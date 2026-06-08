@@ -369,3 +369,12 @@ The best learned swing frontier passed the progress-`0.375` gate and exported `5
 The same-stage capture PPO trained from those saved states improves the handoff but does not solve capture. Held-out `20` episode eval reports `success_rate = 0.0`, `ever_upright_rate = 0.95`, `max_upright_streak_mean = 0.227 s`, and `max_upright_streak_max = 0.44 s`. With reset noise removed it still fails (`success_rate = 0.0`, `max_upright_streak_max = 0.28 s`). Forcing saved handoff velocities to zero improves the diagnostic (`max_upright_streak_mean = 0.371 s`, max `0.50 s`) but remains far below the `5 s` sustain gate.
 
 Finite-difference LQR is a valid near-upright stabilizer for the final uniform model, but it is not a reliable capture stabilizer for the progress-`0.375` gradient morphology: the stage linearization is highly ill-conditioned and the closed-loop eigenvalue remains slightly above `1.0`. Receding-horizon MPC from the best saved handoff state confirms the same gap. Full-velocity MPC reached only a `0.30 s` upright streak; zeroing saved qvel reached `0.50 s` and then used almost the whole `+/-3 m` rail. The next useful capture work is therefore a nonlinear learned catch policy from saved states, while the final proof still requires exporting states from a full-uniform, full-hanging swing expert.
+
+Longer-rail continuation probe:
+
+```text
+runs/swingup6_gradient_low_momentum_longrail_from3875_probe_100/train_log.csv
+runs/swingup6_gradient_low_momentum_longrail_from3875_probe_100/checkpoints/best.meta.json
+```
+
+This bounded `100` update run initialized from the previous latest checkpoint at progress `0.3875`, widened the scheduled rail at that stage from `+/-6.675 m` to `+/-8.5125 m`, relaxed the low-momentum cart-position allowance to `3.0 m`, and lowered entropy to `0.010`. It did not pass the gate or advance curriculum. The best checkpoint was update `20`: `ever_upright_rate = 0.875`, `low_momentum_upright_rate = 0.125`, `max_upright_streak_mean = 0.2325 s`, `max_upright_streak_max = 0.64 s`, `max_low_momentum_upright_streak_max = 0.50 s`, and `success_rate = 0.0`. Later evals regressed. This supports the user's longer-windup idea as a useful training-wheel probe, but the current policy still cannot reliably arrive with low momentum.
