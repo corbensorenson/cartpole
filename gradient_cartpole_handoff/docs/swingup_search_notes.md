@@ -18,7 +18,7 @@ configs/swingup6_gradient_low_momentum.yaml
 configs/swingup6_uniform_low_momentum_finetune.yaml
 ```
 
-The first config starts with a base-heavy, mildly base-long, high-damping morphology and anneals length, mass, and damping to the uniform target using `morphology.schedule_mode: swingup_slow`. It also uses `env.hanging_curriculum_power: 3.0`, so the start angle becomes hanging more slowly while morphology training wheels are being removed. Its reward includes `capture_quality`, low-velocity upright bonuses, and rail-margin penalties so checkpoint selection can prefer low-momentum top handoffs over high-speed upright flickers. This pretraining config uses `ppo.eval_progress: current`, so `best.safetensors` is selected at the active curriculum stage rather than only at the final hanging-start task. The second config removes the morphology training wheels and fine-tunes on the real uniform hanging-start task, where evaluation returns to final-task progress.
+The first config starts with a base-heavy, mildly base-long, high-damping morphology plus temporary hinge friction-loss and a longer `+/-9 m` rail. It anneals length, mass, damping, friction-loss, and rail length to the uniform target using `morphology.schedule_mode: swingup_slow` and environment rail scheduling. It also uses `env.hanging_curriculum_power: 3.0`, so the start angle becomes hanging more slowly while training wheels are being removed. Its reward includes `capture_quality`, low-velocity upright bonuses, and rail-margin penalties so checkpoint selection can prefer low-momentum top handoffs over high-speed upright flickers. This pretraining config uses `ppo.curriculum_mode: gated` and `ppo.eval_progress: current`, so training only advances after current-stage eval shows low-momentum upright handoffs. The second config removes the morphology/friction training wheels, anneals the rail from `+/-4.5 m` to the real `+/-3 m`, and fine-tunes on the real uniform hanging-start task, where evaluation returns to final-task progress.
 
 Run path:
 
@@ -39,6 +39,17 @@ runs/swingup6_gradient_low_momentum_probe_80/checkpoints/best.meta.json
 Training returns were positive on early easy morphology stages, then collapsed around progress `0.30` as the start angle became too hard. The best final-progress checkpoint was update `20` and still had `success_rate = 0.0`, `ever_upright_rate = 0.0`, and `low_momentum_upright_rate = 0.0`. That run is not solution evidence; it is a schedule diagnostic.
 
 A bounded `40` update probe with `hanging_curriculum_power: 2.0` moved the training collapse later, around progress `0.62`, but final-progress eval still had no upright events. The checked-in config now uses a stronger `hanging_curriculum_power: 3.0` and the `swingup_slow` morphology schedule to keep damping, length gradient, and mass gradient available longer.
+
+Current-stage checkpointing exposed useful curriculum signal that final-progress eval hid:
+
+```text
+runs/swingup6_gradient_low_momentum_current_probe_120
+runs/swingup6_gradient_low_momentum_friction_probe_120
+runs/swingup6_gradient_low_momentum_gated_rail_probe_240
+runs/swingup6_gradient_low_momentum_gated_longrail_continue_160
+```
+
+The current-stage `120` update probe reached low-momentum upright handoffs through roughly progress `0.33`, then lost upright events around progress `0.41`. Adding hinge friction-loss improved early returns but did not move that collapse boundary. A gated curriculum with friction-loss and rail scheduling advanced by mastery instead of update count: it reached progress `0.375`, with the `+/-9 m` rail schedule now configured to give more windup room, but still failed the gate there (`success_rate = 0.0`). A direct longer-rail continuation at progress `0.375` produced intermittent upright events but did not pass the low-momentum gate. The checked-in curriculum now uses a smaller `curriculum_step: 0.0125` so the next full pretrain removes training wheels more gradually through the `0.30-0.40` transition.
 
 The current unsolved gap is capture, not only reachability. A direct cart-position trajectory probe can swing the exact hanging six-link chain into the upright angle threshold once:
 

@@ -17,6 +17,7 @@ def generate_nlink_cartpole_xml(
     force_limit: float = 80.0,
     timestep: float = 0.005,
     cart_damping: float = 0.02,
+    cart_frictionloss: float = 0.0,
     joint_armature: float = 0.0005,
     link_radius: float = 0.025,
 ) -> str:
@@ -51,7 +52,7 @@ def generate_nlink_cartpole_xml(
     lines.append(f'    <camera name="side" pos="0 -{_f(cam_y)} {_f(cam_z)}" xyaxes="1 0 0 0 0 1"/>')
     lines.append(f'    <geom name="rail" type="box" pos="0 0 -0.04" size="{_f(rail)} 0.025 0.025" rgba="0.35 0.35 0.35 1"/>')
     lines.append('    <body name="cart" pos="0 0 0">')
-    lines.append(f'      <joint name="slide" type="slide" axis="1 0 0" limited="true" range="-{_f(rail)} {_f(rail)}" damping="{_f(cart_damping)}"/>')
+    lines.append(f'      <joint name="slide" type="slide" axis="1 0 0" limited="true" range="-{_f(rail)} {_f(rail)}" damping="{_f(cart_damping)}" frictionloss="{_f(cart_frictionloss)}"/>')
     lines.append(f'      <geom name="cart_geom" type="box" size="0.18 0.12 {_f(cart_half_z)}" mass="{_f(cart_mass)}" rgba="0.1 0.25 0.9 1"/>')
 
     indent = '      '
@@ -61,10 +62,11 @@ def generate_nlink_cartpole_xml(
         length = morph.lengths[i]
         mass = morph.masses[i]
         damping = morph.damping[i]
+        frictionloss = morph.frictionloss[i]
         rgba = "0.9 0.25 0.15 1" if i % 2 == 0 else "0.95 0.65 0.10 1"
         lines.append(f'{indent}<body name="link_{idx}" pos="0 0 {_f(parent_pos if i == 0 else morph.lengths[i-1])}">')
         indent += '  '
-        lines.append(f'{indent}<joint name="hinge_{idx}" type="hinge" axis="0 1 0" damping="{_f(damping)}"/>')
+        lines.append(f'{indent}<joint name="hinge_{idx}" type="hinge" axis="0 1 0" damping="{_f(damping)}" frictionloss="{_f(frictionloss)}"/>')
         lines.append(f'{indent}<geom name="link_{idx}_geom" type="capsule" fromto="0 0 0 0 0 {_f(length)}" size="{_f(link_radius)}" mass="{_f(mass)}" rgba="{escape(rgba)}"/>')
         lines.append(f'{indent}<site name="tip_{idx}" pos="0 0 {_f(length)}" size="0.012" rgba="0 0 0 1"/>')
 

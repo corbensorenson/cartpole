@@ -12,12 +12,15 @@ class Morphology:
     lengths: np.ndarray
     masses: np.ndarray
     damping: np.ndarray
+    frictionloss: np.ndarray
     total_length: float
     total_mass: float
     total_damping: float
+    total_frictionloss: float
     alpha_length: float
     alpha_mass: float
     alpha_damping: float
+    alpha_frictionloss: float
 
     def fingerprint(self) -> np.ndarray:
         """Normalized morphology vector for optional policy conditioning."""
@@ -28,6 +31,11 @@ class Morphology:
         else:
             d = np.zeros_like(self.damping)
         return np.concatenate([l, m, d]).astype(np.float32)
+
+    def frictionloss_fingerprint(self) -> np.ndarray:
+        if self.total_frictionloss > 0:
+            return (self.frictionloss / (self.total_frictionloss / self.n_links)).astype(np.float32)
+        return np.zeros_like(self.frictionloss, dtype=np.float32)
 
 
 def exp_gradient(total: float, n: int, alpha: float, min_value: float = 1e-9) -> np.ndarray:
@@ -71,6 +79,8 @@ def scheduled_params(schedule_cfg: dict[str, Any], progress: float) -> dict[str,
             "alpha_mass": interpolate(start.get("alpha_mass", 0.0), end.get("alpha_mass", 0.0), t),
             "alpha_damping": interpolate(start.get("alpha_damping", 0.0), end.get("alpha_damping", 0.0), t),
             "total_damping": interpolate(start.get("total_damping", 0.0), end.get("total_damping", 0.0), t),
+            "alpha_frictionloss": interpolate(start.get("alpha_frictionloss", 0.0), end.get("alpha_frictionloss", 0.0), t),
+            "total_frictionloss": interpolate(start.get("total_frictionloss", 0.0), end.get("total_frictionloss", 0.0), t),
         }
 
     if mode == "mass_last":
@@ -78,6 +88,8 @@ def scheduled_params(schedule_cfg: dict[str, Any], progress: float) -> dict[str,
         return {
             "alpha_damping": _stage_value(start.get("alpha_damping", 0.0), end.get("alpha_damping", 0.0), t, 0.00, 0.25),
             "total_damping": _stage_value(start.get("total_damping", 0.0), end.get("total_damping", 0.0), t, 0.00, 0.35),
+            "alpha_frictionloss": _stage_value(start.get("alpha_frictionloss", 0.0), end.get("alpha_frictionloss", 0.0), t, 0.00, 0.35),
+            "total_frictionloss": _stage_value(start.get("total_frictionloss", 0.0), end.get("total_frictionloss", 0.0), t, 0.00, 0.45),
             "alpha_length": _stage_value(start.get("alpha_length", 0.0), end.get("alpha_length", 0.0), t, 0.20, 0.55),
             "alpha_mass": _stage_value(start.get("alpha_mass", 0.0), end.get("alpha_mass", 0.0), t, 0.45, 1.00),
         }
@@ -89,6 +101,8 @@ def scheduled_params(schedule_cfg: dict[str, Any], progress: float) -> dict[str,
         return {
             "alpha_damping": _stage_value(start.get("alpha_damping", 0.0), end.get("alpha_damping", 0.0), t, 0.10, 0.60),
             "total_damping": _stage_value(start.get("total_damping", 0.0), end.get("total_damping", 0.0), t, 0.10, 0.65),
+            "alpha_frictionloss": _stage_value(start.get("alpha_frictionloss", 0.0), end.get("alpha_frictionloss", 0.0), t, 0.10, 0.65),
+            "total_frictionloss": _stage_value(start.get("total_frictionloss", 0.0), end.get("total_frictionloss", 0.0), t, 0.10, 0.70),
             "alpha_length": _stage_value(start.get("alpha_length", 0.0), end.get("alpha_length", 0.0), t, 0.35, 0.80),
             "alpha_mass": _stage_value(start.get("alpha_mass", 0.0), end.get("alpha_mass", 0.0), t, 0.65, 1.00),
         }
@@ -103,19 +117,28 @@ def build_morphology(env_cfg: dict[str, Any], morph_cfg: dict[str, Any], progres
 
     params = scheduled_params(morph_cfg, progress)
     total_damping = float(params["total_damping"])
+    total_frictionloss = float(params["total_frictionloss"])
     lengths = exp_gradient(total_length, n, params["alpha_length"], min_value=0.02)
     masses = exp_gradient(total_mass, n, params["alpha_mass"], min_value=1e-4)
     damping = exp_gradient(total_damping, n, params["alpha_damping"], min_value=0.0) if total_damping > 0 else np.zeros(n)
+    frictionloss = (
+        exp_gradient(total_frictionloss, n, params["alpha_frictionloss"], min_value=0.0)
+        if total_frictionloss > 0
+        else np.zeros(n)
+    )
 
     return Morphology(
         n_links=n,
         lengths=lengths,
         masses=masses,
         damping=damping,
+        frictionloss=frictionloss,
         total_length=total_length,
         total_mass=total_mass,
         total_damping=total_damping,
+        total_frictionloss=total_frictionloss,
         alpha_length=float(params["alpha_length"]),
         alpha_mass=float(params["alpha_mass"]),
         alpha_damping=float(params["alpha_damping"]),
+        alpha_frictionloss=float(params["alpha_frictionloss"]),
     )

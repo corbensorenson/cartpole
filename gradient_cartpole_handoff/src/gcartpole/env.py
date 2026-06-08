@@ -45,10 +45,11 @@ class NLinkCartPoleEnv(gym.Env):
         self.progress = float(progress)
         self.n = int(self.env_cfg["n_links"])
         self.force_limit = float(self.env_cfg["force_limit"])
-        self.rail_limit = float(self.env_cfg["rail_limit"])
+        self.rail_limit = self._scheduled_rail_limit(self.progress)
         self.frame_skip = int(self.env_cfg.get("frame_skip", 1))
         self.max_steps = max(1, int(float(self.env_cfg["episode_seconds"]) / (float(self.env_cfg["timestep"]) * self.frame_skip)))
         self.obs_include_morphology = bool(self.env_cfg.get("obs_include_morphology", True))
+        self.obs_include_frictionloss = bool(self.env_cfg.get("obs_include_frictionloss", False))
         self.step_count = 0
         self.last_action_norm = np.zeros(1, dtype=np.float32)
         self.upright_streak_steps = 0
@@ -67,16 +68,25 @@ class NLinkCartPoleEnv(gym.Env):
     def dt(self) -> float:
         return float(self.env_cfg["timestep"]) * self.frame_skip
 
+    def _scheduled_rail_limit(self, progress: float) -> float:
+        target = float(self.env_cfg["rail_limit"])
+        start = float(self.env_cfg.get("rail_limit_start", target))
+        end = float(self.env_cfg.get("rail_limit_end", target))
+        t = float(np.clip(progress, 0.0, 1.0))
+        return start + (end - start) * t
+
     def _build_model(self, progress: float) -> None:
         self.progress = float(progress)
+        self.rail_limit = self._scheduled_rail_limit(self.progress)
         self.morphology: Morphology = build_morphology(self.env_cfg, self.morph_cfg, self.progress)
         xml = generate_nlink_cartpole_xml(
             self.morphology,
             cart_mass=float(self.env_cfg["cart_mass"]),
-            rail_limit=float(self.env_cfg["rail_limit"]),
+            rail_limit=float(self.rail_limit),
             force_limit=float(self.env_cfg["force_limit"]),
             timestep=float(self.env_cfg["timestep"]),
             cart_damping=float(self.env_cfg.get("cart_damping", 0.0)),
+            cart_frictionloss=float(self.env_cfg.get("cart_frictionloss", 0.0)),
             joint_armature=float(self.env_cfg.get("joint_armature", 0.0)),
             link_radius=float(self.env_cfg.get("link_radius", 0.025)),
         )
@@ -217,6 +227,8 @@ class NLinkCartPoleEnv(gym.Env):
         ]
         if self.obs_include_morphology:
             obs_parts.append(self.morphology.fingerprint())
+        if self.obs_include_frictionloss:
+            obs_parts.append(self.morphology.frictionloss_fingerprint())
         obs = np.concatenate(obs_parts).astype(np.float32)
         # Keep pathological MuJoCo explosions from poisoning PPO batches.
         return np.nan_to_num(obs, nan=0.0, posinf=1e6, neginf=-1e6).astype(np.float32)
@@ -338,12 +350,15 @@ class NLinkCartPoleEnv(gym.Env):
             "max_upright_streak_seconds": float(self.max_upright_streak_steps * self.dt),
             "time_to_first_upright": first_upright_time,
             "progress": float(self.progress),
+            "rail_limit": float(self.rail_limit),
             "alpha_length": float(self.morphology.alpha_length),
             "alpha_mass": float(self.morphology.alpha_mass),
             "alpha_damping": float(self.morphology.alpha_damping),
+            "alpha_frictionloss": float(self.morphology.alpha_frictionloss),
             "lengths": self.morphology.lengths.astype(float).tolist(),
             "masses": self.morphology.masses.astype(float).tolist(),
             "damping": self.morphology.damping.astype(float).tolist(),
+            "frictionloss": self.morphology.frictionloss.astype(float).tolist(),
             "init_state_index": self.last_init_state_index,
         }
 

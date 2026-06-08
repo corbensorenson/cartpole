@@ -113,7 +113,7 @@ make swingup6-uniform-low-momentum
 make eval-swingup6-low-momentum
 ```
 
-`configs/swingup6_gradient_low_momentum.yaml` starts with easier length, mass, and damping gradients, then anneals them away. `configs/swingup6_uniform_low_momentum_finetune.yaml` removes those training wheels and evaluates at the final hanging-start task.
+`configs/swingup6_gradient_low_momentum.yaml` starts with easier length, mass, damping, hinge friction-loss, and longer-rail gradients, then anneals them away. `configs/swingup6_uniform_low_momentum_finetune.yaml` removes those training wheels and evaluates at the final hanging-start task with the real `+/-3 m` rail.
 
 ---
 

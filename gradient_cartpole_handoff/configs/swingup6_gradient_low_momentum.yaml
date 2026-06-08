@@ -9,6 +9,10 @@ env:
   total_mass: 1.0
   cart_mass: 1.0
   rail_limit: 3.0
+  # Training wheel: allow a longer windup track early, then anneal to the
+  # real final +/-3 m rail before solution evidence.
+  rail_limit_start: 9.0
+  rail_limit_end: 3.0
   force_limit: 80.0
   timestep: 0.005
   frame_skip: 4
@@ -29,6 +33,7 @@ env:
   joint_armature: 0.0005
   link_radius: 0.025
   obs_include_morphology: true
+  obs_include_frictionloss: true
   curriculum_rebuild_every: 25
   reward:
     alive: 0.0
@@ -57,19 +62,24 @@ env:
 
 morphology:
   # Start with the original handoff packet's training wheels:
-  # base-heavy, mildly base-long, and extra joint damping. Anneal to the real
-  # uniform-length, uniform-mass, low-damping target late in training.
+  # base-heavy, mildly base-long, extra joint damping, and temporary hinge
+  # friction loss. Anneal to the real uniform-length, uniform-mass,
+  # low-damping, zero-friction-loss target late in training.
   schedule_mode: swingup_slow
   start:
     alpha_length: 0.65
     alpha_mass: 5.0
     alpha_damping: 2.5
     total_damping: 0.120
+    alpha_frictionloss: 3.0
+    total_frictionloss: 0.060
   end:
     alpha_length: 0.0
     alpha_mass: 0.0
     alpha_damping: 0.0
     total_damping: 0.015
+    alpha_frictionloss: 0.0
+    total_frictionloss: 0.0
 
 ppo:
   backend: mlx
@@ -90,8 +100,18 @@ ppo:
   action_std_init: 0.50
   normalize_advantages: true
   checkpoint_every: 50
-  eval_every: 50
+  eval_every: 20
   eval_episodes: 8
+  # Remove training wheels by mastery, not just by wall-clock updates.
+  curriculum_mode: gated
+  curriculum_start_progress: 0.0
+  curriculum_step: 0.0125
+  curriculum_min_updates_per_stage: 20
+  curriculum_gate_success_rate: 0.0
+  curriculum_gate_ever_upright_rate: 0.60
+  curriculum_gate_low_momentum_upright_rate: 0.60
+  curriculum_gate_max_upright_streak: 0.25
+  curriculum_gate_max_capture_quality: 0.50
   # During gradient pretraining, choose the best checkpoint at the current
   # curriculum stage. Final-task evaluation is restored by the uniform finetune.
   eval_progress: current

@@ -9,6 +9,8 @@ env:
   total_mass: 1.0
   cart_mass: 1.0
   rail_limit: 3.0
+  rail_limit_start: 4.5
+  rail_limit_end: 3.0
   force_limit: 80.0
   timestep: 0.005
   frame_skip: 4
@@ -23,6 +25,7 @@ env:
   joint_armature: 0.0005
   link_radius: 0.025
   obs_include_morphology: true
+  obs_include_frictionloss: true
   curriculum_rebuild_every: 999999
   hanging_curriculum_power: 1.5
   reward:
@@ -57,11 +60,15 @@ morphology:
     alpha_mass: 0.0
     alpha_damping: 0.0
     total_damping: 0.015
+    alpha_frictionloss: 0.0
+    total_frictionloss: 0.0
   end:
     alpha_length: 0.0
     alpha_mass: 0.0
     alpha_damping: 0.0
     total_damping: 0.015
+    alpha_frictionloss: 0.0
+    total_frictionloss: 0.0
 
 ppo:
   backend: mlx

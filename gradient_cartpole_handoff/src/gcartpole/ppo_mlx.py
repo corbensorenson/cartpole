@@ -295,6 +295,17 @@ def resolve_eval_progress(ppo: dict[str, Any], progress: float) -> float:
     return value
 
 
+def curriculum_gate_passed(ppo: dict[str, Any], eval_metrics: dict[str, Any]) -> bool:
+    thresholds = {
+        "success_rate": float(ppo.get("curriculum_gate_success_rate", 0.0)),
+        "ever_upright_rate": float(ppo.get("curriculum_gate_ever_upright_rate", 0.6)),
+        "low_momentum_upright_rate": float(ppo.get("curriculum_gate_low_momentum_upright_rate", 0.6)),
+        "max_upright_streak_max": float(ppo.get("curriculum_gate_max_upright_streak", 0.20)),
+        "max_capture_quality_max": float(ppo.get("curriculum_gate_max_capture_quality", 0.50)),
+    }
+    return all(float(eval_metrics.get(key, 0.0)) >= threshold for key, threshold in thresholds.items())
+
+
 def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, Any]:
     require_mlx()
     seed = int(cfg.get("experiment", {}).get("seed", 0))
@@ -313,6 +324,15 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
     total_updates = int(ppo["total_updates"])
     vec_backend = str(ppo.get("vec_backend", "serial"))
     rebuild_every = int(cfg["env"].get("curriculum_rebuild_every", 25))
+    curriculum_mode = str(ppo.get("curriculum_mode", "linear")).lower()
+    if curriculum_mode not in {"linear", "gated"}:
+        raise ValueError("ppo.curriculum_mode must be 'linear' or 'gated'")
+    curriculum_progress = float(np.clip(float(ppo.get("curriculum_start_progress", 0.0)), 0.0, 1.0))
+    curriculum_step = float(ppo.get("curriculum_step", 0.025))
+    curriculum_min_updates = int(ppo.get("curriculum_min_updates_per_stage", ppo.get("eval_every", 50)))
+    last_curriculum_advance_update = 0
+    last_env_progress: float | None = None
+    current_morph_info: dict[str, Any] = {}
 
     envs = make_vec_env(cfg, num_envs=num_envs, seed=seed, progress=0.0, backend=vec_backend)
     obs, _ = envs.reset()
@@ -340,7 +360,8 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
         "eval_return_mean", "eval_success_rate", "eval_length_mean", "eval_ever_upright_rate",
         "eval_max_upright_streak_mean", "eval_max_upright_streak_max",
         "eval_low_momentum_upright_rate", "eval_max_capture_quality_mean", "eval_max_capture_quality_max",
-        "eval_time_to_first_upright_mean", "alpha_length", "alpha_mass", "alpha_damping",
+        "eval_time_to_first_upright_mean", "curriculum_advanced", "rail_limit",
+        "alpha_length", "alpha_mass", "alpha_damping", "alpha_frictionloss",
     ]
     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
     writer.writeheader()
@@ -357,12 +378,19 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
 
     try:
         for update in range(1, total_updates + 1):
-            progress = (update - 1) / max(1, total_updates - 1)
-            if update == 1 or (rebuild_every > 0 and update % rebuild_every == 0):
-                obs, infos = envs.set_progress(progress)
-                morph_info = infos[0]
+            if curriculum_mode == "linear":
+                progress = (update - 1) / max(1, total_updates - 1)
             else:
-                morph_info = {}
+                progress = curriculum_progress
+
+            rebuild_for_progress = last_env_progress is None or not math.isclose(progress, last_env_progress, rel_tol=0.0, abs_tol=1e-12)
+            if update == 1 or rebuild_for_progress or (rebuild_every > 0 and update % rebuild_every == 0):
+                obs, infos = envs.set_progress(progress)
+                current_morph_info = infos[0]
+                morph_info = current_morph_info
+                last_env_progress = progress
+            else:
+                morph_info = current_morph_info
 
             obs_buf = np.zeros((rollout_steps, num_envs, obs_dim), dtype=np.float32)
             action_buf = np.zeros((rollout_steps, num_envs, act_dim), dtype=np.float32)
@@ -467,6 +495,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
             mean_ep_len = float(np.mean(recent_lengths[-20:])) if recent_lengths else 0.0
             eval_metrics = {"return_mean": np.nan, "success_rate": np.nan, "length_mean": np.nan}
             eval_progress = np.nan
+            curriculum_advanced = False
 
             if update % int(ppo.get("eval_every", 50)) == 0 or update == total_updates:
                 eval_progress = resolve_eval_progress(ppo, progress)
@@ -485,8 +514,10 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                     dump_json(
                         {
                             "update": update,
+                            "progress": progress,
                             "eval_progress": eval_progress,
                             "eval": eval_metrics,
+                            "curriculum_mode": curriculum_mode,
                             "checkpoint_score": list(eval_score),
                             "checkpoint_score_order": [
                                 "success_rate",
@@ -501,11 +532,31 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                         },
                         ckpt_dir / "best.meta.json",
                     )
+                if (
+                    curriculum_mode == "gated"
+                    and math.isclose(eval_progress, progress, rel_tol=0.0, abs_tol=1e-12)
+                    and progress < 1.0
+                    and update - last_curriculum_advance_update >= curriculum_min_updates
+                    and curriculum_gate_passed(ppo, eval_metrics)
+                ):
+                    curriculum_progress = float(np.clip(progress + curriculum_step, 0.0, 1.0))
+                    last_curriculum_advance_update = update
+                    curriculum_advanced = curriculum_progress > progress
 
             if update % int(ppo.get("checkpoint_every", 50)) == 0 or update == total_updates:
                 save_model(model, ckpt_dir / f"update_{update:06d}.safetensors")
                 save_model(model, ckpt_dir / "latest.safetensors")
-                dump_json({"update": update, "global_steps": global_steps, "elapsed_seconds": time.time() - start_time}, ckpt_dir / "latest.meta.json")
+                dump_json(
+                    {
+                        "update": update,
+                        "progress": progress,
+                        "curriculum_progress_next": curriculum_progress,
+                        "curriculum_mode": curriculum_mode,
+                        "global_steps": global_steps,
+                        "elapsed_seconds": time.time() - start_time,
+                    },
+                    ckpt_dir / "latest.meta.json",
+                )
 
             row = {
                 "update": update,
@@ -526,9 +577,12 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                 "eval_max_capture_quality_mean": eval_metrics.get("max_capture_quality_mean", np.nan),
                 "eval_max_capture_quality_max": eval_metrics.get("max_capture_quality_max", np.nan),
                 "eval_time_to_first_upright_mean": eval_metrics.get("time_to_first_upright_mean", np.nan),
+                "curriculum_advanced": curriculum_advanced,
+                "rail_limit": morph_info.get("rail_limit", np.nan),
                 "alpha_length": morph_info.get("alpha_length", np.nan),
                 "alpha_mass": morph_info.get("alpha_mass", np.nan),
                 "alpha_damping": morph_info.get("alpha_damping", np.nan),
+                "alpha_frictionloss": morph_info.get("alpha_frictionloss", np.nan),
             }
             writer.writerow(row)
             csv_file.flush()
@@ -539,7 +593,8 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                 f"ep_ret={mean_ep_return:.1f} ep_len={mean_ep_len:.1f} "
                 f"eval_prog={eval_progress:.3f} "
                 f"eval_ret={eval_metrics.get('return_mean', float('nan')):.1f} "
-                f"succ={eval_metrics.get('success_rate', float('nan')):.2f}"
+                f"succ={eval_metrics.get('success_rate', float('nan')):.2f} "
+                f"adv={int(curriculum_advanced)}"
             )
 
     finally:

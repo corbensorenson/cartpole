@@ -19,13 +19,18 @@ def main() -> None:
 
     cfg = apply_overrides(load_config(args.config), args.override)
     morph = build_morphology(cfg["env"], cfg["morphology"], progress=args.progress)
+    target_rail = float(cfg["env"]["rail_limit"])
+    rail_start = float(cfg["env"].get("rail_limit_start", target_rail))
+    rail_end = float(cfg["env"].get("rail_limit_end", target_rail))
+    rail_limit = rail_start + (rail_end - rail_start) * float(args.progress)
     xml = generate_nlink_cartpole_xml(
         morph,
         cart_mass=float(cfg["env"]["cart_mass"]),
-        rail_limit=float(cfg["env"]["rail_limit"]),
+        rail_limit=rail_limit,
         force_limit=float(cfg["env"]["force_limit"]),
         timestep=float(cfg["env"]["timestep"]),
         cart_damping=float(cfg["env"].get("cart_damping", 0.0)),
+        cart_frictionloss=float(cfg["env"].get("cart_frictionloss", 0.0)),
         joint_armature=float(cfg["env"].get("joint_armature", 0.0)),
         link_radius=float(cfg["env"].get("link_radius", 0.025)),
     )
@@ -36,6 +41,8 @@ def main() -> None:
     print("lengths:", morph.lengths)
     print("masses: ", morph.masses)
     print("damping:", morph.damping)
+    print("frictionloss:", morph.frictionloss)
+    print("rail_limit:", rail_limit)
 
 
 if __name__ == "__main__":
