@@ -1,4 +1,4 @@
-.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 eval-swingup6 render-swingup6 probe-swingup-trajectory search-swingup-trajectory
+.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 eval-swingup6 render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-capture
 
 PYTHON ?= .venv/bin/python
 
@@ -46,3 +46,6 @@ probe-swingup-trajectory:
 
 search-swingup-trajectory:
 	$(PYTHON) scripts/search_swingup_trajectory.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_trajectory_search/search.json
+
+search-swingup-capture:
+	$(PYTHON) scripts/search_swingup_capture.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_capture_search/search.json
