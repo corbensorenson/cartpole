@@ -137,8 +137,11 @@ make search-swingup-low-momentum
 make search-swingup-sustain
 make export-low-momentum-swingup-states
 make search-capture-sequence
+make eval-mpc-capture
 make capture-low-momentum-velocity-curriculum
 ```
+
+`export-low-momentum-swingup-states` is the first-expert handoff file for the real-uniform path. It saves replayable MuJoCo `qpos/qvel` states from the swing trajectory, and the capture targets consume that same file through `SWING_TRAJECTORY_STATES_OUT`. `capture-low-momentum-velocity-curriculum` trains from those real positions while annealing saved handoff velocity from zero back to full velocity. `eval-mpc-capture` is a deterministic nonlinear catchability diagnostic from one saved state; override `MPC_CAPTURE_QVEL_SCALE=0.0` to test whether the same handoff position would be easy if the swing expert arrived with no velocity.
 
 If the exported frontier is still a gradiented curriculum stage, train the diagnostic capture expert on the same stage instead of forcing those states into the final uniform plant:
 
