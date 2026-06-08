@@ -1,0 +1,90 @@
+experiment:
+  name: swingup6_uniform_time_linear
+  seed: 721
+  out_dir: runs/swingup6_uniform_time_linear
+
+env:
+  n_links: 6
+  total_length: 3.0
+  total_mass: 1.0
+  cart_mass: 1.0
+  rail_limit: 3.0
+  force_limit: 80.0
+  timestep: 0.005
+  frame_skip: 4
+  episode_seconds: 30.0
+  init_mode: hanging_curriculum
+  init_angle_noise: 0.05
+  init_vel_noise: 0.05
+  terminate_abs_angle: null
+  success_upright_threshold: 0.15
+  success_sustain_seconds: 5.0
+  cart_damping: 0.02
+  joint_armature: 0.0005
+  link_radius: 0.025
+  obs_include_morphology: true
+  obs_include_time: true
+  obs_time_scale_seconds: 16.0
+  obs_time_frequencies: [1, 2, 3, 4, 5, 6, 7, 8]
+  curriculum_rebuild_every: 25
+  reward:
+    alive: 0.0
+    terminal_penalty: -200.0
+    angle_cos: 3.0
+    upright_bonus: 45.0
+    sustained_upright_bonus: 10.0
+    capture_quality: 120.0
+    capture_angle_scale: 0.25
+    capture_hinge_vel_scale: 1.10
+    capture_cart_pos_scale: 0.50
+    capture_cart_vel_scale: 0.75
+    upright_low_velocity_bonus: 30.0
+    upright_hinge_vel_threshold: 0.75
+    upright_cart_vel_threshold: 0.50
+    low_momentum_min_time_seconds: 0.50
+    low_momentum_max_cart_abs: 2.50
+    angle_abs: 1.0
+    angle_rel: 0.02
+    tip: 0.50
+    cart_pos: 1.00
+    cart_vel: 0.002
+    hinge_vel: 0.0005
+    rail_margin: 40.0
+    rail_margin_start: 0.85
+    control: 0.0010
+    upright_threshold: 0.15
+
+morphology:
+  schedule_mode: all_linear
+  start:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    total_damping: 0.015
+  end:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    total_damping: 0.015
+
+ppo:
+  backend: mlx
+  vec_backend: subprocess
+  num_envs: 48
+  rollout_steps: 256
+  total_updates: 8000
+  minibatches: 8
+  epochs: 4
+  gamma: 0.995
+  gae_lambda: 0.95
+  learning_rate: 0.00025
+  clip_coef: 0.20
+  entropy_coef: 0.015
+  value_coef: 0.50
+  max_grad_norm: 0.50
+  hidden_sizes: []
+  action_std_init: 0.03
+  normalize_advantages: true
+  checkpoint_every: 50
+  eval_every: 50
+  eval_episodes: 8

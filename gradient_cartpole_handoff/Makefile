@@ -1,4 +1,4 @@
-.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-capture search-capture-sequence eval-mpc-capture search-swingup-chain export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
+.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture search-swingup-chain export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
 
 PYTHON ?= .venv/bin/python
 SWING_TRAJECTORY_SEARCH_OUT ?= runs/swingup6_trajectory_search/low_momentum_search.json
@@ -6,6 +6,13 @@ SWING_TRAJECTORY_SUSTAIN_OUT ?= runs/swingup6_trajectory_search/sustain_search.j
 SWING_TRAJECTORY_STATES_OUT ?= runs/swingup6_expert_chain/swing_states_low_momentum.json
 SWING_ACTION_SEARCH_OUT ?= runs/swingup6_action_search/low_momentum_search.json
 SWING_ACTION_STATES_OUT ?= runs/swingup6_expert_chain/swing_states_action_low_momentum.json
+SWING_ACTION_COLD_OUT ?= runs/swingup6_action_search/cold_handoff_search.json
+SWING_ACTION_COLD_STATES_OUT ?= runs/swingup6_expert_chain/swing_states_action_cold_handoff.json
+LINEAR_POLICY_SEARCH_OUT ?= runs/swingup6_uniform_time_linear_search
+LINEAR_POLICY_SEARCH_ITERATIONS ?= 80
+LINEAR_POLICY_SEARCH_POPULATION ?= 128
+LINEAR_POLICY_SEARCH_ELITES ?= 12
+LINEAR_POLICY_SEARCH_WORKERS ?= 8
 CAPTURE_SEQUENCE_OUT ?= runs/swingup6_capture_sequence/search.json
 CAPTURE_VEL_CURRICULUM_OUT ?= runs/swingup6_capture_low_momentum_velocity_curriculum
 CAPTURE_VEL_CURRICULUM_UPDATES ?= 5000
@@ -124,6 +131,12 @@ search-swingup-sustain:
 
 search-swingup-action-low-momentum:
 	$(PYTHON) scripts/search_swingup_action_sequence.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --seconds 16 --score-mode low_momentum --handoff-min-time 4.0 --handoff-max-cart-abs 1.25 --init-controller-json $(SWING_TRAJECTORY_SEARCH_OUT) --out $(SWING_ACTION_SEARCH_OUT) --state-out $(SWING_ACTION_STATES_OUT)
+
+search-swingup-action-cold:
+	$(PYTHON) scripts/search_swingup_action_sequence.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --seconds 20 --score-mode cold_handoff --handoff-min-time 4.0 --handoff-max-cart-abs 2.5 --init-controller-json $(SWING_ACTION_SEARCH_OUT) --out $(SWING_ACTION_COLD_OUT) --state-out $(SWING_ACTION_COLD_STATES_OUT)
+
+search-linear-policy:
+	$(PYTHON) scripts/search_linear_policy.py --config configs/swingup6_uniform_time_linear.yaml --out-dir $(LINEAR_POLICY_SEARCH_OUT) --progress 1.0 --zero-noise --seconds 8 --iterations $(LINEAR_POLICY_SEARCH_ITERATIONS) --population $(LINEAR_POLICY_SEARCH_POPULATION) --elites $(LINEAR_POLICY_SEARCH_ELITES) --workers $(LINEAR_POLICY_SEARCH_WORKERS)
 
 search-swingup-capture:
 	$(PYTHON) scripts/search_swingup_capture.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_capture_search/search.json

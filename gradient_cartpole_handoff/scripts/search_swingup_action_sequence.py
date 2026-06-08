@@ -208,6 +208,19 @@ def evaluate_actions(
                 - 2.5 * float(row["capture_quality"])
                 - 1.2 * float(row["max_upright_streak_seconds"])
             )
+        elif score_mode == "cold_handoff":
+            row_score = (
+                320.0 * angle_gap
+                + 10.0 * float(row["max_abs_angle"])
+                + 10.0 * float(row["hinge_velocity_rms"])
+                + 4.0 * abs(float(row["cart_velocity"]))
+                + 1.5 * abs(float(row["x"]))
+                + 20.0 * cart_over * cart_over
+                + 25.0 * time_shortfall
+                - 6.0 * float(row["is_upright"])
+                - 8.0 * float(row["capture_quality"])
+                - 2.0 * float(row["max_upright_streak_seconds"])
+            )
         elif score_mode == "sustain":
             row_score = (
                 180.0 * angle_gap
@@ -270,6 +283,8 @@ def evaluate_actions(
         )
     elif score_mode == "low_momentum":
         score = best_row_score + 0.01 * action_smooth_cost + 35.0 * max(0.0, max_cart_abs - float(cfg["env"]["rail_limit"])) ** 2
+    elif score_mode == "cold_handoff":
+        score = best_row_score + 0.02 * action_smooth_cost + 35.0 * max(0.0, max_cart_abs - float(cfg["env"]["rail_limit"])) ** 2
     else:
         score = best_row_score + 0.01 * action_smooth_cost
 
@@ -302,7 +317,7 @@ def main() -> None:
     parser.add_argument("--state-out", default=None)
     parser.add_argument("--zero-noise", action="store_true")
     parser.add_argument("--init-controller-json", default=None)
-    parser.add_argument("--score-mode", choices=["reachability", "low_momentum", "sustain"], default="low_momentum")
+    parser.add_argument("--score-mode", choices=["reachability", "low_momentum", "cold_handoff", "sustain"], default="low_momentum")
     parser.add_argument("--handoff-min-time", type=float, default=4.0)
     parser.add_argument("--handoff-max-cart-abs", type=float, default=1.25)
     parser.add_argument("--iterations", type=int, default=20)

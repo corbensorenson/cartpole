@@ -123,12 +123,14 @@ For an ad-hoc continuation run, point the handoff/export targets at that run wit
 
 ```bash
 make export-policy-handoff-states \
-  SWING_HANDOFF_RUN=runs/swingup6_gradient_low_momentum_centered_gate025_from3125_lowent_180
+  SWING_HANDOFF_RUN=runs/swingup6_gradient_low_momentum_centered_gate025_from350_retry_240
 
 make capture-policy-handoff-shaped6
 ```
 
 The exporter uses `checkpoints/frontier.safetensors` by default and inherits the swing reward's centered low-momentum cart-position gate (`low_momentum_max_cart_abs`) unless `--max-cart-abs` is explicitly supplied.
+
+Current best learned swing frontier: `runs/swingup6_gradient_low_momentum_centered_gate025_from350_retry_240/checkpoints/frontier.safetensors`. It passed the progress-`0.375` gate and exports real MuJoCo handoff states at `runs/swingup6_policy_handoff/swing_handoff_states_frontier0375_retry128.json`, but it is still curriculum-stage evidence, not final uniform swing-up evidence.
 
 For deterministic real-uniform trajectory probes, the search/export path can also target low-momentum handoff states before capture training:
 
@@ -136,6 +138,8 @@ For deterministic real-uniform trajectory probes, the search/export path can als
 make search-swingup-low-momentum
 make search-swingup-sustain
 make search-swingup-action-low-momentum
+make search-swingup-action-cold
+make search-linear-policy
 make export-low-momentum-swingup-states
 make search-capture-sequence
 make eval-mpc-capture

@@ -50,6 +50,7 @@ class NLinkCartPoleEnv(gym.Env):
         self.max_steps = max(1, int(float(self.env_cfg["episode_seconds"]) / (float(self.env_cfg["timestep"]) * self.frame_skip)))
         self.obs_include_morphology = bool(self.env_cfg.get("obs_include_morphology", True))
         self.obs_include_frictionloss = bool(self.env_cfg.get("obs_include_frictionloss", False))
+        self.obs_include_time = bool(self.env_cfg.get("obs_include_time", False))
         self.step_count = 0
         self.last_action_norm = np.zeros(1, dtype=np.float32)
         self.last_policy_action_norm = np.zeros(1, dtype=np.float32)
@@ -336,6 +337,14 @@ class NLinkCartPoleEnv(gym.Env):
             obs_parts.append(self.morphology.fingerprint())
         if self.obs_include_frictionloss:
             obs_parts.append(self.morphology.frictionloss_fingerprint())
+        if self.obs_include_time:
+            time_scale = max(1e-9, float(self.env_cfg.get("obs_time_scale_seconds", self.env_cfg["episode_seconds"])))
+            phase = float(self.step_count * self.dt) / time_scale
+            time_parts = [phase]
+            for freq in self.env_cfg.get("obs_time_frequencies", []):
+                angle = 2.0 * np.pi * float(freq) * phase
+                time_parts.extend([float(np.sin(angle)), float(np.cos(angle))])
+            obs_parts.append(np.asarray(time_parts, dtype=np.float64))
         obs = np.concatenate(obs_parts).astype(np.float32)
         # Keep pathological MuJoCo explosions from poisoning PPO batches.
         return np.nan_to_num(obs, nan=0.0, posinf=1e6, neginf=-1e6).astype(np.float32)
