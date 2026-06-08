@@ -92,3 +92,6 @@ ppo:
   checkpoint_every: 50
   eval_every: 50
   eval_episodes: 8
+  # During gradient pretraining, choose the best checkpoint at the current
+  # curriculum stage. Final-task evaluation is restored by the uniform finetune.
+  eval_progress: current

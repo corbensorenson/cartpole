@@ -84,3 +84,5 @@ ppo:
   checkpoint_every: 50
   eval_every: 50
   eval_episodes: 8
+  # Fine-tune/checkpoint against the real final hanging-start task.
+  eval_progress: final

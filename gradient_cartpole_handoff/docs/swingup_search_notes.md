@@ -1,8 +1,10 @@
 # Swing-Up Search Notes
 
-## Current Architecture Direction
+## Current Goal And Architecture
 
-The current best interpretation is a two-expert system, not three independent experts:
+Working goal: solve the real six-link swing-up benchmark from the hanging/collapsed start, then stabilize the uniform chain upright. Starting from already-upright links is a separate near-upright control baseline and is not the target problem.
+
+The current architecture is a two-expert system, not three independent experts:
 
 1. low-momentum swing expert: swing the hanging six-link chain to the top while explicitly minimizing hinge velocity, cart velocity, and rail offset at the upright crossing,
 2. capture/stabilize expert: take over from those low-momentum upright states and hold the chain inside the `0.15 rad` success threshold for `5 s`.
@@ -16,7 +18,7 @@ configs/swingup6_gradient_low_momentum.yaml
 configs/swingup6_uniform_low_momentum_finetune.yaml
 ```
 
-The first config starts with a base-heavy, mildly base-long, high-damping morphology and anneals length, mass, and damping to the uniform target using `morphology.schedule_mode: swingup_slow`. It also uses `env.hanging_curriculum_power: 3.0`, so the start angle becomes hanging more slowly while morphology training wheels are being removed. Its reward includes `capture_quality`, low-velocity upright bonuses, and rail-margin penalties so checkpoint selection can prefer low-momentum top handoffs over high-speed upright flickers. The second config removes the morphology training wheels and fine-tunes on the real uniform hanging-start task.
+The first config starts with a base-heavy, mildly base-long, high-damping morphology and anneals length, mass, and damping to the uniform target using `morphology.schedule_mode: swingup_slow`. It also uses `env.hanging_curriculum_power: 3.0`, so the start angle becomes hanging more slowly while morphology training wheels are being removed. Its reward includes `capture_quality`, low-velocity upright bonuses, and rail-margin penalties so checkpoint selection can prefer low-momentum top handoffs over high-speed upright flickers. This pretraining config uses `ppo.eval_progress: current`, so `best.safetensors` is selected at the active curriculum stage rather than only at the final hanging-start task. The second config removes the morphology training wheels and fine-tunes on the real uniform hanging-start task, where evaluation returns to final-task progress.
 
 Run path:
 
@@ -84,11 +86,9 @@ runs/swingup6_capture_handoff_probe_120/eval_capture_handoff20.json
 
 That `120` update run reported `success_rate = 0.0` over `20` deterministic handoff episodes, with `max_upright_streak_max = 0.04 s`. It confirms that simply starting PPO at the current crossing state is not enough; the crossing still needs either a lower-velocity/centered handoff or a stronger staged capture curriculum.
 
-The next staged architecture is an expert chain:
+Legacy three-stage diagnostic path:
 
-1. swing expert: generate the large-amplitude energy injection from the hanging state,
-2. capture expert: convert real swing states into a low-velocity upright basin,
-3. stabilize expert: hold the chain once it is inside the upright basin.
+The old swing/capture/stabilize chain remains useful as a way to export states and measure handoff quality, but it is no longer the preferred architecture. Treat the capture and stabilize portions as one capture/stabilize expert unless future evidence shows a separate stabilizer materially improves the reset-free benchmark.
 
 Generate replayable swing states for the capture expert with:
 
@@ -151,7 +151,7 @@ runs/swingup6_chain_search/centered_chain_states.json
 
 This search optimizes the swing cart-position trajectory against the actual shaped capture checkpoint and optional stabilizer handoff, rather than scoring only an isolated upright crossing. A bounded full-horizon `4 x 6` probe found a slightly cleaner handoff (`x = 1.43`, best angle `0.102 rad`) and avoided rail termination for `30 s`, but max upright streak remained `0.08 s`. A tighter `rail-target-limit = 1.8` probe produced more centered near-upright states (`x` roughly `0.8-1.0`) and exported `202` chain-generated states with `max_abs_angle <= 0.60` and `hinge_velocity_rms <= 3.0`; those states are closer to the desired transition manifold but still high velocity.
 
-Learned third-expert probe:
+Legacy learned stabilizer split probe:
 
 ```text
 configs/swingup6_chain_state_list_shaped.yaml
@@ -159,7 +159,7 @@ runs/swingup6_chain_state_list_shaped_probe_120/eval_chain_state_list_shaped20.j
 runs/swingup6_expert_chain/eval_chain_learned_probe_120.json
 ```
 
-This curriculum trains from chain-generated near-upright states, and `evaluate_expert_chain.py` can now route the stabilize stage to a learned checkpoint instead of LQR. The bounded `120` update probe did not improve the full chain. Its held-out `20` episode state-list eval reported `success_rate = 0.0`, `ever_upright_rate = 0.5`, and `max_upright_streak_max = 0.06 s`. In reset-free chain eval with shaped capture plus the learned stabilizer, the stabilizer controlled `779` steps but still only reached `max_upright_streak_seconds = 0.08`. This indicates the exported chain states remain too high-velocity for the current PPO/reward setup; the next version should either reduce velocity before export or use stronger supervised/MPC targets for braking.
+This older curriculum trains from chain-generated near-upright states, and `evaluate_expert_chain.py` can route the stabilize stage to a learned checkpoint instead of LQR. The bounded `120` update probe did not improve the full chain. Its held-out `20` episode state-list eval reported `success_rate = 0.0`, `ever_upright_rate = 0.5`, and `max_upright_streak_max = 0.06 s`. In reset-free chain eval with shaped capture plus the learned stabilizer, the stabilizer controlled `779` steps but still only reached `max_upright_streak_seconds = 0.08`. Treat this as evidence that the exported chain states were still too high-velocity, not as a reason to split the current architecture into three experts.
 
 Trajectory search is now reproducible through:
 

@@ -98,6 +98,23 @@ make render-swingup6
 
 At the moment, the swing-up target is infrastructure-ready but not solved. The near-upright evidence in `runs/uniform6_finetune/` should not be used as a substitute.
 
+## Current Two-Expert Curriculum
+
+The active search direction is a two-expert setup:
+
+1. a low-momentum swing expert that gets the hanging chain to the top with low hinge velocity, low cart velocity, and rail margin,
+2. one capture/stabilize expert that takes over from those low-momentum top states and holds the uniform chain upright.
+
+The gradient training-wheel path is:
+
+```bash
+make swingup6-gradient-low-momentum
+make swingup6-uniform-low-momentum
+make eval-swingup6-low-momentum
+```
+
+`configs/swingup6_gradient_low_momentum.yaml` starts with easier length, mass, and damping gradients, then anneals them away. `configs/swingup6_uniform_low_momentum_finetune.yaml` removes those training wheels and evaluates at the final hanging-start task.
+
 ---
 
 # 1. Mac setup

@@ -271,6 +271,30 @@ def checkpoint_score(eval_metrics: dict[str, Any]) -> tuple[float, float, float,
     )
 
 
+def resolve_eval_progress(ppo: dict[str, Any], progress: float) -> float:
+    """Choose the curriculum progress used for checkpoint evaluation."""
+    mode = ppo.get("eval_progress", "final")
+    if mode is None:
+        value = 1.0
+    elif isinstance(mode, str):
+        normalized = mode.strip().lower()
+        if normalized in {"final", "target"}:
+            value = 1.0
+        elif normalized in {"current", "curriculum"}:
+            value = float(progress)
+        else:
+            try:
+                value = float(normalized)
+            except ValueError as exc:
+                raise ValueError("ppo.eval_progress must be 'final', 'current', or a numeric progress in [0, 1]") from exc
+    else:
+        value = float(mode)
+
+    if not math.isfinite(value) or value < 0.0 or value > 1.0:
+        raise ValueError("ppo.eval_progress resolved outside [0, 1]")
+    return value
+
+
 def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, Any]:
     require_mlx()
     seed = int(cfg.get("experiment", {}).get("seed", 0))
@@ -311,7 +335,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
     log_path = out_dir / "train_log.csv"
     csv_file = open(log_path, "w", newline="", encoding="utf-8")
     fieldnames = [
-        "update", "global_steps", "progress", "steps_per_sec", "mean_ep_return", "mean_ep_len",
+        "update", "global_steps", "progress", "eval_progress", "steps_per_sec", "mean_ep_return", "mean_ep_len",
         "policy_loss", "value_loss", "entropy", "approx_kl", "clip_fraction",
         "eval_return_mean", "eval_success_rate", "eval_length_mean", "eval_ever_upright_rate",
         "eval_max_upright_streak_mean", "eval_max_upright_streak_max",
@@ -326,7 +350,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
     recent_returns: list[float] = []
     recent_lengths: list[int] = []
     best_eval_return = -float("inf")
-    best_eval_score: tuple[float, float, float, float, float] | None = None
+    best_eval_score: tuple[float, float, float, float, float, float, float] | None = None
     global_steps = 0
     start_time = time.time()
     last_loss_metrics = {"policy_loss": 0.0, "value_loss": 0.0, "entropy": 0.0, "approx_kl": 0.0, "clip_fraction": 0.0}
@@ -442,14 +466,16 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
             mean_ep_return = float(np.mean(recent_returns[-20:])) if recent_returns else 0.0
             mean_ep_len = float(np.mean(recent_lengths[-20:])) if recent_lengths else 0.0
             eval_metrics = {"return_mean": np.nan, "success_rate": np.nan, "length_mean": np.nan}
+            eval_progress = np.nan
 
             if update % int(ppo.get("eval_every", 50)) == 0 or update == total_updates:
+                eval_progress = resolve_eval_progress(ppo, progress)
                 eval_metrics = evaluate_policy(
                     cfg,
                     model,
                     episodes=int(ppo.get("eval_episodes", 5)),
                     seed=seed + update * 17,
-                    progress=1.0,
+                    progress=eval_progress,
                 )
                 eval_score = checkpoint_score(eval_metrics)
                 if best_eval_score is None or eval_score > best_eval_score:
@@ -459,6 +485,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                     dump_json(
                         {
                             "update": update,
+                            "eval_progress": eval_progress,
                             "eval": eval_metrics,
                             "checkpoint_score": list(eval_score),
                             "checkpoint_score_order": [
@@ -484,6 +511,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                 "update": update,
                 "global_steps": global_steps,
                 "progress": progress,
+                "eval_progress": eval_progress,
                 "steps_per_sec": steps_per_sec,
                 "mean_ep_return": mean_ep_return,
                 "mean_ep_len": mean_ep_len,
@@ -509,6 +537,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                 f"upd={update:05d}/{total_updates} steps={global_steps:,} "
                 f"prog={progress:.3f} sps={steps_per_sec:,.0f} "
                 f"ep_ret={mean_ep_return:.1f} ep_len={mean_ep_len:.1f} "
+                f"eval_prog={eval_progress:.3f} "
                 f"eval_ret={eval_metrics.get('return_mean', float('nan')):.1f} "
                 f"succ={eval_metrics.get('success_rate', float('nan')):.2f}"
             )
