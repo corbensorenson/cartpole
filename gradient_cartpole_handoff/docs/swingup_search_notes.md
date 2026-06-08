@@ -1,5 +1,43 @@
 # Swing-Up Search Notes
 
+## Current Architecture Direction
+
+The current best interpretation is a two-expert system, not three independent experts:
+
+1. low-momentum swing expert: swing the hanging six-link chain to the top while explicitly minimizing hinge velocity, cart velocity, and rail offset at the upright crossing,
+2. capture/stabilize expert: take over from those low-momentum upright states and hold the chain inside the `0.15 rad` success threshold for `5 s`.
+
+The earlier three-stage swing/capture/stabilize probes are still useful diagnostics, but the learned third-expert probe did not improve the reset-free chain. The real bottleneck is upstream: the handoff arrives upright too briefly and with too much momentum.
+
+The handoff packet's original gradient idea is now represented in:
+
+```text
+configs/swingup6_gradient_low_momentum.yaml
+configs/swingup6_uniform_low_momentum_finetune.yaml
+```
+
+The first config starts with a base-heavy, mildly base-long, high-damping morphology and anneals length, mass, and damping to the uniform target using `morphology.schedule_mode: swingup_slow`. It also uses `env.hanging_curriculum_power: 3.0`, so the start angle becomes hanging more slowly while morphology training wheels are being removed. Its reward includes `capture_quality`, low-velocity upright bonuses, and rail-margin penalties so checkpoint selection can prefer low-momentum top handoffs over high-speed upright flickers. The second config removes the morphology training wheels and fine-tunes on the real uniform hanging-start task.
+
+Run path:
+
+```bash
+make swingup6-gradient-low-momentum
+make swingup6-uniform-low-momentum
+make eval-swingup6-low-momentum
+```
+
+This is still not final evidence until the uniform checkpoint passes the held-out eval/video/hash gates.
+
+A bounded `80` update probe before adding the slower hanging-start ramp showed why this matters:
+
+```text
+runs/swingup6_gradient_low_momentum_probe_80/checkpoints/best.meta.json
+```
+
+Training returns were positive on early easy morphology stages, then collapsed around progress `0.30` as the start angle became too hard. The best final-progress checkpoint was update `20` and still had `success_rate = 0.0`, `ever_upright_rate = 0.0`, and `low_momentum_upright_rate = 0.0`. That run is not solution evidence; it is a schedule diagnostic.
+
+A bounded `40` update probe with `hanging_curriculum_power: 2.0` moved the training collapse later, around progress `0.62`, but final-progress eval still had no upright events. The checked-in config now uses a stronger `hanging_curriculum_power: 3.0` and the `swingup_slow` morphology schedule to keep damping, length gradient, and mass gradient available longer.
+
 The current unsolved gap is capture, not only reachability. A direct cart-position trajectory probe can swing the exact hanging six-link chain into the upright angle threshold once:
 
 ```bash

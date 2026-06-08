@@ -1,0 +1,94 @@
+experiment:
+  name: swingup6_gradient_low_momentum
+  seed: 401
+  out_dir: runs/swingup6_gradient_low_momentum
+
+env:
+  n_links: 6
+  total_length: 3.0
+  total_mass: 1.0
+  cart_mass: 1.0
+  rail_limit: 3.0
+  force_limit: 80.0
+  timestep: 0.005
+  frame_skip: 4
+  episode_seconds: 30.0
+  # Two-expert swing curriculum: this policy's job is not merely crossing the
+  # upright threshold. It should arrive near upright with low hinge velocity,
+  # low cart velocity, and rail margin so one capture/stabilize expert can take over.
+  init_mode: hanging_curriculum
+  # Keep early curriculum starts closer to upright while morphology training
+  # wheels are being removed. Progress 1.0 is still the exact hanging start.
+  hanging_curriculum_power: 3.0
+  init_angle_noise: 0.04
+  init_vel_noise: 0.04
+  terminate_abs_angle: null
+  success_upright_threshold: 0.15
+  success_sustain_seconds: 5.0
+  cart_damping: 0.02
+  joint_armature: 0.0005
+  link_radius: 0.025
+  obs_include_morphology: true
+  curriculum_rebuild_every: 25
+  reward:
+    alive: 0.0
+    terminal_penalty: -250.0
+    angle_cos: 3.0
+    upright_bonus: 30.0
+    sustained_upright_bonus: 20.0
+    capture_quality: 120.0
+    capture_angle_scale: 0.24
+    capture_hinge_vel_scale: 0.90
+    capture_cart_pos_scale: 0.50
+    capture_cart_vel_scale: 0.65
+    upright_low_velocity_bonus: 45.0
+    upright_hinge_vel_threshold: 0.70
+    upright_cart_vel_threshold: 0.45
+    angle_abs: 1.0
+    angle_rel: 0.03
+    tip: 0.50
+    cart_pos: 2.50
+    cart_vel: 0.03
+    hinge_vel: 0.006
+    rail_margin: 80.0
+    rail_margin_start: 0.75
+    control: 0.0012
+    upright_threshold: 0.15
+
+morphology:
+  # Start with the original handoff packet's training wheels:
+  # base-heavy, mildly base-long, and extra joint damping. Anneal to the real
+  # uniform-length, uniform-mass, low-damping target late in training.
+  schedule_mode: swingup_slow
+  start:
+    alpha_length: 0.65
+    alpha_mass: 5.0
+    alpha_damping: 2.5
+    total_damping: 0.120
+  end:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    total_damping: 0.015
+
+ppo:
+  backend: mlx
+  vec_backend: subprocess
+  num_envs: 48
+  rollout_steps: 256
+  total_updates: 8000
+  minibatches: 8
+  epochs: 4
+  gamma: 0.995
+  gae_lambda: 0.95
+  learning_rate: 0.00025
+  clip_coef: 0.20
+  entropy_coef: 0.018
+  value_coef: 0.50
+  max_grad_norm: 0.50
+  hidden_sizes: [256, 256]
+  action_std_init: 0.50
+  normalize_advantages: true
+  checkpoint_every: 50
+  eval_every: 50
+  eval_episodes: 8

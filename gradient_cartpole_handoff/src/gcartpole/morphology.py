@@ -82,6 +82,17 @@ def scheduled_params(schedule_cfg: dict[str, Any], progress: float) -> dict[str,
             "alpha_mass": _stage_value(start.get("alpha_mass", 0.0), end.get("alpha_mass", 0.0), t, 0.45, 1.00),
         }
 
+    if mode == "swingup_slow":
+        # Swing-up is more sensitive than near-upright stabilization. Keep the
+        # damping/length/mass training wheels longer while the hanging-start
+        # angle is ramping up, then remove everything before final progress.
+        return {
+            "alpha_damping": _stage_value(start.get("alpha_damping", 0.0), end.get("alpha_damping", 0.0), t, 0.10, 0.60),
+            "total_damping": _stage_value(start.get("total_damping", 0.0), end.get("total_damping", 0.0), t, 0.10, 0.65),
+            "alpha_length": _stage_value(start.get("alpha_length", 0.0), end.get("alpha_length", 0.0), t, 0.35, 0.80),
+            "alpha_mass": _stage_value(start.get("alpha_mass", 0.0), end.get("alpha_mass", 0.0), t, 0.65, 1.00),
+        }
+
     raise ValueError(f"Unknown morphology.schedule_mode: {mode}")
 
 

@@ -1,4 +1,4 @@
-.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 eval-swingup6 render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-capture search-swingup-chain export-swingup-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
+.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-capture search-swingup-chain export-swingup-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
 
 PYTHON ?= .venv/bin/python
 
@@ -35,11 +35,20 @@ swingup-debug:
 swingup6:
 	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_uniform.yaml
 
+swingup6-gradient-low-momentum:
+	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_gradient_low_momentum.yaml
+
+swingup6-uniform-low-momentum:
+	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_uniform_low_momentum_finetune.yaml --init-checkpoint runs/swingup6_gradient_low_momentum/checkpoints/best.safetensors
+
 capture-handoff6:
 	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_capture_handoff.yaml
 
 eval-swingup6:
 	$(PYTHON) scripts/evaluate.py --config configs/swingup6_uniform.yaml --checkpoint runs/swingup6_uniform/checkpoints/best.safetensors --episodes 20 --progress 1.0 --out runs/swingup6_uniform/eval_swingup6.json
+
+eval-swingup6-low-momentum:
+	$(PYTHON) scripts/evaluate.py --config configs/swingup6_uniform_low_momentum_finetune.yaml --checkpoint runs/swingup6_uniform_low_momentum_finetune/checkpoints/best.safetensors --episodes 20 --progress 1.0 --out runs/swingup6_uniform_low_momentum_finetune/eval_swingup6_low_momentum.json
 
 eval-capture-handoff6:
 	$(PYTHON) scripts/evaluate.py --config configs/swingup6_capture_handoff.yaml --checkpoint runs/swingup6_capture_handoff/checkpoints/best.safetensors --episodes 20 --progress 1.0 --out runs/swingup6_capture_handoff/eval_capture_handoff6.json

@@ -114,7 +114,9 @@ class NLinkCartPoleEnv(gym.Env):
             # Training curriculum: progress 0 starts upright, progress 1 starts
             # fully hanging. Evaluation at progress=1.0 is the true swing-up task.
             base_angles = np.zeros(self.n, dtype=np.float64)
-            base_angles[0] = np.pi * float(np.clip(self.progress, 0.0, 1.0))
+            progress = float(np.clip(self.progress, 0.0, 1.0))
+            progress = progress ** max(1e-6, float(self.env_cfg.get("hanging_curriculum_power", 1.0)))
+            base_angles[0] = np.pi * progress
         elif init_mode == "folded":
             # A compact alternating folded start, useful for stress tests.
             base_angles = np.asarray([np.pi if i % 2 == 0 else -np.pi for i in range(self.n)], dtype=np.float64)

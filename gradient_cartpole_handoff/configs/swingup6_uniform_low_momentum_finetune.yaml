@@ -1,0 +1,86 @@
+experiment:
+  name: swingup6_uniform_low_momentum_finetune
+  seed: 409
+  out_dir: runs/swingup6_uniform_low_momentum_finetune
+
+env:
+  n_links: 6
+  total_length: 3.0
+  total_mass: 1.0
+  cart_mass: 1.0
+  rail_limit: 3.0
+  force_limit: 80.0
+  timestep: 0.005
+  frame_skip: 4
+  episode_seconds: 30.0
+  init_mode: hanging_curriculum
+  init_angle_noise: 0.05
+  init_vel_noise: 0.05
+  terminate_abs_angle: null
+  success_upright_threshold: 0.15
+  success_sustain_seconds: 5.0
+  cart_damping: 0.02
+  joint_armature: 0.0005
+  link_radius: 0.025
+  obs_include_morphology: true
+  curriculum_rebuild_every: 999999
+  hanging_curriculum_power: 1.5
+  reward:
+    alive: 0.0
+    terminal_penalty: -250.0
+    angle_cos: 3.0
+    upright_bonus: 30.0
+    sustained_upright_bonus: 20.0
+    capture_quality: 120.0
+    capture_angle_scale: 0.24
+    capture_hinge_vel_scale: 0.90
+    capture_cart_pos_scale: 0.50
+    capture_cart_vel_scale: 0.65
+    upright_low_velocity_bonus: 45.0
+    upright_hinge_vel_threshold: 0.70
+    upright_cart_vel_threshold: 0.45
+    angle_abs: 1.0
+    angle_rel: 0.03
+    tip: 0.50
+    cart_pos: 2.50
+    cart_vel: 0.03
+    hinge_vel: 0.006
+    rail_margin: 80.0
+    rail_margin_start: 0.75
+    control: 0.0012
+    upright_threshold: 0.15
+
+morphology:
+  schedule_mode: all_linear
+  start:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    total_damping: 0.015
+  end:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    total_damping: 0.015
+
+ppo:
+  backend: mlx
+  vec_backend: subprocess
+  num_envs: 48
+  rollout_steps: 256
+  total_updates: 5000
+  minibatches: 8
+  epochs: 4
+  gamma: 0.995
+  gae_lambda: 0.95
+  learning_rate: 0.00020
+  clip_coef: 0.20
+  entropy_coef: 0.012
+  value_coef: 0.50
+  max_grad_norm: 0.50
+  hidden_sizes: [256, 256]
+  action_std_init: 0.35
+  normalize_advantages: true
+  checkpoint_every: 50
+  eval_every: 50
+  eval_episodes: 8

@@ -169,7 +169,12 @@ def evaluate_policy(
     max_angles = []
     time_to_uprights = []
     max_upright_streaks = []
+    max_capture_qualities = []
+    low_momentum_upright_events = []
     episode_results = []
+    reward_cfg = cfg.get("env", {}).get("reward", {})
+    low_momentum_hinge_threshold = float(reward_cfg.get("upright_hinge_vel_threshold", 1.0))
+    low_momentum_cart_threshold = float(reward_cfg.get("upright_cart_vel_threshold", 1.0))
     for ep in range(episodes):
         env = NLinkCartPoleEnv(cfg, progress=progress, seed=seed + 10_000 + ep)
         obs, _ = env.reset()
@@ -177,18 +182,30 @@ def evaluate_policy(
         ep_return = 0.0
         ep_len = 0
         ep_max_angle = 0.0
+        ep_max_capture_quality = 0.0
+        ep_low_momentum_upright = False
         while not done:
             action, _, _ = sample_action(model, obs[None, :], deterministic=True)
             obs, reward, terminated, truncated, info = env.step(action[0])
             ep_return += float(reward)
             ep_len += 1
             ep_max_angle = max(ep_max_angle, float(info.get("max_abs_angle", 0.0)))
+            ep_max_capture_quality = max(ep_max_capture_quality, float(info.get("capture_quality", 0.0)))
+            hinge_rms = float(info.get("hinge_velocity_rms", np.inf))
+            cart_vel = abs(float(env.data.qvel[0]))
+            ep_low_momentum_upright = ep_low_momentum_upright or bool(
+                info.get("is_upright", False)
+                and hinge_rms <= low_momentum_hinge_threshold
+                and cart_vel <= low_momentum_cart_threshold
+            )
             done = bool(terminated or truncated)
         returns.append(ep_return)
         lengths.append(ep_len)
         success = bool(info.get("success", False))
         successes.append(float(success))
         max_angles.append(ep_max_angle)
+        max_capture_qualities.append(ep_max_capture_quality)
+        low_momentum_upright_events.append(float(ep_low_momentum_upright))
         ttu = info.get("time_to_first_upright")
         streak = float(info.get("max_upright_streak_seconds", 0.0))
         if ttu is not None:
@@ -207,6 +224,8 @@ def evaluate_policy(
                     "final_x": float(info.get("x", np.nan)),
                     "time_to_first_upright": None if ttu is None else float(ttu),
                     "max_upright_streak_seconds": streak,
+                    "max_capture_quality": float(ep_max_capture_quality),
+                    "low_momentum_upright": bool(ep_low_momentum_upright),
                 }
             )
         env.close()
@@ -226,13 +245,16 @@ def evaluate_policy(
         "max_upright_streak_mean": float(np.mean(max_upright_streaks)),
         "max_upright_streak_min": float(np.min(max_upright_streaks)),
         "max_upright_streak_max": float(np.max(max_upright_streaks)),
+        "max_capture_quality_mean": float(np.mean(max_capture_qualities)),
+        "max_capture_quality_max": float(np.max(max_capture_qualities)),
+        "low_momentum_upright_rate": float(np.mean(low_momentum_upright_events)),
     }
     if return_episodes:
         metrics["episode_results"] = episode_results
     return metrics
 
 
-def checkpoint_score(eval_metrics: dict[str, Any]) -> tuple[float, float, float, float, float]:
+def checkpoint_score(eval_metrics: dict[str, Any]) -> tuple[float, float, float, float, float, float, float]:
     """Rank checkpoints by swing-up evidence before shaped return.
 
     Return alone can be reward-hacked by long survival without ever reaching
@@ -240,9 +262,11 @@ def checkpoint_score(eval_metrics: dict[str, Any]) -> tuple[float, float, float,
     """
     return (
         float(eval_metrics.get("success_rate", 0.0)),
+        float(eval_metrics.get("low_momentum_upright_rate", 0.0)),
         float(eval_metrics.get("ever_upright_rate", 0.0)),
         float(eval_metrics.get("max_upright_streak_mean", 0.0)),
         float(eval_metrics.get("max_upright_streak_max", 0.0)),
+        float(eval_metrics.get("max_capture_quality_mean", 0.0)),
         float(eval_metrics.get("return_mean", -float("inf"))),
     )
 
@@ -291,6 +315,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
         "policy_loss", "value_loss", "entropy", "approx_kl", "clip_fraction",
         "eval_return_mean", "eval_success_rate", "eval_length_mean", "eval_ever_upright_rate",
         "eval_max_upright_streak_mean", "eval_max_upright_streak_max",
+        "eval_low_momentum_upright_rate", "eval_max_capture_quality_mean", "eval_max_capture_quality_max",
         "eval_time_to_first_upright_mean", "alpha_length", "alpha_mass", "alpha_damping",
     ]
     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
@@ -438,9 +463,11 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                             "checkpoint_score": list(eval_score),
                             "checkpoint_score_order": [
                                 "success_rate",
+                                "low_momentum_upright_rate",
                                 "ever_upright_rate",
                                 "max_upright_streak_mean",
                                 "max_upright_streak_max",
+                                "max_capture_quality_mean",
                                 "return_mean",
                             ],
                             "global_steps": global_steps,
@@ -467,6 +494,9 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                 "eval_ever_upright_rate": eval_metrics.get("ever_upright_rate", np.nan),
                 "eval_max_upright_streak_mean": eval_metrics.get("max_upright_streak_mean", np.nan),
                 "eval_max_upright_streak_max": eval_metrics.get("max_upright_streak_max", np.nan),
+                "eval_low_momentum_upright_rate": eval_metrics.get("low_momentum_upright_rate", np.nan),
+                "eval_max_capture_quality_mean": eval_metrics.get("max_capture_quality_mean", np.nan),
+                "eval_max_capture_quality_max": eval_metrics.get("max_capture_quality_max", np.nan),
                 "eval_time_to_first_upright_mean": eval_metrics.get("time_to_first_upright_mean", np.nan),
                 "alpha_length": morph_info.get("alpha_length", np.nan),
                 "alpha_mass": morph_info.get("alpha_mass", np.nan),
