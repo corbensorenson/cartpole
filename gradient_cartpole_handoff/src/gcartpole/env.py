@@ -123,8 +123,8 @@ class NLinkCartPoleEnv(gym.Env):
         self.last_init_state_index = None
         self.data.qpos[:] = 0.0
         self.data.qvel[:] = 0.0
-        angle_noise = float(self.env_cfg.get("init_angle_noise", 0.02))
-        vel_noise = float(self.env_cfg.get("init_vel_noise", 0.01))
+        angle_noise = self._progress_value(self.env_cfg, "init_angle_noise", 0.02)
+        vel_noise = self._progress_value(self.env_cfg, "init_vel_noise", 0.01)
         init_mode = str(self.env_cfg.get("init_mode", "upright"))
         if init_mode == "upright":
             base_angles = np.zeros(self.n, dtype=np.float64)
@@ -159,8 +159,10 @@ class NLinkCartPoleEnv(gym.Env):
             return self._reset_to_state(init_qpos, init_qvel, angle_noise, vel_noise)
         else:
             raise ValueError(f"Unknown env.init_mode: {init_mode}")
+        self.data.qpos[0] += self.rng.normal(0.0, self._progress_value(self.env_cfg, "init_cart_noise", 0.0))
         self.data.qpos[1 : 1 + self.n] = base_angles + self.rng.normal(0.0, angle_noise, size=self.n)
         self.data.qvel[:] = self.rng.normal(0.0, vel_noise, size=self.n + 1)
+        self.data.qvel[0] = self.rng.normal(0.0, self._progress_value(self.env_cfg, "init_cart_vel_noise", vel_noise))
         self.data.ctrl[:] = 0.0
         self.last_action_norm[:] = 0.0
         self.last_policy_action_norm[:] = 0.0
@@ -242,8 +244,8 @@ class NLinkCartPoleEnv(gym.Env):
             self.data.qpos[:] = qpos_target + qpos_scale * (init_qpos - qpos_target)
             self.data.qpos[1 : 1 + self.n] = qpos_scale * wrap_angle(init_qpos[1 : 1 + self.n])
         self.data.qvel[:] = init_qvel * self._init_qvel_scale()
-        self.data.qpos[0] += self.rng.normal(0.0, float(self.env_cfg.get("init_cart_noise", 0.0)))
-        self.data.qvel[0] += self.rng.normal(0.0, float(self.env_cfg.get("init_cart_vel_noise", vel_noise)))
+        self.data.qpos[0] += self.rng.normal(0.0, self._progress_value(self.env_cfg, "init_cart_noise", 0.0))
+        self.data.qvel[0] += self.rng.normal(0.0, self._progress_value(self.env_cfg, "init_cart_vel_noise", vel_noise))
         self.data.qpos[1 : 1 + self.n] += self.rng.normal(0.0, angle_noise, size=self.n)
         self.data.qvel[1 : 1 + self.n] += self.rng.normal(0.0, vel_noise, size=self.n)
         self.data.ctrl[:] = 0.0

@@ -378,3 +378,25 @@ runs/swingup6_gradient_low_momentum_longrail_from3875_probe_100/checkpoints/best
 ```
 
 This bounded `100` update run initialized from the previous latest checkpoint at progress `0.3875`, widened the scheduled rail at that stage from `+/-6.675 m` to `+/-8.5125 m`, relaxed the low-momentum cart-position allowance to `3.0 m`, and lowered entropy to `0.010`. It did not pass the gate or advance curriculum. The best checkpoint was update `20`: `ever_upright_rate = 0.875`, `low_momentum_upright_rate = 0.125`, `max_upright_streak_mean = 0.2325 s`, `max_upright_streak_max = 0.64 s`, `max_low_momentum_upright_streak_max = 0.50 s`, and `success_rate = 0.0`. Later evals regressed. This supports the user's longer-windup idea as a useful training-wheel probe, but the current policy still cannot reliably arrive with low momentum.
+
+Low-momentum refinement and capture follow-up:
+
+```text
+runs/swingup6_gradient_low_momentum_lmom_refine_from3875_probe_120/train_log.csv
+runs/swingup6_policy_handoff/swing_handoff_states_frontier03875_lmom_refine128.json
+runs/swingup6_policy_handoff_capture_stage03875_lmom_refine_probe_160/eval_capture_policy_handoff_stage20.json
+runs/swingup6_policy_handoff_capture_stage03875_lmom_refine_probe_160/eval_capture_policy_handoff_stage20_qvel0_zeronoise.json
+```
+
+The `120` update refinement restarted from the long-rail best checkpoint and added explicit centered/low-momentum streak rewards at progress `0.3875`. It still did not advance the gate, but it improved the best internal upright-streak diagnostic: update `120` reached `max_upright_streak_max = 2.04 s`, `max_upright_streak_mean = 0.4375 s`, and `max_low_momentum_upright_streak_mean = 0.10 s` with `success_rate = 0.0`. Exporting actual learned-policy handoff states from that checkpoint produced only `2` low-momentum states in `128` deterministic episodes. The best exported state was `x = 0.171 m`, `cart_velocity = 0.396 m/s`, `max_abs_angle = 0.0849 rad`, and `hinge_velocity_rms = 0.100`.
+
+Training the same-stage capture expert from those two real states again failed the sustain gate. Held-out `20` episode eval reported `success_rate = 0.0`, `ever_upright_rate = 0.95`, `max_upright_streak_mean = 0.221 s`, and `max_upright_streak_max = 0.54 s`. Even with reset noise removed and saved qvel forced to zero, the capture checkpoint still terminated on the rail with `success_rate = 0.0`, `max_upright_streak_mean = 0.442 s`, and `max_upright_streak_max = 0.46 s`. The saved poses are therefore better first-expert artifacts, but the capture/stabilize basin remains too small.
+
+Wide uniform capture/stabilizer probe:
+
+```text
+configs/uniform6_capture_wide.yaml
+runs/uniform6_capture_wide_probe_80/eval_capture_wide20.json
+```
+
+The environment now supports scheduled reset noise (`*_start` / `*_end`) for initial angle, velocity, cart-position, and cart-velocity noise, and `evaluate.py` records both the effective noise at eval progress and the schedule fields in evidence JSON. `configs/uniform6_capture_wide.yaml` uses that support to train a robust final-uniform near-upright capture expert from progressively wider upright perturbations. A bounded `80` update probe did not learn the final wide-noise task: held-out `20` episode eval at progress `1.0` reported `success_rate = 0.0`, `ever_upright_rate = 0.15`, `max_upright_streak_max = 0.06 s`, and `max_capture_quality_mean = 0.0266`. This is not a solution, but it clarifies the next bottleneck: before final swing-up proof, the capture/stabilize expert must learn a much wider near-upright basin than the current analytic LQR baseline.

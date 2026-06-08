@@ -55,8 +55,34 @@ def main() -> None:
         "environment": {
             "n_links": int(cfg["env"]["n_links"]),
             "init_mode": str(cfg["env"].get("init_mode", "upright")),
-            "init_angle_noise": float(cfg["env"].get("init_angle_noise", 0.02)),
-            "init_vel_noise": float(cfg["env"].get("init_vel_noise", 0.01)),
+            "init_angle_noise": float(probe._progress_value(cfg["env"], "init_angle_noise", 0.02)),
+            "init_vel_noise": float(probe._progress_value(cfg["env"], "init_vel_noise", 0.01)),
+            "init_cart_noise": float(probe._progress_value(cfg["env"], "init_cart_noise", 0.0)),
+            "init_cart_vel_noise": float(
+                probe._progress_value(
+                    cfg["env"],
+                    "init_cart_vel_noise",
+                    probe._progress_value(cfg["env"], "init_vel_noise", 0.01),
+                )
+            ),
+            "scheduled_reset_noise": {
+                key: cfg["env"][key]
+                for key in (
+                    "init_angle_noise_start",
+                    "init_angle_noise_end",
+                    "init_vel_noise_start",
+                    "init_vel_noise_end",
+                    "init_cart_noise_start",
+                    "init_cart_noise_end",
+                    "init_cart_vel_noise_start",
+                    "init_cart_vel_noise_end",
+                    "init_qpos_scale_start",
+                    "init_qpos_scale_end",
+                    "init_qvel_scale_start",
+                    "init_qvel_scale_end",
+                )
+                if key in cfg["env"]
+            },
             "episode_seconds": float(cfg["env"]["episode_seconds"]),
             "max_steps": int(probe.max_steps),
             "force_limit": float(cfg["env"]["force_limit"]),
