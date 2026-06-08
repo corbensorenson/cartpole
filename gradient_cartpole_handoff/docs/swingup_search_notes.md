@@ -159,18 +159,23 @@ runs/swingup6_expert_chain/swing_states_low_momentum_probe_10x32.json
 runs/swingup6_chain_search/eval_low_momentum_probe_10x32_lqr_30s.json
 runs/swingup6_expert_chain/eval_lqr_on_low_momentum_probe_10x32_states20.json
 runs/swingup6_capture_low_momentum_trajectory_probe_80/eval_capture_low_momentum_trajectory20.json
+runs/swingup6_trajectory_search/sustain_probe_18x40_30s.json
+runs/swingup6_capture_sequence/low_momentum_state_probe_24x64_8s.json
+runs/swingup6_capture_sequence/low_momentum_state6_probe_14x48_8s.json
 ```
 
-`scripts/search_swingup_trajectory.py` now has a `--score-mode low_momentum` option and can warm-start from a prior controller JSON. `scripts/export_swingup_states.py` can export states from a searched controller JSON and no longer shadows the `--max-cart-abs` filter with observed max cart position. Reproduce the path with:
+`scripts/search_swingup_trajectory.py` now has `--score-mode low_momentum` and `--score-mode sustain` options and can warm-start from a prior controller JSON. `scripts/export_swingup_states.py` can export states from a searched controller JSON and no longer shadows the `--max-cart-abs` filter with observed max cart position. `scripts/search_capture_sequence.py` searches an open-loop action sequence from a replayed handoff state to test whether the state is physically catchable before spending more PPO time. Reproduce the path with:
 
 ```bash
 make search-swingup-low-momentum
+make search-swingup-sustain
 make export-low-momentum-swingup-states
+make search-capture-sequence
 ```
 
 A bounded `10 x 32` exact-hanging uniform search found a more centered top crossing than the original fixed probe: best score handoff had `max_abs_angle = 0.079 rad`, `hinge_velocity_rms = 1.062 rad/s`, `x = 1.069 m`, and `cart_velocity = -0.030 m/s`; the best-streak candidate reached `0.10 s` upright with `max_abs_angle = 0.074 rad` and `hinge_velocity_rms = 1.091 rad/s`. A warm-started `20 x 48` continuation did not beat this; it found a lower-angle candidate (`0.059 rad`) but with higher hinge velocity (`1.302 rad/s`) and the same `0.08 s` streak. The exporter wrote `11` replayable low-momentum-search states from the best controller.
 
-The better trajectory states still did not solve capture. Reset-free chain eval with LQR capture/stabilization reached capture but stayed at `max_upright_streak_seconds = 0.04`. Direct near-upright LQR eval from the exported states reported `success_rate = 0.0`, `ever_upright_rate = 0.45`, `low_momentum_upright_rate = 0.0`, and `max_upright_streak_max = 0.04 s`. A bounded `80` update PPO capture probe from those states reported held-out `20` episode `success_rate = 0.0`, `ever_upright_rate = 0.75`, `low_momentum_upright_rate = 0.0`, `max_upright_streak_mean = 0.053 s`, and `max_upright_streak_max = 0.10 s`. This improves the real-uniform first-expert state quality but confirms the capture expert still needs either a colder handoff or a stronger nonlinear catch method.
+The better trajectory states still did not solve capture. Reset-free chain eval with LQR capture/stabilization reached capture but stayed at `max_upright_streak_seconds = 0.04`. Direct near-upright LQR eval from the exported states reported `success_rate = 0.0`, `ever_upright_rate = 0.45`, `low_momentum_upright_rate = 0.0`, and `max_upright_streak_max = 0.04 s`. A bounded `80` update PPO capture probe from those states reported held-out `20` episode `success_rate = 0.0`, `ever_upright_rate = 0.75`, `low_momentum_upright_rate = 0.0`, `max_upright_streak_mean = 0.053 s`, and `max_upright_streak_max = 0.10 s`. A full `30 s` sustain-scored trajectory search also failed to improve the reset-free controller; its best candidate stayed at `0.08 s` upright. Open-loop action-sequence CEM from the best exported state improved the LQR baseline from `0.04 s` to only `0.06 s`, and the later state-index `6` probe reached only `0.02 s`. This improves the real-uniform first-expert state quality but confirms the capture expert still needs either a colder handoff or a stronger nonlinear catch method.
 
 ```text
 configs/swingup6_capture_handoff.yaml

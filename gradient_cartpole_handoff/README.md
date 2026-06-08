@@ -134,7 +134,9 @@ For deterministic real-uniform trajectory probes, the search/export path can als
 
 ```bash
 make search-swingup-low-momentum
+make search-swingup-sustain
 make export-low-momentum-swingup-states
+make search-capture-sequence
 ```
 
 If the exported frontier is still a gradiented curriculum stage, train the diagnostic capture expert on the same stage instead of forcing those states into the final uniform plant:

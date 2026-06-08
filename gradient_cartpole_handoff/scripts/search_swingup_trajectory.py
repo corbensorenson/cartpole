@@ -78,6 +78,7 @@ def evaluate_controller(
     max_cart_abs = abs(float(reset_info["x"]))
     final_info: dict[str, Any] = {}
     score = float("inf")
+    best_row_score = float("inf")
 
     for step in range(steps):
         t = step * env.dt
@@ -134,10 +135,23 @@ def evaluate_controller(
                 - 2.0 * row["capture_quality"]
                 - 0.80 * row["max_upright_streak_seconds"]
             )
+        elif score_mode == "sustain":
+            cart_over = max(0.0, abs(row["x"]) - handoff_max_cart_abs)
+            row_score = (
+                180.0 * angle_gap
+                + 4.0 * row["max_abs_angle"]
+                + 1.3 * row["hinge_velocity_rms"]
+                + 0.55 * abs(row["cart_velocity"])
+                + 0.35 * abs(row["x"])
+                + 8.0 * cart_over * cart_over
+                - 3.0 * float(row["is_upright"])
+                - 2.5 * row["capture_quality"]
+                - 4.0 * row["upright_streak_seconds"]
+            )
         else:
             raise ValueError(f"unknown score_mode={score_mode!r}")
-        if row_score < score:
-            score = row_score
+        if row_score < best_row_score:
+            best_row_score = row_score
             best = row
         if info["is_upright"]:
             upright_event_count += 1
@@ -148,6 +162,26 @@ def evaluate_controller(
     env.close()
     assert best is not None
     success = bool(final_info.get("success", False))
+    max_streak = float(final_info.get("max_upright_streak_seconds", 0.0))
+    ever_upright = final_info.get("time_to_first_upright") is not None
+    if score_mode == "sustain":
+        terminal_penalty = 0.0
+        if not bool(final_info.get("success", False)) and step + 1 < steps:
+            terminal_penalty = 650.0
+        score = (
+            -20000.0 * float(success)
+            - 3000.0 * max_streak
+            - 250.0 * float(ever_upright)
+            - 1.5 * float(upright_event_count)
+            + 30.0 * float(best["max_abs_angle"])
+            + 14.0 * float(best["hinge_velocity_rms"])
+            + 5.0 * abs(float(best["cart_velocity"]))
+            + 3.0 * abs(float(best["x"]))
+            + 20.0 * max(0.0, max_cart_abs - float(cfg["env"]["rail_limit"])) ** 2
+            + terminal_penalty
+        )
+    else:
+        score = best_row_score
     return {
         "score": float(score),
         "success": success,
@@ -163,11 +197,17 @@ def evaluate_controller(
     }
 
 
-def vector_to_controller(vec: np.ndarray, knot_count: int, rail_target_limit: float) -> tuple[np.ndarray, float, float, float]:
+def vector_to_controller(
+    vec: np.ndarray,
+    knot_count: int,
+    rail_target_limit: float,
+    trajectory_seconds_min: float,
+    trajectory_seconds_max: float,
+) -> tuple[np.ndarray, float, float, float]:
     knots = np.concatenate([[0.0], np.clip(vec[: knot_count - 1], -rail_target_limit, rail_target_limit)])
     kp = float(np.clip(vec[knot_count - 1], 0.05, 3.0))
     kd = float(np.clip(vec[knot_count], 0.0, 2.0))
-    trajectory_seconds = float(np.clip(vec[knot_count + 1], 4.0, 16.0))
+    trajectory_seconds = float(np.clip(vec[knot_count + 1], trajectory_seconds_min, trajectory_seconds_max))
     return knots, kp, kd, trajectory_seconds
 
 
@@ -182,9 +222,11 @@ def main() -> None:
     parser.add_argument("--out", default="runs/swingup6_trajectory_search/search.json")
     parser.add_argument("--zero-noise", action="store_true", help="Search the exact hanging state by overriding init noise to zero")
     parser.add_argument("--init-controller-json", default=None)
-    parser.add_argument("--score-mode", choices=["reachability", "low_momentum"], default="reachability")
+    parser.add_argument("--score-mode", choices=["reachability", "low_momentum", "sustain"], default="reachability")
     parser.add_argument("--handoff-min-time", type=float, default=4.0)
     parser.add_argument("--handoff-max-cart-abs", type=float, default=1.25)
+    parser.add_argument("--trajectory-seconds-min", type=float, default=4.0)
+    parser.add_argument("--trajectory-seconds-max", type=float, default=16.0)
     parser.add_argument("--iterations", type=int, default=20)
     parser.add_argument("--population", type=int, default=64)
     parser.add_argument("--elites", type=int, default=8)
@@ -200,6 +242,8 @@ def main() -> None:
         raise ValueError("--population must be >= 1")
     if args.elites < 1 or args.elites > args.population:
         raise ValueError("--elites must be between 1 and --population")
+    if args.trajectory_seconds_min <= 0 or args.trajectory_seconds_max < args.trajectory_seconds_min:
+        raise ValueError("--trajectory-seconds-max must be >= --trajectory-seconds-min > 0")
 
     cfg = apply_overrides(load_config(args.config), args.override)
     rng = np.random.default_rng(args.seed)
@@ -232,7 +276,13 @@ def main() -> None:
         candidates = [center] if iteration == 0 else [center + rng.normal(0.0, sigma) for _ in range(args.population)]
         records: list[dict[str, Any]] = []
         for candidate in candidates:
-            knots, kp, kd, trajectory_seconds = vector_to_controller(candidate, knot_count, args.rail_target_limit)
+            knots, kp, kd, trajectory_seconds = vector_to_controller(
+                candidate,
+                knot_count,
+                args.rail_target_limit,
+                args.trajectory_seconds_min,
+                args.trajectory_seconds_max,
+            )
             metrics = evaluate_controller(
                 cfg,
                 progress=args.progress,
@@ -354,6 +404,8 @@ def main() -> None:
             "score_mode": str(args.score_mode),
             "handoff_min_time": float(args.handoff_min_time),
             "handoff_max_cart_abs": float(args.handoff_max_cart_abs),
+            "trajectory_seconds_min": float(args.trajectory_seconds_min),
+            "trajectory_seconds_max": float(args.trajectory_seconds_max),
             "init_controller_json": args.init_controller_json,
         },
         "best": best_record,
