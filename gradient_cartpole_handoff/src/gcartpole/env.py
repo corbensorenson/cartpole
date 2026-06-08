@@ -150,7 +150,7 @@ class NLinkCartPoleEnv(gym.Env):
             states = self._load_init_states()
             if not states:
                 raise ValueError("env.init_mode=state_list requires at least one init state")
-            idx = int(self.rng.integers(0, len(states)))
+            idx = self._select_init_state_index(states)
             self.last_init_state_index = idx
             state = states[idx]
             init_qpos = np.asarray(state.get("qpos", []), dtype=np.float64)
@@ -186,6 +186,34 @@ class NLinkCartPoleEnv(gym.Env):
         self._init_state_cache = states
         return self._init_state_cache
 
+    def _state_list_quality(self, state: dict[str, Any]) -> tuple[float, float, float, float]:
+        qpos = np.asarray(state.get("qpos", []), dtype=np.float64)
+        qvel = np.asarray(state.get("qvel", []), dtype=np.float64)
+        if qpos.shape != (self.n + 1,) or qvel.shape != (self.n + 1,):
+            return (float("inf"), float("inf"), float("inf"), float("inf"))
+        abs_angles = wrap_angle(np.cumsum(qpos[1 : 1 + self.n]))
+        hinge_rms = float(np.sqrt(np.mean(qvel[1 : 1 + self.n] ** 2)))
+        return (
+            float(np.max(np.abs(abs_angles))),
+            hinge_rms,
+            abs(float(qpos[0])),
+            abs(float(qvel[0])),
+        )
+
+    def _select_init_state_index(self, states: list[dict[str, Any]]) -> int:
+        mode = str(self.env_cfg.get("init_state_curriculum", "all")).strip().lower()
+        if mode in {"", "all", "none"}:
+            return int(self.rng.integers(0, len(states)))
+        if mode != "quality_prefix":
+            raise ValueError("env.init_state_curriculum must be 'all' or 'quality_prefix'")
+        order = sorted(range(len(states)), key=lambda idx: self._state_list_quality(states[idx]))
+        min_count = int(np.clip(int(self.env_cfg.get("init_state_curriculum_min_count", 1)), 1, len(states)))
+        power = max(1e-6, float(self.env_cfg.get("init_state_curriculum_power", 1.0)))
+        t = float(np.clip(self.progress, 0.0, 1.0)) ** power
+        count = int(np.ceil(min_count + (len(states) - min_count) * t))
+        count = int(np.clip(count, min_count, len(states)))
+        return int(order[int(self.rng.integers(0, count))])
+
     def _init_qvel_scale(self) -> float:
         if "init_qvel_scale" in self.env_cfg:
             return float(self.env_cfg["init_qvel_scale"])
@@ -206,6 +234,12 @@ class NLinkCartPoleEnv(gym.Env):
                 f"with length {expected}; got {init_qpos.shape} and {init_qvel.shape}"
             )
         self.data.qpos[:] = init_qpos
+        qpos_scale = self._progress_value(self.env_cfg, "init_qpos_scale", 1.0)
+        if not np.isclose(qpos_scale, 1.0) or "init_qpos_scale_start" in self.env_cfg or "init_qpos_scale_end" in self.env_cfg:
+            qpos_target = np.zeros(expected, dtype=np.float64)
+            qpos_target[0] = float(self.env_cfg.get("init_qpos_cart_target", self.env_cfg.get("init_state_cart_target", 0.0)))
+            self.data.qpos[:] = qpos_target + qpos_scale * (init_qpos - qpos_target)
+            self.data.qpos[1 : 1 + self.n] = qpos_scale * wrap_angle(init_qpos[1 : 1 + self.n])
         self.data.qvel[:] = init_qvel * self._init_qvel_scale()
         self.data.qpos[0] += self.rng.normal(0.0, float(self.env_cfg.get("init_cart_noise", 0.0)))
         self.data.qvel[0] += self.rng.normal(0.0, float(self.env_cfg.get("init_cart_vel_noise", vel_noise)))
