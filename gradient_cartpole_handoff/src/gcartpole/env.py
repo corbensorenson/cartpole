@@ -178,6 +178,18 @@ class NLinkCartPoleEnv(gym.Env):
         self._init_state_cache = states
         return self._init_state_cache
 
+    def _init_qvel_scale(self) -> float:
+        if "init_qvel_scale" in self.env_cfg:
+            return float(self.env_cfg["init_qvel_scale"])
+        start = self.env_cfg.get("init_qvel_scale_start")
+        end = self.env_cfg.get("init_qvel_scale_end")
+        if start is None and end is None:
+            return 1.0
+        start = 1.0 if start is None else float(start)
+        end = 1.0 if end is None else float(end)
+        t = float(np.clip(self.progress, 0.0, 1.0))
+        return float(start + (end - start) * t)
+
     def _reset_to_state(self, init_qpos: np.ndarray, init_qvel: np.ndarray, angle_noise: float, vel_noise: float):
         expected = self.n + 1
         if init_qpos.shape != (expected,) or init_qvel.shape != (expected,):
@@ -186,7 +198,7 @@ class NLinkCartPoleEnv(gym.Env):
                 f"with length {expected}; got {init_qpos.shape} and {init_qvel.shape}"
             )
         self.data.qpos[:] = init_qpos
-        self.data.qvel[:] = init_qvel
+        self.data.qvel[:] = init_qvel * self._init_qvel_scale()
         self.data.qpos[0] += self.rng.normal(0.0, float(self.env_cfg.get("init_cart_noise", 0.0)))
         self.data.qvel[0] += self.rng.normal(0.0, float(self.env_cfg.get("init_cart_vel_noise", vel_noise)))
         self.data.qpos[1 : 1 + self.n] += self.rng.normal(0.0, angle_noise, size=self.n)
@@ -444,6 +456,7 @@ class NLinkCartPoleEnv(gym.Env):
             "alpha_mass": float(self.morphology.alpha_mass),
             "alpha_damping": float(self.morphology.alpha_damping),
             "alpha_frictionloss": float(self.morphology.alpha_frictionloss),
+            "init_qvel_scale": float(self._init_qvel_scale()),
             "lengths": self.morphology.lengths.astype(float).tolist(),
             "masses": self.morphology.masses.astype(float).tolist(),
             "damping": self.morphology.damping.astype(float).tolist(),

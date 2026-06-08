@@ -386,7 +386,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
         "eval_max_low_momentum_upright_streak_mean", "eval_max_low_momentum_upright_streak_max",
         "eval_low_momentum_upright_rate", "eval_max_capture_quality_mean", "eval_max_capture_quality_max",
         "eval_time_to_first_upright_mean", "curriculum_advanced", "rail_limit",
-        "alpha_length", "alpha_mass", "alpha_damping", "alpha_frictionloss",
+        "alpha_length", "alpha_mass", "alpha_damping", "alpha_frictionloss", "init_qvel_scale",
     ]
     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
     writer.writeheader()
@@ -640,6 +640,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                 "alpha_mass": morph_info.get("alpha_mass", np.nan),
                 "alpha_damping": morph_info.get("alpha_damping", np.nan),
                 "alpha_frictionloss": morph_info.get("alpha_frictionloss", np.nan),
+                "init_qvel_scale": morph_info.get("init_qvel_scale", np.nan),
             }
             writer.writerow(row)
             csv_file.flush()
