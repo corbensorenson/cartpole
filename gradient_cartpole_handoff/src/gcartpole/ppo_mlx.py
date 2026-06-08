@@ -175,6 +175,7 @@ def evaluate_policy(
     reward_cfg = cfg.get("env", {}).get("reward", {})
     low_momentum_hinge_threshold = float(reward_cfg.get("upright_hinge_vel_threshold", 1.0))
     low_momentum_cart_threshold = float(reward_cfg.get("upright_cart_vel_threshold", 1.0))
+    low_momentum_min_time = float(reward_cfg.get("low_momentum_min_time_seconds", 0.0))
     for ep in range(episodes):
         env = NLinkCartPoleEnv(cfg, progress=progress, seed=seed + 10_000 + ep)
         obs, _ = env.reset()
@@ -193,8 +194,10 @@ def evaluate_policy(
             ep_max_capture_quality = max(ep_max_capture_quality, float(info.get("capture_quality", 0.0)))
             hinge_rms = float(info.get("hinge_velocity_rms", np.inf))
             cart_vel = abs(float(env.data.qvel[0]))
+            time_seconds = float(ep_len * env.dt)
             ep_low_momentum_upright = ep_low_momentum_upright or bool(
                 info.get("is_upright", False)
+                and time_seconds >= low_momentum_min_time
                 and hinge_rms <= low_momentum_hinge_threshold
                 and cart_vel <= low_momentum_cart_threshold
             )

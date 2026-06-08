@@ -49,6 +49,7 @@ env:
     upright_low_velocity_bonus: 45.0
     upright_hinge_vel_threshold: 0.70
     upright_cart_vel_threshold: 0.45
+    low_momentum_min_time_seconds: 0.50
     angle_abs: 1.0
     angle_rel: 0.03
     tip: 0.50

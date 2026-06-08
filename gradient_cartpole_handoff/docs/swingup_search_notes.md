@@ -51,6 +51,8 @@ runs/swingup6_gradient_low_momentum_gated_longrail_continue_160
 
 The current-stage `120` update probe reached low-momentum upright handoffs through roughly progress `0.33`, then lost upright events around progress `0.41`. Adding hinge friction-loss improved early returns but did not move that collapse boundary. A gated curriculum with friction-loss and rail scheduling advanced by mastery instead of update count: it reached progress `0.375`, with the `+/-9 m` rail schedule now configured to give more windup room, but still failed the gate there (`success_rate = 0.0`). A direct longer-rail continuation at progress `0.375` produced intermittent upright events but did not pass the low-momentum gate. The checked-in curriculum now uses a smaller `curriculum_step: 0.0125` and requires `curriculum_gate_mean_upright_streak: 0.25` so the next full pretrain removes training wheels more gradually through the `0.30-0.40` transition and does not advance on one lucky upright blip.
 
+The swing pretrain reward config also sets `low_momentum_min_time_seconds: 0.50`, so checkpoint selection and gated curriculum advancement cannot count an immediate near-upright reset as a real swing handoff.
+
 Learned swing-policy handoff export:
 
 ```text
