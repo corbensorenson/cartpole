@@ -111,7 +111,9 @@ The gradient training-wheel path is:
 make swingup6-gradient-low-momentum
 make export-policy-handoff-states
 make capture-policy-handoff-stage
+make capture-policy-handoff-curriculum
 make eval-capture-policy-handoff-stage
+make eval-capture-policy-handoff-curriculum
 make eval-mpc-policy-handoff-stage
 make swingup6-uniform-low-momentum
 make eval-swingup6-low-momentum
@@ -119,7 +121,7 @@ make eval-swingup6-low-momentum
 
 `configs/swingup6_gradient_low_momentum.yaml` starts with easier length, mass, damping, hinge friction-loss, and longer-rail gradients, then anneals them away. `configs/swingup6_uniform_low_momentum_finetune.yaml` removes those training wheels and evaluates at the final hanging-start task with the real `+/-3 m` rail.
 
-`export-policy-handoff-states` is the boundary between the two experts: it replays the learned swing frontier policy and writes actual MuJoCo `qpos/qvel` low-momentum handoff states for the capture/stabilize expert. `capture-policy-handoff-stage` then trains from that saved state file, `eval-capture-policy-handoff-stage` runs held-out deterministic capture eval, and `eval-mpc-policy-handoff-stage` tests whether the saved state is catchable by a receding-horizon diagnostic.
+`export-policy-handoff-states` is the boundary between the two experts: it replays the learned swing frontier policy and writes actual MuJoCo `qpos/qvel` low-momentum handoff states for the capture/stabilize expert. `capture-policy-handoff-stage` trains directly from that saved state file. `capture-policy-handoff-curriculum` is the stricter handoff curriculum: it pins the physical plant at the swing expert's `CAPTURE_STAGE_PROGRESS`, starts from the saved real positions with saved velocities scaled to zero, then restores the real saved velocities and reset noise through training progress. `eval-capture-policy-handoff-stage` and `eval-capture-policy-handoff-curriculum` run held-out deterministic capture eval, and `eval-mpc-policy-handoff-stage` tests whether the saved state is catchable by a receding-horizon diagnostic.
 
 For an ad-hoc continuation run, point the handoff/export targets at that run without editing the Makefile:
 
@@ -132,7 +134,7 @@ make capture-policy-handoff-shaped6
 
 The exporter uses `checkpoints/frontier.safetensors` by default and inherits the swing reward's centered low-momentum cart-position gate (`low_momentum_max_cart_abs`) unless `--max-cart-abs` is explicitly supplied.
 
-Current best learned swing frontier: `runs/swingup6_gradient_low_momentum_centered_gate025_from350_retry_240/checkpoints/frontier.safetensors`. It passed the progress-`0.375` gate and exports real MuJoCo handoff states at `runs/swingup6_policy_handoff/swing_handoff_states_frontier0375_retry128.json`, but it is still curriculum-stage evidence, not final uniform swing-up evidence.
+Current best learned swing handoff artifact: `runs/swingup6_policy_handoff/swing_handoff_states_frontier03875_lmom_refine128.json`, exported from `runs/swingup6_gradient_low_momentum_lmom_refine_from3875_probe_120`. It contains only `2` low-momentum states, but the best one is near upright with `x = 0.171 m`, `cart_velocity = 0.396 m/s`, `max_abs_angle = 0.0849 rad`, and `hinge_velocity_rms = 0.100`. This is still curriculum-stage evidence at progress `0.3875`, not final uniform swing-up evidence.
 
 For deterministic real-uniform trajectory probes, the search/export path can also target low-momentum handoff states before capture training:
 
@@ -171,6 +173,22 @@ make eval-capture-policy-handoff-stage \
 ```
 
 That target defaults to a forced `+/-3 m` capture rail and centered/low-momentum upright-streak rewards. Override `CAPTURE_STAGE_RAIL_LIMIT`, `CAPTURE_STAGE_CENTERED_MAX_CART_ABS`, `CAPTURE_STAGE_CENTERED_STREAK`, or `CAPTURE_STAGE_LOW_MOMENTUM_STREAK` to run ablations.
+
+For a two-expert curriculum that keeps the same stage plant but restores the real handoff velocities over training:
+
+```bash
+make capture-policy-handoff-curriculum \
+  SWING_HANDOFF_RUN=runs/swingup6_gradient_low_momentum_lmom_refine_from3875_probe_120 \
+  SWING_HANDOFF_OUT=runs/swingup6_policy_handoff/swing_handoff_states_frontier03875_lmom_refine128.json \
+  CAPTURE_STAGE_PROGRESS=0.3875 \
+  CAPTURE_HANDOFF_CURRICULUM_OUT=runs/swingup6_policy_handoff_capture_curriculum03875
+
+make eval-capture-policy-handoff-curriculum \
+  SWING_HANDOFF_RUN=runs/swingup6_gradient_low_momentum_lmom_refine_from3875_probe_120 \
+  SWING_HANDOFF_OUT=runs/swingup6_policy_handoff/swing_handoff_states_frontier03875_lmom_refine128.json \
+  CAPTURE_STAGE_PROGRESS=0.3875 \
+  CAPTURE_HANDOFF_CURRICULUM_OUT=runs/swingup6_policy_handoff_capture_curriculum03875
+```
 
 ---
 

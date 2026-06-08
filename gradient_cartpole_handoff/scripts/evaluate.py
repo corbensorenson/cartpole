@@ -45,6 +45,8 @@ def main() -> None:
         "generated_at": utc_timestamp(),
         "deterministic_policy": True,
         "progress": float(args.progress),
+        "reset_schedule_progress": float(args.progress),
+        "plant_progress": float(probe.plant_progress),
         "eval_seed": eval_seed,
         "config": {
             "path": str(Path(args.config)),
@@ -90,6 +92,7 @@ def main() -> None:
             "configured_rail_limit": float(cfg["env"]["rail_limit"]),
             "rail_limit_start": float(cfg["env"].get("rail_limit_start", cfg["env"]["rail_limit"])),
             "rail_limit_end": float(cfg["env"].get("rail_limit_end", cfg["env"]["rail_limit"])),
+            "plant_progress": float(probe.plant_progress),
             "terminate_abs_angle": cfg["env"].get("terminate_abs_angle", 1.25),
             "success_upright_threshold": float(cfg["env"].get("success_upright_threshold", cfg["env"].get("reward", {}).get("upright_threshold", 0.10))),
             "success_sustain_seconds": float(cfg["env"].get("success_sustain_seconds", 0.0)),

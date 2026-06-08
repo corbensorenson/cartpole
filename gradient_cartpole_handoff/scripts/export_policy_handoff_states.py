@@ -67,6 +67,7 @@ def state_row(
         "max_upright_streak_seconds": float(info["max_upright_streak_seconds"]),
         "time_to_first_upright": info["time_to_first_upright"],
         "progress": float(info.get("progress", env.progress)),
+        "plant_progress": float(info.get("plant_progress", env.plant_progress)),
         "rail_limit": float(info.get("rail_limit", env.rail_limit)),
         "lengths": list(info.get("lengths", [])),
         "masses": list(info.get("masses", [])),
@@ -208,6 +209,7 @@ def export_policy_handoffs(
             "force_limit": float(cfg["env"]["force_limit"]),
             "rail_limit": float(cfg["env"]["rail_limit"]),
             "scheduled_rail_limit": None if not states else float(states[0]["rail_limit"]),
+            "plant_progress": float(probe.plant_progress),
             "success_upright_threshold": float(
                 cfg["env"].get("success_upright_threshold", cfg["env"].get("reward", {}).get("upright_threshold", 0.10))
             ),

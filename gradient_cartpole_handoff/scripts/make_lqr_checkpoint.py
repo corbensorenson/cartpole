@@ -90,6 +90,11 @@ def state_gain_to_obs_weight(cfg: dict[str, Any], gain: np.ndarray, obs_dim: int
     return w
 
 
+def cart_target_bias(gain: np.ndarray, scale: float, cart_target: float) -> float:
+    # action = -scale * K @ (state - [cart_target, 0, ...])
+    return float(gain[0] * scale * cart_target)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate a deterministic MLX checkpoint from a MuJoCo LQR linearization")
     parser.add_argument("--config", default="configs/uniform6_near_upright_lqr.yaml")
@@ -98,6 +103,7 @@ def main() -> None:
     parser.add_argument("--fd-eps", type=float, default=1e-7)
     parser.add_argument("--control-cost", type=float, default=1000.0)
     parser.add_argument("--policy-scale", type=float, default=1.0)
+    parser.add_argument("--cart-target", type=float, default=0.0)
     parser.add_argument("--override", action="append", default=[])
     args = parser.parse_args()
 
@@ -135,7 +141,7 @@ def main() -> None:
     params = {
         "actor_out": {
             "weight": mx.array(obs_weight.reshape(1, -1)),
-            "bias": mx.zeros((1,), dtype=mx.float32),
+            "bias": mx.array([cart_target_bias(gain, float(args.policy_scale), float(args.cart_target))], dtype=mx.float32),
         },
         "critic_out": {
             "weight": mx.zeros((1, obs_dim), dtype=mx.float32),
@@ -159,6 +165,7 @@ def main() -> None:
         "fd_eps": float(args.fd_eps),
         "control_cost": float(args.control_cost),
         "policy_scale": float(args.policy_scale),
+        "cart_target": float(args.cart_target),
         "q_weights": q_weights,
         "state_gain": gain.astype(float).tolist(),
         "nonzero_observation_weights": {

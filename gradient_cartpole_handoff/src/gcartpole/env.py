@@ -43,9 +43,10 @@ class NLinkCartPoleEnv(gym.Env):
         self.render_mode = render_mode
         self.rng = np.random.default_rng(seed)
         self.progress = float(progress)
+        self.plant_progress = self._resolve_plant_progress(self.progress)
         self.n = int(self.env_cfg["n_links"])
         self.force_limit = float(self.env_cfg["force_limit"])
-        self.rail_limit = self._scheduled_rail_limit(self.progress)
+        self.rail_limit = self._scheduled_rail_limit(self.plant_progress)
         self.frame_skip = int(self.env_cfg.get("frame_skip", 1))
         self.max_steps = max(1, int(float(self.env_cfg["episode_seconds"]) / (float(self.env_cfg["timestep"]) * self.frame_skip)))
         self.obs_include_morphology = bool(self.env_cfg.get("obs_include_morphology", True))
@@ -84,10 +85,17 @@ class NLinkCartPoleEnv(gym.Env):
         t = float(np.clip(progress, 0.0, 1.0))
         return start + (end - start) * t
 
+    def _resolve_plant_progress(self, progress: float) -> float:
+        override = self.env_cfg.get("plant_progress")
+        if override is None:
+            return float(progress)
+        return float(np.clip(float(override), 0.0, 1.0))
+
     def _build_model(self, progress: float) -> None:
         self.progress = float(progress)
-        self.rail_limit = self._scheduled_rail_limit(self.progress)
-        self.morphology: Morphology = build_morphology(self.env_cfg, self.morph_cfg, self.progress)
+        self.plant_progress = self._resolve_plant_progress(self.progress)
+        self.rail_limit = self._scheduled_rail_limit(self.plant_progress)
+        self.morphology: Morphology = build_morphology(self.env_cfg, self.morph_cfg, self.plant_progress)
         xml = generate_nlink_cartpole_xml(
             self.morphology,
             cart_mass=float(self.env_cfg["cart_mass"]),
@@ -106,7 +114,13 @@ class NLinkCartPoleEnv(gym.Env):
         mujoco.mj_forward(self.model, self.data)
 
     def set_progress(self, progress: float) -> None:
-        self._build_model(progress)
+        progress = float(progress)
+        plant_progress = self._resolve_plant_progress(progress)
+        rail_limit = self._scheduled_rail_limit(plant_progress)
+        if np.isclose(plant_progress, self.plant_progress) and np.isclose(rail_limit, self.rail_limit):
+            self.progress = progress
+        else:
+            self._build_model(progress)
         self.reset()
 
     def reset(self, *, seed: int | None = None, options: dict[str, Any] | None = None):
@@ -218,16 +232,7 @@ class NLinkCartPoleEnv(gym.Env):
         return int(order[int(self.rng.integers(0, count))])
 
     def _init_qvel_scale(self) -> float:
-        if "init_qvel_scale" in self.env_cfg:
-            return float(self.env_cfg["init_qvel_scale"])
-        start = self.env_cfg.get("init_qvel_scale_start")
-        end = self.env_cfg.get("init_qvel_scale_end")
-        if start is None and end is None:
-            return 1.0
-        start = 1.0 if start is None else float(start)
-        end = 1.0 if end is None else float(end)
-        t = float(np.clip(self.progress, 0.0, 1.0))
-        return float(start + (end - start) * t)
+        return self._progress_value(self.env_cfg, "init_qvel_scale", 1.0)
 
     def _reset_to_state(self, init_qpos: np.ndarray, init_qvel: np.ndarray, angle_noise: float, vel_noise: float):
         expected = self.n + 1
@@ -281,14 +286,13 @@ class NLinkCartPoleEnv(gym.Env):
         return obs, reward, terminated, truncated, info
 
     def _progress_value(self, cfg: dict[str, Any], key: str, default: float) -> float:
-        if key in cfg:
-            return float(cfg[key])
         start = cfg.get(f"{key}_start")
         end = cfg.get(f"{key}_end")
         if start is None and end is None:
-            return float(default)
-        start = default if start is None else float(start)
-        end = default if end is None else float(end)
+            return float(cfg.get(key, default))
+        base = float(cfg.get(key, default))
+        start = base if start is None else float(start)
+        end = base if end is None else float(end)
         t = float(np.clip(self.progress, 0.0, 1.0))
         return float(start + (end - start) * t)
 
@@ -549,6 +553,7 @@ class NLinkCartPoleEnv(gym.Env):
             "max_low_momentum_upright_streak_seconds": float(self.max_low_momentum_upright_streak_steps * self.dt),
             "time_to_first_upright": first_upright_time,
             "progress": float(self.progress),
+            "plant_progress": float(self.plant_progress),
             "rail_limit": float(self.rail_limit),
             "alpha_length": float(self.morphology.alpha_length),
             "alpha_mass": float(self.morphology.alpha_mass),

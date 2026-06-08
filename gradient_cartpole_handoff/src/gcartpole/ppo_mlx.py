@@ -378,7 +378,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
     log_path = out_dir / "train_log.csv"
     csv_file = open(log_path, "w", newline="", encoding="utf-8")
     fieldnames = [
-        "update", "global_steps", "progress", "eval_progress", "steps_per_sec", "mean_ep_return", "mean_ep_len",
+        "update", "global_steps", "progress", "plant_progress", "eval_progress", "steps_per_sec", "mean_ep_return", "mean_ep_len",
         "policy_loss", "value_loss", "entropy", "approx_kl", "clip_fraction",
         "eval_return_mean", "eval_success_rate", "eval_length_mean", "eval_ever_upright_rate",
         "eval_max_upright_streak_mean", "eval_max_upright_streak_max",
@@ -615,6 +615,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                 "update": update,
                 "global_steps": global_steps,
                 "progress": progress,
+                "plant_progress": morph_info.get("plant_progress", progress),
                 "eval_progress": eval_progress,
                 "steps_per_sec": steps_per_sec,
                 "mean_ep_return": mean_ep_return,
