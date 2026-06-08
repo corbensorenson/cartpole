@@ -32,6 +32,7 @@ Current configured target:
 - failure termination: rail hit or numerical failure,
 - success: at least `5 s` sustained upright before the 30-second episode ends,
 - upright threshold: max absolute link angle `< 0.15 rad`.
+- reward gate: no survival bonus; best checkpoints are ranked by success/capture metrics before shaped return.
 
 To pursue a stricter external benchmark, confirm whether this spec matches the target. If not, adjust it before training.
 
@@ -48,7 +49,7 @@ If the benchmark differs, add a dedicated environment/config that:
 - initializes relative or absolute link angles near the collapsed/downward state,
 - documents whether actions are continuous or discrete,
 - matches the target force limits and rail length,
-- rewards swing-up, capture, and sustained upright balance,
+- rewards swing-up, capture, and sustained upright balance without paying for hanging survival,
 - evaluates from held-out collapsed/downward seeds,
 - renders reset-free videos from that initial-state distribution.
 

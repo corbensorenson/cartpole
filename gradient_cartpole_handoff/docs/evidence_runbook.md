@@ -61,6 +61,7 @@ Do not claim swing-up success unless:
 
 - `eval_swingup6.json` reports `success_rate >= 0.80` over at least 20 deterministic held-out episodes,
 - the stronger 100-episode eval reports `success_rate >= 0.90`,
+- `best.safetensors` was selected by success/capture metrics, not by raw shaped return alone,
 - the video starts from the hanging/collapsed state,
 - the video metadata reports `reset_count == 0`,
 - the only done event is successful truncation at the episode limit,
@@ -69,7 +70,7 @@ Do not claim swing-up success unless:
 The current swing-up config is explicit, but the task is not solved yet. If matching an external benchmark, verify:
 
 - initial joint angles near the downward/collapsed configuration,
-- reward terms for energy injection and upright capture,
+- reward terms for energy injection and upright capture, with no survival-only shortcut,
 - termination and rail limits matching the target,
 - action space matching the target, especially if it is discrete,
 - evaluation videos with no resets from that initial-state distribution.

@@ -222,12 +222,29 @@ def evaluate_policy(
         "max_angle_max": float(np.max(max_angles)),
         "time_to_first_upright_mean": None if not time_to_uprights else float(np.mean(time_to_uprights)),
         "time_to_first_upright_success_count": int(len(time_to_uprights)),
+        "ever_upright_rate": float(len(time_to_uprights) / max(1, episodes)),
         "max_upright_streak_mean": float(np.mean(max_upright_streaks)),
         "max_upright_streak_min": float(np.min(max_upright_streaks)),
+        "max_upright_streak_max": float(np.max(max_upright_streaks)),
     }
     if return_episodes:
         metrics["episode_results"] = episode_results
     return metrics
+
+
+def checkpoint_score(eval_metrics: dict[str, Any]) -> tuple[float, float, float, float, float]:
+    """Rank checkpoints by swing-up evidence before shaped return.
+
+    Return alone can be reward-hacked by long survival without ever reaching
+    upright, so it is only a tie-breaker after success and capture metrics.
+    """
+    return (
+        float(eval_metrics.get("success_rate", 0.0)),
+        float(eval_metrics.get("ever_upright_rate", 0.0)),
+        float(eval_metrics.get("max_upright_streak_mean", 0.0)),
+        float(eval_metrics.get("max_upright_streak_max", 0.0)),
+        float(eval_metrics.get("return_mean", -float("inf"))),
+    )
 
 
 def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, Any]:
@@ -272,7 +289,8 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
     fieldnames = [
         "update", "global_steps", "progress", "steps_per_sec", "mean_ep_return", "mean_ep_len",
         "policy_loss", "value_loss", "entropy", "approx_kl", "clip_fraction",
-        "eval_return_mean", "eval_success_rate", "eval_length_mean", "eval_max_upright_streak_mean",
+        "eval_return_mean", "eval_success_rate", "eval_length_mean", "eval_ever_upright_rate",
+        "eval_max_upright_streak_mean", "eval_max_upright_streak_max",
         "eval_time_to_first_upright_mean", "alpha_length", "alpha_mass", "alpha_damping",
     ]
     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
@@ -283,6 +301,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
     recent_returns: list[float] = []
     recent_lengths: list[int] = []
     best_eval_return = -float("inf")
+    best_eval_score: tuple[float, float, float, float, float] | None = None
     global_steps = 0
     start_time = time.time()
     last_loss_metrics = {"policy_loss": 0.0, "value_loss": 0.0, "entropy": 0.0, "approx_kl": 0.0, "clip_fraction": 0.0}
@@ -407,10 +426,27 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                     seed=seed + update * 17,
                     progress=1.0,
                 )
-                if eval_metrics["return_mean"] > best_eval_return:
+                eval_score = checkpoint_score(eval_metrics)
+                if best_eval_score is None or eval_score > best_eval_score:
+                    best_eval_score = eval_score
                     best_eval_return = eval_metrics["return_mean"]
                     save_model(model, ckpt_dir / "best.safetensors")
-                    dump_json({"update": update, "eval": eval_metrics, "global_steps": global_steps}, ckpt_dir / "best.meta.json")
+                    dump_json(
+                        {
+                            "update": update,
+                            "eval": eval_metrics,
+                            "checkpoint_score": list(eval_score),
+                            "checkpoint_score_order": [
+                                "success_rate",
+                                "ever_upright_rate",
+                                "max_upright_streak_mean",
+                                "max_upright_streak_max",
+                                "return_mean",
+                            ],
+                            "global_steps": global_steps,
+                        },
+                        ckpt_dir / "best.meta.json",
+                    )
 
             if update % int(ppo.get("checkpoint_every", 50)) == 0 or update == total_updates:
                 save_model(model, ckpt_dir / f"update_{update:06d}.safetensors")
@@ -428,7 +464,9 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                 "eval_return_mean": eval_metrics.get("return_mean", np.nan),
                 "eval_success_rate": eval_metrics.get("success_rate", np.nan),
                 "eval_length_mean": eval_metrics.get("length_mean", np.nan),
+                "eval_ever_upright_rate": eval_metrics.get("ever_upright_rate", np.nan),
                 "eval_max_upright_streak_mean": eval_metrics.get("max_upright_streak_mean", np.nan),
+                "eval_max_upright_streak_max": eval_metrics.get("max_upright_streak_max", np.nan),
                 "eval_time_to_first_upright_mean": eval_metrics.get("time_to_first_upright_mean", np.nan),
                 "alpha_length": morph_info.get("alpha_length", np.nan),
                 "alpha_mass": morph_info.get("alpha_mass", np.nan),

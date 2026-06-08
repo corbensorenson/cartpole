@@ -83,6 +83,9 @@ Environment spec:
 | Failure termination | rail hit or numerical failure |
 | Success | episode completes with at least `5 s` sustained upright |
 | Upright threshold | max absolute link angle `< 0.15 rad` |
+| Reward gate | no survival bonus; shaped return prioritizes upright angle, capture, and sustained upright |
+
+During training, `best.safetensors` is selected by success/capture metrics before return: success rate, ever-upright rate, upright streak length, then shaped return. A long episode that never reaches upright should not become the best swing-up checkpoint.
 
 Run path:
 
@@ -289,7 +292,7 @@ python scripts/render_video.py \
   --progress 1.0
 ```
 
-The video script resets if the episode terminates so it always produces a continuous MP4. For a clean claim, inspect whether the agent actually stayed upright for the full run rather than falling and resetting.
+The video script can keep rendering after resets for debugging, but evidence runs use `--fail-on-reset`. For a clean claim, inspect whether the agent actually started from the target distribution and stayed upright without a reset or failure termination.
 
 ---
 

@@ -26,15 +26,17 @@ env:
   obs_include_morphology: true
   curriculum_rebuild_every: 5
   reward:
-    alive: 3.0
+    # No survival bonus: a policy must earn reward by raising and stabilizing
+    # the chain, not by staying below the cart for the full episode.
+    alive: 0.0
     terminal_penalty: -200.0
-    angle_cos: 1.0
-    upright_bonus: 20.0
-    sustained_upright_bonus: 2.0
-    angle_abs: 0.25
+    angle_cos: 3.0
+    upright_bonus: 45.0
+    sustained_upright_bonus: 10.0
+    angle_abs: 1.0
     angle_rel: 0.02
-    tip: 0.10
-    cart_pos: 0.50
+    tip: 0.50
+    cart_pos: 1.00
     cart_vel: 0.002
     hinge_vel: 0.0005
     control: 0.0010
