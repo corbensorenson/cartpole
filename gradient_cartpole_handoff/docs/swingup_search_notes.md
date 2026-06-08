@@ -75,9 +75,18 @@ The chain evaluator records stage transitions, best pass `qpos/qvel`, and final 
 
 Current expert-chain baseline with no trained capture checkpoint:
 
-- `make export-swingup-states` exports `51` replayable swing states from the zero-noise hanging trajectory,
-- `make eval-expert-chain` preserves the swing expert's upright crossing and then hands off to LQR stabilization,
+- `make export-swingup-states` exports `35` replayable swing states from the zero-noise hanging trajectory after filtering out high-speed states (`hinge_velocity_rms <= 4.0` by default),
+- `make eval-expert-chain` preserves the swing expert's upright crossing and then runs the capture stage for at least `0.50 s` before the stabilizer can take over,
 - result remains `success = false`, `max_upright_streak_seconds = 0.04`, so the capture expert must improve this boundary before the chain can become solution evidence.
+
+Bounded capture-expert probe:
+
+```text
+runs/swingup6_capture_state_list_probe_160/eval_capture_state_list20.json
+runs/swingup6_expert_chain/eval_chain_capture_probe_160.json
+```
+
+The `160` update state-list PPO probe did not solve capture. Its held-out `20` episode capture eval reported `success_rate = 0.0`, `ever_upright_rate = 0.25`, and `max_upright_streak_max = 0.06 s`. In the reset-free expert chain, the checkpoint controlled the capture stage for `176` steps but still only reached `max_upright_streak_seconds = 0.04`. The next capture expert likely needs either a stronger objective around rail-centered recovery or a supervised/warm-start controller target instead of plain PPO from swing states.
 
 Trajectory search is now reproducible through:
 

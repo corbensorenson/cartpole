@@ -49,6 +49,7 @@ def evaluate_chain(
     stabilize_enter_angle: float,
     stabilize_enter_streak: float,
     stabilize_hinge_rms: float,
+    min_capture_seconds: float,
     lqr_capture_scale: float,
     lqr_stabilize_scale: float,
 ) -> dict[str, Any]:
@@ -62,6 +63,7 @@ def evaluate_chain(
     del reset_info
 
     stage = "swing"
+    stage_enter_time = 0.0
     stage_counts = {"swing": 0, "capture": 0, "stabilize": 0}
     stage_events: list[dict[str, Any]] = [{"time_seconds": 0.0, "stage": stage, "reason": "reset"}]
     best_pass: dict[str, Any] | None = None
@@ -77,6 +79,7 @@ def evaluate_chain(
         hinge_rms = hinge_velocity_rms(env)
         if stage == "swing" and t >= capture_min_time and max_abs_angle <= capture_enter_angle:
             stage = "capture"
+            stage_enter_time = t
             stage_events.append(
                 {
                     "time_seconds": float(t),
@@ -89,11 +92,13 @@ def evaluate_chain(
             )
         if (
             stage == "capture"
+            and t - stage_enter_time >= min_capture_seconds
             and max_abs_angle <= stabilize_enter_angle
             and float(env._info()["upright_streak_seconds"]) >= stabilize_enter_streak
             and hinge_rms <= stabilize_hinge_rms
         ):
             stage = "stabilize"
+            stage_enter_time = t
             stage_events.append(
                 {
                     "time_seconds": float(t),
@@ -184,6 +189,7 @@ def evaluate_chain(
             "stabilize_enter_angle": float(stabilize_enter_angle),
             "stabilize_enter_streak": float(stabilize_enter_streak),
             "stabilize_hinge_rms": float(stabilize_hinge_rms),
+            "min_capture_seconds": float(min_capture_seconds),
         },
         "environment": {
             "n_links": int(cfg["env"]["n_links"]),
@@ -217,6 +223,7 @@ def main() -> None:
     parser.add_argument("--stabilize-enter-angle", type=float, default=0.15)
     parser.add_argument("--stabilize-enter-streak", type=float, default=0.02)
     parser.add_argument("--stabilize-hinge-rms", type=float, default=1.00)
+    parser.add_argument("--min-capture-seconds", type=float, default=0.50)
     parser.add_argument("--lqr-control-cost", type=float, default=1000.0)
     parser.add_argument("--lqr-capture-scale", type=float, default=1.0)
     parser.add_argument("--lqr-stabilize-scale", type=float, default=1.0)
@@ -252,6 +259,7 @@ def main() -> None:
         stabilize_enter_angle=args.stabilize_enter_angle,
         stabilize_enter_streak=args.stabilize_enter_streak,
         stabilize_hinge_rms=args.stabilize_hinge_rms,
+        min_capture_seconds=args.min_capture_seconds,
         lqr_capture_scale=args.lqr_capture_scale,
         lqr_stabilize_scale=args.lqr_stabilize_scale,
     )

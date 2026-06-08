@@ -23,6 +23,9 @@ def export_states(
     max_angle: float,
     min_time: float,
     max_time: float | None,
+    max_hinge_rms: float | None,
+    max_cart_abs: float | None,
+    max_cart_velocity: float | None,
     stride: int,
     keep_best: int | None,
 ) -> dict[str, Any]:
@@ -72,6 +75,9 @@ def export_states(
             row["time_seconds"] >= min_time
             and row["time_seconds"] <= max_time
             and row["max_abs_angle"] <= max_angle
+            and (max_hinge_rms is None or row["hinge_velocity_rms"] <= max_hinge_rms)
+            and (max_cart_abs is None or abs(row["x"]) <= max_cart_abs)
+            and (max_cart_velocity is None or abs(row["cart_velocity"]) <= max_cart_velocity)
             and int(step + 1) % max(1, stride) == 0
         ):
             states.append(row)
@@ -80,7 +86,15 @@ def export_states(
 
     env.close()
     if keep_best is not None:
-        states = sorted(states, key=lambda item: (float(item["max_abs_angle"]), abs(float(item["x"]))))[:keep_best]
+        states = sorted(
+            states,
+            key=lambda item: (
+                float(item["max_abs_angle"]),
+                0.15 * float(item["hinge_velocity_rms"]),
+                0.10 * abs(float(item["x"])),
+                0.05 * abs(float(item["cart_velocity"])),
+            ),
+        )[:keep_best]
         states = sorted(states, key=lambda item: int(item["step"]))
     return {
         "generated_at": utc_timestamp(),
@@ -93,6 +107,9 @@ def export_states(
             "max_angle": float(max_angle),
             "min_time": float(min_time),
             "max_time": float(max_time),
+            "max_hinge_rms": None if max_hinge_rms is None else float(max_hinge_rms),
+            "max_cart_abs": None if max_cart_abs is None else float(max_cart_abs),
+            "max_cart_velocity": None if max_cart_velocity is None else float(max_cart_velocity),
             "stride": int(stride),
             "keep_best": keep_best,
         },
@@ -135,6 +152,9 @@ def main() -> None:
     parser.add_argument("--max-angle", type=float, default=0.70)
     parser.add_argument("--min-time", type=float, default=1.0)
     parser.add_argument("--max-time", type=float, default=None)
+    parser.add_argument("--max-hinge-rms", type=float, default=4.0)
+    parser.add_argument("--max-cart-abs", type=float, default=2.75)
+    parser.add_argument("--max-cart-velocity", type=float, default=1.5)
     parser.add_argument("--stride", type=int, default=1)
     parser.add_argument("--keep-best", type=int, default=64)
     parser.add_argument("--override", action="append", default=[])
@@ -150,6 +170,9 @@ def main() -> None:
         max_angle=args.max_angle,
         min_time=args.min_time,
         max_time=args.max_time,
+        max_hinge_rms=args.max_hinge_rms,
+        max_cart_abs=args.max_cart_abs,
+        max_cart_velocity=args.max_cart_velocity,
         stride=args.stride,
         keep_best=args.keep_best,
     )
