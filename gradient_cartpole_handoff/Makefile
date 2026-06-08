@@ -1,12 +1,18 @@
-.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-capture search-capture-sequence eval-mpc-capture search-swingup-chain export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-low-momentum-velocity-curriculum capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
+.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-capture search-capture-sequence eval-mpc-capture search-swingup-chain export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-low-momentum-velocity-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
 
 PYTHON ?= .venv/bin/python
 SWING_TRAJECTORY_SEARCH_OUT ?= runs/swingup6_trajectory_search/low_momentum_search.json
 SWING_TRAJECTORY_SUSTAIN_OUT ?= runs/swingup6_trajectory_search/sustain_search.json
 SWING_TRAJECTORY_STATES_OUT ?= runs/swingup6_expert_chain/swing_states_low_momentum.json
+SWING_ACTION_SEARCH_OUT ?= runs/swingup6_action_search/low_momentum_search.json
+SWING_ACTION_STATES_OUT ?= runs/swingup6_expert_chain/swing_states_action_low_momentum.json
 CAPTURE_SEQUENCE_OUT ?= runs/swingup6_capture_sequence/search.json
 CAPTURE_VEL_CURRICULUM_OUT ?= runs/swingup6_capture_low_momentum_velocity_curriculum
 CAPTURE_VEL_CURRICULUM_UPDATES ?= 5000
+CAPTURE_LQR_RESIDUAL_OUT ?= runs/swingup6_capture_lqr_residual
+CAPTURE_LQR_RESIDUAL_UPDATES ?= 5000
+CAPTURE_LQR_RESIDUAL_CHECKPOINT ?= $(CAPTURE_LQR_RESIDUAL_OUT)/checkpoints/best.safetensors
+CAPTURE_LQR_RESIDUAL_EVAL_OUT ?= $(CAPTURE_LQR_RESIDUAL_OUT)/eval_capture_lqr_residual20.json
 MPC_CAPTURE_OUT ?= runs/swingup6_mpc_capture/eval.json
 MPC_CAPTURE_STATE_INDEX ?= best
 MPC_CAPTURE_SECONDS ?= 8
@@ -107,6 +113,9 @@ search-swingup-low-momentum:
 search-swingup-sustain:
 	$(PYTHON) scripts/search_swingup_trajectory.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --seconds 30 --score-mode sustain --init-controller-json $(SWING_TRAJECTORY_SEARCH_OUT) --trajectory-seconds-min 6 --trajectory-seconds-max 30 --handoff-max-cart-abs 1.50 --out $(SWING_TRAJECTORY_SUSTAIN_OUT)
 
+search-swingup-action-low-momentum:
+	$(PYTHON) scripts/search_swingup_action_sequence.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --seconds 16 --score-mode low_momentum --handoff-min-time 4.0 --handoff-max-cart-abs 1.25 --init-controller-json $(SWING_TRAJECTORY_SEARCH_OUT) --out $(SWING_ACTION_SEARCH_OUT) --state-out $(SWING_ACTION_STATES_OUT)
+
 search-swingup-capture:
 	$(PYTHON) scripts/search_swingup_capture.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_capture_search/search.json
 
@@ -148,6 +157,12 @@ capture-state-list-shaped6:
 
 capture-low-momentum-velocity-curriculum:
 	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_capture_state_list_shaped.yaml --override experiment.out_dir=$(CAPTURE_VEL_CURRICULUM_OUT) --override env.init_states_path=$(SWING_TRAJECTORY_STATES_OUT) --override env.init_qvel_scale_start=0.0 --override env.init_qvel_scale_end=1.0 --override env.init_cart_noise=0.02 --override env.init_cart_vel_noise=0.04 --override env.init_angle_noise=0.012 --override env.init_vel_noise=0.05 --override env.reward.centered_upright_max_cart_abs=1.25 --override env.reward.low_momentum_max_cart_abs=1.25 --override env.reward.cart_pos=8.0 --override env.reward.rail_margin=220.0 --override env.reward.rail_margin_start=0.55 --override env.reward.centered_upright_streak=80.0 --override env.reward.centered_upright_streak_cap_seconds=5.0 --override env.reward.low_momentum_upright_streak=120.0 --override env.reward.low_momentum_upright_streak_cap_seconds=5.0 --override ppo.total_updates=$(CAPTURE_VEL_CURRICULUM_UPDATES) --override ppo.entropy_coef=0.006
+
+capture-lqr-residual-velocity-curriculum:
+	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_capture_lqr_residual.yaml --override experiment.out_dir=$(CAPTURE_LQR_RESIDUAL_OUT) --override env.init_states_path=$(SWING_TRAJECTORY_STATES_OUT) --override ppo.total_updates=$(CAPTURE_LQR_RESIDUAL_UPDATES)
+
+eval-capture-lqr-residual:
+	$(PYTHON) scripts/evaluate.py --config configs/swingup6_capture_lqr_residual.yaml --checkpoint $(CAPTURE_LQR_RESIDUAL_CHECKPOINT) --episodes 20 --progress 1.0 --override env.init_states_path=$(SWING_TRAJECTORY_STATES_OUT) --out $(CAPTURE_LQR_RESIDUAL_EVAL_OUT)
 
 eval-capture-state-list-shaped6:
 	$(PYTHON) scripts/evaluate.py --config configs/swingup6_capture_state_list_shaped.yaml --checkpoint runs/swingup6_capture_state_list_shaped/checkpoints/best.safetensors --episodes 20 --progress 1.0 --out runs/swingup6_capture_state_list_shaped/eval_capture_state_list_shaped6.json

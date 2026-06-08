@@ -52,6 +52,10 @@ class NLinkCartPoleEnv(gym.Env):
         self.obs_include_frictionloss = bool(self.env_cfg.get("obs_include_frictionloss", False))
         self.step_count = 0
         self.last_action_norm = np.zeros(1, dtype=np.float32)
+        self.last_policy_action_norm = np.zeros(1, dtype=np.float32)
+        self.last_action_bias_norm = 0.0
+        self.last_residual_scale = 1.0
+        self.last_lqr_cart_target = 0.0
         self.upright_streak_steps = 0
         self.max_upright_streak_steps = 0
         self.centered_upright_streak_steps = 0
@@ -158,6 +162,10 @@ class NLinkCartPoleEnv(gym.Env):
         self.data.qvel[:] = self.rng.normal(0.0, vel_noise, size=self.n + 1)
         self.data.ctrl[:] = 0.0
         self.last_action_norm[:] = 0.0
+        self.last_policy_action_norm[:] = 0.0
+        self.last_action_bias_norm = 0.0
+        self.last_residual_scale = 1.0
+        self.last_lqr_cart_target = 0.0
         mujoco.mj_forward(self.model, self.data)
         self._update_upright_tracking()
         return self._get_obs(), self._info()
@@ -205,13 +213,19 @@ class NLinkCartPoleEnv(gym.Env):
         self.data.qvel[1 : 1 + self.n] += self.rng.normal(0.0, vel_noise, size=self.n)
         self.data.ctrl[:] = 0.0
         self.last_action_norm[:] = 0.0
+        self.last_policy_action_norm[:] = 0.0
+        self.last_action_bias_norm = 0.0
+        self.last_residual_scale = 1.0
+        self.last_lqr_cart_target = 0.0
         mujoco.mj_forward(self.model, self.data)
         self._update_upright_tracking()
         return self._get_obs(), self._info()
 
     def step(self, action):
         action_arr = np.asarray(action, dtype=np.float32).reshape(-1)
-        action_norm = float(np.clip(action_arr[0], -1.0, 1.0))
+        policy_action_norm = float(np.clip(action_arr[0], -1.0, 1.0))
+        action_norm = self._applied_action_norm(policy_action_norm)
+        self.last_policy_action_norm[0] = policy_action_norm
         self.last_action_norm[0] = action_norm
         self.data.ctrl[0] = action_norm * self.force_limit
         for _ in range(self.frame_skip):
@@ -228,6 +242,45 @@ class NLinkCartPoleEnv(gym.Env):
         info = self._info()
         info["success"] = bool(truncated and not terminated and self._success())
         return obs, reward, terminated, truncated, info
+
+    def _progress_value(self, cfg: dict[str, Any], key: str, default: float) -> float:
+        if key in cfg:
+            return float(cfg[key])
+        start = cfg.get(f"{key}_start")
+        end = cfg.get(f"{key}_end")
+        if start is None and end is None:
+            return float(default)
+        start = default if start is None else float(start)
+        end = default if end is None else float(end)
+        t = float(np.clip(self.progress, 0.0, 1.0))
+        return float(start + (end - start) * t)
+
+    def _lqr_action_bias(self, cfg: dict[str, Any]) -> tuple[float, float]:
+        gain = np.asarray(cfg.get("state_gain", []), dtype=np.float64)
+        expected = 2 * (self.n + 1)
+        if gain.shape != (expected,):
+            raise ValueError(f"action_lqr_residual.state_gain must have length {expected}; got {gain.shape}")
+        cart_target = self._progress_value(cfg, "cart_target", 0.0)
+        scale = self._progress_value(cfg, "scale", 1.0)
+        state = np.zeros(expected, dtype=np.float64)
+        state[0] = float(self.data.qpos[0]) - cart_target
+        state[1 : 1 + self.n] = wrap_angle(np.asarray(self.data.qpos[1 : 1 + self.n], dtype=np.float64))
+        state[self.n + 1 :] = np.asarray(self.data.qvel, dtype=np.float64)
+        return float(np.clip(-scale * float(gain @ state), -1.0, 1.0)), float(cart_target)
+
+    def _applied_action_norm(self, policy_action_norm: float) -> float:
+        residual_cfg = self.env_cfg.get("action_lqr_residual", {})
+        if not bool(residual_cfg.get("enabled", False)):
+            self.last_action_bias_norm = 0.0
+            self.last_residual_scale = 1.0
+            self.last_lqr_cart_target = 0.0
+            return float(policy_action_norm)
+        bias, cart_target = self._lqr_action_bias(residual_cfg)
+        residual_scale = self._progress_value(residual_cfg, "residual_scale", 1.0)
+        self.last_action_bias_norm = float(bias)
+        self.last_residual_scale = float(residual_scale)
+        self.last_lqr_cart_target = float(cart_target)
+        return float(np.clip(bias + residual_scale * policy_action_norm, -1.0, 1.0))
 
     def _angles(self) -> tuple[np.ndarray, np.ndarray]:
         rel = wrap_angle(np.array(self.data.qpos[1 : 1 + self.n], dtype=np.float64))
@@ -457,6 +510,11 @@ class NLinkCartPoleEnv(gym.Env):
             "alpha_damping": float(self.morphology.alpha_damping),
             "alpha_frictionloss": float(self.morphology.alpha_frictionloss),
             "init_qvel_scale": float(self._init_qvel_scale()),
+            "policy_action_norm": float(self.last_policy_action_norm[0]),
+            "applied_action_norm": float(self.last_action_norm[0]),
+            "action_bias_norm": float(self.last_action_bias_norm),
+            "residual_scale": float(self.last_residual_scale),
+            "lqr_cart_target": float(self.last_lqr_cart_target),
             "lengths": self.morphology.lengths.astype(float).tolist(),
             "masses": self.morphology.masses.astype(float).tolist(),
             "damping": self.morphology.damping.astype(float).tolist(),

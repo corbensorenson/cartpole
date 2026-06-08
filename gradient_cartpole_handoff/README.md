@@ -135,13 +135,15 @@ For deterministic real-uniform trajectory probes, the search/export path can als
 ```bash
 make search-swingup-low-momentum
 make search-swingup-sustain
+make search-swingup-action-low-momentum
 make export-low-momentum-swingup-states
 make search-capture-sequence
 make eval-mpc-capture
 make capture-low-momentum-velocity-curriculum
+make capture-lqr-residual-velocity-curriculum
 ```
 
-`export-low-momentum-swingup-states` is the first-expert handoff file for the real-uniform path. It saves replayable MuJoCo `qpos/qvel` states from the swing trajectory, and the capture targets consume that same file through `SWING_TRAJECTORY_STATES_OUT`. `capture-low-momentum-velocity-curriculum` trains from those real positions while annealing saved handoff velocity from zero back to full velocity. `eval-mpc-capture` is a deterministic nonlinear catchability diagnostic from one saved state; override `MPC_CAPTURE_QVEL_SCALE=0.0` to test whether the same handoff position would be easy if the swing expert arrived with no velocity.
+`export-low-momentum-swingup-states` is the first-expert handoff file for the real-uniform path. It saves replayable MuJoCo `qpos/qvel` states from the swing trajectory, and the capture targets consume that same file through `SWING_TRAJECTORY_STATES_OUT`. `search-swingup-action-low-momentum` searches direct normalized-force knots as a richer first-expert handoff generator when fixed cart-position knots stall. `capture-low-momentum-velocity-curriculum` trains from those real positions while annealing saved handoff velocity from zero back to full velocity. `capture-lqr-residual-velocity-curriculum` uses the same state/velocity curriculum but applies a finite-difference LQR action bias around upright, so PPO learns a nonlinear residual catch policy instead of starting from an unaided random controller. `eval-mpc-capture` is a deterministic nonlinear catchability diagnostic from one saved state; override `MPC_CAPTURE_QVEL_SCALE=0.0` to test whether the same handoff position would be easy if the swing expert arrived with no velocity.
 
 If the exported frontier is still a gradiented curriculum stage, train the diagnostic capture expert on the same stage instead of forcing those states into the final uniform plant:
 

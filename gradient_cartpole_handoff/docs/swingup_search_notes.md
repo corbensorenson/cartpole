@@ -164,6 +164,10 @@ runs/swingup6_capture_sequence/low_momentum_state_probe_24x64_8s.json
 runs/swingup6_capture_sequence/low_momentum_state6_probe_14x48_8s.json
 runs/swingup6_mpc_capture/low_momentum_state_probe_8s.json
 runs/swingup6_mpc_capture/low_momentum_state_zero_velocity_probe_8s.json
+runs/swingup6_capture_lqr_residual_probe_120/eval_capture_lqr_residual20.json
+runs/swingup6_action_search/low_momentum_probe_10x64.json
+runs/swingup6_action_search/longrail_low_momentum_continue_20x64.json
+runs/swingup6_action_search/longrail_sustain_continue_10x64.json
 runs/swingup6_capture_low_momentum_velocity_curriculum_probe_120/eval_capture_velocity_curriculum20.json
 runs/swingup6_capture_low_momentum_velocity_curriculum_probe_120/eval_capture_velocity_curriculum_progress0_zeronoise20.json
 ```
@@ -173,10 +177,12 @@ runs/swingup6_capture_low_momentum_velocity_curriculum_probe_120/eval_capture_ve
 ```bash
 make search-swingup-low-momentum
 make search-swingup-sustain
+make search-swingup-action-low-momentum
 make export-low-momentum-swingup-states
 make search-capture-sequence
 make eval-mpc-capture
 make capture-low-momentum-velocity-curriculum
+make capture-lqr-residual-velocity-curriculum
 ```
 
 A bounded `10 x 32` exact-hanging uniform search found a more centered top crossing than the original fixed probe: best score handoff had `max_abs_angle = 0.079 rad`, `hinge_velocity_rms = 1.062 rad/s`, `x = 1.069 m`, and `cart_velocity = -0.030 m/s`; the best-streak candidate reached `0.10 s` upright with `max_abs_angle = 0.074 rad` and `hinge_velocity_rms = 1.091 rad/s`. A warm-started `20 x 48` continuation did not beat this; it found a lower-angle candidate (`0.059 rad`) but with higher hinge velocity (`1.302 rad/s`) and the same `0.08 s` streak. The exporter wrote `11` replayable low-momentum-search states from the best controller.
@@ -184,6 +190,10 @@ A bounded `10 x 32` exact-hanging uniform search found a more centered top cross
 The better trajectory states still did not solve capture. Reset-free chain eval with LQR capture/stabilization reached capture but stayed at `max_upright_streak_seconds = 0.04`. Direct near-upright LQR eval from the exported states reported `success_rate = 0.0`, `ever_upright_rate = 0.45`, `low_momentum_upright_rate = 0.0`, and `max_upright_streak_max = 0.04 s`. A bounded `80` update PPO capture probe from those states reported held-out `20` episode `success_rate = 0.0`, `ever_upright_rate = 0.75`, `low_momentum_upright_rate = 0.0`, `max_upright_streak_mean = 0.053 s`, and `max_upright_streak_max = 0.10 s`. A `120` update velocity-curriculum PPO probe, training from real positions with saved velocities annealed from `0.0` to `1.0`, also failed: held-out final-velocity eval reported `success_rate = 0.0`, `ever_upright_rate = 0.75`, `low_momentum_upright_rate = 0.0`, `max_upright_streak_mean = 0.053 s`, and `max_upright_streak_max = 0.10 s`; even progress-`0.0` zero-noise eval only reached `max_upright_streak_max = 0.10 s`. A small LQR sweep over cart targets, gains, control costs, and velocity scales likewise topped out at `0.06 s`. A full `30 s` sustain-scored trajectory search also failed to improve the reset-free controller; its best candidate stayed at `0.08 s` upright. Open-loop action-sequence CEM from the best exported state improved the LQR baseline from `0.04 s` to only `0.06 s`, and the later state-index `6` probe reached only `0.02 s`.
 
 A receding-horizon MPC diagnostic from the best saved handoff state confirms the same capture bottleneck with feedback replanning. With the real saved velocity, an `8 s`, `96` sample, `30` step horizon probe reached `success = false`, `max_upright_streak_seconds = 0.08`, best angle `0.082 rad`, hinge velocity RMS `1.728 rad/s`, and max cart excursion `2.885 m`. Replaying the same handoff position with `env.init_qvel_scale = 0.0` improved the streak to `0.12 s` and best angle to `0.043 rad`, but still failed the `5 s` sustain target. This improves the real-uniform first-expert state quality but confirms the capture expert still needs either a colder handoff, a more centered handoff, or a stronger nonlinear catch method.
+
+The next capture variant is `configs/swingup6_capture_lqr_residual.yaml`. It keeps the real saved state-list and velocity curriculum, but the environment applies a finite-difference LQR action bias around upright plus the policy's learned residual action. This tests whether the capture learner benefits from starting inside the proven near-upright stabilizer's feedback structure while still being able to learn nonlinear corrections for swing handoff states. A bounded `120` update real-uniform probe was not better than the unaided velocity curriculum: held-out `20` episode eval reported `success_rate = 0.0`, `ever_upright_rate = 0.65`, `low_momentum_upright_rate = 0.0`, `max_upright_streak_mean = 0.038 s`, `max_upright_streak_max = 0.10 s`, and repeated rail termination. Treat this as evidence that a naive LQR residual bias is not enough for the current handoff states.
+
+`scripts/search_swingup_action_sequence.py` adds a direct normalized-force-knot search to test whether fixed cart-position PD knots are hiding better swing handoffs. On the real `+/-3 m` rail, a bounded `10 x 64` probe improved only to `max_abs_angle = 0.802 rad` and exported no upright states. With a temporary `+/-9 m` rail, a warm-started `20 x 64` continuation reached the upright threshold (`min_best_pass_angle = 0.074 rad`, best score pass `0.138 rad`) near the center, but hinge velocity remained about `10-11 rad/s` and no low-momentum states passed export filters. A sustain-scored continuation did not improve the streak beyond `0.02 s`. This supports the longer-windup hypothesis for reachability, but not yet for catchable handoff quality.
 
 ```text
 configs/swingup6_capture_handoff.yaml
