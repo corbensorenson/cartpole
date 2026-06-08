@@ -2,7 +2,7 @@
 
 ## Objective
 
-Use this Mac to produce:
+Use this Mac to produce near-upright six-link stabilization artifacts:
 
 1. A trained 6-link uniform cart-pole checkpoint:
 
@@ -16,7 +16,27 @@ runs/uniform6_finetune/checkpoints/best.safetensors
 runs/uniform6_finetune/six_link_uniform_success.mp4
 ```
 
-The code supports arbitrary `n`; solve 6 first, then scale.
+The code supports arbitrary `n`; solve 6 first, then scale. This packet does not currently solve swing-up from a collapsed/hanging initial state.
+
+## Current local baseline
+
+The checked-in near-upright LQR path is:
+
+```bash
+make lqr6
+make eval6
+make render6
+```
+
+It is scoped to:
+
+```text
+configs/uniform6_near_upright_lqr.yaml
+init_angle_noise: 0.0003
+init_vel_noise: 0.00009
+```
+
+Do not describe this as a Yacine benchmark beat if Yacine starts below the cart and requires swing-up.
 
 ## Main idea
 
@@ -95,4 +115,4 @@ Strong:
 
 ## Fairness note
 
-This packet defaults to continuous-action near-upright stabilization. To claim an exact Yacine benchmark beat, match his precise action space, force bins, reward, initial-state distribution, rail, force limits, termination, and MuJoCo version.
+This packet defaults to continuous-action near-upright stabilization. To claim an exact Yacine benchmark beat, match his precise action space, force bins, reward, initial-state distribution, rail, force limits, termination, MuJoCo version, and especially whether the initial state is collapsed/hanging and requires swing-up.

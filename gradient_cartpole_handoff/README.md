@@ -1,18 +1,45 @@
-# Gradient n-Link Cart-Pole Handoff Packet
+# Gradient n-Link Cart-Pole
 
-## Mission
+## Status
 
-Produce **weights** and a **video** of a working **6-link MuJoCo cart-pole**, using a gradient-to-uniform curriculum that also scales to arbitrary `n` links.
+This repository currently contains a reproducible **near-upright stabilization** result for a uniform 6-link MuJoCo cart-pole. It does **not** solve the harder swing-up problem from a collapsed or hanging-down initial state.
 
-The first target is:
+That distinction matters. If Yacine's benchmark starts with the links below the cart and requires swinging them upright, this repo should be treated as a baseline/tooling repo, not as a benchmark beat.
+
+Current achieved artifact set:
 
 ```text
 runs/uniform6_finetune/checkpoints/best.safetensors
-runs/uniform6_finetune/six_link_uniform_success.mp4
 runs/uniform6_finetune/eval_uniform6.json
+runs/uniform6_finetune/eval_uniform6_100.json
+runs/uniform6_finetune/six_link_uniform_success.mp4
+runs/uniform6_finetune/six_link_uniform_success.video.json
 ```
 
-The experimental hypothesis is:
+The achieved config is:
+
+```text
+configs/uniform6_near_upright_lqr.yaml
+```
+
+It uses a finite-difference MuJoCo linearization plus discrete LQR to produce a deterministic MLX checkpoint for a narrow near-upright basin:
+
+```text
+init_angle_noise: 0.0003
+init_vel_noise: 0.00009
+```
+
+Verified locally:
+
+```text
+20 deterministic episodes: success_rate = 1.0
+100 deterministic episodes: success_rate = 1.0
+30-second MP4: reset_count = 0, no termination event
+```
+
+## Research Direction
+
+The original handoff hypothesis is still included:
 
 > A heavily gradiented n-link cart-pole can be easier to learn than the uniform benchmark. Train on the easier morphology, then anneal length/mass/damping gradients back to the final uniform morphology.
 
@@ -23,9 +50,9 @@ This packet contains a **native Apple Silicon path** using:
 - A custom vectorized environment layer for throughput.
 - Optional notes for **PufferLib 4.0** exploration.
 
-## Important scope note
+## Important Scope Note
 
-The current default target is **upright stabilization**, not guaranteed full swing-up from hanging-down initial conditions. It initializes near the upright equilibrium with small noise and trains the agent to keep all 6 links upright. If Yacine's exact target includes swing-up, discrete actions, a different reward, different rail length, or different force limits, match those before claiming an exact reproduction.
+The current solved target is **upright stabilization from a very small near-upright perturbation**, not full swing-up from collapsed/hanging initial conditions. If Yacine's target starts below the cart, uses discrete actions, or has different rail/force/reward/termination details, those must be implemented and solved before claiming a direct comparison.
 
 The code is written for `n` links. Six links is just the first target.
 
@@ -114,7 +141,34 @@ runs/debug6_fast/checkpoints/latest.safetensors
 
 ---
 
-# 4. Run the full 6-link gradient curriculum
+# 4. Generate the current near-upright LQR baseline
+
+```bash
+make lqr6
+make eval6
+make render6
+```
+
+This writes the required checkpoint/eval/video paths under:
+
+```text
+runs/uniform6_finetune/
+```
+
+For stronger evaluation:
+
+```bash
+python scripts/evaluate.py \
+  --config configs/uniform6_near_upright_lqr.yaml \
+  --checkpoint runs/uniform6_finetune/checkpoints/best.safetensors \
+  --episodes 100 \
+  --progress 1.0 \
+  --out runs/uniform6_finetune/eval_uniform6_100.json
+```
+
+Again: this is not a swing-up result.
+
+# 5. Run the full 6-link gradient curriculum
 
 ```bash
 python scripts/train_mlx_ppo.py --config configs/gradient6_curriculum.yaml
@@ -144,7 +198,7 @@ tail -f runs/gradient6_curriculum/train_log.csv
 
 ---
 
-# 5. Uniform 6-link fine-tune
+# 6. Uniform 6-link fine-tune
 
 After the gradient run produces a useful checkpoint, fine-tune on the fully uniform morphology:
 
@@ -163,7 +217,7 @@ runs/uniform6_finetune/train_log.csv
 
 ---
 
-# 6. Evaluate final uniform 6-link policy
+# 7. Evaluate final uniform 6-link policy
 
 ```bash
 python scripts/evaluate.py \
@@ -185,7 +239,7 @@ For a stronger claim, use 100 deterministic episodes and random seeds held out f
 
 ---
 
-# 7. Render final video
+# 8. Render final video
 
 ```bash
 python scripts/render_video.py \
@@ -200,7 +254,7 @@ The video script resets if the episode terminates so it always produces a contin
 
 ---
 
-# 8. Speed tuning on Mac
+# 9. Speed tuning on Mac
 
 Before long runs:
 

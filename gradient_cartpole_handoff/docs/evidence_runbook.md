@@ -24,9 +24,9 @@ runs/uniform6_finetune/six_link_uniform_success.mp4
 runs/uniform6_finetune/six_link_uniform_success.video.json
 ```
 
-## Minimum claim gate
+## Minimum near-upright claim gate
 
-Do not claim the six-link barrier is overcome unless all of these are true:
+Do not claim even near-upright six-link stabilization unless all of these are true:
 
 - `eval_uniform6.json` reports `success_rate >= 0.80` over at least 20 deterministic episodes.
 - `eval_uniform6.json` includes the checkpoint SHA-256, resolved config SHA-256, runtime versions, and git state.
@@ -35,4 +35,14 @@ Do not claim the six-link barrier is overcome unless all of these are true:
 - The MP4 visually shows the cart staying within the rail and all six links staying upright for the requested duration.
 - The claim text states the initialization scope. The analytic LQR checkpoint is only evidence for `init_angle_noise: 0.0003` and `init_vel_noise: 0.00009`, not the handoff packet's harder PPO default of `init_angle_noise: 0.040`.
 
-For a stronger claim, rerun eval with `--episodes 100` and use a clean git commit so the evidence JSON points at an immutable code revision.
+For a stronger near-upright claim, rerun eval with `--episodes 100` and use a clean git commit so the evidence JSON points at an immutable code revision.
+
+## Swing-up gap
+
+If the target benchmark starts with links collapsed or hanging below the cart, this repo has not solved it yet. Add an explicit swing-up environment mode before making any comparison:
+
+- initial joint angles near the downward/collapsed configuration,
+- reward terms for energy injection and upright capture,
+- termination and rail limits matching the target,
+- action space matching the target, especially if it is discrete,
+- evaluation videos with no resets from that initial-state distribution.

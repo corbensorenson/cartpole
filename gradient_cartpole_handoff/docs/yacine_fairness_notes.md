@@ -18,9 +18,8 @@ Before claiming a direct beat, write down the exact target environment:
 - MuJoCo version.
 - Policy observation vector.
 
-This packet defaults to continuous force and near-upright stabilization. If the public target uses five discrete force actions or swing-up from non-upright states, add those modes and retrain before making a claim.
+This packet defaults to continuous force and near-upright stabilization. If the public target starts collapsed/hanging below the cart and requires swing-up, this repo has not beaten that target. Add that initialization mode and retrain before making a claim.
 
 Suggested wording if this succeeds before exact matching:
 
-> We trained a 6-link MuJoCo cart-pole to stabilize from near-upright using a gradient-to-uniform curriculum. The morphology is uniform at final evaluation. Next step is to match Yacine's exact action/reward/initialization spec.
-
+> We produced a uniform 6-link MuJoCo cart-pole near-upright stabilization baseline with checkpoint, evaluation JSON, and reset-free video evidence. This is not a swing-up result. Next step is to match Yacine's exact action/reward/initialization spec.
