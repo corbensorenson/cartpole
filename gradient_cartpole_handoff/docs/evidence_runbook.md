@@ -74,3 +74,5 @@ The current swing-up config is explicit, but the task is not solved yet. If matc
 - termination and rail limits matching the target,
 - action space matching the target, especially if it is discrete,
 - evaluation videos with no resets from that initial-state distribution.
+
+For current unsolved search notes, including a zero-noise trajectory probe that reaches the upright angle threshold once but does not capture, see `docs/swingup_search_notes.md`.

@@ -20,6 +20,12 @@ The repository now has a dedicated swing-up environment/config:
 configs/swingup6_uniform.yaml
 ```
 
+Current search notes and negative probes are tracked in:
+
+```text
+docs/swingup_search_notes.md
+```
+
 Current configured target:
 
 - initial mode: `hanging_curriculum` for training, evaluated at `progress=1.0`,
