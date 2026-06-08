@@ -225,28 +225,68 @@ class NLinkCartPoleEnv(gym.Env):
         qpos = self.data.qpos
         qvel = self.data.qvel
 
+        hinge_vel_rms = float(np.sqrt(np.mean(qvel[1 : 1 + self.n] ** 2)))
+        max_abs_angle = float(np.max(np.abs(abs_angles)))
         angle_abs_cost = float(np.mean(1.0 - np.cos(abs_angles)))
         angle_cos_mean = float(np.mean(np.cos(abs_angles)))
         angle_rel_cost = float(np.mean(rel * rel))
         tip_cost = float(1.0 - np.cos(abs_angles[-1])) if abs_angles.size else 0.0
         cart_pos_cost = float((qpos[0] / self.rail_limit) ** 2)
         cart_vel_cost = float(qvel[0] ** 2)
-        hinge_vel_cost = float(np.mean(qvel[1 : 1 + self.n] ** 2))
+        hinge_vel_cost = float(hinge_vel_rms * hinge_vel_rms)
         control_cost = float(action_norm * action_norm)
         upright = float(self._is_upright(abs_angles))
+        capture_quality = self._capture_quality(max_abs_angle=max_abs_angle, hinge_vel_rms=hinge_vel_rms)
+        rail_margin_start = float(reward_cfg.get("rail_margin_start", 1.0))
+        rail_margin = max(0.0, abs(float(qpos[0])) / self.rail_limit - rail_margin_start)
+        upright_low_velocity = float(
+            bool(upright)
+            and hinge_vel_rms <= float(reward_cfg.get("upright_hinge_vel_threshold", 1.0))
+            and abs(float(qvel[0])) <= float(reward_cfg.get("upright_cart_vel_threshold", 1.0))
+        )
+        upright_streak_seconds = min(
+            float(self.upright_streak_steps * self.dt),
+            float(reward_cfg.get("upright_streak_cap_seconds", self.env_cfg.get("success_sustain_seconds", 0.0))),
+        )
 
         reward = float(reward_cfg.get("alive", 1.0))
         reward += float(reward_cfg.get("angle_cos", 0.0)) * angle_cos_mean
         reward += float(reward_cfg.get("upright_bonus", 0.0)) * upright
         reward += float(reward_cfg.get("sustained_upright_bonus", 0.0)) * float(self.upright_streak_steps > 0)
+        reward += float(reward_cfg.get("capture_quality", 0.0)) * capture_quality
+        reward += float(reward_cfg.get("upright_low_velocity_bonus", 0.0)) * upright_low_velocity
+        reward += float(reward_cfg.get("upright_streak", 0.0)) * upright_streak_seconds
         reward -= float(reward_cfg.get("angle_abs", 2.5)) * angle_abs_cost
         reward -= float(reward_cfg.get("angle_rel", 0.15)) * angle_rel_cost
         reward -= float(reward_cfg.get("tip", 0.0)) * tip_cost
         reward -= float(reward_cfg.get("cart_pos", 0.10)) * cart_pos_cost
         reward -= float(reward_cfg.get("cart_vel", 0.005)) * cart_vel_cost
         reward -= float(reward_cfg.get("hinge_vel", 0.001)) * hinge_vel_cost
+        reward -= float(reward_cfg.get("rail_margin", 0.0)) * rail_margin * rail_margin
         reward -= float(reward_cfg.get("control", 0.0003)) * control_cost
         return float(np.clip(reward, -100.0, 100.0))
+
+    def _capture_quality(self, *, max_abs_angle: float | None = None, hinge_vel_rms: float | None = None) -> float:
+        reward_cfg = self.env_cfg.get("reward", {})
+        _, abs_angles = self._angles()
+        qpos = self.data.qpos
+        qvel = self.data.qvel
+        angle_scale = max(1e-6, float(reward_cfg.get("capture_angle_scale", 0.30)))
+        hinge_vel_scale = max(1e-6, float(reward_cfg.get("capture_hinge_vel_scale", 1.25)))
+        cart_pos_scale = max(1e-6, float(reward_cfg.get("capture_cart_pos_scale", 0.60)))
+        cart_vel_scale = max(1e-6, float(reward_cfg.get("capture_cart_vel_scale", 1.00)))
+        if max_abs_angle is None:
+            max_abs_angle = float(np.max(np.abs(abs_angles)))
+        if hinge_vel_rms is None:
+            hinge_vel_rms = float(np.sqrt(np.mean(qvel[1 : 1 + self.n] ** 2)))
+        cart_pos_norm = abs(float(qpos[0])) / self.rail_limit
+        cost = (
+            (float(max_abs_angle) / angle_scale) ** 2
+            + (float(hinge_vel_rms) / hinge_vel_scale) ** 2
+            + (cart_pos_norm / cart_pos_scale) ** 2
+            + (abs(float(qvel[0])) / cart_vel_scale) ** 2
+        )
+        return float(np.exp(-min(50.0, cost)))
 
     def _terminated(self) -> bool:
         if abs(float(self.data.qpos[0])) > self.rail_limit:
@@ -283,10 +323,14 @@ class NLinkCartPoleEnv(gym.Env):
     def _info(self) -> dict[str, Any]:
         rel, abs_angles = self._angles()
         first_upright_time = None if self.first_upright_step is None else float(self.first_upright_step * self.dt)
+        hinge_vel_rms = float(np.sqrt(np.mean(self.data.qvel[1 : 1 + self.n] ** 2)))
+        max_abs_angle = float(np.max(np.abs(abs_angles)))
         return {
             "x": float(self.data.qpos[0]),
-            "max_abs_angle": float(np.max(np.abs(abs_angles))),
+            "max_abs_angle": max_abs_angle,
             "mean_abs_angle": float(np.mean(np.abs(abs_angles))),
+            "hinge_velocity_rms": hinge_vel_rms,
+            "capture_quality": self._capture_quality(max_abs_angle=max_abs_angle, hinge_vel_rms=hinge_vel_rms),
             "is_upright": bool(self._is_upright(abs_angles)),
             "upright_streak_seconds": float(self.upright_streak_steps * self.dt),
             "max_upright_streak_seconds": float(self.max_upright_streak_steps * self.dt),
