@@ -1,0 +1,74 @@
+experiment:
+  name: swingup6_debug
+  seed: 101
+  out_dir: runs/swingup6_debug
+
+env:
+  n_links: 6
+  total_length: 3.0
+  total_mass: 1.0
+  cart_mass: 1.0
+  rail_limit: 3.0
+  force_limit: 80.0
+  timestep: 0.005
+  frame_skip: 4
+  episode_seconds: 10.0
+  init_mode: hanging
+  init_angle_noise: 0.03
+  init_vel_noise: 0.03
+  # Swing-up must allow large angles; failure is rail hit / numerical failure.
+  terminate_abs_angle: null
+  success_upright_threshold: 0.15
+  success_sustain_seconds: 2.0
+  cart_damping: 0.02
+  joint_armature: 0.0005
+  link_radius: 0.025
+  obs_include_morphology: true
+  curriculum_rebuild_every: 999999
+  reward:
+    alive: 0.0
+    upright_bonus: 20.0
+    sustained_upright_bonus: 2.0
+    angle_abs: 1.0
+    angle_rel: 0.02
+    tip: 0.5
+    cart_pos: 0.05
+    cart_vel: 0.002
+    hinge_vel: 0.0005
+    control: 0.0005
+    upright_threshold: 0.15
+
+morphology:
+  schedule_mode: all_linear
+  start:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    total_damping: 0.015
+  end:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    total_damping: 0.015
+
+ppo:
+  backend: mlx
+  vec_backend: serial
+  num_envs: 8
+  rollout_steps: 128
+  total_updates: 20
+  minibatches: 4
+  epochs: 2
+  gamma: 0.995
+  gae_lambda: 0.95
+  learning_rate: 0.0003
+  clip_coef: 0.20
+  entropy_coef: 0.015
+  value_coef: 0.50
+  max_grad_norm: 0.50
+  hidden_sizes: [256, 256]
+  action_std_init: 0.90
+  normalize_advantages: true
+  checkpoint_every: 5
+  eval_every: 5
+  eval_episodes: 3

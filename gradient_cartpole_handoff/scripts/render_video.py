@@ -71,6 +71,8 @@ def main() -> None:
                     "success": bool(info.get("success", False)),
                     "x": float(info.get("x", np.nan)),
                     "max_abs_angle": float(info.get("max_abs_angle", np.nan)),
+                    "time_to_first_upright": info.get("time_to_first_upright"),
+                    "max_upright_streak_seconds": float(info.get("max_upright_streak_seconds", 0.0)),
                 }
                 done_events.append(event)
                 if step < sim_steps - 1:
@@ -110,10 +112,15 @@ def main() -> None:
         },
         "environment": {
             "n_links": int(cfg["env"]["n_links"]),
+            "init_mode": str(cfg["env"].get("init_mode", "upright")),
+            "init_angle_noise": float(cfg["env"].get("init_angle_noise", 0.02)),
+            "init_vel_noise": float(cfg["env"].get("init_vel_noise", 0.01)),
             "episode_seconds": float(cfg["env"]["episode_seconds"]),
             "force_limit": float(cfg["env"]["force_limit"]),
             "rail_limit": float(cfg["env"]["rail_limit"]),
-            "terminate_abs_angle": float(cfg["env"].get("terminate_abs_angle", 1.25)),
+            "terminate_abs_angle": cfg["env"].get("terminate_abs_angle", 1.25),
+            "success_upright_threshold": float(cfg["env"].get("success_upright_threshold", cfg["env"].get("reward", {}).get("upright_threshold", 0.10))),
+            "success_sustain_seconds": float(cfg["env"].get("success_sustain_seconds", 0.0)),
         },
         "runtime": runtime_metadata(),
         "git": git_metadata(Path(__file__).resolve().parents[1]),
@@ -126,7 +133,8 @@ def main() -> None:
         print(f"Wrote metadata to {args.metadata_out}")
 
     had_termination = any(event["terminated"] for event in done_events)
-    if args.fail_on_reset and (reset_count > 0 or had_termination or stopped_early):
+    had_unsuccessful_done = any(not event["success"] for event in done_events)
+    if args.fail_on_reset and (reset_count > 0 or had_termination or had_unsuccessful_done or stopped_early):
         sys.exit(2)
 
 

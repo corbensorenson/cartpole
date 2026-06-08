@@ -167,6 +167,8 @@ def evaluate_policy(
     lengths = []
     successes = []
     max_angles = []
+    time_to_uprights = []
+    max_upright_streaks = []
     episode_results = []
     for ep in range(episodes):
         env = NLinkCartPoleEnv(cfg, progress=progress, seed=seed + 10_000 + ep)
@@ -187,6 +189,11 @@ def evaluate_policy(
         success = bool(info.get("success", False))
         successes.append(float(success))
         max_angles.append(ep_max_angle)
+        ttu = info.get("time_to_first_upright")
+        streak = float(info.get("max_upright_streak_seconds", 0.0))
+        if ttu is not None:
+            time_to_uprights.append(float(ttu))
+        max_upright_streaks.append(streak)
         if return_episodes:
             episode_results.append(
                 {
@@ -198,6 +205,8 @@ def evaluate_policy(
                     "max_abs_angle": float(ep_max_angle),
                     "terminated": not success and ep_len < env.max_steps,
                     "final_x": float(info.get("x", np.nan)),
+                    "time_to_first_upright": None if ttu is None else float(ttu),
+                    "max_upright_streak_seconds": streak,
                 }
             )
         env.close()
@@ -211,6 +220,10 @@ def evaluate_policy(
         "success_rate": float(np.mean(successes)),
         "max_angle_mean": float(np.mean(max_angles)),
         "max_angle_max": float(np.max(max_angles)),
+        "time_to_first_upright_mean": None if not time_to_uprights else float(np.mean(time_to_uprights)),
+        "time_to_first_upright_success_count": int(len(time_to_uprights)),
+        "max_upright_streak_mean": float(np.mean(max_upright_streaks)),
+        "max_upright_streak_min": float(np.min(max_upright_streaks)),
     }
     if return_episodes:
         metrics["episode_results"] = episode_results

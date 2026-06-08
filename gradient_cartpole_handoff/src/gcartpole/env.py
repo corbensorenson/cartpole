@@ -45,6 +45,9 @@ class NLinkCartPoleEnv(gym.Env):
         self.obs_include_morphology = bool(self.env_cfg.get("obs_include_morphology", True))
         self.step_count = 0
         self.last_action_norm = np.zeros(1, dtype=np.float32)
+        self.upright_streak_steps = 0
+        self.max_upright_streak_steps = 0
+        self.first_upright_step: int | None = None
         self.renderer = None
         self._build_model(self.progress)
 
@@ -83,15 +86,37 @@ class NLinkCartPoleEnv(gym.Env):
         if seed is not None:
             self.rng = np.random.default_rng(seed)
         self.step_count = 0
+        self.upright_streak_steps = 0
+        self.max_upright_streak_steps = 0
+        self.first_upright_step = None
         self.data.qpos[:] = 0.0
         self.data.qvel[:] = 0.0
         angle_noise = float(self.env_cfg.get("init_angle_noise", 0.02))
         vel_noise = float(self.env_cfg.get("init_vel_noise", 0.01))
-        self.data.qpos[1 : 1 + self.n] = self.rng.normal(0.0, angle_noise, size=self.n)
+        init_mode = str(self.env_cfg.get("init_mode", "upright"))
+        if init_mode == "upright":
+            base_angles = np.zeros(self.n, dtype=np.float64)
+        elif init_mode == "hanging":
+            # Relative-angle convention: [pi, 0, ..., 0] makes the whole
+            # serial chain hang downward below the cart.
+            base_angles = np.zeros(self.n, dtype=np.float64)
+            base_angles[0] = np.pi
+        elif init_mode == "hanging_curriculum":
+            # Training curriculum: progress 0 starts upright, progress 1 starts
+            # fully hanging. Evaluation at progress=1.0 is the true swing-up task.
+            base_angles = np.zeros(self.n, dtype=np.float64)
+            base_angles[0] = np.pi * float(np.clip(self.progress, 0.0, 1.0))
+        elif init_mode == "folded":
+            # A compact alternating folded start, useful for stress tests.
+            base_angles = np.asarray([np.pi if i % 2 == 0 else -np.pi for i in range(self.n)], dtype=np.float64)
+        else:
+            raise ValueError(f"Unknown env.init_mode: {init_mode}")
+        self.data.qpos[1 : 1 + self.n] = base_angles + self.rng.normal(0.0, angle_noise, size=self.n)
         self.data.qvel[:] = self.rng.normal(0.0, vel_noise, size=self.n + 1)
         self.data.ctrl[:] = 0.0
         self.last_action_norm[:] = 0.0
         mujoco.mj_forward(self.model, self.data)
+        self._update_upright_tracking()
         return self._get_obs(), self._info()
 
     def step(self, action):
@@ -102,13 +127,14 @@ class NLinkCartPoleEnv(gym.Env):
         for _ in range(self.frame_skip):
             mujoco.mj_step(self.model, self.data)
         self.step_count += 1
+        self._update_upright_tracking()
 
         obs = self._get_obs()
         reward = self._reward(action_norm)
         terminated = self._terminated()
         truncated = self.step_count >= self.max_steps
         info = self._info()
-        info["success"] = bool(truncated and not terminated)
+        info["success"] = bool(truncated and not terminated and self._success())
         return obs, reward, terminated, truncated, info
 
     def _angles(self) -> tuple[np.ndarray, np.ndarray]:
@@ -141,16 +167,19 @@ class NLinkCartPoleEnv(gym.Env):
 
         angle_abs_cost = float(np.mean(1.0 - np.cos(abs_angles)))
         angle_rel_cost = float(np.mean(rel * rel))
+        tip_cost = float(1.0 - np.cos(abs_angles[-1])) if abs_angles.size else 0.0
         cart_pos_cost = float((qpos[0] / self.rail_limit) ** 2)
         cart_vel_cost = float(qvel[0] ** 2)
         hinge_vel_cost = float(np.mean(qvel[1 : 1 + self.n] ** 2))
         control_cost = float(action_norm * action_norm)
-        upright = float(np.max(np.abs(abs_angles)) < float(reward_cfg.get("upright_threshold", 0.10)))
+        upright = float(self._is_upright(abs_angles))
 
         reward = float(reward_cfg.get("alive", 1.0))
         reward += float(reward_cfg.get("upright_bonus", 0.0)) * upright
+        reward += float(reward_cfg.get("sustained_upright_bonus", 0.0)) * float(self.upright_streak_steps > 0)
         reward -= float(reward_cfg.get("angle_abs", 2.5)) * angle_abs_cost
         reward -= float(reward_cfg.get("angle_rel", 0.15)) * angle_rel_cost
+        reward -= float(reward_cfg.get("tip", 0.0)) * tip_cost
         reward -= float(reward_cfg.get("cart_pos", 0.10)) * cart_pos_cost
         reward -= float(reward_cfg.get("cart_vel", 0.005)) * cart_vel_cost
         reward -= float(reward_cfg.get("hinge_vel", 0.001)) * hinge_vel_cost
@@ -161,18 +190,45 @@ class NLinkCartPoleEnv(gym.Env):
         if abs(float(self.data.qpos[0])) > self.rail_limit:
             return True
         _, abs_angles = self._angles()
-        if float(np.max(np.abs(abs_angles))) > float(self.env_cfg.get("terminate_abs_angle", 1.25)):
+        terminate_abs_angle = self.env_cfg.get("terminate_abs_angle", 1.25)
+        if terminate_abs_angle is not None and float(np.max(np.abs(abs_angles))) > float(terminate_abs_angle):
             return True
         if not np.all(np.isfinite(self.data.qpos)) or not np.all(np.isfinite(self.data.qvel)):
             return True
         return False
 
+    def _is_upright(self, abs_angles: np.ndarray | None = None) -> bool:
+        if abs_angles is None:
+            _, abs_angles = self._angles()
+        threshold = float(self.env_cfg.get("success_upright_threshold", self.env_cfg.get("reward", {}).get("upright_threshold", 0.10)))
+        return bool(float(np.max(np.abs(abs_angles))) < threshold)
+
+    def _update_upright_tracking(self) -> None:
+        _, abs_angles = self._angles()
+        if self._is_upright(abs_angles):
+            self.upright_streak_steps += 1
+            if self.first_upright_step is None:
+                self.first_upright_step = self.step_count
+        else:
+            self.upright_streak_steps = 0
+        self.max_upright_streak_steps = max(self.max_upright_streak_steps, self.upright_streak_steps)
+
+    def _success(self) -> bool:
+        sustain_seconds = float(self.env_cfg.get("success_sustain_seconds", 0.0))
+        sustain_steps = int(np.ceil(sustain_seconds / self.dt))
+        return self.max_upright_streak_steps >= sustain_steps
+
     def _info(self) -> dict[str, Any]:
         rel, abs_angles = self._angles()
+        first_upright_time = None if self.first_upright_step is None else float(self.first_upright_step * self.dt)
         return {
             "x": float(self.data.qpos[0]),
             "max_abs_angle": float(np.max(np.abs(abs_angles))),
             "mean_abs_angle": float(np.mean(np.abs(abs_angles))),
+            "is_upright": bool(self._is_upright(abs_angles)),
+            "upright_streak_seconds": float(self.upright_streak_steps * self.dt),
+            "max_upright_streak_seconds": float(self.max_upright_streak_steps * self.dt),
+            "time_to_first_upright": first_upright_time,
             "progress": float(self.progress),
             "alpha_length": float(self.morphology.alpha_length),
             "alpha_mass": float(self.morphology.alpha_mass),

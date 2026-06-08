@@ -39,7 +39,34 @@ For a stronger near-upright claim, rerun eval with `--episodes 100` and use a cl
 
 ## Swing-up gap
 
-If the target benchmark starts with links collapsed or hanging below the cart, this repo has not solved it yet. Add an explicit swing-up environment mode before making any comparison:
+If the target benchmark starts with links collapsed or hanging below the cart, use the swing-up path:
+
+```bash
+make swingup-debug
+make swingup6
+make eval-swingup6
+make render-swingup6
+```
+
+The expected final artifacts are:
+
+```text
+runs/swingup6_uniform/checkpoints/best.safetensors
+runs/swingup6_uniform/eval_swingup6.json
+runs/swingup6_uniform/six_link_swingup_success.mp4
+runs/swingup6_uniform/six_link_swingup_success.video.json
+```
+
+Do not claim swing-up success unless:
+
+- `eval_swingup6.json` reports `success_rate >= 0.80` over at least 20 deterministic held-out episodes,
+- the stronger 100-episode eval reports `success_rate >= 0.90`,
+- the video starts from the hanging/collapsed state,
+- the video metadata reports `reset_count == 0`,
+- the only done event is successful truncation at the episode limit,
+- per-episode metrics include time-to-upright/capture and sustained-upright duration.
+
+The current swing-up config is explicit, but the task is not solved yet. If matching an external benchmark, verify:
 
 - initial joint angles near the downward/collapsed configuration,
 - reward terms for energy injection and upright capture,

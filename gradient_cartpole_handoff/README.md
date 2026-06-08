@@ -56,6 +56,45 @@ The current solved target is **upright stabilization from a very small near-upri
 
 The code is written for `n` links. Six links is just the first target.
 
+## Swing-Up Target
+
+The real target for comparison is now tracked separately from the near-upright baseline:
+
+```text
+configs/swingup6_uniform.yaml
+runs/swingup6_uniform/checkpoints/best.safetensors
+runs/swingup6_uniform/eval_swingup6.json
+runs/swingup6_uniform/six_link_swingup_success.mp4
+```
+
+Environment spec:
+
+| Setting | Value |
+|---|---:|
+| Links | 6 |
+| Initial mode | `hanging_curriculum`, evaluated at `progress=1.0` |
+| Initial relative angles at eval | `[pi, 0, 0, 0, 0, 0] + Normal(0, 0.05)` |
+| Initial velocities | `Normal(0, 0.05)` |
+| Action space | continuous normalized force in `[-1, 1]` |
+| Force limit | `80 N` |
+| Rail limit | `+/-3.0 m` |
+| Episode length | `30 s` |
+| Angle failure termination | disabled (`terminate_abs_angle: null`) |
+| Failure termination | rail hit or numerical failure |
+| Success | episode completes with at least `5 s` sustained upright |
+| Upright threshold | max absolute link angle `< 0.15 rad` |
+
+Run path:
+
+```bash
+make swingup-debug
+make swingup6
+make eval-swingup6
+make render-swingup6
+```
+
+At the moment, the swing-up target is infrastructure-ready but not solved. The near-upright evidence in `runs/uniform6_finetune/` should not be used as a substitute.
+
 ---
 
 # 1. Mac setup
