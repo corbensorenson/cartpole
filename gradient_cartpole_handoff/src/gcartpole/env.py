@@ -54,6 +54,10 @@ class NLinkCartPoleEnv(gym.Env):
         self.last_action_norm = np.zeros(1, dtype=np.float32)
         self.upright_streak_steps = 0
         self.max_upright_streak_steps = 0
+        self.centered_upright_streak_steps = 0
+        self.max_centered_upright_streak_steps = 0
+        self.low_momentum_upright_streak_steps = 0
+        self.max_low_momentum_upright_streak_steps = 0
         self.first_upright_step: int | None = None
         self.last_init_state_index: int | None = None
         self._init_state_cache: list[dict[str, Any]] | None = None
@@ -106,6 +110,10 @@ class NLinkCartPoleEnv(gym.Env):
         self.step_count = 0
         self.upright_streak_steps = 0
         self.max_upright_streak_steps = 0
+        self.centered_upright_streak_steps = 0
+        self.max_centered_upright_streak_steps = 0
+        self.low_momentum_upright_streak_steps = 0
+        self.max_low_momentum_upright_streak_steps = 0
         self.first_upright_step = None
         self.last_init_state_index = None
         self.data.qpos[:] = 0.0
@@ -274,14 +282,35 @@ class NLinkCartPoleEnv(gym.Env):
             float(self.upright_streak_steps * self.dt),
             float(reward_cfg.get("upright_streak_cap_seconds", self.env_cfg.get("success_sustain_seconds", 0.0))),
         )
+        centered_upright_streak_seconds = min(
+            float(self.centered_upright_streak_steps * self.dt),
+            float(
+                reward_cfg.get(
+                    "centered_upright_streak_cap_seconds",
+                    reward_cfg.get("upright_streak_cap_seconds", self.env_cfg.get("success_sustain_seconds", 0.0)),
+                )
+            ),
+        )
+        low_momentum_upright_streak_seconds = min(
+            float(self.low_momentum_upright_streak_steps * self.dt),
+            float(
+                reward_cfg.get(
+                    "low_momentum_upright_streak_cap_seconds",
+                    reward_cfg.get("centered_upright_streak_cap_seconds", self.env_cfg.get("success_sustain_seconds", 0.0)),
+                )
+            ),
+        )
 
         reward = float(reward_cfg.get("alive", 1.0))
         reward += float(reward_cfg.get("angle_cos", 0.0)) * angle_cos_mean
         reward += float(reward_cfg.get("upright_bonus", 0.0)) * upright
+        reward += float(reward_cfg.get("centered_upright_bonus", 0.0)) * float(self.centered_upright_streak_steps > 0)
         reward += float(reward_cfg.get("sustained_upright_bonus", 0.0)) * float(self.upright_streak_steps > 0)
         reward += float(reward_cfg.get("capture_quality", 0.0)) * capture_quality
         reward += float(reward_cfg.get("upright_low_velocity_bonus", 0.0)) * upright_low_velocity
         reward += float(reward_cfg.get("upright_streak", 0.0)) * upright_streak_seconds
+        reward += float(reward_cfg.get("centered_upright_streak", 0.0)) * centered_upright_streak_seconds
+        reward += float(reward_cfg.get("low_momentum_upright_streak", 0.0)) * low_momentum_upright_streak_seconds
         reward -= float(reward_cfg.get("angle_abs", 2.5)) * angle_abs_cost
         reward -= float(reward_cfg.get("angle_rel", 0.15)) * angle_rel_cost
         reward -= float(reward_cfg.get("tip", 0.0)) * tip_cost
@@ -338,13 +367,52 @@ class NLinkCartPoleEnv(gym.Env):
 
     def _update_upright_tracking(self) -> None:
         _, abs_angles = self._angles()
-        if self._is_upright(abs_angles):
+        reward_cfg = self.env_cfg.get("reward", {})
+        qpos = self.data.qpos
+        qvel = self.data.qvel
+        hinge_vel_rms = float(np.sqrt(np.mean(qvel[1 : 1 + self.n] ** 2)))
+        upright = self._is_upright(abs_angles)
+        centered_max_cart_abs = reward_cfg.get("centered_upright_max_cart_abs", reward_cfg.get("low_momentum_max_cart_abs"))
+        centered_upright = bool(
+            upright
+            and (
+                centered_max_cart_abs is None
+                or abs(float(qpos[0])) <= float(centered_max_cart_abs)
+            )
+        )
+        low_momentum_upright = bool(
+            centered_upright
+            and hinge_vel_rms <= float(
+                reward_cfg.get("low_momentum_streak_hinge_vel_threshold", reward_cfg.get("upright_hinge_vel_threshold", 1.0))
+            )
+            and abs(float(qvel[0])) <= float(
+                reward_cfg.get("low_momentum_streak_cart_vel_threshold", reward_cfg.get("upright_cart_vel_threshold", 1.0))
+            )
+        )
+
+        if upright:
             self.upright_streak_steps += 1
             if self.first_upright_step is None:
                 self.first_upright_step = self.step_count
         else:
             self.upright_streak_steps = 0
+        if centered_upright:
+            self.centered_upright_streak_steps += 1
+        else:
+            self.centered_upright_streak_steps = 0
+        if low_momentum_upright:
+            self.low_momentum_upright_streak_steps += 1
+        else:
+            self.low_momentum_upright_streak_steps = 0
         self.max_upright_streak_steps = max(self.max_upright_streak_steps, self.upright_streak_steps)
+        self.max_centered_upright_streak_steps = max(
+            self.max_centered_upright_streak_steps,
+            self.centered_upright_streak_steps,
+        )
+        self.max_low_momentum_upright_streak_steps = max(
+            self.max_low_momentum_upright_streak_steps,
+            self.low_momentum_upright_streak_steps,
+        )
 
     def _success(self) -> bool:
         sustain_seconds = float(self.env_cfg.get("success_sustain_seconds", 0.0))
@@ -365,6 +433,10 @@ class NLinkCartPoleEnv(gym.Env):
             "is_upright": bool(self._is_upright(abs_angles)),
             "upright_streak_seconds": float(self.upright_streak_steps * self.dt),
             "max_upright_streak_seconds": float(self.max_upright_streak_steps * self.dt),
+            "centered_upright_streak_seconds": float(self.centered_upright_streak_steps * self.dt),
+            "max_centered_upright_streak_seconds": float(self.max_centered_upright_streak_steps * self.dt),
+            "low_momentum_upright_streak_seconds": float(self.low_momentum_upright_streak_steps * self.dt),
+            "max_low_momentum_upright_streak_seconds": float(self.max_low_momentum_upright_streak_steps * self.dt),
             "time_to_first_upright": first_upright_time,
             "progress": float(self.progress),
             "rail_limit": float(self.rail_limit),

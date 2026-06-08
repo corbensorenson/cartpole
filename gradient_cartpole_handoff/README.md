@@ -139,6 +139,8 @@ make capture-policy-handoff-stage \
   CAPTURE_STAGE_OUT=runs/swingup6_policy_handoff_capture_stage03375
 ```
 
+That target defaults to a forced `+/-3 m` capture rail and centered/low-momentum upright-streak rewards. Override `CAPTURE_STAGE_RAIL_LIMIT`, `CAPTURE_STAGE_CENTERED_MAX_CART_ABS`, `CAPTURE_STAGE_CENTERED_STREAK`, or `CAPTURE_STAGE_LOW_MOMENTUM_STREAK` to run ablations.
+
 ---
 
 # 1. Mac setup

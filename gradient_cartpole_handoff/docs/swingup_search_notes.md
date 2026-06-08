@@ -107,6 +107,24 @@ runs/swingup6_policy_handoff_capture_stage03375_probe_120/eval_capture_stage0337
 
 This improved the capture diagnostics but still did not solve sustained balance. The best internal eval at update `120` had `success_rate = 0.0`, `ever_upright_rate = 1.0`, `low_momentum_upright_rate = 0.125`, `max_upright_streak_mean = 0.43 s`, `max_upright_streak_max = 0.74 s`, and `max_capture_quality_mean = 0.725`. The held-out `20` episode eval reported `success_rate = 0.0`, `ever_upright_rate = 0.9`, `low_momentum_upright_rate = 0.05`, `max_upright_streak_mean = 0.278 s`, and `max_upright_streak_max = 0.66 s`. The evidence JSON now records both the scheduled rail at that progress (`6.975 m`) and the final configured rail (`3.0 m`). This makes the next concrete capture step a centered-rail sustain curriculum: same-stage capture can briefly catch, but it still rides out to the temporary long rail instead of holding near center.
 
+Final-rail same-stage centered probe:
+
+```text
+runs/swingup6_policy_handoff_capture_stage03375_finalrail_centered_probe_160/eval_capture_stage03375_finalrail_centered20.json
+```
+
+This forced the same progress-`0.3375` morphology onto the final `+/-3 m` rail and increased centered cart penalties. It did not improve capture: best internal eval had `success_rate = 0.0`, `low_momentum_upright_rate = 0.125`, `max_upright_streak_mean = 0.313 s`, and `max_upright_streak_max = 0.58 s`; held-out `20` episode eval had `success_rate = 0.0`, `ever_upright_rate = 0.9`, `low_momentum_upright_rate = 0.05`, `max_upright_streak_mean = 0.224 s`, and `max_upright_streak_max = 0.54 s`. The eval episodes terminated at the real rail instead of the temporary long rail, which confirms that simply shrinking the rail and increasing cart-position penalties is not enough.
+
+The environment now tracks `centered_upright_streak_seconds` and `low_momentum_upright_streak_seconds` separately from generic upright streaks. Capture reward configs can use `centered_upright_streak` and `low_momentum_upright_streak` terms, and checkpoint selection records centered/low-momentum streak metrics so the best capture checkpoint is not chosen only for a brief upright touch.
+
+Centered/low-momentum streak capture probe:
+
+```text
+runs/swingup6_policy_handoff_capture_stage03375_centered_streak_probe_120/eval_capture_stage03375_centered_streak20.json
+```
+
+This used the same progress-`0.3375` morphology and exported swing-policy handoff states, forced the real `+/-3 m` rail, and added explicit centered/low-momentum upright-streak rewards. It improved the best internal capture checkpoint to `max_centered_upright_streak_mean = 0.428 s`, `max_centered_upright_streak_max = 0.66 s`, `max_low_momentum_upright_streak_mean = 0.163 s`, and `max_capture_quality_mean = 0.724`, but held-out `20` episode eval still reported `success_rate = 0.0`, `ever_upright_rate = 0.9`, `low_momentum_upright_rate = 0.05`, `max_centered_upright_streak_mean = 0.288 s`, and `max_centered_upright_streak_max = 0.66 s`. This is a better diagnostic reward and checkpoint selector, not a solved capture policy.
+
 The current unsolved gap is capture, not only reachability. A direct cart-position trajectory probe can swing the exact hanging six-link chain into the upright angle threshold once:
 
 ```bash

@@ -169,6 +169,8 @@ def evaluate_policy(
     max_angles = []
     time_to_uprights = []
     max_upright_streaks = []
+    max_centered_upright_streaks = []
+    max_low_momentum_upright_streaks = []
     max_capture_qualities = []
     low_momentum_upright_events = []
     episode_results = []
@@ -216,9 +218,13 @@ def evaluate_policy(
         low_momentum_upright_events.append(float(ep_low_momentum_upright))
         ttu = info.get("time_to_first_upright")
         streak = float(info.get("max_upright_streak_seconds", 0.0))
+        centered_streak = float(info.get("max_centered_upright_streak_seconds", 0.0))
+        low_momentum_streak = float(info.get("max_low_momentum_upright_streak_seconds", 0.0))
         if ttu is not None:
             time_to_uprights.append(float(ttu))
         max_upright_streaks.append(streak)
+        max_centered_upright_streaks.append(centered_streak)
+        max_low_momentum_upright_streaks.append(low_momentum_streak)
         if return_episodes:
             episode_results.append(
                 {
@@ -232,6 +238,8 @@ def evaluate_policy(
                     "final_x": float(info.get("x", np.nan)),
                     "time_to_first_upright": None if ttu is None else float(ttu),
                     "max_upright_streak_seconds": streak,
+                    "max_centered_upright_streak_seconds": centered_streak,
+                    "max_low_momentum_upright_streak_seconds": low_momentum_streak,
                     "max_capture_quality": float(ep_max_capture_quality),
                     "low_momentum_upright": bool(ep_low_momentum_upright),
                 }
@@ -253,6 +261,10 @@ def evaluate_policy(
         "max_upright_streak_mean": float(np.mean(max_upright_streaks)),
         "max_upright_streak_min": float(np.min(max_upright_streaks)),
         "max_upright_streak_max": float(np.max(max_upright_streaks)),
+        "max_centered_upright_streak_mean": float(np.mean(max_centered_upright_streaks)),
+        "max_centered_upright_streak_max": float(np.max(max_centered_upright_streaks)),
+        "max_low_momentum_upright_streak_mean": float(np.mean(max_low_momentum_upright_streaks)),
+        "max_low_momentum_upright_streak_max": float(np.max(max_low_momentum_upright_streaks)),
         "max_capture_quality_mean": float(np.mean(max_capture_qualities)),
         "max_capture_quality_max": float(np.max(max_capture_qualities)),
         "low_momentum_upright_rate": float(np.mean(low_momentum_upright_events)),
@@ -262,7 +274,7 @@ def evaluate_policy(
     return metrics
 
 
-def checkpoint_score(eval_metrics: dict[str, Any]) -> tuple[float, float, float, float, float, float, float]:
+def checkpoint_score(eval_metrics: dict[str, Any]) -> tuple[float, ...]:
     """Rank checkpoints by swing-up evidence before shaped return.
 
     Return alone can be reward-hacked by long survival without ever reaching
@@ -271,7 +283,9 @@ def checkpoint_score(eval_metrics: dict[str, Any]) -> tuple[float, float, float,
     return (
         float(eval_metrics.get("success_rate", 0.0)),
         float(eval_metrics.get("low_momentum_upright_rate", 0.0)),
+        float(eval_metrics.get("max_low_momentum_upright_streak_mean", 0.0)),
         float(eval_metrics.get("ever_upright_rate", 0.0)),
+        float(eval_metrics.get("max_centered_upright_streak_mean", 0.0)),
         float(eval_metrics.get("max_upright_streak_mean", 0.0)),
         float(eval_metrics.get("max_upright_streak_max", 0.0)),
         float(eval_metrics.get("max_capture_quality_mean", 0.0)),
@@ -368,6 +382,8 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
         "policy_loss", "value_loss", "entropy", "approx_kl", "clip_fraction",
         "eval_return_mean", "eval_success_rate", "eval_length_mean", "eval_ever_upright_rate",
         "eval_max_upright_streak_mean", "eval_max_upright_streak_max",
+        "eval_max_centered_upright_streak_mean", "eval_max_centered_upright_streak_max",
+        "eval_max_low_momentum_upright_streak_mean", "eval_max_low_momentum_upright_streak_max",
         "eval_low_momentum_upright_rate", "eval_max_capture_quality_mean", "eval_max_capture_quality_max",
         "eval_time_to_first_upright_mean", "curriculum_advanced", "rail_limit",
         "alpha_length", "alpha_mass", "alpha_damping", "alpha_frictionloss",
@@ -380,7 +396,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
     recent_returns: list[float] = []
     recent_lengths: list[int] = []
     best_eval_return = -float("inf")
-    best_eval_score: tuple[float, float, float, float, float, float, float] | None = None
+    best_eval_score: tuple[float, ...] | None = None
     global_steps = 0
     start_time = time.time()
     last_loss_metrics = {"policy_loss": 0.0, "value_loss": 0.0, "entropy": 0.0, "approx_kl": 0.0, "clip_fraction": 0.0}
@@ -531,7 +547,9 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                             "checkpoint_score_order": [
                                 "success_rate",
                                 "low_momentum_upright_rate",
+                                "max_low_momentum_upright_streak_mean",
                                 "ever_upright_rate",
+                                "max_centered_upright_streak_mean",
                                 "max_upright_streak_mean",
                                 "max_upright_streak_max",
                                 "max_capture_quality_mean",
@@ -562,7 +580,9 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                             "checkpoint_score_order": [
                                 "success_rate",
                                 "low_momentum_upright_rate",
+                                "max_low_momentum_upright_streak_mean",
                                 "ever_upright_rate",
+                                "max_centered_upright_streak_mean",
                                 "max_upright_streak_mean",
                                 "max_upright_streak_max",
                                 "max_capture_quality_mean",
@@ -606,6 +626,10 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                 "eval_ever_upright_rate": eval_metrics.get("ever_upright_rate", np.nan),
                 "eval_max_upright_streak_mean": eval_metrics.get("max_upright_streak_mean", np.nan),
                 "eval_max_upright_streak_max": eval_metrics.get("max_upright_streak_max", np.nan),
+                "eval_max_centered_upright_streak_mean": eval_metrics.get("max_centered_upright_streak_mean", np.nan),
+                "eval_max_centered_upright_streak_max": eval_metrics.get("max_centered_upright_streak_max", np.nan),
+                "eval_max_low_momentum_upright_streak_mean": eval_metrics.get("max_low_momentum_upright_streak_mean", np.nan),
+                "eval_max_low_momentum_upright_streak_max": eval_metrics.get("max_low_momentum_upright_streak_max", np.nan),
                 "eval_low_momentum_upright_rate": eval_metrics.get("low_momentum_upright_rate", np.nan),
                 "eval_max_capture_quality_mean": eval_metrics.get("max_capture_quality_mean", np.nan),
                 "eval_max_capture_quality_max": eval_metrics.get("max_capture_quality_max", np.nan),

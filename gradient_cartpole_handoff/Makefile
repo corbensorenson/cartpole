@@ -14,6 +14,14 @@ CAPTURE_STAGE_ENVS ?= 48
 CAPTURE_STAGE_ROLLOUT_STEPS ?= 256
 CAPTURE_STAGE_EVAL_EVERY ?= 50
 CAPTURE_STAGE_EVAL_EPISODES ?= 8
+CAPTURE_STAGE_ENTROPY ?= 0.006
+CAPTURE_STAGE_RAIL_LIMIT ?= 3.0
+CAPTURE_STAGE_CENTERED_MAX_CART_ABS ?= 1.25
+CAPTURE_STAGE_CART_POS_COST ?= 8.0
+CAPTURE_STAGE_RAIL_MARGIN ?= 220.0
+CAPTURE_STAGE_RAIL_MARGIN_START ?= 0.55
+CAPTURE_STAGE_CENTERED_STREAK ?= 80.0
+CAPTURE_STAGE_LOW_MOMENTUM_STREAK ?= 120.0
 
 setup:
 	bash scripts/setup_mac.sh
@@ -112,7 +120,7 @@ capture-policy-handoff-shaped6:
 	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_policy_handoff_capture_shaped.yaml
 
 capture-policy-handoff-stage:
-	$(PYTHON) scripts/train_mlx_ppo.py --config $(SWING_HANDOFF_CONFIG) --override experiment.out_dir=$(CAPTURE_STAGE_OUT) --override env.init_mode=state_list --override env.init_states_path=$(SWING_HANDOFF_OUT) --override env.init_cart_noise=0.02 --override env.init_cart_vel_noise=0.04 --override env.init_angle_noise=0.012 --override env.init_vel_noise=0.05 --override env.episode_seconds=15.0 --override ppo.curriculum_mode=gated --override ppo.curriculum_start_progress=$(CAPTURE_STAGE_PROGRESS) --override ppo.curriculum_step=0.0 --override ppo.curriculum_min_updates_per_stage=999999 --override ppo.eval_progress=current --override ppo.total_updates=$(CAPTURE_STAGE_UPDATES) --override ppo.num_envs=$(CAPTURE_STAGE_ENVS) --override ppo.rollout_steps=$(CAPTURE_STAGE_ROLLOUT_STEPS) --override ppo.eval_every=$(CAPTURE_STAGE_EVAL_EVERY) --override ppo.eval_episodes=$(CAPTURE_STAGE_EVAL_EPISODES)
+	$(PYTHON) scripts/train_mlx_ppo.py --config $(SWING_HANDOFF_CONFIG) --override experiment.out_dir=$(CAPTURE_STAGE_OUT) --override env.init_mode=state_list --override env.init_states_path=$(SWING_HANDOFF_OUT) --override env.init_cart_noise=0.02 --override env.init_cart_vel_noise=0.04 --override env.init_angle_noise=0.012 --override env.init_vel_noise=0.05 --override env.episode_seconds=15.0 --override env.rail_limit_start=$(CAPTURE_STAGE_RAIL_LIMIT) --override env.rail_limit_end=$(CAPTURE_STAGE_RAIL_LIMIT) --override env.reward.centered_upright_max_cart_abs=$(CAPTURE_STAGE_CENTERED_MAX_CART_ABS) --override env.reward.low_momentum_max_cart_abs=$(CAPTURE_STAGE_CENTERED_MAX_CART_ABS) --override env.reward.cart_pos=$(CAPTURE_STAGE_CART_POS_COST) --override env.reward.rail_margin=$(CAPTURE_STAGE_RAIL_MARGIN) --override env.reward.rail_margin_start=$(CAPTURE_STAGE_RAIL_MARGIN_START) --override env.reward.centered_upright_streak=$(CAPTURE_STAGE_CENTERED_STREAK) --override env.reward.centered_upright_streak_cap_seconds=5.0 --override env.reward.low_momentum_upright_streak=$(CAPTURE_STAGE_LOW_MOMENTUM_STREAK) --override env.reward.low_momentum_upright_streak_cap_seconds=5.0 --override ppo.curriculum_mode=gated --override ppo.curriculum_start_progress=$(CAPTURE_STAGE_PROGRESS) --override ppo.curriculum_step=0.0 --override ppo.curriculum_min_updates_per_stage=999999 --override ppo.eval_progress=current --override ppo.total_updates=$(CAPTURE_STAGE_UPDATES) --override ppo.num_envs=$(CAPTURE_STAGE_ENVS) --override ppo.rollout_steps=$(CAPTURE_STAGE_ROLLOUT_STEPS) --override ppo.eval_every=$(CAPTURE_STAGE_EVAL_EVERY) --override ppo.eval_episodes=$(CAPTURE_STAGE_EVAL_EPISODES) --override ppo.entropy_coef=$(CAPTURE_STAGE_ENTROPY)
 
 eval-capture-policy-handoff-shaped6:
 	$(PYTHON) scripts/evaluate.py --config configs/swingup6_policy_handoff_capture_shaped.yaml --checkpoint runs/swingup6_policy_handoff_capture_shaped/checkpoints/best.safetensors --episodes 20 --progress 1.0 --out runs/swingup6_policy_handoff_capture_shaped/eval_capture_policy_handoff_shaped6.json
