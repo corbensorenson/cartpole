@@ -68,6 +68,10 @@ def state_row(
         "time_to_first_upright": info["time_to_first_upright"],
         "progress": float(info.get("progress", env.progress)),
         "rail_limit": float(info.get("rail_limit", env.rail_limit)),
+        "lengths": list(info.get("lengths", [])),
+        "masses": list(info.get("masses", [])),
+        "damping": list(info.get("damping", [])),
+        "frictionloss": list(info.get("frictionloss", [])),
     }
 
 
@@ -261,7 +265,7 @@ def main() -> None:
         max_angle=float(args.max_angle if args.max_angle is not None else cfg["env"].get("success_upright_threshold", reward_cfg.get("upright_threshold", 0.15))),
         max_hinge_rms=float(args.max_hinge_rms if args.max_hinge_rms is not None else reward_cfg.get("upright_hinge_vel_threshold", 0.7)),
         max_cart_velocity=float(args.max_cart_velocity if args.max_cart_velocity is not None else reward_cfg.get("upright_cart_vel_threshold", 0.45)),
-        max_cart_abs=args.max_cart_abs,
+        max_cart_abs=args.max_cart_abs if args.max_cart_abs is not None else reward_cfg.get("low_momentum_max_cart_abs"),
         min_time=float(args.min_time),
         stride=int(args.stride),
         max_states=args.max_states,

@@ -1,6 +1,19 @@
-.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-capture search-swingup-chain export-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-policy-handoff-shaped6 eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
+.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-capture search-swingup-chain export-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
 
 PYTHON ?= .venv/bin/python
+SWING_HANDOFF_RUN ?= runs/swingup6_gradient_low_momentum
+SWING_HANDOFF_CONFIG ?= $(SWING_HANDOFF_RUN)/config.resolved.yaml
+SWING_HANDOFF_CHECKPOINT ?= $(SWING_HANDOFF_RUN)/checkpoints/frontier.safetensors
+SWING_HANDOFF_OUT ?= runs/swingup6_policy_handoff/swing_handoff_states.json
+SWING_HANDOFF_EPISODES ?= 128
+SWING_HANDOFF_MAX_STATES ?= 512
+CAPTURE_STAGE_PROGRESS ?= 1.0
+CAPTURE_STAGE_OUT ?= runs/swingup6_policy_handoff_capture_stage
+CAPTURE_STAGE_UPDATES ?= 5000
+CAPTURE_STAGE_ENVS ?= 48
+CAPTURE_STAGE_ROLLOUT_STEPS ?= 256
+CAPTURE_STAGE_EVAL_EVERY ?= 50
+CAPTURE_STAGE_EVAL_EPISODES ?= 8
 
 setup:
 	bash scripts/setup_mac.sh
@@ -39,7 +52,7 @@ swingup6-gradient-low-momentum:
 	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_gradient_low_momentum.yaml
 
 swingup6-uniform-low-momentum:
-	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_uniform_low_momentum_finetune.yaml --init-checkpoint runs/swingup6_gradient_low_momentum/checkpoints/frontier.safetensors
+	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_uniform_low_momentum_finetune.yaml --init-checkpoint $(SWING_HANDOFF_CHECKPOINT)
 
 capture-handoff6:
 	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_capture_handoff.yaml
@@ -75,7 +88,7 @@ export-swingup-states:
 	$(PYTHON) scripts/export_swingup_states.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_expert_chain/swing_states.json
 
 export-policy-handoff-states:
-	$(PYTHON) scripts/export_policy_handoff_states.py --config runs/swingup6_gradient_low_momentum/config.resolved.yaml --checkpoint runs/swingup6_gradient_low_momentum/checkpoints/frontier.safetensors --use-checkpoint-progress --episodes 128 --max-states 512 --one-per-episode --out runs/swingup6_policy_handoff/swing_handoff_states.json
+	$(PYTHON) scripts/export_policy_handoff_states.py --config $(SWING_HANDOFF_CONFIG) --checkpoint $(SWING_HANDOFF_CHECKPOINT) --use-checkpoint-progress --episodes $(SWING_HANDOFF_EPISODES) --max-states $(SWING_HANDOFF_MAX_STATES) --one-per-episode --out $(SWING_HANDOFF_OUT)
 
 eval-expert-chain:
 	$(PYTHON) scripts/evaluate_expert_chain.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_expert_chain/eval_chain.json
@@ -97,6 +110,9 @@ eval-capture-state-list-shaped6:
 
 capture-policy-handoff-shaped6:
 	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_policy_handoff_capture_shaped.yaml
+
+capture-policy-handoff-stage:
+	$(PYTHON) scripts/train_mlx_ppo.py --config $(SWING_HANDOFF_CONFIG) --override experiment.out_dir=$(CAPTURE_STAGE_OUT) --override env.init_mode=state_list --override env.init_states_path=$(SWING_HANDOFF_OUT) --override env.init_cart_noise=0.02 --override env.init_cart_vel_noise=0.04 --override env.init_angle_noise=0.012 --override env.init_vel_noise=0.05 --override env.episode_seconds=15.0 --override ppo.curriculum_mode=gated --override ppo.curriculum_start_progress=$(CAPTURE_STAGE_PROGRESS) --override ppo.curriculum_step=0.0 --override ppo.curriculum_min_updates_per_stage=999999 --override ppo.eval_progress=current --override ppo.total_updates=$(CAPTURE_STAGE_UPDATES) --override ppo.num_envs=$(CAPTURE_STAGE_ENVS) --override ppo.rollout_steps=$(CAPTURE_STAGE_ROLLOUT_STEPS) --override ppo.eval_every=$(CAPTURE_STAGE_EVAL_EVERY) --override ppo.eval_episodes=$(CAPTURE_STAGE_EVAL_EPISODES)
 
 eval-capture-policy-handoff-shaped6:
 	$(PYTHON) scripts/evaluate.py --config configs/swingup6_policy_handoff_capture_shaped.yaml --checkpoint runs/swingup6_policy_handoff_capture_shaped/checkpoints/best.safetensors --episodes 20 --progress 1.0 --out runs/swingup6_policy_handoff_capture_shaped/eval_capture_policy_handoff_shaped6.json

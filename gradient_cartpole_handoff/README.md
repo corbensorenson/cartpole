@@ -119,6 +119,26 @@ make eval-swingup6-low-momentum
 
 `export-policy-handoff-states` is the boundary between the two experts: it replays the learned swing frontier policy and writes actual MuJoCo `qpos/qvel` low-momentum handoff states for the capture/stabilize expert.
 
+For an ad-hoc continuation run, point the handoff/export targets at that run without editing the Makefile:
+
+```bash
+make export-policy-handoff-states \
+  SWING_HANDOFF_RUN=runs/swingup6_gradient_low_momentum_centered_gate025_from3125_lowent_180
+
+make capture-policy-handoff-shaped6
+```
+
+The exporter uses `checkpoints/frontier.safetensors` by default and inherits the swing reward's centered low-momentum cart-position gate (`low_momentum_max_cart_abs`) unless `--max-cart-abs` is explicitly supplied.
+
+If the exported frontier is still a gradiented curriculum stage, train the diagnostic capture expert on the same stage instead of forcing those states into the final uniform plant:
+
+```bash
+make capture-policy-handoff-stage \
+  SWING_HANDOFF_RUN=runs/swingup6_gradient_low_momentum_centered_gate025_from3125_lowent_180 \
+  CAPTURE_STAGE_PROGRESS=0.3375 \
+  CAPTURE_STAGE_OUT=runs/swingup6_policy_handoff_capture_stage03375
+```
+
 ---
 
 # 1. Mac setup
