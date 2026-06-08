@@ -39,7 +39,7 @@ swingup6-gradient-low-momentum:
 	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_gradient_low_momentum.yaml
 
 swingup6-uniform-low-momentum:
-	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_uniform_low_momentum_finetune.yaml --init-checkpoint runs/swingup6_gradient_low_momentum/checkpoints/best.safetensors
+	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_uniform_low_momentum_finetune.yaml --init-checkpoint runs/swingup6_gradient_low_momentum/checkpoints/frontier.safetensors
 
 capture-handoff6:
 	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_capture_handoff.yaml
@@ -75,7 +75,7 @@ export-swingup-states:
 	$(PYTHON) scripts/export_swingup_states.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_expert_chain/swing_states.json
 
 export-policy-handoff-states:
-	$(PYTHON) scripts/export_policy_handoff_states.py --config runs/swingup6_gradient_low_momentum/config.resolved.yaml --checkpoint runs/swingup6_gradient_low_momentum/checkpoints/best.safetensors --use-checkpoint-progress --episodes 128 --max-states 512 --one-per-episode --out runs/swingup6_policy_handoff/swing_handoff_states.json
+	$(PYTHON) scripts/export_policy_handoff_states.py --config runs/swingup6_gradient_low_momentum/config.resolved.yaml --checkpoint runs/swingup6_gradient_low_momentum/checkpoints/frontier.safetensors --use-checkpoint-progress --episodes 128 --max-states 512 --one-per-episode --out runs/swingup6_policy_handoff/swing_handoff_states.json
 
 eval-expert-chain:
 	$(PYTHON) scripts/evaluate_expert_chain.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_expert_chain/eval_chain.json

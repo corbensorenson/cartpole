@@ -85,7 +85,7 @@ Environment spec:
 | Upright threshold | max absolute link angle `< 0.15 rad` |
 | Reward gate | no survival bonus; shaped return prioritizes upright angle, capture, and sustained upright |
 
-During training, `best.safetensors` is selected by success/capture metrics before return: success rate, ever-upright rate, upright streak length, then shaped return. A long episode that never reaches upright should not become the best swing-up checkpoint.
+During training, `best.safetensors` is selected by success/capture metrics before return: success rate, ever-upright rate, upright streak length, then shaped return. A long episode that never reaches upright should not become the best swing-up checkpoint. For gated swing pretraining, `frontier.safetensors` is also written when a curriculum stage passes; use that checkpoint for handoff export and uniform fine-tuning because it represents the farthest mastered swing stage, not merely the easiest high-scoring stage.
 
 Run path:
 
@@ -117,7 +117,7 @@ make eval-swingup6-low-momentum
 
 `configs/swingup6_gradient_low_momentum.yaml` starts with easier length, mass, damping, hinge friction-loss, and longer-rail gradients, then anneals them away. `configs/swingup6_uniform_low_momentum_finetune.yaml` removes those training wheels and evaluates at the final hanging-start task with the real `+/-3 m` rail.
 
-`export-policy-handoff-states` is the boundary between the two experts: it replays the learned swing policy and writes actual MuJoCo `qpos/qvel` low-momentum handoff states for the capture/stabilize expert.
+`export-policy-handoff-states` is the boundary between the two experts: it replays the learned swing frontier policy and writes actual MuJoCo `qpos/qvel` low-momentum handoff states for the capture/stabilize expert.
 
 ---
 

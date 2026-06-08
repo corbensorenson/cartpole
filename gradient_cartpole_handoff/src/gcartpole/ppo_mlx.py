@@ -548,7 +548,31 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                     and update - last_curriculum_advance_update >= curriculum_min_updates
                     and curriculum_gate_passed(ppo, eval_metrics)
                 ):
-                    curriculum_progress = float(np.clip(progress + curriculum_step, 0.0, 1.0))
+                    next_progress = float(np.clip(progress + curriculum_step, 0.0, 1.0))
+                    save_model(model, ckpt_dir / "frontier.safetensors")
+                    dump_json(
+                        {
+                            "update": update,
+                            "progress": progress,
+                            "eval_progress": eval_progress,
+                            "curriculum_progress_next": next_progress,
+                            "curriculum_mode": curriculum_mode,
+                            "eval": eval_metrics,
+                            "checkpoint_score": list(eval_score),
+                            "checkpoint_score_order": [
+                                "success_rate",
+                                "low_momentum_upright_rate",
+                                "ever_upright_rate",
+                                "max_upright_streak_mean",
+                                "max_upright_streak_max",
+                                "max_capture_quality_mean",
+                                "return_mean",
+                            ],
+                            "global_steps": global_steps,
+                        },
+                        ckpt_dir / "frontier.meta.json",
+                    )
+                    curriculum_progress = next_progress
                     last_curriculum_advance_update = update
                     curriculum_advanced = curriculum_progress > progress
 
