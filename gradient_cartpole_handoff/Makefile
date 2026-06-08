@@ -1,6 +1,8 @@
-.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-capture search-swingup-chain export-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
+.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-capture search-swingup-chain export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
 
 PYTHON ?= .venv/bin/python
+SWING_TRAJECTORY_SEARCH_OUT ?= runs/swingup6_trajectory_search/low_momentum_search.json
+SWING_TRAJECTORY_STATES_OUT ?= runs/swingup6_expert_chain/swing_states_low_momentum.json
 SWING_HANDOFF_RUN ?= runs/swingup6_gradient_low_momentum
 SWING_HANDOFF_CONFIG ?= $(SWING_HANDOFF_RUN)/config.resolved.yaml
 SWING_HANDOFF_CHECKPOINT ?= $(SWING_HANDOFF_RUN)/checkpoints/frontier.safetensors
@@ -83,6 +85,9 @@ probe-swingup-trajectory:
 search-swingup-trajectory:
 	$(PYTHON) scripts/search_swingup_trajectory.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_trajectory_search/search.json
 
+search-swingup-low-momentum:
+	$(PYTHON) scripts/search_swingup_trajectory.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --seconds 16 --score-mode low_momentum --handoff-min-time 4.0 --handoff-max-cart-abs 1.25 --out $(SWING_TRAJECTORY_SEARCH_OUT)
+
 search-swingup-capture:
 	$(PYTHON) scripts/search_swingup_capture.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_capture_search/search.json
 
@@ -94,6 +99,9 @@ export-chain-states:
 
 export-swingup-states:
 	$(PYTHON) scripts/export_swingup_states.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_expert_chain/swing_states.json
+
+export-low-momentum-swingup-states:
+	$(PYTHON) scripts/export_swingup_states.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --controller-json $(SWING_TRAJECTORY_SEARCH_OUT) --max-angle 0.35 --min-time 4.0 --max-hinge-rms 2.5 --max-cart-abs 2.75 --max-cart-velocity 2.0 --keep-best 96 --out $(SWING_TRAJECTORY_STATES_OUT)
 
 export-policy-handoff-states:
 	$(PYTHON) scripts/export_policy_handoff_states.py --config $(SWING_HANDOFF_CONFIG) --checkpoint $(SWING_HANDOFF_CHECKPOINT) --use-checkpoint-progress --episodes $(SWING_HANDOFF_EPISODES) --max-states $(SWING_HANDOFF_MAX_STATES) --one-per-episode --out $(SWING_HANDOFF_OUT)

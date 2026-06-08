@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 from typing import Any
 
@@ -19,6 +20,28 @@ from probe_swingup_trajectory import (
 )
 
 
+def load_initial_controller(path: str | None) -> dict[str, Any]:
+    if not path:
+        return {
+            "type": "cart_position_pd_fixed_knots",
+            "trajectory_seconds": float(DEFAULT_TRAJECTORY_SECONDS),
+            "kp": float(DEFAULT_KP),
+            "kd": float(DEFAULT_KD),
+            "knots": DEFAULT_KNOTS.astype(float).tolist(),
+        }
+    with open(Path(path), "r", encoding="utf-8") as f:
+        payload = json.load(f)
+    if isinstance(payload, dict) and "best" in payload:
+        return dict(payload["best"]["controller"])
+    if isinstance(payload, dict) and "best_by" in payload and "score" in payload["best_by"]:
+        return dict(payload["best_by"]["score"]["controller"])
+    if isinstance(payload, dict) and "controller" in payload:
+        return dict(payload["controller"])
+    if isinstance(payload, dict) and "knots" in payload:
+        return dict(payload)
+    raise ValueError(f"Could not load controller from {path}")
+
+
 def evaluate_controller(
     cfg: dict[str, Any],
     *,
@@ -30,6 +53,9 @@ def evaluate_controller(
     trajectory_seconds: float,
     kp: float,
     kd: float,
+    score_mode: str,
+    handoff_min_time: float,
+    handoff_max_cart_abs: float,
 ) -> dict[str, Any]:
     cfg = {**cfg, "env": {**cfg["env"]}}
     if zero_noise:
@@ -73,6 +99,7 @@ def evaluate_controller(
             "max_abs_angle": float(info["max_abs_angle"]),
             "mean_abs_angle": float(info["mean_abs_angle"]),
             "hinge_velocity_rms": hinge_rms,
+            "capture_quality": float(info.get("capture_quality", 0.0)),
             "relative_angles": rel.astype(float).tolist(),
             "absolute_angles": abs_angles.astype(float).tolist(),
             "is_upright": bool(info["is_upright"]),
@@ -82,15 +109,33 @@ def evaluate_controller(
         }
 
         angle_gap = max(0.0, row["max_abs_angle"] - threshold)
-        row_score = (
-            50.0 * angle_gap
-            + row["mean_abs_angle"]
-            + 0.55 * row["hinge_velocity_rms"]
-            + 0.08 * abs(row["x"])
-            + 0.04 * abs(row["cart_velocity"])
-        )
-        if row["max_abs_angle"] < threshold:
-            row_score -= 0.50
+        if score_mode == "reachability":
+            row_score = (
+                50.0 * angle_gap
+                + row["mean_abs_angle"]
+                + 0.55 * row["hinge_velocity_rms"]
+                + 0.08 * abs(row["x"])
+                + 0.04 * abs(row["cart_velocity"])
+            )
+            if row["max_abs_angle"] < threshold:
+                row_score -= 0.50
+        elif score_mode == "low_momentum":
+            cart_over = max(0.0, abs(row["x"]) - handoff_max_cart_abs)
+            time_shortfall = max(0.0, handoff_min_time - row["time_seconds"])
+            row_score = (
+                220.0 * angle_gap
+                + 6.0 * row["max_abs_angle"]
+                + 2.0 * row["hinge_velocity_rms"]
+                + 0.85 * abs(row["cart_velocity"])
+                + 0.60 * abs(row["x"])
+                + 12.0 * cart_over * cart_over
+                + 20.0 * time_shortfall
+                - 4.0 * float(row["is_upright"])
+                - 2.0 * row["capture_quality"]
+                - 0.80 * row["max_upright_streak_seconds"]
+            )
+        else:
+            raise ValueError(f"unknown score_mode={score_mode!r}")
         if row_score < score:
             score = row_score
             best = row
@@ -136,6 +181,10 @@ def main() -> None:
     parser.add_argument("--seconds", type=float, default=30.0)
     parser.add_argument("--out", default="runs/swingup6_trajectory_search/search.json")
     parser.add_argument("--zero-noise", action="store_true", help="Search the exact hanging state by overriding init noise to zero")
+    parser.add_argument("--init-controller-json", default=None)
+    parser.add_argument("--score-mode", choices=["reachability", "low_momentum"], default="reachability")
+    parser.add_argument("--handoff-min-time", type=float, default=4.0)
+    parser.add_argument("--handoff-max-cart-abs", type=float, default=1.25)
     parser.add_argument("--iterations", type=int, default=20)
     parser.add_argument("--population", type=int, default=64)
     parser.add_argument("--elites", type=int, default=8)
@@ -154,8 +203,19 @@ def main() -> None:
 
     cfg = apply_overrides(load_config(args.config), args.override)
     rng = np.random.default_rng(args.seed)
-    knot_count = len(DEFAULT_KNOTS)
-    center = np.concatenate([DEFAULT_KNOTS[1:], [DEFAULT_KP, DEFAULT_KD, DEFAULT_TRAJECTORY_SECONDS]]).astype(np.float64)
+    center_controller = load_initial_controller(args.init_controller_json)
+    center_knots = np.asarray(center_controller["knots"], dtype=np.float64)
+    knot_count = len(center_knots)
+    center = np.concatenate(
+        [
+            center_knots[1:],
+            [
+                float(center_controller["kp"]),
+                float(center_controller["kd"]),
+                float(center_controller["trajectory_seconds"]),
+            ],
+        ]
+    ).astype(np.float64)
     sigma = np.concatenate(
         [
             np.full(knot_count - 1, args.knot_sigma, dtype=np.float64),
@@ -183,6 +243,9 @@ def main() -> None:
                 trajectory_seconds=trajectory_seconds,
                 kp=kp,
                 kd=kd,
+                score_mode=args.score_mode,
+                handoff_min_time=args.handoff_min_time,
+                handoff_max_cart_abs=args.handoff_max_cart_abs,
             )
             records.append(
                 {
@@ -288,6 +351,10 @@ def main() -> None:
             "gain_sigma": float(args.gain_sigma),
             "time_sigma": float(args.time_sigma),
             "sigma_decay": float(args.sigma_decay),
+            "score_mode": str(args.score_mode),
+            "handoff_min_time": float(args.handoff_min_time),
+            "handoff_max_cart_abs": float(args.handoff_max_cart_abs),
+            "init_controller_json": args.init_controller_json,
         },
         "best": best_record,
         "best_by": {

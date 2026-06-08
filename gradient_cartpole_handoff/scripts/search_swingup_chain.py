@@ -46,8 +46,8 @@ def controller_to_vector(controller: dict[str, Any]) -> np.ndarray:
                     controller["kp"],
                     controller["kd"],
                     controller["trajectory_seconds"],
-                    controller["capture_min_time"],
-                    controller["capture_enter_angle"],
+                    controller.get("capture_min_time", 5.70),
+                    controller.get("capture_enter_angle", 0.16),
                 ],
                 dtype=np.float64,
             ),
@@ -56,23 +56,29 @@ def controller_to_vector(controller: dict[str, Any]) -> np.ndarray:
 
 
 def load_initial_controller(path: str | None) -> dict[str, Any]:
+    def normalize(controller: dict[str, Any]) -> dict[str, Any]:
+        controller = dict(controller)
+        controller.setdefault("capture_min_time", 5.70)
+        controller.setdefault("capture_enter_angle", 0.16)
+        return controller
+
     if not path:
-        return {
+        return normalize({
             "knots": DEFAULT_KNOTS.astype(float).tolist(),
             "kp": float(DEFAULT_KP),
             "kd": float(DEFAULT_KD),
             "trajectory_seconds": float(DEFAULT_TRAJECTORY_SECONDS),
             "capture_min_time": 5.70,
             "capture_enter_angle": 0.16,
-        }
+        })
     with open(Path(path), "r", encoding="utf-8") as f:
         payload = json.load(f)
     if isinstance(payload, dict) and "best" in payload:
-        return dict(payload["best"]["controller"])
+        return normalize(payload["best"]["controller"])
     if isinstance(payload, dict) and "controller" in payload:
-        return dict(payload["controller"])
+        return normalize(payload["controller"])
     if isinstance(payload, dict) and "knots" in payload:
-        return dict(payload)
+        return normalize(payload)
     raise ValueError(f"Could not load swing controller from {path}")
 
 

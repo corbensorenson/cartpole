@@ -130,6 +130,13 @@ make capture-policy-handoff-shaped6
 
 The exporter uses `checkpoints/frontier.safetensors` by default and inherits the swing reward's centered low-momentum cart-position gate (`low_momentum_max_cart_abs`) unless `--max-cart-abs` is explicitly supplied.
 
+For deterministic real-uniform trajectory probes, the search/export path can also target low-momentum handoff states before capture training:
+
+```bash
+make search-swingup-low-momentum
+make export-low-momentum-swingup-states
+```
+
 If the exported frontier is still a gradiented curriculum stage, train the diagnostic capture expert on the same stage instead of forcing those states into the final uniform plant:
 
 ```bash
