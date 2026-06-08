@@ -53,6 +53,23 @@ The current-stage `120` update probe reached low-momentum upright handoffs throu
 
 The swing pretrain reward config also sets `low_momentum_min_time_seconds: 0.50`, so checkpoint selection and gated curriculum advancement cannot count an immediate near-upright reset as a real swing handoff.
 
+Post-control gate probe:
+
+```text
+runs/swingup6_gradient_low_momentum_postcontrol_probe_300
+```
+
+This run was stopped after update `174` because it remained stuck at curriculum progress `0.0`. The best checkpoint reached current-stage upright events (`ever_upright_rate = 1.0`, `max_upright_streak_mean = 0.513 s`, `max_upright_streak_max = 0.74 s` at update `100`) but only `2/6` eval episodes passed the stricter post-control low-momentum handoff gate. A `12` episode per-episode eval showed the policy was using the temporary `+/-9 m` rail and terminating at the rail, so the long rail was acting as an escape path instead of only a windup aid. The checked-in reward/eval path now supports `capture_cart_pos_abs_scale` and `low_momentum_max_cart_abs`; the active swing configs set a `1.5 m` absolute cart-position capture-quality scale and require low-momentum handoff events inside `2.5 m`.
+
+The centered-handoff follow-up:
+
+```text
+runs/swingup6_gradient_low_momentum_centered_handoff_probe_180
+runs/swingup6_gradient_low_momentum_centered_gate025_continue_80
+```
+
+was stopped at update `100`. The best checkpoint still had `low_momentum_upright_rate = 0.333` over `6` eval episodes, but the centered reward changed the failure mode: `ever_upright_rate = 1.0`, `max_upright_streak_mean = 0.51 s`, `max_upright_streak_max = 0.86 s`, and `max_capture_quality_mean = 0.892`. The checked-in gate now uses `curriculum_gate_low_momentum_upright_rate: 0.25`, which requires at least two centered, post-control low-momentum handoffs in the default `8` episode eval while still allowing the curriculum to move off progress `0.0`. A short continuation from that checkpoint validated the change: it advanced at updates `25`, `30`, and `60`, reaching curriculum progress `0.0375`. It then stalled at that stage; the update `80` eval at progress `0.0375` had `ever_upright_rate = 0.833`, `max_upright_streak_max = 1.0 s`, but only `low_momentum_upright_rate = 0.167`. This is progress on the curriculum machinery, not solution evidence.
+
 Learned swing-policy handoff export:
 
 ```text

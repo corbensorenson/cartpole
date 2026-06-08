@@ -253,10 +253,22 @@ class NLinkCartPoleEnv(gym.Env):
         capture_quality = self._capture_quality(max_abs_angle=max_abs_angle, hinge_vel_rms=hinge_vel_rms)
         rail_margin_start = float(reward_cfg.get("rail_margin_start", 1.0))
         rail_margin = max(0.0, abs(float(qpos[0])) / self.rail_limit - rail_margin_start)
+        low_momentum_reward_min_time = float(
+            reward_cfg.get(
+                "low_momentum_reward_min_time_seconds",
+                reward_cfg.get("low_momentum_min_time_seconds", 0.0),
+            )
+        )
+        max_handoff_cart_abs = reward_cfg.get("low_momentum_max_cart_abs")
         upright_low_velocity = float(
             bool(upright)
+            and float(self.step_count * self.dt) >= low_momentum_reward_min_time
             and hinge_vel_rms <= float(reward_cfg.get("upright_hinge_vel_threshold", 1.0))
             and abs(float(qvel[0])) <= float(reward_cfg.get("upright_cart_vel_threshold", 1.0))
+            and (
+                max_handoff_cart_abs is None
+                or abs(float(qpos[0])) <= float(max_handoff_cart_abs)
+            )
         )
         upright_streak_seconds = min(
             float(self.upright_streak_steps * self.dt),
@@ -294,10 +306,15 @@ class NLinkCartPoleEnv(gym.Env):
         if hinge_vel_rms is None:
             hinge_vel_rms = float(np.sqrt(np.mean(qvel[1 : 1 + self.n] ** 2)))
         cart_pos_norm = abs(float(qpos[0])) / self.rail_limit
+        cart_pos_abs_scale = reward_cfg.get("capture_cart_pos_abs_scale")
+        if cart_pos_abs_scale is None:
+            cart_pos_cost = cart_pos_norm / cart_pos_scale
+        else:
+            cart_pos_cost = abs(float(qpos[0])) / max(1e-6, float(cart_pos_abs_scale))
         cost = (
             (float(max_abs_angle) / angle_scale) ** 2
             + (float(hinge_vel_rms) / hinge_vel_scale) ** 2
-            + (cart_pos_norm / cart_pos_scale) ** 2
+            + cart_pos_cost ** 2
             + (abs(float(qvel[0])) / cart_vel_scale) ** 2
         )
         return float(np.exp(-min(50.0, cost)))

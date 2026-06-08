@@ -38,10 +38,14 @@ env:
     capture_angle_scale: 0.24
     capture_hinge_vel_scale: 0.90
     capture_cart_pos_scale: 0.50
+    capture_cart_pos_abs_scale: 1.50
     capture_cart_vel_scale: 0.65
     upright_low_velocity_bonus: 45.0
     upright_hinge_vel_threshold: 0.70
     upright_cart_vel_threshold: 0.45
+    low_momentum_min_time_seconds: 0.50
+    low_momentum_reward_min_time_seconds: 0.50
+    low_momentum_max_cart_abs: 2.50
     angle_abs: 1.0
     angle_rel: 0.03
     tip: 0.50
