@@ -300,6 +300,7 @@ def curriculum_gate_passed(ppo: dict[str, Any], eval_metrics: dict[str, Any]) ->
         "success_rate": float(ppo.get("curriculum_gate_success_rate", 0.0)),
         "ever_upright_rate": float(ppo.get("curriculum_gate_ever_upright_rate", 0.6)),
         "low_momentum_upright_rate": float(ppo.get("curriculum_gate_low_momentum_upright_rate", 0.6)),
+        "max_upright_streak_mean": float(ppo.get("curriculum_gate_mean_upright_streak", 0.0)),
         "max_upright_streak_max": float(ppo.get("curriculum_gate_max_upright_streak", 0.20)),
         "max_capture_quality_max": float(ppo.get("curriculum_gate_max_capture_quality", 0.50)),
     }

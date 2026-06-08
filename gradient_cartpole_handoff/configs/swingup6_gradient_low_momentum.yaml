@@ -110,6 +110,7 @@ ppo:
   curriculum_gate_success_rate: 0.0
   curriculum_gate_ever_upright_rate: 0.60
   curriculum_gate_low_momentum_upright_rate: 0.60
+  curriculum_gate_mean_upright_streak: 0.25
   curriculum_gate_max_upright_streak: 0.25
   curriculum_gate_max_capture_quality: 0.50
   # During gradient pretraining, choose the best checkpoint at the current
