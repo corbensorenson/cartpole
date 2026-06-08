@@ -1,0 +1,14 @@
+experiment:
+  name: linear_sweep_n
+  seed: 123
+  out_dir: runs/linear_sweep_n
+
+sweep:
+  n_min: 2
+  n_max: 12
+  total_length: 3.0
+  total_mass: 1.0
+  cart_mass: 1.0
+  alpha_length_values: [0.0, 0.25, 0.5, 0.75, 1.0]
+  alpha_mass_values: [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
+  total_damping: 0.015

@@ -1,0 +1,197 @@
+from __future__ import annotations
+
+from dataclasses import asdict
+from typing import Any
+
+import gymnasium as gym
+import numpy as np
+from gymnasium import spaces
+
+try:
+    import mujoco
+except Exception as exc:  # pragma: no cover - import checked by smoke_test on target machine
+    mujoco = None
+    _MUJOCO_IMPORT_ERROR = exc
+else:
+    _MUJOCO_IMPORT_ERROR = None
+
+from .mjxml import generate_nlink_cartpole_xml
+from .morphology import Morphology, build_morphology
+
+
+class NLinkCartPoleEnv(gym.Env):
+    """Planar n-link cart-pole environment generated from gradient morphology parameters.
+
+    The action space is normalized continuous force in [-1, 1]. The MuJoCo motor force is
+    action * env.force_limit.
+    """
+
+    metadata = {"render_modes": ["rgb_array", "human"], "render_fps": 50}
+
+    def __init__(self, cfg: dict[str, Any], progress: float = 0.0, seed: int | None = None, render_mode: str | None = None):
+        if mujoco is None:
+            raise RuntimeError(f"Could not import mujoco: {_MUJOCO_IMPORT_ERROR}")
+        self.cfg = cfg
+        self.env_cfg = cfg["env"]
+        self.morph_cfg = cfg["morphology"]
+        self.render_mode = render_mode
+        self.rng = np.random.default_rng(seed)
+        self.progress = float(progress)
+        self.n = int(self.env_cfg["n_links"])
+        self.force_limit = float(self.env_cfg["force_limit"])
+        self.rail_limit = float(self.env_cfg["rail_limit"])
+        self.frame_skip = int(self.env_cfg.get("frame_skip", 1))
+        self.max_steps = max(1, int(float(self.env_cfg["episode_seconds"]) / (float(self.env_cfg["timestep"]) * self.frame_skip)))
+        self.obs_include_morphology = bool(self.env_cfg.get("obs_include_morphology", True))
+        self.step_count = 0
+        self.last_action_norm = np.zeros(1, dtype=np.float32)
+        self.renderer = None
+        self._build_model(self.progress)
+
+        obs_dim = self._get_obs().shape[0]
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(obs_dim,), dtype=np.float32)
+        self.action_space = spaces.Box(-1.0, 1.0, shape=(1,), dtype=np.float32)
+
+    @property
+    def dt(self) -> float:
+        return float(self.env_cfg["timestep"]) * self.frame_skip
+
+    def _build_model(self, progress: float) -> None:
+        self.progress = float(progress)
+        self.morphology: Morphology = build_morphology(self.env_cfg, self.morph_cfg, self.progress)
+        xml = generate_nlink_cartpole_xml(
+            self.morphology,
+            cart_mass=float(self.env_cfg["cart_mass"]),
+            rail_limit=float(self.env_cfg["rail_limit"]),
+            force_limit=float(self.env_cfg["force_limit"]),
+            timestep=float(self.env_cfg["timestep"]),
+            cart_damping=float(self.env_cfg.get("cart_damping", 0.0)),
+            joint_armature=float(self.env_cfg.get("joint_armature", 0.0)),
+            link_radius=float(self.env_cfg.get("link_radius", 0.025)),
+        )
+        self.xml = xml
+        self.model = mujoco.MjModel.from_xml_string(xml)
+        self.data = mujoco.MjData(self.model)
+        self.renderer = None
+        mujoco.mj_forward(self.model, self.data)
+
+    def set_progress(self, progress: float) -> None:
+        self._build_model(progress)
+        self.reset()
+
+    def reset(self, *, seed: int | None = None, options: dict[str, Any] | None = None):
+        if seed is not None:
+            self.rng = np.random.default_rng(seed)
+        self.step_count = 0
+        self.data.qpos[:] = 0.0
+        self.data.qvel[:] = 0.0
+        angle_noise = float(self.env_cfg.get("init_angle_noise", 0.02))
+        vel_noise = float(self.env_cfg.get("init_vel_noise", 0.01))
+        self.data.qpos[1 : 1 + self.n] = self.rng.normal(0.0, angle_noise, size=self.n)
+        self.data.qvel[:] = self.rng.normal(0.0, vel_noise, size=self.n + 1)
+        self.data.ctrl[:] = 0.0
+        self.last_action_norm[:] = 0.0
+        mujoco.mj_forward(self.model, self.data)
+        return self._get_obs(), self._info()
+
+    def step(self, action):
+        action_arr = np.asarray(action, dtype=np.float32).reshape(-1)
+        action_norm = float(np.clip(action_arr[0], -1.0, 1.0))
+        self.last_action_norm[0] = action_norm
+        self.data.ctrl[0] = action_norm * self.force_limit
+        for _ in range(self.frame_skip):
+            mujoco.mj_step(self.model, self.data)
+        self.step_count += 1
+
+        obs = self._get_obs()
+        reward = self._reward(action_norm)
+        terminated = self._terminated()
+        truncated = self.step_count >= self.max_steps
+        info = self._info()
+        info["success"] = bool(truncated and not terminated)
+        return obs, reward, terminated, truncated, info
+
+    def _angles(self) -> tuple[np.ndarray, np.ndarray]:
+        rel = np.array(self.data.qpos[1 : 1 + self.n], dtype=np.float64)
+        abs_angles = np.cumsum(rel)
+        return rel, abs_angles
+
+    def _get_obs(self) -> np.ndarray:
+        qpos = np.array(self.data.qpos, dtype=np.float64)
+        qvel = np.array(self.data.qvel, dtype=np.float64)
+        rel, abs_angles = self._angles()
+        obs_parts = [
+            np.array([qpos[0] / self.rail_limit, qvel[0]], dtype=np.float64),
+            np.sin(abs_angles),
+            np.cos(abs_angles),
+            rel,
+            qvel[1 : 1 + self.n],
+        ]
+        if self.obs_include_morphology:
+            obs_parts.append(self.morphology.fingerprint())
+        obs = np.concatenate(obs_parts).astype(np.float32)
+        # Keep pathological MuJoCo explosions from poisoning PPO batches.
+        return np.nan_to_num(obs, nan=0.0, posinf=1e6, neginf=-1e6).astype(np.float32)
+
+    def _reward(self, action_norm: float) -> float:
+        reward_cfg = self.env_cfg.get("reward", {})
+        rel, abs_angles = self._angles()
+        qpos = self.data.qpos
+        qvel = self.data.qvel
+
+        angle_abs_cost = float(np.mean(1.0 - np.cos(abs_angles)))
+        angle_rel_cost = float(np.mean(rel * rel))
+        cart_pos_cost = float((qpos[0] / self.rail_limit) ** 2)
+        cart_vel_cost = float(qvel[0] ** 2)
+        hinge_vel_cost = float(np.mean(qvel[1 : 1 + self.n] ** 2))
+        control_cost = float(action_norm * action_norm)
+        upright = float(np.max(np.abs(abs_angles)) < float(reward_cfg.get("upright_threshold", 0.10)))
+
+        reward = float(reward_cfg.get("alive", 1.0))
+        reward += float(reward_cfg.get("upright_bonus", 0.0)) * upright
+        reward -= float(reward_cfg.get("angle_abs", 2.5)) * angle_abs_cost
+        reward -= float(reward_cfg.get("angle_rel", 0.15)) * angle_rel_cost
+        reward -= float(reward_cfg.get("cart_pos", 0.10)) * cart_pos_cost
+        reward -= float(reward_cfg.get("cart_vel", 0.005)) * cart_vel_cost
+        reward -= float(reward_cfg.get("hinge_vel", 0.001)) * hinge_vel_cost
+        reward -= float(reward_cfg.get("control", 0.0003)) * control_cost
+        return float(np.clip(reward, -100.0, 100.0))
+
+    def _terminated(self) -> bool:
+        if abs(float(self.data.qpos[0])) > self.rail_limit:
+            return True
+        _, abs_angles = self._angles()
+        if float(np.max(np.abs(abs_angles))) > float(self.env_cfg.get("terminate_abs_angle", 1.25)):
+            return True
+        if not np.all(np.isfinite(self.data.qpos)) or not np.all(np.isfinite(self.data.qvel)):
+            return True
+        return False
+
+    def _info(self) -> dict[str, Any]:
+        rel, abs_angles = self._angles()
+        return {
+            "x": float(self.data.qpos[0]),
+            "max_abs_angle": float(np.max(np.abs(abs_angles))),
+            "mean_abs_angle": float(np.mean(np.abs(abs_angles))),
+            "progress": float(self.progress),
+            "alpha_length": float(self.morphology.alpha_length),
+            "alpha_mass": float(self.morphology.alpha_mass),
+            "alpha_damping": float(self.morphology.alpha_damping),
+            "lengths": self.morphology.lengths.astype(float).tolist(),
+            "masses": self.morphology.masses.astype(float).tolist(),
+            "damping": self.morphology.damping.astype(float).tolist(),
+        }
+
+    def render(self):
+        return self.render_rgb()
+
+    def render_rgb(self, width: int = 1280, height: int = 720, camera: str = "side") -> np.ndarray:
+        if self.renderer is None or self.renderer.width != width or self.renderer.height != height:
+            self.renderer = mujoco.Renderer(self.model, width=width, height=height)
+        self.renderer.update_scene(self.data, camera=camera)
+        return self.renderer.render()
+
+    def close(self):
+        if self.renderer is not None:
+            self.renderer.close()
+            self.renderer = None

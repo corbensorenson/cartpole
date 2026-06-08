@@ -1,0 +1,68 @@
+experiment:
+  name: debug6_fast
+  seed: 7
+  out_dir: runs/debug6_fast
+
+env:
+  n_links: 6
+  total_length: 3.0
+  total_mass: 1.0
+  cart_mass: 1.0
+  rail_limit: 3.0
+  force_limit: 80.0
+  timestep: 0.005
+  frame_skip: 4
+  episode_seconds: 8.0
+  init_angle_noise: 0.025
+  init_vel_noise: 0.01
+  terminate_abs_angle: 1.25
+  cart_damping: 0.02
+  joint_armature: 0.0005
+  link_radius: 0.025
+  obs_include_morphology: true
+  curriculum_rebuild_every: 5
+  reward:
+    alive: 1.0
+    upright_bonus: 1.0
+    angle_abs: 2.5
+    angle_rel: 0.15
+    cart_pos: 0.10
+    cart_vel: 0.005
+    hinge_vel: 0.001
+    control: 0.0003
+    upright_threshold: 0.10
+
+morphology:
+  schedule_mode: mass_last
+  start:
+    alpha_length: 0.45
+    alpha_mass: 4.0
+    alpha_damping: 2.0
+    total_damping: 0.080
+  end:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    total_damping: 0.015
+
+ppo:
+  backend: mlx
+  vec_backend: serial
+  num_envs: 8
+  rollout_steps: 128
+  total_updates: 20
+  minibatches: 4
+  epochs: 2
+  gamma: 0.995
+  gae_lambda: 0.95
+  learning_rate: 0.0003
+  clip_coef: 0.20
+  entropy_coef: 0.010
+  value_coef: 0.50
+  max_grad_norm: 0.50
+  hidden_sizes: [128, 128]
+  action_std_init: 0.70
+  normalize_advantages: true
+  checkpoint_every: 5
+  eval_every: 5
+  eval_episodes: 3

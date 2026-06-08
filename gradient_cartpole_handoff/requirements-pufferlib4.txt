@@ -1,0 +1,4 @@
+# Optional. PufferLib 4.0 is currently easiest to install from the 4.0 branch.
+# It is CUDA-first; on Mac, treat this as experimental and do not block the MLX PPO path on it.
+git+https://github.com/PufferAI/PufferLib.git@4.0
+torch>=2.9

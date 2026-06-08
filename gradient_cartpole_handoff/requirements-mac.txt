@@ -1,0 +1,12 @@
+# Native Apple Silicon MVP path.
+# Use a native arm64 Python 3.10+; Python 3.12 is recommended.
+numpy>=1.26
+scipy>=1.11
+mujoco>=3.3.0
+gymnasium>=1.0.0
+PyYAML>=6.0
+tqdm>=4.66
+imageio>=2.34
+imageio-ffmpeg>=0.4.9
+matplotlib>=3.8
+mlx>=0.31.0; platform_system == "Darwin" and platform_machine == "arm64"
