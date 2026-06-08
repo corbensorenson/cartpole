@@ -42,6 +42,7 @@ def evaluate_chain(
     seconds: float,
     zero_noise: bool,
     capture_model: ActorCritic | None,
+    stabilize_model: ActorCritic | None,
     capture_gain: np.ndarray,
     stabilize_gain: np.ndarray,
     capture_enter_angle: float,
@@ -119,7 +120,11 @@ def evaluate_chain(
             else:
                 action = lqr_action(env, capture_gain, scale=lqr_capture_scale, cart_target=0.0)
         else:
-            action = lqr_action(env, stabilize_gain, scale=lqr_stabilize_scale, cart_target=0.0)
+            if stabilize_model is not None:
+                action_arr, _, _ = sample_action(stabilize_model, obs[None, :], deterministic=True)
+                action = float(action_arr[0, 0])
+            else:
+                action = lqr_action(env, stabilize_gain, scale=lqr_stabilize_scale, cart_target=0.0)
 
         stage_counts[stage] += 1
         action_abs_max = max(action_abs_max, abs(float(action)))
@@ -218,6 +223,8 @@ def main() -> None:
     parser.add_argument("--zero-noise", action="store_true")
     parser.add_argument("--capture-config", default=None)
     parser.add_argument("--capture-checkpoint", default=None)
+    parser.add_argument("--stabilize-config", default=None)
+    parser.add_argument("--stabilize-checkpoint", default=None)
     parser.add_argument("--capture-enter-angle", type=float, default=0.16)
     parser.add_argument("--capture-min-time", type=float, default=5.70)
     parser.add_argument("--stabilize-enter-angle", type=float, default=0.15)
@@ -242,6 +249,16 @@ def main() -> None:
             "config": str(Path(args.capture_config)),
             "checkpoint": file_metadata(args.capture_checkpoint),
         }
+    stabilize_model = None
+    stabilize_evidence: dict[str, Any] | None = None
+    if args.stabilize_checkpoint:
+        if not args.stabilize_config:
+            raise ValueError("--stabilize-checkpoint requires --stabilize-config")
+        _, stabilize_model = load_checkpoint_policy(args.stabilize_config, args.stabilize_checkpoint, args.progress)
+        stabilize_evidence = {
+            "config": str(Path(args.stabilize_config)),
+            "checkpoint": file_metadata(args.stabilize_checkpoint),
+        }
 
     capture_gain = lqr_gain(cfg, progress=args.progress, fd_eps=args.fd_eps, control_cost=args.lqr_control_cost)
     stabilize_gain = capture_gain
@@ -252,6 +269,7 @@ def main() -> None:
         seconds=args.seconds,
         zero_noise=args.zero_noise,
         capture_model=capture_model,
+        stabilize_model=stabilize_model,
         capture_gain=capture_gain,
         stabilize_gain=stabilize_gain,
         capture_enter_angle=args.capture_enter_angle,
@@ -272,7 +290,11 @@ def main() -> None:
             "knots": DEFAULT_KNOTS.astype(float).tolist(),
         },
         "capture": {"type": "checkpoint" if capture_model is not None else "lqr", "checkpoint": capture_evidence},
-        "stabilize": {"type": "lqr", "control_cost": float(args.lqr_control_cost)},
+        "stabilize": {
+            "type": "checkpoint" if stabilize_model is not None else "lqr",
+            "checkpoint": stabilize_evidence,
+            "control_cost": float(args.lqr_control_cost),
+        },
     }
     dump_json(result, Path(args.out))
     best = result.get("best_upright_pass") or {}

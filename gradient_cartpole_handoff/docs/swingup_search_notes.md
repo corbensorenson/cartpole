@@ -102,6 +102,27 @@ The shaped config adds optional capture-specific reward terms for low angle, low
 
 A short `80` update fine-tune from that shaped checkpoint with an added upright-streak reward regressed (`ever_upright_rate = 0.375`, `max_upright_streak_mean = 0.0225 s` in the best internal eval), so that streak term is available as an override but is not enabled in the shaped config by default.
 
+Chain-level swing search:
+
+```text
+scripts/search_swingup_chain.py
+runs/swingup6_chain_search/search_shaped_probe_4x6_30s.json
+runs/swingup6_chain_search/search_shaped_probe_centered_8x12_20s.json
+runs/swingup6_chain_search/centered_chain_states.json
+```
+
+This search optimizes the swing cart-position trajectory against the actual shaped capture checkpoint and optional stabilizer handoff, rather than scoring only an isolated upright crossing. A bounded full-horizon `4 x 6` probe found a slightly cleaner handoff (`x = 1.43`, best angle `0.102 rad`) and avoided rail termination for `30 s`, but max upright streak remained `0.08 s`. A tighter `rail-target-limit = 1.8` probe produced more centered near-upright states (`x` roughly `0.8-1.0`) and exported `202` chain-generated states with `max_abs_angle <= 0.60` and `hinge_velocity_rms <= 3.0`; those states are closer to the desired transition manifold but still high velocity.
+
+Learned third-expert probe:
+
+```text
+configs/swingup6_chain_state_list_shaped.yaml
+runs/swingup6_chain_state_list_shaped_probe_120/eval_chain_state_list_shaped20.json
+runs/swingup6_expert_chain/eval_chain_learned_probe_120.json
+```
+
+This curriculum trains from chain-generated near-upright states, and `evaluate_expert_chain.py` can now route the stabilize stage to a learned checkpoint instead of LQR. The bounded `120` update probe did not improve the full chain. Its held-out `20` episode state-list eval reported `success_rate = 0.0`, `ever_upright_rate = 0.5`, and `max_upright_streak_max = 0.06 s`. In reset-free chain eval with shaped capture plus the learned stabilizer, the stabilizer controlled `779` steps but still only reached `max_upright_streak_seconds = 0.08`. This indicates the exported chain states remain too high-velocity for the current PPO/reward setup; the next version should either reduce velocity before export or use stronger supervised/MPC targets for braking.
+
 Trajectory search is now reproducible through:
 
 ```bash

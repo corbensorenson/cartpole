@@ -1,4 +1,4 @@
-.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 eval-swingup6 render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-capture export-swingup-states eval-expert-chain capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6
+.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 eval-swingup6 render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-capture search-swingup-chain export-swingup-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
 
 PYTHON ?= .venv/bin/python
 
@@ -56,11 +56,20 @@ search-swingup-trajectory:
 search-swingup-capture:
 	$(PYTHON) scripts/search_swingup_capture.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_capture_search/search.json
 
+search-swingup-chain:
+	$(PYTHON) scripts/search_swingup_chain.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --capture-config configs/swingup6_capture_state_list_shaped.yaml --capture-checkpoint runs/swingup6_capture_state_list_shaped/checkpoints/best.safetensors --out runs/swingup6_chain_search/search.json
+
+export-chain-states:
+	$(PYTHON) scripts/search_swingup_chain.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --capture-config configs/swingup6_capture_state_list_shaped.yaml --capture-checkpoint runs/swingup6_capture_state_list_shaped/checkpoints/best.safetensors --init-controller-json runs/swingup6_chain_search/search.json --iterations 0 --population 1 --elites 1 --seconds 30 --state-max-angle 0.60 --state-max-hinge-rms 3.0 --state-out runs/swingup6_chain_search/centered_chain_states.json --out runs/swingup6_chain_search/eval_chain_state_export.json
+
 export-swingup-states:
 	$(PYTHON) scripts/export_swingup_states.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_expert_chain/swing_states.json
 
 eval-expert-chain:
 	$(PYTHON) scripts/evaluate_expert_chain.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_expert_chain/eval_chain.json
+
+eval-expert-chain-learned:
+	$(PYTHON) scripts/evaluate_expert_chain.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --capture-config configs/swingup6_capture_state_list_shaped.yaml --capture-checkpoint runs/swingup6_capture_state_list_shaped/checkpoints/best.safetensors --stabilize-config configs/swingup6_chain_state_list_shaped.yaml --stabilize-checkpoint runs/swingup6_chain_state_list_shaped/checkpoints/best.safetensors --out runs/swingup6_expert_chain/eval_chain_learned.json
 
 capture-state-list6:
 	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_capture_state_list.yaml
@@ -73,3 +82,9 @@ capture-state-list-shaped6:
 
 eval-capture-state-list-shaped6:
 	$(PYTHON) scripts/evaluate.py --config configs/swingup6_capture_state_list_shaped.yaml --checkpoint runs/swingup6_capture_state_list_shaped/checkpoints/best.safetensors --episodes 20 --progress 1.0 --out runs/swingup6_capture_state_list_shaped/eval_capture_state_list_shaped6.json
+
+chain-state-list-shaped6:
+	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_chain_state_list_shaped.yaml
+
+eval-chain-state-list-shaped6:
+	$(PYTHON) scripts/evaluate.py --config configs/swingup6_chain_state_list_shaped.yaml --checkpoint runs/swingup6_chain_state_list_shaped/checkpoints/best.safetensors --episodes 20 --progress 1.0 --out runs/swingup6_chain_state_list_shaped/eval_chain_state_list_shaped6.json
