@@ -1,4 +1,4 @@
-.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 eval-swingup6 render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-capture capture-handoff6 eval-capture-handoff6
+.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 eval-swingup6 render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-capture export-swingup-states eval-expert-chain capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6
 
 PYTHON ?= .venv/bin/python
 
@@ -55,3 +55,15 @@ search-swingup-trajectory:
 
 search-swingup-capture:
 	$(PYTHON) scripts/search_swingup_capture.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_capture_search/search.json
+
+export-swingup-states:
+	$(PYTHON) scripts/export_swingup_states.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_expert_chain/swing_states.json
+
+eval-expert-chain:
+	$(PYTHON) scripts/evaluate_expert_chain.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --out runs/swingup6_expert_chain/eval_chain.json
+
+capture-state-list6:
+	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_capture_state_list.yaml
+
+eval-capture-state-list6:
+	$(PYTHON) scripts/evaluate.py --config configs/swingup6_capture_state_list.yaml --checkpoint runs/swingup6_capture_state_list/checkpoints/best.safetensors --episodes 20 --progress 1.0 --out runs/swingup6_capture_state_list/eval_capture_state_list6.json

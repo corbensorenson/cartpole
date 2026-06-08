@@ -1,0 +1,81 @@
+experiment:
+  name: swingup6_capture_state_list
+  seed: 311
+  out_dir: runs/swingup6_capture_state_list
+
+env:
+  n_links: 6
+  total_length: 3.0
+  total_mass: 1.0
+  cart_mass: 1.0
+  rail_limit: 3.0
+  force_limit: 80.0
+  timestep: 0.005
+  frame_skip: 4
+  episode_seconds: 15.0
+  # Capture expert curriculum: reset from replayable states exported from the
+  # real hanging-start swing expert. Generate them first with:
+  #   make export-swingup-states
+  init_mode: state_list
+  init_states_path: runs/swingup6_expert_chain/swing_states.json
+  init_cart_noise: 0.03
+  init_cart_vel_noise: 0.06
+  init_angle_noise: 0.02
+  init_vel_noise: 0.08
+  terminate_abs_angle: null
+  success_upright_threshold: 0.15
+  success_sustain_seconds: 5.0
+  cart_damping: 0.02
+  joint_armature: 0.0005
+  link_radius: 0.025
+  obs_include_morphology: true
+  curriculum_rebuild_every: 999999
+  reward:
+    alive: 0.0
+    terminal_penalty: -200.0
+    angle_cos: 2.5
+    upright_bonus: 70.0
+    sustained_upright_bonus: 30.0
+    angle_abs: 1.5
+    angle_rel: 0.04
+    tip: 0.25
+    cart_pos: 2.50
+    cart_vel: 0.01
+    hinge_vel: 0.003
+    control: 0.0010
+    upright_threshold: 0.15
+
+morphology:
+  schedule_mode: all_linear
+  start:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    total_damping: 0.015
+  end:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    total_damping: 0.015
+
+ppo:
+  backend: mlx
+  vec_backend: subprocess
+  num_envs: 48
+  rollout_steps: 256
+  total_updates: 5000
+  minibatches: 8
+  epochs: 4
+  gamma: 0.995
+  gae_lambda: 0.95
+  learning_rate: 0.00025
+  clip_coef: 0.20
+  entropy_coef: 0.012
+  value_coef: 0.50
+  max_grad_norm: 0.50
+  hidden_sizes: [256, 256]
+  action_std_init: 0.40
+  normalize_advantages: true
+  checkpoint_every: 50
+  eval_every: 50
+  eval_episodes: 8

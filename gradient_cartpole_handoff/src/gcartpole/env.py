@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 from dataclasses import asdict
+from pathlib import Path
 from typing import Any
 
 import gymnasium as gym
@@ -52,6 +54,8 @@ class NLinkCartPoleEnv(gym.Env):
         self.upright_streak_steps = 0
         self.max_upright_streak_steps = 0
         self.first_upright_step: int | None = None
+        self.last_init_state_index: int | None = None
+        self._init_state_cache: list[dict[str, Any]] | None = None
         self.renderer = None
         self._build_model(self.progress)
 
@@ -93,6 +97,7 @@ class NLinkCartPoleEnv(gym.Env):
         self.upright_streak_steps = 0
         self.max_upright_streak_steps = 0
         self.first_upright_step = None
+        self.last_init_state_index = None
         self.data.qpos[:] = 0.0
         self.data.qvel[:] = 0.0
         angle_noise = float(self.env_cfg.get("init_angle_noise", 0.02))
@@ -116,27 +121,56 @@ class NLinkCartPoleEnv(gym.Env):
         elif init_mode == "fixed_state":
             init_qpos = np.asarray(self.env_cfg.get("init_qpos", []), dtype=np.float64)
             init_qvel = np.asarray(self.env_cfg.get("init_qvel", []), dtype=np.float64)
-            expected = self.n + 1
-            if init_qpos.shape != (expected,) or init_qvel.shape != (expected,):
-                raise ValueError(
-                    "env.init_mode=fixed_state requires init_qpos and init_qvel "
-                    f"with length {expected}; got {init_qpos.shape} and {init_qvel.shape}"
-                )
-            self.data.qpos[:] = init_qpos
-            self.data.qvel[:] = init_qvel
-            self.data.qpos[0] += self.rng.normal(0.0, float(self.env_cfg.get("init_cart_noise", 0.0)))
-            self.data.qvel[0] += self.rng.normal(0.0, float(self.env_cfg.get("init_cart_vel_noise", vel_noise)))
-            self.data.qpos[1 : 1 + self.n] += self.rng.normal(0.0, angle_noise, size=self.n)
-            self.data.qvel[1 : 1 + self.n] += self.rng.normal(0.0, vel_noise, size=self.n)
-            self.data.ctrl[:] = 0.0
-            self.last_action_norm[:] = 0.0
-            mujoco.mj_forward(self.model, self.data)
-            self._update_upright_tracking()
-            return self._get_obs(), self._info()
+            return self._reset_to_state(init_qpos, init_qvel, angle_noise, vel_noise)
+        elif init_mode == "state_list":
+            states = self._load_init_states()
+            if not states:
+                raise ValueError("env.init_mode=state_list requires at least one init state")
+            idx = int(self.rng.integers(0, len(states)))
+            self.last_init_state_index = idx
+            state = states[idx]
+            init_qpos = np.asarray(state.get("qpos", []), dtype=np.float64)
+            init_qvel = np.asarray(state.get("qvel", []), dtype=np.float64)
+            return self._reset_to_state(init_qpos, init_qvel, angle_noise, vel_noise)
         else:
             raise ValueError(f"Unknown env.init_mode: {init_mode}")
         self.data.qpos[1 : 1 + self.n] = base_angles + self.rng.normal(0.0, angle_noise, size=self.n)
         self.data.qvel[:] = self.rng.normal(0.0, vel_noise, size=self.n + 1)
+        self.data.ctrl[:] = 0.0
+        self.last_action_norm[:] = 0.0
+        mujoco.mj_forward(self.model, self.data)
+        self._update_upright_tracking()
+        return self._get_obs(), self._info()
+
+    def _load_init_states(self) -> list[dict[str, Any]]:
+        if self._init_state_cache is not None:
+            return self._init_state_cache
+        states = self.env_cfg.get("init_states")
+        if states is None:
+            path = self.env_cfg.get("init_states_path")
+            if not path:
+                raise ValueError("env.init_mode=state_list requires env.init_states or env.init_states_path")
+            with open(Path(path), "r", encoding="utf-8") as f:
+                payload = json.load(f)
+            states = payload.get("states", payload) if isinstance(payload, dict) else payload
+        if not isinstance(states, list):
+            raise ValueError("state_list initial states must be a list")
+        self._init_state_cache = states
+        return self._init_state_cache
+
+    def _reset_to_state(self, init_qpos: np.ndarray, init_qvel: np.ndarray, angle_noise: float, vel_noise: float):
+        expected = self.n + 1
+        if init_qpos.shape != (expected,) or init_qvel.shape != (expected,):
+            raise ValueError(
+                "fixed state reset requires qpos and qvel "
+                f"with length {expected}; got {init_qpos.shape} and {init_qvel.shape}"
+            )
+        self.data.qpos[:] = init_qpos
+        self.data.qvel[:] = init_qvel
+        self.data.qpos[0] += self.rng.normal(0.0, float(self.env_cfg.get("init_cart_noise", 0.0)))
+        self.data.qvel[0] += self.rng.normal(0.0, float(self.env_cfg.get("init_cart_vel_noise", vel_noise)))
+        self.data.qpos[1 : 1 + self.n] += self.rng.normal(0.0, angle_noise, size=self.n)
+        self.data.qvel[1 : 1 + self.n] += self.rng.normal(0.0, vel_noise, size=self.n)
         self.data.ctrl[:] = 0.0
         self.last_action_norm[:] = 0.0
         mujoco.mj_forward(self.model, self.data)
@@ -264,6 +298,7 @@ class NLinkCartPoleEnv(gym.Env):
             "lengths": self.morphology.lengths.astype(float).tolist(),
             "masses": self.morphology.masses.astype(float).tolist(),
             "damping": self.morphology.damping.astype(float).tolist(),
+            "init_state_index": self.last_init_state_index,
         }
 
     def render(self):

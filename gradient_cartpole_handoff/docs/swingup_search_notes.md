@@ -46,6 +46,39 @@ runs/swingup6_capture_handoff_probe_120/eval_capture_handoff20.json
 
 That `120` update run reported `success_rate = 0.0` over `20` deterministic handoff episodes, with `max_upright_streak_max = 0.04 s`. It confirms that simply starting PPO at the current crossing state is not enough; the crossing still needs either a lower-velocity/centered handoff or a stronger staged capture curriculum.
 
+The next staged architecture is an expert chain:
+
+1. swing expert: generate the large-amplitude energy injection from the hanging state,
+2. capture expert: convert real swing states into a low-velocity upright basin,
+3. stabilize expert: hold the chain once it is inside the upright basin.
+
+Generate replayable swing states for the capture expert with:
+
+```bash
+make export-swingup-states
+```
+
+Train/evaluate the capture expert over that state distribution with:
+
+```bash
+make capture-state-list6
+make eval-capture-state-list6
+```
+
+Evaluate the reset-free expert chain with:
+
+```bash
+make eval-expert-chain
+```
+
+The chain evaluator records stage transitions, best pass `qpos/qvel`, and final success metrics in `runs/swingup6_expert_chain/eval_chain.json`. Until it reaches the held-out success gate and is rendered reset-free, it is diagnostic evidence only.
+
+Current expert-chain baseline with no trained capture checkpoint:
+
+- `make export-swingup-states` exports `51` replayable swing states from the zero-noise hanging trajectory,
+- `make eval-expert-chain` preserves the swing expert's upright crossing and then hands off to LQR stabilization,
+- result remains `success = false`, `max_upright_streak_seconds = 0.04`, so the capture expert must improve this boundary before the chain can become solution evidence.
+
 Trajectory search is now reproducible through:
 
 ```bash
