@@ -109,11 +109,15 @@ The gradient training-wheel path is:
 
 ```bash
 make swingup6-gradient-low-momentum
+make export-policy-handoff-states
+make capture-policy-handoff-shaped6
 make swingup6-uniform-low-momentum
 make eval-swingup6-low-momentum
 ```
 
 `configs/swingup6_gradient_low_momentum.yaml` starts with easier length, mass, damping, hinge friction-loss, and longer-rail gradients, then anneals them away. `configs/swingup6_uniform_low_momentum_finetune.yaml` removes those training wheels and evaluates at the final hanging-start task with the real `+/-3 m` rail.
+
+`export-policy-handoff-states` is the boundary between the two experts: it replays the learned swing policy and writes actual MuJoCo `qpos/qvel` low-momentum handoff states for the capture/stabilize expert.
 
 ---
 
