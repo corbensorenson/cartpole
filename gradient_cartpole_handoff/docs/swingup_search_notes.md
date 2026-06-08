@@ -12,14 +12,30 @@ This writes:
 runs/swingup6_trajectory_probe/probe.json
 ```
 
-Expected zero-noise probe result:
+Current zero-noise probe result:
 
-- best max absolute angle is about `0.143 rad`, below the configured `0.15 rad` threshold,
-- first upright event occurs around `3.52 s`,
-- max upright streak is only one simulation step (`0.02 s`),
+- best max absolute angle is about `0.122 rad`, below the configured `0.15 rad` threshold,
+- first upright event occurs around `5.84 s`,
+- best-pass hinge velocity RMS is about `0.885 rad/s`,
+- max upright streak is two simulation steps (`0.04 s`),
+- maximum absolute cart position is about `2.64 m`, within the `3.0 m` rail,
 - the run is not successful and must not be used as evidence for a solved policy.
 
 The probe is useful because it proves the configured MuJoCo system can physically reach the upright basin from the hanging state within the rail. The remaining work is to produce a low-velocity capture state or a stronger catch controller that can hold the chain upright for at least `5 s`, then validate it over held-out noisy starts.
+
+Trajectory search is now reproducible through:
+
+```bash
+make search-swingup-trajectory
+```
+
+This writes:
+
+```text
+runs/swingup6_trajectory_search/search.json
+```
+
+The search currently optimizes fixed cart-position PD knot trajectories for better reachability/capture candidates from the exact hanging state. It is a planning tool only; the benchmark is still unsolved until `runs/swingup6_uniform/checkpoints/best.safetensors`, held-out eval JSON, and reset-free video evidence satisfy the swing-up success gate.
 
 Negative PPO probe with the corrected reward gate:
 

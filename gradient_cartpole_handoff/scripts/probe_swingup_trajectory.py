@@ -12,33 +12,35 @@ from gcartpole.evidence import data_sha256, git_metadata, runtime_metadata, utc_
 from gcartpole.env import NLinkCartPoleEnv
 
 
-# Rail-safe cart-position trajectory found by direct CEM probing. It is a
-# starting point for capture work, not a solved swing-up controller.
+# Rail-safe cart-position trajectory found by direct CEM probing. It reaches
+# the upright threshold from the exact hanging start at much lower hinge speed
+# than the first probe, but it is still a starting point for capture work, not
+# a solved swing-up controller.
 DEFAULT_KNOTS = np.asarray(
     [
         0.0,
-        1.10400526,
-        2.03138413,
-        -1.9565657,
-        -0.55818515,
-        -1.34776297,
-        0.20047096,
-        0.80701656,
-        -0.08703181,
-        0.51818086,
-        0.62358092,
-        0.64954928,
-        -1.333504,
-        0.73295461,
-        -0.02786263,
-        0.18427576,
-        1.11227404,
+        1.3477824329524968,
+        2.6,
+        -1.8797531264904297,
+        -0.7263162704385387,
+        -0.48498085401892155,
+        0.2274783383974651,
+        0.9721886190708176,
+        1.1991037737107664,
+        1.4681396813967078,
+        1.6529353266254345,
+        2.6,
+        -0.19672935448735163,
+        -1.43587504087747,
+        0.04151199607926792,
+        -2.6,
+        0.5163352440729813,
     ],
     dtype=np.float64,
 )
-DEFAULT_TRAJECTORY_SECONDS = 8.0
-DEFAULT_KP = 1.2897204876013413
-DEFAULT_KD = 0.40655890835298936
+DEFAULT_TRAJECTORY_SECONDS = 10.57367634226263
+DEFAULT_KP = 0.9414756587106877
+DEFAULT_KD = 0.7572946397505047
 
 
 def trajectory_action(env: NLinkCartPoleEnv, t: float, knots: np.ndarray, trajectory_seconds: float, kp: float, kd: float) -> float:
@@ -117,7 +119,7 @@ def run_probe(cfg: dict[str, Any], *, progress: float, seed: int, seconds: float
     return {
         "generated_at": utc_timestamp(),
         "not_solution": True,
-        "summary": "Fixed trajectory reaches the upright angle threshold once but does not stabilize.",
+        "summary": "Fixed trajectory reaches the upright angle threshold at low hinge speed but does not stabilize.",
         "success": bool(final_info.get("success", False)),
         "zero_noise": bool(zero_noise),
         "seed": int(seed),
