@@ -19,6 +19,10 @@ from .mjxml import generate_nlink_cartpole_xml
 from .morphology import Morphology, build_morphology
 
 
+def wrap_angle(angle: np.ndarray) -> np.ndarray:
+    return (angle + np.pi) % (2.0 * np.pi) - np.pi
+
+
 class NLinkCartPoleEnv(gym.Env):
     """Planar n-link cart-pole environment generated from gradient morphology parameters.
 
@@ -133,13 +137,15 @@ class NLinkCartPoleEnv(gym.Env):
         reward = self._reward(action_norm)
         terminated = self._terminated()
         truncated = self.step_count >= self.max_steps
+        if terminated and not truncated:
+            reward += float(self.env_cfg.get("reward", {}).get("terminal_penalty", 0.0))
         info = self._info()
         info["success"] = bool(truncated and not terminated and self._success())
         return obs, reward, terminated, truncated, info
 
     def _angles(self) -> tuple[np.ndarray, np.ndarray]:
-        rel = np.array(self.data.qpos[1 : 1 + self.n], dtype=np.float64)
-        abs_angles = np.cumsum(rel)
+        rel = wrap_angle(np.array(self.data.qpos[1 : 1 + self.n], dtype=np.float64))
+        abs_angles = wrap_angle(np.cumsum(np.array(self.data.qpos[1 : 1 + self.n], dtype=np.float64)))
         return rel, abs_angles
 
     def _get_obs(self) -> np.ndarray:
@@ -166,6 +172,7 @@ class NLinkCartPoleEnv(gym.Env):
         qvel = self.data.qvel
 
         angle_abs_cost = float(np.mean(1.0 - np.cos(abs_angles)))
+        angle_cos_mean = float(np.mean(np.cos(abs_angles)))
         angle_rel_cost = float(np.mean(rel * rel))
         tip_cost = float(1.0 - np.cos(abs_angles[-1])) if abs_angles.size else 0.0
         cart_pos_cost = float((qpos[0] / self.rail_limit) ** 2)
@@ -175,6 +182,7 @@ class NLinkCartPoleEnv(gym.Env):
         upright = float(self._is_upright(abs_angles))
 
         reward = float(reward_cfg.get("alive", 1.0))
+        reward += float(reward_cfg.get("angle_cos", 0.0)) * angle_cos_mean
         reward += float(reward_cfg.get("upright_bonus", 0.0)) * upright
         reward += float(reward_cfg.get("sustained_upright_bonus", 0.0)) * float(self.upright_streak_steps > 0)
         reward -= float(reward_cfg.get("angle_abs", 2.5)) * angle_abs_cost

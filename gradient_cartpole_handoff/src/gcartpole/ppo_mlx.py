@@ -272,7 +272,8 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
     fieldnames = [
         "update", "global_steps", "progress", "steps_per_sec", "mean_ep_return", "mean_ep_len",
         "policy_loss", "value_loss", "entropy", "approx_kl", "clip_fraction",
-        "eval_return_mean", "eval_success_rate", "eval_length_mean", "alpha_length", "alpha_mass", "alpha_damping",
+        "eval_return_mean", "eval_success_rate", "eval_length_mean", "eval_max_upright_streak_mean",
+        "eval_time_to_first_upright_mean", "alpha_length", "alpha_mass", "alpha_damping",
     ]
     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
     writer.writeheader()
@@ -427,6 +428,8 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                 "eval_return_mean": eval_metrics.get("return_mean", np.nan),
                 "eval_success_rate": eval_metrics.get("success_rate", np.nan),
                 "eval_length_mean": eval_metrics.get("length_mean", np.nan),
+                "eval_max_upright_streak_mean": eval_metrics.get("max_upright_streak_mean", np.nan),
+                "eval_time_to_first_upright_mean": eval_metrics.get("time_to_first_upright_mean", np.nan),
                 "alpha_length": morph_info.get("alpha_length", np.nan),
                 "alpha_mass": morph_info.get("alpha_mass", np.nan),
                 "alpha_damping": morph_info.get("alpha_damping", np.nan),
