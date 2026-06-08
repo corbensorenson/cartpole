@@ -1,4 +1,4 @@
-.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture search-swingup-chain export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
+.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture eval-mpc-policy-handoff-stage search-swingup-chain export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-stage eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
 
 PYTHON ?= .venv/bin/python
 SWING_TRAJECTORY_SEARCH_OUT ?= runs/swingup6_trajectory_search/low_momentum_search.json
@@ -54,6 +54,7 @@ CAPTURE_STAGE_ENVS ?= 48
 CAPTURE_STAGE_ROLLOUT_STEPS ?= 256
 CAPTURE_STAGE_EVAL_EVERY ?= 50
 CAPTURE_STAGE_EVAL_EPISODES ?= 8
+CAPTURE_STAGE_HELDOUT_EPISODES ?= 20
 CAPTURE_STAGE_ENTROPY ?= 0.006
 CAPTURE_STAGE_RAIL_LIMIT ?= 3.0
 CAPTURE_STAGE_CENTERED_MAX_CART_ABS ?= 1.25
@@ -62,6 +63,8 @@ CAPTURE_STAGE_RAIL_MARGIN ?= 220.0
 CAPTURE_STAGE_RAIL_MARGIN_START ?= 0.55
 CAPTURE_STAGE_CENTERED_STREAK ?= 80.0
 CAPTURE_STAGE_LOW_MOMENTUM_STREAK ?= 120.0
+CAPTURE_STAGE_CHECKPOINT ?= $(CAPTURE_STAGE_OUT)/checkpoints/best.safetensors
+CAPTURE_STAGE_EVAL_OUT ?= $(CAPTURE_STAGE_OUT)/eval_capture_policy_handoff_stage20.json
 
 setup:
 	bash scripts/setup_mac.sh
@@ -147,6 +150,9 @@ search-capture-sequence:
 eval-mpc-capture:
 	$(PYTHON) scripts/evaluate_mpc_capture.py --config configs/swingup6_uniform.yaml --state-json $(SWING_TRAJECTORY_STATES_OUT) --state-index $(MPC_CAPTURE_STATE_INDEX) --seconds $(MPC_CAPTURE_SECONDS) --horizon-steps $(MPC_CAPTURE_HORIZON_STEPS) --replan-steps $(MPC_CAPTURE_REPLAN_STEPS) --samples $(MPC_CAPTURE_SAMPLES) --elites $(MPC_CAPTURE_ELITES) --iterations $(MPC_CAPTURE_ITERATIONS) --sigma $(MPC_CAPTURE_SIGMA) --lqr-baseline --lqr-target $(MPC_CAPTURE_LQR_TARGET) --lqr-scale $(MPC_CAPTURE_LQR_SCALE) --override env.init_qvel_scale=$(MPC_CAPTURE_QVEL_SCALE) --out $(MPC_CAPTURE_OUT)
 
+eval-mpc-policy-handoff-stage:
+	$(PYTHON) scripts/evaluate_mpc_capture.py --config $(SWING_HANDOFF_CONFIG) --state-json $(SWING_HANDOFF_OUT) --state-index $(MPC_CAPTURE_STATE_INDEX) --progress $(CAPTURE_STAGE_PROGRESS) --seconds $(MPC_CAPTURE_SECONDS) --horizon-steps $(MPC_CAPTURE_HORIZON_STEPS) --replan-steps $(MPC_CAPTURE_REPLAN_STEPS) --samples $(MPC_CAPTURE_SAMPLES) --elites $(MPC_CAPTURE_ELITES) --iterations $(MPC_CAPTURE_ITERATIONS) --sigma $(MPC_CAPTURE_SIGMA) --lqr-baseline --lqr-target $(MPC_CAPTURE_LQR_TARGET) --lqr-scale $(MPC_CAPTURE_LQR_SCALE) --override env.rail_limit_start=$(CAPTURE_STAGE_RAIL_LIMIT) --override env.rail_limit_end=$(CAPTURE_STAGE_RAIL_LIMIT) --override env.init_qvel_scale=$(MPC_CAPTURE_QVEL_SCALE) --out $(MPC_CAPTURE_OUT)
+
 search-swingup-chain:
 	$(PYTHON) scripts/search_swingup_chain.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --capture-config configs/swingup6_capture_state_list_shaped.yaml --capture-checkpoint runs/swingup6_capture_state_list_shaped/checkpoints/best.safetensors --out runs/swingup6_chain_search/search.json
 
@@ -206,6 +212,9 @@ capture-policy-handoff-shaped6:
 
 capture-policy-handoff-stage:
 	$(PYTHON) scripts/train_mlx_ppo.py --config $(SWING_HANDOFF_CONFIG) --override experiment.out_dir=$(CAPTURE_STAGE_OUT) --override env.init_mode=state_list --override env.init_states_path=$(SWING_HANDOFF_OUT) --override env.init_cart_noise=0.02 --override env.init_cart_vel_noise=0.04 --override env.init_angle_noise=0.012 --override env.init_vel_noise=0.05 --override env.episode_seconds=15.0 --override env.rail_limit_start=$(CAPTURE_STAGE_RAIL_LIMIT) --override env.rail_limit_end=$(CAPTURE_STAGE_RAIL_LIMIT) --override env.reward.centered_upright_max_cart_abs=$(CAPTURE_STAGE_CENTERED_MAX_CART_ABS) --override env.reward.low_momentum_max_cart_abs=$(CAPTURE_STAGE_CENTERED_MAX_CART_ABS) --override env.reward.cart_pos=$(CAPTURE_STAGE_CART_POS_COST) --override env.reward.rail_margin=$(CAPTURE_STAGE_RAIL_MARGIN) --override env.reward.rail_margin_start=$(CAPTURE_STAGE_RAIL_MARGIN_START) --override env.reward.centered_upright_streak=$(CAPTURE_STAGE_CENTERED_STREAK) --override env.reward.centered_upright_streak_cap_seconds=5.0 --override env.reward.low_momentum_upright_streak=$(CAPTURE_STAGE_LOW_MOMENTUM_STREAK) --override env.reward.low_momentum_upright_streak_cap_seconds=5.0 --override ppo.curriculum_mode=gated --override ppo.curriculum_start_progress=$(CAPTURE_STAGE_PROGRESS) --override ppo.curriculum_step=0.0 --override ppo.curriculum_min_updates_per_stage=999999 --override ppo.eval_progress=current --override ppo.total_updates=$(CAPTURE_STAGE_UPDATES) --override ppo.num_envs=$(CAPTURE_STAGE_ENVS) --override ppo.rollout_steps=$(CAPTURE_STAGE_ROLLOUT_STEPS) --override ppo.eval_every=$(CAPTURE_STAGE_EVAL_EVERY) --override ppo.eval_episodes=$(CAPTURE_STAGE_EVAL_EPISODES) --override ppo.entropy_coef=$(CAPTURE_STAGE_ENTROPY)
+
+eval-capture-policy-handoff-stage:
+	$(PYTHON) scripts/evaluate.py --config $(SWING_HANDOFF_CONFIG) --checkpoint $(CAPTURE_STAGE_CHECKPOINT) --episodes $(CAPTURE_STAGE_HELDOUT_EPISODES) --progress $(CAPTURE_STAGE_PROGRESS) --override env.init_mode=state_list --override env.init_states_path=$(SWING_HANDOFF_OUT) --override env.init_cart_noise=0.02 --override env.init_cart_vel_noise=0.04 --override env.init_angle_noise=0.012 --override env.init_vel_noise=0.05 --override env.episode_seconds=15.0 --override env.rail_limit_start=$(CAPTURE_STAGE_RAIL_LIMIT) --override env.rail_limit_end=$(CAPTURE_STAGE_RAIL_LIMIT) --override env.reward.centered_upright_max_cart_abs=$(CAPTURE_STAGE_CENTERED_MAX_CART_ABS) --override env.reward.low_momentum_max_cart_abs=$(CAPTURE_STAGE_CENTERED_MAX_CART_ABS) --override env.reward.cart_pos=$(CAPTURE_STAGE_CART_POS_COST) --override env.reward.rail_margin=$(CAPTURE_STAGE_RAIL_MARGIN) --override env.reward.rail_margin_start=$(CAPTURE_STAGE_RAIL_MARGIN_START) --override env.reward.centered_upright_streak=$(CAPTURE_STAGE_CENTERED_STREAK) --override env.reward.centered_upright_streak_cap_seconds=5.0 --override env.reward.low_momentum_upright_streak=$(CAPTURE_STAGE_LOW_MOMENTUM_STREAK) --override env.reward.low_momentum_upright_streak_cap_seconds=5.0 --out $(CAPTURE_STAGE_EVAL_OUT)
 
 eval-capture-policy-handoff-shaped6:
 	$(PYTHON) scripts/evaluate.py --config configs/swingup6_policy_handoff_capture_shaped.yaml --checkpoint runs/swingup6_policy_handoff_capture_shaped/checkpoints/best.safetensors --episodes 20 --progress 1.0 --out runs/swingup6_policy_handoff_capture_shaped/eval_capture_policy_handoff_shaped6.json

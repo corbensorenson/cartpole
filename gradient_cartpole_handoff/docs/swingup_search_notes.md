@@ -351,3 +351,21 @@ runs/swingup6_probe_reward_gate_400/train_log.csv
 ```
 
 Final full-hanging eval from that bounded run remained `success_rate = 0.0`, `ever_upright_rate = 0.0`, and `max_upright_streak_mean = 0.0`. Later curriculum stages collapsed into short rail-hit episodes, so that checkpoint is not a solution artifact.
+
+Policy handoff frontier and capture diagnostics:
+
+```text
+runs/swingup6_gradient_low_momentum_centered_gate025_from350_retry_240/checkpoints/frontier.safetensors
+runs/swingup6_policy_handoff/swing_handoff_states_frontier0375_retry128.json
+runs/swingup6_policy_handoff_capture_stage0375_retry_probe_120/eval_capture_stage0375_retry20.json
+runs/swingup6_policy_handoff_capture_stage0375_retry_probe_120/eval_capture_stage0375_retry20_zeronoise.json
+runs/swingup6_policy_handoff_capture_stage0375_retry_probe_120/eval_capture_stage0375_retry20_qvel0_zeronoise.json
+runs/swingup6_mpc_capture/stage0375_frontier_best_8s.json
+runs/swingup6_mpc_capture/stage0375_frontier_best_qvel0_8s.json
+```
+
+The best learned swing frontier passed the progress-`0.375` gate and exported `5` real MuJoCo low-momentum handoff states from `128` deterministic replay episodes. The best exported state is close to upright (`max_abs_angle = 0.0549 rad`, `hinge_velocity_rms = 0.146`) and centered enough for capture (`x = 0.277 m`, `cart_velocity = 0.444 m/s`), but it is still an intermediate curriculum state: progress `0.375`, scheduled rail `+/-6.75 m`, and a partially hanging start due `hanging_curriculum_power = 3.0`.
+
+The same-stage capture PPO trained from those saved states improves the handoff but does not solve capture. Held-out `20` episode eval reports `success_rate = 0.0`, `ever_upright_rate = 0.95`, `max_upright_streak_mean = 0.227 s`, and `max_upright_streak_max = 0.44 s`. With reset noise removed it still fails (`success_rate = 0.0`, `max_upright_streak_max = 0.28 s`). Forcing saved handoff velocities to zero improves the diagnostic (`max_upright_streak_mean = 0.371 s`, max `0.50 s`) but remains far below the `5 s` sustain gate.
+
+Finite-difference LQR is a valid near-upright stabilizer for the final uniform model, but it is not a reliable capture stabilizer for the progress-`0.375` gradient morphology: the stage linearization is highly ill-conditioned and the closed-loop eigenvalue remains slightly above `1.0`. Receding-horizon MPC from the best saved handoff state confirms the same gap. Full-velocity MPC reached only a `0.30 s` upright streak; zeroing saved qvel reached `0.50 s` and then used almost the whole `+/-3 m` rail. The next useful capture work is therefore a nonlinear learned catch policy from saved states, while the final proof still requires exporting states from a full-uniform, full-hanging swing expert.

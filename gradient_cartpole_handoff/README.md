@@ -110,14 +110,16 @@ The gradient training-wheel path is:
 ```bash
 make swingup6-gradient-low-momentum
 make export-policy-handoff-states
-make capture-policy-handoff-shaped6
+make capture-policy-handoff-stage
+make eval-capture-policy-handoff-stage
+make eval-mpc-policy-handoff-stage
 make swingup6-uniform-low-momentum
 make eval-swingup6-low-momentum
 ```
 
 `configs/swingup6_gradient_low_momentum.yaml` starts with easier length, mass, damping, hinge friction-loss, and longer-rail gradients, then anneals them away. `configs/swingup6_uniform_low_momentum_finetune.yaml` removes those training wheels and evaluates at the final hanging-start task with the real `+/-3 m` rail.
 
-`export-policy-handoff-states` is the boundary between the two experts: it replays the learned swing frontier policy and writes actual MuJoCo `qpos/qvel` low-momentum handoff states for the capture/stabilize expert.
+`export-policy-handoff-states` is the boundary between the two experts: it replays the learned swing frontier policy and writes actual MuJoCo `qpos/qvel` low-momentum handoff states for the capture/stabilize expert. `capture-policy-handoff-stage` then trains from that saved state file, `eval-capture-policy-handoff-stage` runs held-out deterministic capture eval, and `eval-mpc-policy-handoff-stage` tests whether the saved state is catchable by a receding-horizon diagnostic.
 
 For an ad-hoc continuation run, point the handoff/export targets at that run without editing the Makefile:
 
@@ -156,6 +158,12 @@ If the exported frontier is still a gradiented curriculum stage, train the diagn
 ```bash
 make capture-policy-handoff-stage \
   SWING_HANDOFF_RUN=runs/swingup6_gradient_low_momentum_centered_gate025_from3125_lowent_180 \
+  CAPTURE_STAGE_PROGRESS=0.3375 \
+  CAPTURE_STAGE_OUT=runs/swingup6_policy_handoff_capture_stage03375
+
+make eval-capture-policy-handoff-stage \
+  SWING_HANDOFF_RUN=runs/swingup6_gradient_low_momentum_centered_gate025_from3125_lowent_180 \
+  SWING_HANDOFF_OUT=runs/swingup6_policy_handoff/swing_handoff_states.json \
   CAPTURE_STAGE_PROGRESS=0.3375 \
   CAPTURE_STAGE_OUT=runs/swingup6_policy_handoff_capture_stage03375
 ```
