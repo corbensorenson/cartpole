@@ -1,0 +1,96 @@
+experiment:
+  name: swingup6_capture_handoff
+  seed: 207
+  out_dir: runs/swingup6_capture_handoff
+
+env:
+  n_links: 6
+  total_length: 3.0
+  total_mass: 1.0
+  cart_mass: 1.0
+  rail_limit: 3.0
+  force_limit: 80.0
+  timestep: 0.005
+  frame_skip: 4
+  episode_seconds: 15.0
+  # Exact MuJoCo state at the current zero-noise hanging-start trajectory's
+  # best upright pass. This is a capture-training subproblem, not the final
+  # hanging-start benchmark.
+  init_mode: fixed_state
+  init_qpos:
+    - 1.482057674361105
+    - -18.79744096994473
+    - -0.0638993792892215
+    - -0.0025036347526551325
+    - -0.06289114441921946
+    - 0.16406223855630792
+    - -0.20902316764368362
+  init_qvel:
+    - 0.3419007994702423
+    - -1.7971496932879443
+    - -1.013320080237061
+    - 0.6484623192039157
+    - 0.035263222514403184
+    - -0.13892102572627588
+    - -0.06015095295419246
+  init_cart_noise: 0.02
+  init_cart_vel_noise: 0.05
+  init_angle_noise: 0.015
+  init_vel_noise: 0.05
+  terminate_abs_angle: null
+  success_upright_threshold: 0.15
+  success_sustain_seconds: 5.0
+  cart_damping: 0.02
+  joint_armature: 0.0005
+  link_radius: 0.025
+  obs_include_morphology: true
+  curriculum_rebuild_every: 999999
+  reward:
+    alive: 0.0
+    terminal_penalty: -200.0
+    angle_cos: 2.0
+    upright_bonus: 60.0
+    sustained_upright_bonus: 25.0
+    angle_abs: 1.5
+    angle_rel: 0.04
+    tip: 0.25
+    cart_pos: 2.50
+    cart_vel: 0.01
+    hinge_vel: 0.002
+    control: 0.0010
+    upright_threshold: 0.15
+
+morphology:
+  schedule_mode: all_linear
+  start:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    total_damping: 0.015
+  end:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    total_damping: 0.015
+
+ppo:
+  backend: mlx
+  vec_backend: subprocess
+  num_envs: 48
+  rollout_steps: 256
+  total_updates: 3000
+  minibatches: 8
+  epochs: 4
+  gamma: 0.995
+  gae_lambda: 0.95
+  learning_rate: 0.00025
+  clip_coef: 0.20
+  entropy_coef: 0.010
+  value_coef: 0.50
+  max_grad_norm: 0.50
+  hidden_sizes: [256, 256]
+  action_std_init: 0.35
+  normalize_advantages: true
+  checkpoint_every: 50
+  eval_every: 50
+  eval_episodes: 8

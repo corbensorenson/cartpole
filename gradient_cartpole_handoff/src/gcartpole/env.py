@@ -113,6 +113,26 @@ class NLinkCartPoleEnv(gym.Env):
         elif init_mode == "folded":
             # A compact alternating folded start, useful for stress tests.
             base_angles = np.asarray([np.pi if i % 2 == 0 else -np.pi for i in range(self.n)], dtype=np.float64)
+        elif init_mode == "fixed_state":
+            init_qpos = np.asarray(self.env_cfg.get("init_qpos", []), dtype=np.float64)
+            init_qvel = np.asarray(self.env_cfg.get("init_qvel", []), dtype=np.float64)
+            expected = self.n + 1
+            if init_qpos.shape != (expected,) or init_qvel.shape != (expected,):
+                raise ValueError(
+                    "env.init_mode=fixed_state requires init_qpos and init_qvel "
+                    f"with length {expected}; got {init_qpos.shape} and {init_qvel.shape}"
+                )
+            self.data.qpos[:] = init_qpos
+            self.data.qvel[:] = init_qvel
+            self.data.qpos[0] += self.rng.normal(0.0, float(self.env_cfg.get("init_cart_noise", 0.0)))
+            self.data.qvel[0] += self.rng.normal(0.0, float(self.env_cfg.get("init_cart_vel_noise", vel_noise)))
+            self.data.qpos[1 : 1 + self.n] += self.rng.normal(0.0, angle_noise, size=self.n)
+            self.data.qvel[1 : 1 + self.n] += self.rng.normal(0.0, vel_noise, size=self.n)
+            self.data.ctrl[:] = 0.0
+            self.last_action_norm[:] = 0.0
+            mujoco.mj_forward(self.model, self.data)
+            self._update_upright_tracking()
+            return self._get_obs(), self._info()
         else:
             raise ValueError(f"Unknown env.init_mode: {init_mode}")
         self.data.qpos[1 : 1 + self.n] = base_angles + self.rng.normal(0.0, angle_noise, size=self.n)

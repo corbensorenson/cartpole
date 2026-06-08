@@ -85,6 +85,8 @@ def run_probe(cfg: dict[str, Any], *, progress: float, seed: int, seconds: float
             "action": float(action),
             "x": float(info["x"]),
             "cart_velocity": float(env.data.qvel[0]),
+            "qpos": np.array(env.data.qpos, dtype=np.float64).astype(float).tolist(),
+            "qvel": np.array(env.data.qvel, dtype=np.float64).astype(float).tolist(),
             "max_abs_angle": float(info["max_abs_angle"]),
             "mean_abs_angle": float(info["mean_abs_angle"]),
             "hinge_velocity_rms": hinge_rms,

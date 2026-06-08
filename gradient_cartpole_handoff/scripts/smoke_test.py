@@ -6,7 +6,7 @@ import sys
 
 import numpy as np
 
-from gcartpole.config import load_config
+from gcartpole.config import apply_overrides, load_config
 from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.morphology import build_morphology
 
@@ -26,6 +26,25 @@ def main() -> None:
     frame = env.render_rgb(width=320, height=180)
     print("render frame:", frame.shape, frame.dtype)
     env.close()
+
+    handoff_cfg = apply_overrides(
+        load_config("configs/swingup6_capture_handoff.yaml"),
+        [
+            "env.init_angle_noise=0.0",
+            "env.init_vel_noise=0.0",
+            "env.init_cart_noise=0.0",
+            "env.init_cart_vel_noise=0.0",
+        ],
+    )
+    handoff_env = NLinkCartPoleEnv(handoff_cfg, progress=1.0, seed=0)
+    _, handoff_info = handoff_env.reset()
+    print(
+        "fixed_state max_abs_angle:",
+        handoff_info["max_abs_angle"],
+        "upright_streak:",
+        handoff_info["upright_streak_seconds"],
+    )
+    handoff_env.close()
 
     try:
         import mlx.core as mx

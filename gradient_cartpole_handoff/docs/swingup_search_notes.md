@@ -23,6 +23,29 @@ Current zero-noise probe result:
 
 The probe is useful because it proves the configured MuJoCo system can physically reach the upright basin from the hanging state within the rail. The remaining work is to produce a low-velocity capture state or a stronger catch controller that can hold the chain upright for at least `5 s`, then validate it over held-out noisy starts.
 
+The probe and search outputs now include full MuJoCo `qpos` and `qvel` arrays for their best pass states. The current best pass state is also encoded in:
+
+```text
+configs/swingup6_capture_handoff.yaml
+```
+
+This config uses `env.init_mode: fixed_state` to start PPO directly from the real hanging-start crossing state, with small reset noise. It is a capture-training curriculum only:
+
+```bash
+make capture-handoff6
+make eval-capture-handoff6
+```
+
+If this subproblem learns to hold the chain upright from the crossing state, the next step is to combine the hanging-start swing-up phase with the learned capture policy and evaluate the whole reset-free episode from `configs/swingup6_uniform.yaml`.
+
+A bounded PPO probe from this handoff curriculum did not solve capture:
+
+```text
+runs/swingup6_capture_handoff_probe_120/eval_capture_handoff20.json
+```
+
+That `120` update run reported `success_rate = 0.0` over `20` deterministic handoff episodes, with `max_upright_streak_max = 0.04 s`. It confirms that simply starting PPO at the current crossing state is not enough; the crossing still needs either a lower-velocity/centered handoff or a stronger staged capture curriculum.
+
 Trajectory search is now reproducible through:
 
 ```bash
