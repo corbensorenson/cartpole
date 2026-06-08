@@ -1,0 +1,256 @@
+{
+  "episode_results": [
+    {
+      "episode": 0,
+      "final_x": 4.4156765495711777e-05,
+      "length": 1500,
+      "max_abs_angle": 0.011537827203200396,
+      "return": 2999.9909200121247,
+      "seed": 14487,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 1,
+      "final_x": -0.000775462894505565,
+      "length": 1500,
+      "max_abs_angle": 0.13033455888253817,
+      "return": 2980.76624587436,
+      "seed": 14488,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 2,
+      "final_x": -0.00033993745092771125,
+      "length": 1500,
+      "max_abs_angle": 0.05842593339034699,
+      "return": 2999.55814411017,
+      "seed": 14489,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 3,
+      "final_x": 0.0002594576688309312,
+      "length": 1500,
+      "max_abs_angle": 0.04512628122817154,
+      "return": 2999.7429829956113,
+      "seed": 14490,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 4,
+      "final_x": -0.00019352905213369781,
+      "length": 1500,
+      "max_abs_angle": 0.03591910427587143,
+      "return": 2999.848705728927,
+      "seed": 14491,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 5,
+      "final_x": 0.0003939791219137015,
+      "length": 1500,
+      "max_abs_angle": 0.07023951202017448,
+      "return": 2999.3923452894173,
+      "seed": 14492,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 6,
+      "final_x": 0.000239923551819684,
+      "length": 1500,
+      "max_abs_angle": 0.03355212288566067,
+      "return": 2999.8066025296052,
+      "seed": 14493,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 7,
+      "final_x": 0.00037380464631480814,
+      "length": 1500,
+      "max_abs_angle": 0.060676609597354735,
+      "return": 2999.491567238265,
+      "seed": 14494,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 8,
+      "final_x": -0.0001407468015720696,
+      "length": 1500,
+      "max_abs_angle": 0.02485760123094168,
+      "return": 2999.924420762163,
+      "seed": 14495,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 9,
+      "final_x": 0.00030235250463119326,
+      "length": 1500,
+      "max_abs_angle": 0.06418112741653048,
+      "return": 2999.595377758223,
+      "seed": 14496,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 10,
+      "final_x": 0.0007967322213066529,
+      "length": 1500,
+      "max_abs_angle": 0.1326236624826262,
+      "return": 2976.6064592913485,
+      "seed": 14497,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 11,
+      "final_x": 0.00080114370475411,
+      "length": 1500,
+      "max_abs_angle": 0.13597169400468362,
+      "return": 2977.5961898142086,
+      "seed": 14498,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 12,
+      "final_x": -0.00010015619705662389,
+      "length": 1500,
+      "max_abs_angle": 0.035885105344518727,
+      "return": 2999.9367592960025,
+      "seed": 14499,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 13,
+      "final_x": 0.0003766395720021821,
+      "length": 1500,
+      "max_abs_angle": 0.06399520155518063,
+      "return": 2999.4643387569636,
+      "seed": 14500,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 14,
+      "final_x": -0.000967738121767347,
+      "length": 1500,
+      "max_abs_angle": 0.15326138205843412,
+      "return": 2968.352251227988,
+      "seed": 14501,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 15,
+      "final_x": -5.9606113645623746e-05,
+      "length": 1500,
+      "max_abs_angle": 0.013973102507480921,
+      "return": 2999.9844348282063,
+      "seed": 14502,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 16,
+      "final_x": 0.0004957659584681733,
+      "length": 1500,
+      "max_abs_angle": 0.0804204071244805,
+      "return": 2999.1001358646895,
+      "seed": 14503,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 17,
+      "final_x": 0.00011312056188554941,
+      "length": 1500,
+      "max_abs_angle": 0.018712250220229546,
+      "return": 2999.956130952501,
+      "seed": 14504,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 18,
+      "final_x": 0.0008554466134375391,
+      "length": 1500,
+      "max_abs_angle": 0.14150385163140358,
+      "return": 2975.3198482956154,
+      "seed": 14505,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 19,
+      "final_x": 0.0003414119409329002,
+      "length": 1500,
+      "max_abs_angle": 0.05622280320839355,
+      "return": 2999.5720470187725,
+      "seed": 14506,
+      "success": true,
+      "terminated": false
+    }
+  ],
+  "episodes": 20,
+  "evidence": {
+    "checkpoint": {
+      "bytes": 738,
+      "path": "runs/uniform6_finetune/checkpoints/best.safetensors",
+      "sha256": "7fa4237c1dc493fb5746223ba1ecc94e06a51e738c9a053085516baa94cc5571"
+    },
+    "config": {
+      "overrides": [],
+      "path": "configs/uniform6_near_upright_lqr.yaml",
+      "resolved_sha256": "8c8b1d6f244a92e3bd08124928f5a3ff166d9afc3a24f06d2a20fec8a2bb92e3"
+    },
+    "deterministic_policy": true,
+    "environment": {
+      "episode_seconds": 30.0,
+      "force_limit": 80.0,
+      "max_steps": 1500,
+      "n_links": 6,
+      "rail_limit": 3.0,
+      "terminate_abs_angle": 1.25
+    },
+    "eval_seed": 4487,
+    "generated_at": "2026-06-08T05:43:30+00:00",
+    "git": {
+      "available": true,
+      "commit": "0f20118f095f8d0a5c500d3587c75bf3e2f2996d",
+      "dirty": false,
+      "root": "/Users/corbensorenson/Documents/cartpole",
+      "status_short": []
+    },
+    "progress": 1.0,
+    "runtime": {
+      "machine": "arm64",
+      "packages": {
+        "gymnasium": "1.3.0",
+        "mlx": "0.31.2",
+        "mujoco": "3.9.0",
+        "numpy": "2.4.6"
+      },
+      "platform": "macOS-15.0-arm64-arm-64bit",
+      "processor": "arm",
+      "python": "3.12.5"
+    }
+  },
+  "length_max": 1500,
+  "length_mean": 1500.0,
+  "length_min": 1500,
+  "max_angle_max": 0.15326138205843412,
+  "max_angle_mean": 0.0683710069134111,
+  "return_mean": 2993.7002953822584,
+  "return_std": 10.57944924784862,
+  "success_rate": 1.0
+}

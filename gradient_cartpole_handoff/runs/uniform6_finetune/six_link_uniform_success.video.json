@@ -1,0 +1,103 @@
+{
+  "checkpoint": {
+    "bytes": 738,
+    "path": "runs/uniform6_finetune/checkpoints/best.safetensors",
+    "sha256": "7fa4237c1dc493fb5746223ba1ecc94e06a51e738c9a053085516baa94cc5571"
+  },
+  "config": {
+    "overrides": [],
+    "path": "configs/uniform6_near_upright_lqr.yaml",
+    "resolved_sha256": "8c8b1d6f244a92e3bd08124928f5a3ff166d9afc3a24f06d2a20fec8a2bb92e3"
+  },
+  "environment": {
+    "episode_seconds": 30.0,
+    "force_limit": 80.0,
+    "n_links": 6,
+    "rail_limit": 3.0,
+    "terminate_abs_angle": 1.25
+  },
+  "generated_at": "2026-06-08T05:43:20+00:00",
+  "git": {
+    "available": true,
+    "commit": "0f20118f095f8d0a5c500d3587c75bf3e2f2996d",
+    "dirty": false,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": []
+  },
+  "render": {
+    "completed_requested_steps": true,
+    "done_events": [
+      {
+        "max_abs_angle": 5.066354324892275e-06,
+        "step": 1500,
+        "success": true,
+        "terminated": false,
+        "time_seconds": 30.0,
+        "truncated": true,
+        "x": -0.00022627227127271807
+      }
+    ],
+    "dt": 0.02,
+    "final_info": {
+      "alpha_damping": 0.0,
+      "alpha_length": 0.0,
+      "alpha_mass": 0.0,
+      "damping": [
+        0.0025,
+        0.0025,
+        0.0025,
+        0.0025,
+        0.0025,
+        0.0025
+      ],
+      "lengths": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "masses": [
+        0.16666666666666666,
+        0.16666666666666666,
+        0.16666666666666666,
+        0.16666666666666666,
+        0.16666666666666666,
+        0.16666666666666666
+      ],
+      "max_abs_angle": 5.066354324892275e-06,
+      "mean_abs_angle": 5.0403972883324015e-06,
+      "progress": 1.0,
+      "success": true,
+      "x": -0.00022627227127271807
+    },
+    "fps": 50,
+    "frames": 1500,
+    "height": 720,
+    "progress": 1.0,
+    "requested_seconds": 30.0,
+    "reset_count": 0,
+    "seed": 12345,
+    "simulated_seconds": 30.0,
+    "stopped_early": false,
+    "width": 1280
+  },
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.31.2",
+      "mujoco": "3.9.0",
+      "numpy": "2.4.6"
+    },
+    "platform": "macOS-15.0-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.5"
+  },
+  "video": {
+    "bytes": 303774,
+    "path": "runs/uniform6_finetune/six_link_uniform_success.mp4",
+    "sha256": "84623deb7a427137695a3022c34b9cd892432488430724f8853782c035004d44"
+  }
+}

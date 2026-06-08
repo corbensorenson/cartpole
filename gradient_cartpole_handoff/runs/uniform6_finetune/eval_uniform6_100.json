@@ -1,0 +1,1056 @@
+{
+  "episode_results": [
+    {
+      "episode": 0,
+      "final_x": 4.4156765495711777e-05,
+      "length": 1500,
+      "max_abs_angle": 0.011537827203200396,
+      "return": 2999.9909200121247,
+      "seed": 14487,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 1,
+      "final_x": -0.000775462894505565,
+      "length": 1500,
+      "max_abs_angle": 0.13033455888253817,
+      "return": 2980.76624587436,
+      "seed": 14488,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 2,
+      "final_x": -0.00033993745092771125,
+      "length": 1500,
+      "max_abs_angle": 0.05842593339034699,
+      "return": 2999.55814411017,
+      "seed": 14489,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 3,
+      "final_x": 0.0002594576688309312,
+      "length": 1500,
+      "max_abs_angle": 0.04512628122817154,
+      "return": 2999.7429829956113,
+      "seed": 14490,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 4,
+      "final_x": -0.00019352905213369781,
+      "length": 1500,
+      "max_abs_angle": 0.03591910427587143,
+      "return": 2999.848705728927,
+      "seed": 14491,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 5,
+      "final_x": 0.0003939791219137015,
+      "length": 1500,
+      "max_abs_angle": 0.07023951202017448,
+      "return": 2999.3923452894173,
+      "seed": 14492,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 6,
+      "final_x": 0.000239923551819684,
+      "length": 1500,
+      "max_abs_angle": 0.03355212288566067,
+      "return": 2999.8066025296052,
+      "seed": 14493,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 7,
+      "final_x": 0.00037380464631480814,
+      "length": 1500,
+      "max_abs_angle": 0.060676609597354735,
+      "return": 2999.491567238265,
+      "seed": 14494,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 8,
+      "final_x": -0.0001407468015720696,
+      "length": 1500,
+      "max_abs_angle": 0.02485760123094168,
+      "return": 2999.924420762163,
+      "seed": 14495,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 9,
+      "final_x": 0.00030235250463119326,
+      "length": 1500,
+      "max_abs_angle": 0.06418112741653048,
+      "return": 2999.595377758223,
+      "seed": 14496,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 10,
+      "final_x": 0.0007967322213066529,
+      "length": 1500,
+      "max_abs_angle": 0.1326236624826262,
+      "return": 2976.6064592913485,
+      "seed": 14497,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 11,
+      "final_x": 0.00080114370475411,
+      "length": 1500,
+      "max_abs_angle": 0.13597169400468362,
+      "return": 2977.5961898142086,
+      "seed": 14498,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 12,
+      "final_x": -0.00010015619705662389,
+      "length": 1500,
+      "max_abs_angle": 0.035885105344518727,
+      "return": 2999.9367592960025,
+      "seed": 14499,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 13,
+      "final_x": 0.0003766395720021821,
+      "length": 1500,
+      "max_abs_angle": 0.06399520155518063,
+      "return": 2999.4643387569636,
+      "seed": 14500,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 14,
+      "final_x": -0.000967738121767347,
+      "length": 1500,
+      "max_abs_angle": 0.15326138205843412,
+      "return": 2968.352251227988,
+      "seed": 14501,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 15,
+      "final_x": -5.9606113645623746e-05,
+      "length": 1500,
+      "max_abs_angle": 0.013973102507480921,
+      "return": 2999.9844348282063,
+      "seed": 14502,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 16,
+      "final_x": 0.0004957659584681733,
+      "length": 1500,
+      "max_abs_angle": 0.0804204071244805,
+      "return": 2999.1001358646895,
+      "seed": 14503,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 17,
+      "final_x": 0.00011312056188554941,
+      "length": 1500,
+      "max_abs_angle": 0.018712250220229546,
+      "return": 2999.956130952501,
+      "seed": 14504,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 18,
+      "final_x": 0.0008554466134375391,
+      "length": 1500,
+      "max_abs_angle": 0.14150385163140358,
+      "return": 2975.3198482956154,
+      "seed": 14505,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 19,
+      "final_x": 0.0003414119409329002,
+      "length": 1500,
+      "max_abs_angle": 0.05622280320839355,
+      "return": 2999.5720470187725,
+      "seed": 14506,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 20,
+      "final_x": -0.0002589110541056463,
+      "length": 1500,
+      "max_abs_angle": 0.049629096642093355,
+      "return": 2999.7228885279046,
+      "seed": 14507,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 21,
+      "final_x": -7.606146176428278e-05,
+      "length": 1500,
+      "max_abs_angle": 0.012537151250558523,
+      "return": 2999.9792584444795,
+      "seed": 14508,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 22,
+      "final_x": -0.0003186945546628738,
+      "length": 1500,
+      "max_abs_angle": 0.05197415848039522,
+      "return": 2999.6299266362653,
+      "seed": 14509,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 23,
+      "final_x": -0.00036212623192845934,
+      "length": 1500,
+      "max_abs_angle": 0.05760016563156544,
+      "return": 2999.5315909152164,
+      "seed": 14510,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 24,
+      "final_x": 0.0005208891323767735,
+      "length": 1500,
+      "max_abs_angle": 0.09159122547531647,
+      "return": 2998.960735814523,
+      "seed": 14511,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 25,
+      "final_x": 0.00047674057714332973,
+      "length": 1500,
+      "max_abs_angle": 0.08324534419485008,
+      "return": 2999.127896927062,
+      "seed": 14512,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 26,
+      "final_x": 0.0001923469626755354,
+      "length": 1500,
+      "max_abs_angle": 0.026967059577211686,
+      "return": 2999.8736095006475,
+      "seed": 14513,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 27,
+      "final_x": 0.00020508076719367576,
+      "length": 1500,
+      "max_abs_angle": 0.04399525901046799,
+      "return": 2999.8114880390735,
+      "seed": 14514,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 28,
+      "final_x": -0.0002438987771371883,
+      "length": 1500,
+      "max_abs_angle": 0.0453387767099558,
+      "return": 2999.7612336372767,
+      "seed": 14515,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 29,
+      "final_x": -0.00020711103767352926,
+      "length": 1500,
+      "max_abs_angle": 0.03445172980289915,
+      "return": 2999.8431119485463,
+      "seed": 14516,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 30,
+      "final_x": 3.2840497749432936e-05,
+      "length": 1500,
+      "max_abs_angle": 0.01500154609023057,
+      "return": 2999.99184274807,
+      "seed": 14517,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 31,
+      "final_x": 0.00035039167901428986,
+      "length": 1500,
+      "max_abs_angle": 0.06391082208998777,
+      "return": 2999.5107218878434,
+      "seed": 14518,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 32,
+      "final_x": 0.000721640081190017,
+      "length": 1500,
+      "max_abs_angle": 0.12152519532389276,
+      "return": 2984.066733187441,
+      "seed": 14519,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 33,
+      "final_x": 0.0002886299723425399,
+      "length": 1500,
+      "max_abs_angle": 0.04320754403289435,
+      "return": 2999.7116013896602,
+      "seed": 14520,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 34,
+      "final_x": 0.0003591234443416562,
+      "length": 1500,
+      "max_abs_angle": 0.06368851304467861,
+      "return": 2999.4921220328747,
+      "seed": 14521,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 35,
+      "final_x": 0.0005120097306900008,
+      "length": 1500,
+      "max_abs_angle": 0.0931031964503932,
+      "return": 2998.9286753990477,
+      "seed": 14522,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 36,
+      "final_x": -0.000399974272457007,
+      "length": 1500,
+      "max_abs_angle": 0.07161828627826908,
+      "return": 2999.374886467281,
+      "seed": 14523,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 37,
+      "final_x": -3.240838887652206e-05,
+      "length": 1500,
+      "max_abs_angle": 0.009450289036205711,
+      "return": 2999.9956912729426,
+      "seed": 14524,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 38,
+      "final_x": 0.00023625034333404272,
+      "length": 1500,
+      "max_abs_angle": 0.04162505359798126,
+      "return": 2999.7784402887514,
+      "seed": 14525,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 39,
+      "final_x": 0.0002579319149958832,
+      "length": 1500,
+      "max_abs_angle": 0.042843978800673956,
+      "return": 2999.751518009619,
+      "seed": 14526,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 40,
+      "final_x": -1.9094284002382454e-05,
+      "length": 1500,
+      "max_abs_angle": 0.016385997651764198,
+      "return": 2999.9941163040344,
+      "seed": 14527,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 41,
+      "final_x": -0.0003854245886922772,
+      "length": 1500,
+      "max_abs_angle": 0.0696439821815494,
+      "return": 2999.4108965208934,
+      "seed": 14528,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 42,
+      "final_x": 0.00028392866477754337,
+      "length": 1500,
+      "max_abs_angle": 0.05119393884769814,
+      "return": 2999.6858605004854,
+      "seed": 14529,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 43,
+      "final_x": -0.00100073143078601,
+      "length": 1500,
+      "max_abs_angle": 0.16044806639320275,
+      "return": 2966.1617368129987,
+      "seed": 14530,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 44,
+      "final_x": -0.0002475441367176696,
+      "length": 1500,
+      "max_abs_angle": 0.047519989334453304,
+      "return": 2999.738966120403,
+      "seed": 14531,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 45,
+      "final_x": 0.0006402822437870953,
+      "length": 1500,
+      "max_abs_angle": 0.11379206263261649,
+      "return": 2987.40479963274,
+      "seed": 14532,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 46,
+      "final_x": 0.0008295275248648382,
+      "length": 1500,
+      "max_abs_angle": 0.1437896783746729,
+      "return": 2972.332633448588,
+      "seed": 14533,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 47,
+      "final_x": -1.6210608823880432e-05,
+      "length": 1500,
+      "max_abs_angle": 0.00745346087685886,
+      "return": 2999.998246395986,
+      "seed": 14534,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 48,
+      "final_x": 0.0003220252848860745,
+      "length": 1500,
+      "max_abs_angle": 0.05039007430830563,
+      "return": 2999.631933000108,
+      "seed": 14535,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 49,
+      "final_x": -2.1018911095341225e-05,
+      "length": 1500,
+      "max_abs_angle": 0.00996871852577241,
+      "return": 2999.9974001255114,
+      "seed": 14536,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 50,
+      "final_x": 9.10838386319445e-05,
+      "length": 1500,
+      "max_abs_angle": 0.030203657621980424,
+      "return": 2999.9562454513552,
+      "seed": 14537,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 51,
+      "final_x": 4.3169503999217773e-05,
+      "length": 1500,
+      "max_abs_angle": 0.006996717136899946,
+      "return": 2999.9936824184474,
+      "seed": 14538,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 52,
+      "final_x": 0.00010814452566566672,
+      "length": 1500,
+      "max_abs_angle": 0.026690586608412458,
+      "return": 2999.9425972876293,
+      "seed": 14539,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 53,
+      "final_x": -3.612542776167991e-05,
+      "length": 1500,
+      "max_abs_angle": 0.03167100407675031,
+      "return": 2999.978306462801,
+      "seed": 14540,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 54,
+      "final_x": 0.0006467940184345152,
+      "length": 1500,
+      "max_abs_angle": 0.10874220775463435,
+      "return": 2989.4356375562556,
+      "seed": 14541,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 55,
+      "final_x": 0.0008659900113026424,
+      "length": 1500,
+      "max_abs_angle": 0.1428692208978174,
+      "return": 2975.223022973724,
+      "seed": 14542,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 56,
+      "final_x": -3.938562911169915e-05,
+      "length": 1500,
+      "max_abs_angle": 0.00709481907641305,
+      "return": 2999.9939238649786,
+      "seed": 14543,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 57,
+      "final_x": 0.0010646916907978313,
+      "length": 1500,
+      "max_abs_angle": 0.1782409708600323,
+      "return": 2965.8336973052265,
+      "seed": 14544,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 58,
+      "final_x": -0.0007040720479830454,
+      "length": 1500,
+      "max_abs_angle": 0.12376681572675897,
+      "return": 2981.0764244395464,
+      "seed": 14545,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 59,
+      "final_x": -5.941830539938091e-05,
+      "length": 1500,
+      "max_abs_angle": 0.028332267605258882,
+      "return": 2999.971656575906,
+      "seed": 14546,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 60,
+      "final_x": 0.00023478761883048065,
+      "length": 1500,
+      "max_abs_angle": 0.03737751878983428,
+      "return": 2999.802425776048,
+      "seed": 14547,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 61,
+      "final_x": 0.00016242394932244344,
+      "length": 1500,
+      "max_abs_angle": 0.025608174465665146,
+      "return": 2999.9050878845987,
+      "seed": 14548,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 62,
+      "final_x": -0.0008558969499524783,
+      "length": 1500,
+      "max_abs_angle": 0.14748177685077277,
+      "return": 2973.206352882925,
+      "seed": 14549,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 63,
+      "final_x": -9.090776325213724e-05,
+      "length": 1500,
+      "max_abs_angle": 0.01384866954951925,
+      "return": 2999.973353502748,
+      "seed": 14550,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 64,
+      "final_x": 0.00017219760877721892,
+      "length": 1500,
+      "max_abs_angle": 0.030982886422739553,
+      "return": 2999.883883847923,
+      "seed": 14551,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 65,
+      "final_x": 7.533522058696678e-05,
+      "length": 1500,
+      "max_abs_angle": 0.03290224649966193,
+      "return": 2999.9592167244537,
+      "seed": 14552,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 66,
+      "final_x": -0.000670402981812246,
+      "length": 1500,
+      "max_abs_angle": 0.11756621803313276,
+      "return": 2986.279721989308,
+      "seed": 14553,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 67,
+      "final_x": 0.00030725962922248086,
+      "length": 1500,
+      "max_abs_angle": 0.04949612242743109,
+      "return": 2999.657069491133,
+      "seed": 14554,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 68,
+      "final_x": -0.0002639224067785071,
+      "length": 1500,
+      "max_abs_angle": 0.05975648058526361,
+      "return": 2999.679761873079,
+      "seed": 14555,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 69,
+      "final_x": 0.00045027178583654484,
+      "length": 1500,
+      "max_abs_angle": 0.08099736898049392,
+      "return": 2999.2004309523354,
+      "seed": 14556,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 70,
+      "final_x": 9.817455821817375e-06,
+      "length": 1500,
+      "max_abs_angle": 0.013365155796249558,
+      "return": 2999.9975654460823,
+      "seed": 14557,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 71,
+      "final_x": -7.109181313204775e-05,
+      "length": 1500,
+      "max_abs_angle": 0.01737814553352931,
+      "return": 2999.9744328383313,
+      "seed": 14558,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 72,
+      "final_x": -0.0007918597148069567,
+      "length": 1500,
+      "max_abs_angle": 0.13707878661372316,
+      "return": 2974.5312405451787,
+      "seed": 14559,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 73,
+      "final_x": 0.0003837678655171795,
+      "length": 1500,
+      "max_abs_angle": 0.0720106010513456,
+      "return": 2999.3912221412584,
+      "seed": 14560,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 74,
+      "final_x": 0.0003941006007130131,
+      "length": 1500,
+      "max_abs_angle": 0.0683402810991794,
+      "return": 2999.405386123232,
+      "seed": 14561,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 75,
+      "final_x": -0.0002471800554925081,
+      "length": 1500,
+      "max_abs_angle": 0.04594719356999005,
+      "return": 2999.7548707267297,
+      "seed": 14562,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 76,
+      "final_x": 0.00013829109964861295,
+      "length": 1500,
+      "max_abs_angle": 0.024769761059808836,
+      "return": 2999.925926363459,
+      "seed": 14563,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 77,
+      "final_x": -0.00029054164030005864,
+      "length": 1500,
+      "max_abs_angle": 0.05244423920666425,
+      "return": 2999.669747219783,
+      "seed": 14564,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 78,
+      "final_x": -0.0006900478301597717,
+      "length": 1500,
+      "max_abs_angle": 0.11924773910925011,
+      "return": 2985.179352205103,
+      "seed": 14565,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 79,
+      "final_x": 0.00015467876966871927,
+      "length": 1500,
+      "max_abs_angle": 0.022637140951483906,
+      "return": 2999.9168055184177,
+      "seed": 14566,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 80,
+      "final_x": 2.7100372480199277e-05,
+      "length": 1500,
+      "max_abs_angle": 0.009379680871915689,
+      "return": 2999.9961708469814,
+      "seed": 14567,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 81,
+      "final_x": -9.87709090984801e-05,
+      "length": 1500,
+      "max_abs_angle": 0.019723660454193635,
+      "return": 2999.9595122449837,
+      "seed": 14568,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 82,
+      "final_x": -2.944042896113873e-05,
+      "length": 1500,
+      "max_abs_angle": 0.02387222201638404,
+      "return": 2999.9867490387323,
+      "seed": 14569,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 83,
+      "final_x": 0.00043523706377387376,
+      "length": 1500,
+      "max_abs_angle": 0.07643729489985099,
+      "return": 2999.2600746374796,
+      "seed": 14570,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 84,
+      "final_x": -0.0005270947024826824,
+      "length": 1500,
+      "max_abs_angle": 0.09306902024354603,
+      "return": 2998.924149218277,
+      "seed": 14571,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 85,
+      "final_x": 0.00040692433187971855,
+      "length": 1500,
+      "max_abs_angle": 0.07436146379783769,
+      "return": 2999.334893187444,
+      "seed": 14572,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 86,
+      "final_x": -0.0006580585435164515,
+      "length": 1500,
+      "max_abs_angle": 0.11616652639262977,
+      "return": 2986.3075541461435,
+      "seed": 14573,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 87,
+      "final_x": -0.0001976324698626279,
+      "length": 1500,
+      "max_abs_angle": 0.03427476996143776,
+      "return": 2999.8516701088024,
+      "seed": 14574,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 88,
+      "final_x": -0.00043234877313550217,
+      "length": 1500,
+      "max_abs_angle": 0.07661686245585747,
+      "return": 2999.272312737491,
+      "seed": 14575,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 89,
+      "final_x": 0.0007230307409375728,
+      "length": 1500,
+      "max_abs_angle": 0.12606011134558237,
+      "return": 2978.999147212258,
+      "seed": 14576,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 90,
+      "final_x": -0.00019517373777479033,
+      "length": 1500,
+      "max_abs_angle": 0.039933626782120375,
+      "return": 2999.832283808703,
+      "seed": 14577,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 91,
+      "final_x": 0.0009839852694624334,
+      "length": 1500,
+      "max_abs_angle": 0.16257419928581643,
+      "return": 2968.3188260499574,
+      "seed": 14578,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 92,
+      "final_x": 0.0001846261618639106,
+      "length": 1500,
+      "max_abs_angle": 0.03856471432317305,
+      "return": 2999.851462986187,
+      "seed": 14579,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 93,
+      "final_x": -0.00041787260343836786,
+      "length": 1500,
+      "max_abs_angle": 0.06960614078583822,
+      "return": 2999.3586156753654,
+      "seed": 14580,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 94,
+      "final_x": 0.00021801639609981874,
+      "length": 1500,
+      "max_abs_angle": 0.03333484575576235,
+      "return": 2999.8335683352802,
+      "seed": 14581,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 95,
+      "final_x": -0.0009888550637623152,
+      "length": 1500,
+      "max_abs_angle": 0.1600616268579238,
+      "return": 2967.2775505570944,
+      "seed": 14582,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 96,
+      "final_x": -0.000559331316158738,
+      "length": 1500,
+      "max_abs_angle": 0.09658138696709354,
+      "return": 2998.8164834019967,
+      "seed": 14583,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 97,
+      "final_x": 5.037325380531048e-05,
+      "length": 1500,
+      "max_abs_angle": 0.02386116747119279,
+      "return": 2999.9843969578938,
+      "seed": 14584,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 98,
+      "final_x": 0.0004329829540542521,
+      "length": 1500,
+      "max_abs_angle": 0.07363358559998653,
+      "return": 2999.2897165396435,
+      "seed": 14585,
+      "success": true,
+      "terminated": false
+    },
+    {
+      "episode": 99,
+      "final_x": 0.0004381787370570406,
+      "length": 1500,
+      "max_abs_angle": 0.07544112615508054,
+      "return": 2999.26546046871,
+      "seed": 14586,
+      "success": true,
+      "terminated": false
+    }
+  ],
+  "episodes": 100,
+  "evidence": {
+    "checkpoint": {
+      "bytes": 738,
+      "path": "runs/uniform6_finetune/checkpoints/best.safetensors",
+      "sha256": "7fa4237c1dc493fb5746223ba1ecc94e06a51e738c9a053085516baa94cc5571"
+    },
+    "config": {
+      "overrides": [],
+      "path": "configs/uniform6_near_upright_lqr.yaml",
+      "resolved_sha256": "8c8b1d6f244a92e3bd08124928f5a3ff166d9afc3a24f06d2a20fec8a2bb92e3"
+    },
+    "deterministic_policy": true,
+    "environment": {
+      "episode_seconds": 30.0,
+      "force_limit": 80.0,
+      "max_steps": 1500,
+      "n_links": 6,
+      "rail_limit": 3.0,
+      "terminate_abs_angle": 1.25
+    },
+    "eval_seed": 4487,
+    "generated_at": "2026-06-08T05:44:55+00:00",
+    "git": {
+      "available": true,
+      "commit": "0f20118f095f8d0a5c500d3587c75bf3e2f2996d",
+      "dirty": false,
+      "root": "/Users/corbensorenson/Documents/cartpole",
+      "status_short": []
+    },
+    "progress": 1.0,
+    "runtime": {
+      "machine": "arm64",
+      "packages": {
+        "gymnasium": "1.3.0",
+        "mlx": "0.31.2",
+        "mujoco": "3.9.0",
+        "numpy": "2.4.6"
+      },
+      "platform": "macOS-15.0-arm64-arm-64bit",
+      "processor": "arm",
+      "python": "3.12.5"
+    }
+  },
+  "length_max": 1500,
+  "length_mean": 1500.0,
+  "length_min": 1500,
+  "max_angle_max": 0.1782409708600323,
+  "max_angle_mean": 0.06378709305299556,
+  "return_mean": 2994.9562611612887,
+  "return_std": 9.773658013486083,
+  "success_rate": 1.0
+}

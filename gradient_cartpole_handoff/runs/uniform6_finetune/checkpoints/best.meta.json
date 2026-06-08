@@ -1,0 +1,73 @@
+{
+  "checkpoint": "runs/uniform6_finetune/checkpoints/best.safetensors",
+  "closed_loop_max_abs_eigenvalue": 0.9949040093628364,
+  "config_path": "configs/uniform6_near_upright_lqr.yaml",
+  "config_resolved_sha256": "8c8b1d6f244a92e3bd08124928f5a3ff166d9afc3a24f06d2a20fec8a2bb92e3",
+  "control_cost": 1000.0,
+  "fd_eps": 1e-07,
+  "generated_at": "2026-06-08T05:42:50+00:00",
+  "git": {
+    "available": true,
+    "commit": "0f20118f095f8d0a5c500d3587c75bf3e2f2996d",
+    "dirty": false,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": []
+  },
+  "method": "finite_difference_discrete_lqr",
+  "nonzero_observation_weights": {
+    "0": -0.008056733757257462,
+    "1": -0.014843752607703209,
+    "14": -0.15758761763572693,
+    "15": -14.455636024475098,
+    "16": 83.94679260253906,
+    "17": -248.1286163330078,
+    "18": 336.4882507324219,
+    "19": -179.83001708984375,
+    "20": -0.4542795717716217,
+    "21": -0.6167729496955872,
+    "22": 1.5600337982177734,
+    "23": -10.650663375854492,
+    "24": 21.451702117919922,
+    "25": -17.051715850830078
+  },
+  "open_loop_max_abs_eigenvalue": 1.5157766973762716,
+  "policy_scale": 1.0,
+  "progress": 1.0,
+  "q_weights": {
+    "absolute_angle": 100.0,
+    "absolute_angular_velocity": 1.0,
+    "cart_position": 0.1,
+    "cart_velocity": 0.1,
+    "relative_angle": 1.0,
+    "relative_angular_velocity": 0.01
+  },
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.31.2",
+      "mujoco": "3.9.0",
+      "numpy": "2.4.6"
+    },
+    "platform": "macOS-15.0-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.5"
+  },
+  "scope": "uniform 6-link near-upright stabilization; not swing-up and not the default PPO curriculum",
+  "state_gain": [
+    0.0026855778085728157,
+    0.15758761422283657,
+    14.455636468232036,
+    -83.94679040035219,
+    248.12862206917,
+    -336.48826201022246,
+    179.8300161087529,
+    0.014843753044057018,
+    0.45427958143390795,
+    0.6167729622934034,
+    -1.5600337751836524,
+    10.65066300949248,
+    -21.451701886956194,
+    17.05171607427916
+  ]
+}
