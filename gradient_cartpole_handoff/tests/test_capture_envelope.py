@@ -20,6 +20,7 @@ from gcartpole.capture_funnel import (
 )
 from gcartpole.config import load_config
 from gcartpole.env import NLinkCartPoleEnv
+from gcartpole.ilqr import MujocoTransition, data_state, state_difference
 from gcartpole.ppo_mlx import select_evaluation_state_indices
 from scripts.mine_capture_failures import build_mining_mixture
 from scripts.evaluate_linear_mpc_capture import LinearMPC
@@ -29,6 +30,7 @@ from scripts.search_capture_hybrid_schedule import evaluate_hybrid_schedule, res
 from scripts.evaluate_feedback_mpc_capture import feedback_action, shift_schedule
 from scripts.search_capture_target_schedule import evaluate_target_schedule, scheduled_cart_target
 from scripts.search_swingup_capture import lqr_action
+from scripts.search_ilqr_capture import load_initial_controls
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -258,6 +260,55 @@ class CaptureEnvelopeTests(unittest.TestCase):
             horizon_seconds=2.0,
         )
         np.testing.assert_allclose(shifted, [0.5, 0.5, 0.0])
+
+    def test_ilqr_state_difference_wraps_relative_angles(self) -> None:
+        first = np.asarray([0.2, 2.0 * np.pi - 0.1, -2.0 * np.pi + 0.2, 0.4, -0.3])
+        second = np.zeros(5, dtype=np.float64)
+        np.testing.assert_allclose(
+            state_difference(first, second, n_links=2),
+            [0.2, -0.1, 0.2, 0.4, -0.3],
+            atol=1e-12,
+        )
+
+    def test_ilqr_warm_start_preserves_time_and_pads_with_zero(self) -> None:
+        payload = {
+            "controller": {
+                "controls": [0.0, 0.5, 1.0],
+                "horizon_seconds": 0.06,
+            }
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "controller.json"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            controls = load_initial_controls(str(path), horizon_steps=5, policy_dt=0.02)
+        np.testing.assert_allclose(controls, [0.0, 0.5, 1.0, 0.0, 0.0])
+
+    def test_ilqr_dimensionless_mujoco_transition_linearizes(self) -> None:
+        cfg = load_config(ROOT / "configs/swingup6_capture_envelope.yaml")
+        cfg["env"]["init_mode"] = "upright"
+        cfg["env"]["init_angle_noise"] = 0.0
+        cfg["env"]["init_vel_noise"] = 0.0
+        env = NLinkCartPoleEnv(cfg, progress=1.0, seed=31)
+        try:
+            env.reset()
+            transform = np.diag(np.linspace(0.5, 1.5, 14, dtype=np.float64))
+            transition = MujocoTransition(env, coordinate_transform=transform)
+            initial = transition.to_coordinates(data_state(env.data))
+            np.testing.assert_allclose(transition.to_physical(initial), data_state(env.data))
+            following = transition(initial, 0.1)
+            state_matrix, input_matrix = transition.linearize(
+                initial,
+                0.1,
+                state_epsilon=1e-5,
+                action_epsilon=1e-4,
+            )
+        finally:
+            env.close()
+        self.assertEqual(following.shape, (14,))
+        self.assertEqual(state_matrix.shape, (14, 14))
+        self.assertEqual(input_matrix.shape, (14, 1))
+        self.assertTrue(np.all(np.isfinite(state_matrix)))
+        self.assertTrue(np.all(np.isfinite(input_matrix)))
 
     def test_policy_control_penalty_prefers_zero_residual(self) -> None:
         cfg = load_config(ROOT / "configs/swingup6_capture_sac_boundary.yaml")

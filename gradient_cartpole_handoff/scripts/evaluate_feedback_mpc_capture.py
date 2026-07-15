@@ -131,6 +131,7 @@ def rollout_feedback_candidate(
     start_qvel: np.ndarray,
     gain: np.ndarray,
     lqr_scale: float,
+    planning_lqr_scale: float,
     transform: np.ndarray,
     lyapunov: np.ndarray,
     controller: dict[str, Any],
@@ -166,7 +167,7 @@ def rollout_feedback_candidate(
             scratch.qvel,
             gain,
             n_links=env.n,
-            scale=lqr_scale,
+            scale=lqr_scale if latched else planning_lqr_scale,
             cart_target=target,
             residual=residual,
             clip=False,
@@ -228,6 +229,7 @@ def search_feedback_plan(
     start_qvel: np.ndarray,
     gain: np.ndarray,
     lqr_scale: float,
+    planning_lqr_scale: float,
     transform: np.ndarray,
     lyapunov: np.ndarray,
     initial_controller: dict[str, Any],
@@ -280,6 +282,7 @@ def search_feedback_plan(
                 start_qvel=start_qvel,
                 gain=gain,
                 lqr_scale=lqr_scale,
+                planning_lqr_scale=planning_lqr_scale,
                 transform=transform,
                 lyapunov=lyapunov,
                 controller=controller,
@@ -347,6 +350,7 @@ def evaluate_feedback_mpc(
     seed: int,
     gain: np.ndarray,
     lqr_scale: float,
+    planning_lqr_scale: float,
     transform: np.ndarray,
     lyapunov: np.ndarray,
     horizon_steps: int,
@@ -411,6 +415,7 @@ def evaluate_feedback_mpc(
                     start_qvel=np.asarray(env.data.qvel, dtype=np.float64).copy(),
                     gain=gain,
                     lqr_scale=lqr_scale,
+                    planning_lqr_scale=planning_lqr_scale,
                     transform=transform,
                     lyapunov=lyapunov,
                     initial_controller=warm_start,
@@ -462,7 +467,7 @@ def evaluate_feedback_mpc(
                 env.data.qvel,
                 gain,
                 n_links=env.n,
-                scale=lqr_scale,
+                scale=planning_lqr_scale if use_mpc else lqr_scale,
                 cart_target=target,
                 residual=residual,
             )
@@ -539,6 +544,7 @@ def main() -> None:
     parser.add_argument("--target-sigma", type=float, default=0.5)
     parser.add_argument("--residual-sigma", type=float, default=0.15)
     parser.add_argument("--lqr-scale", type=float, default=1.30)
+    parser.add_argument("--planning-lqr-scale", type=float, default=None)
     parser.add_argument("--override", action="append", default=[])
     args = parser.parse_args()
 
@@ -590,6 +596,9 @@ def main() -> None:
         seed=args.seed,
         gain=gain,
         lqr_scale=args.lqr_scale,
+        planning_lqr_scale=(
+            args.lqr_scale if args.planning_lqr_scale is None else args.planning_lqr_scale
+        ),
         transform=transform,
         lyapunov=lyapunov,
         horizon_steps=args.horizon_steps,
@@ -634,6 +643,9 @@ def main() -> None:
             "target_sigma": float(args.target_sigma),
             "residual_sigma": float(args.residual_sigma),
             "lqr_scale": float(args.lqr_scale),
+            "planning_lqr_scale": float(
+                args.lqr_scale if args.planning_lqr_scale is None else args.planning_lqr_scale
+            ),
             "lqr_gain": gain.astype(float).tolist(),
         },
         "lyapunov": {

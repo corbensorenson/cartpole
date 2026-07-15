@@ -62,6 +62,7 @@ def main() -> None:
     parser.add_argument("--target-sigma", type=float, default=0.5)
     parser.add_argument("--residual-sigma", type=float, default=0.15)
     parser.add_argument("--lqr-scale", type=float, default=1.30)
+    parser.add_argument("--planning-lqr-scale", type=float, default=None)
     parser.add_argument("--override", action="append", default=[])
     args = parser.parse_args()
 
@@ -135,6 +136,9 @@ def main() -> None:
     )
     policy_dt = float(cfg["env"]["timestep"]) * int(cfg["env"].get("frame_skip", 1))
     mpc_steps = max(1, int(round(args.mpc_seconds / policy_dt)))
+    planning_lqr_scale = (
+        args.lqr_scale if args.planning_lqr_scale is None else args.planning_lqr_scale
+    )
     states = dataset["states"]
     started = time.time()
     refined_rows: list[dict[str, Any]] = []
@@ -153,6 +157,7 @@ def main() -> None:
                 seed=int(initial_row["seed"]),
                 gain=gain,
                 lqr_scale=args.lqr_scale,
+                planning_lqr_scale=planning_lqr_scale,
                 transform=transform,
                 lyapunov=lyapunov,
                 horizon_steps=args.horizon_steps,
@@ -263,6 +268,7 @@ def main() -> None:
                 "target_sigma": float(args.target_sigma),
                 "residual_sigma": float(args.residual_sigma),
                 "lqr_scale": float(args.lqr_scale),
+                "planning_lqr_scale": float(planning_lqr_scale),
                 "lqr_gain": gain.astype(float).tolist(),
             },
         },

@@ -553,3 +553,21 @@ median maximum upright hold 13.94 s; no successful rail hits
 ```
 
 A subsequent six-generation, 128-candidate pass initialized from each best existing schedule recovered `0/20`, confirming that local search around the two-second schedule family is saturated. The next deep-tail experiment should add a longer horizon or direct transient action/residual knots and rank candidates with dense dimensionless Lyapunov reduction. None of these partial-progress validation artifacts pass P1.
+
+### Full-envelope direct-action and iLQR probes
+
+The `p=1.0` capture envelope exposes a controller-authority defect that is hidden near the curriculum frontier. On validation state 674, scale-`1.30` LQR requests approximately `-78` normalized action before clipping. Adding a bounded residual to that saturated signal cannot change the applied action over most of its range. Feedback MPC therefore now has a separate planning LQR scale while retaining scale `1.30` after verified handoff. Zero-feedback direct-action CEM lowers the uninterrupted minimum dimensionless Lyapunov value from the prior `2.14M` floor to `1.76M`; a scale-`0.005` guided variant reaches only `3.63M`. Both miss the funnel and hit the rail.
+
+`src/gcartpole/ilqr.py` adds a bounded finite-difference iLQR trajectory optimizer. It operates in the frozen envelope's dimensionless absolute-angle coordinates, uses exact MuJoCo transitions, carries a steep soft barrier near the physical rail, and returns time-varying tracking gains. `scripts/search_ilqr_capture.py` executes the planned trajectory without reset and switches to the nominal LQR stabilizer only after `V <= 1,800` and the cart handoff bound both pass.
+
+A feasible zero-action seed with terminal-weight continuation produced the strongest full-envelope state-674 trajectory:
+
+```text
+runs/p1_capture_ilqr/validation_674_p1_feasible_seed.json
+terminal V = 1,599,033; planned max |x| = 1.614 m
+
+runs/p1_capture_ilqr/validation_674_p1_continuation10.json
+terminal V = 1,125,027; planned max |x| = 1.638 m
+```
+
+Live time-varying tracking matches the planned terminal value, but neither trajectory enters the conservative funnel; switching to saturated LQR then causes a rail failure. Raising terminal weight by another factor of ten makes no progress. Preserving the three-second control timing and appending a two-second horizon lowers transient `V` to `1.01M` but regresses terminal `V` to `66.4M`. The current local iLQR formulation is therefore retained as a trajectory diagnostic and warm-start tool, not treated as a P1 controller. The next distinct branch should use box-constrained DDP/direct collocation with an explicit terminal-state constraint or learn a broad recovery policy from a diverse set of optimized feasible trajectories; further scalar weight sweeps on this local optimum are not justified.
