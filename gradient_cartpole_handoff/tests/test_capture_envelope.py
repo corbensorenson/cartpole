@@ -12,6 +12,7 @@ from gcartpole.capture_envelope import generate_capture_states, validate_capture
 from gcartpole.config import load_config
 from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.ppo_mlx import select_evaluation_state_indices
+from scripts.mine_capture_failures import build_mining_mixture
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -100,6 +101,14 @@ class CaptureEnvelopeTests(unittest.TestCase):
         self.assertNotEqual(first, different)
         self.assertEqual(len(set(first)), 32)
         self.assertTrue(all(0 <= index < 64 for index in first))
+
+    def test_hard_mining_mixture_preserves_anchors_and_repeats_failures(self) -> None:
+        states = [{"state_id": f"state-{index}"} for index in range(5)]
+        mixture = build_mining_mixture(states, [0, 1, 2, 3], [1, 3], hard_repeat=2)
+        self.assertEqual(len(mixture), 8)
+        self.assertEqual([row["state_id"] for row in mixture[:4]], [f"state-{index}" for index in range(4)])
+        self.assertEqual(sum(bool(row["mining"]["hard_failure"]) for row in mixture), 6)
+        self.assertEqual(len({row["state_id"] for row in mixture}), len(mixture))
 
 
 if __name__ == "__main__":
