@@ -104,6 +104,14 @@ def main() -> None:
     parser.add_argument("--control-cost", type=float, default=1000.0)
     parser.add_argument("--policy-scale", type=float, default=1.0)
     parser.add_argument("--cart-target", type=float, default=0.0)
+    parser.add_argument("--cart-position-cost", type=float, default=0.1)
+    parser.add_argument("--absolute-angle-cost", type=float, default=100.0)
+    parser.add_argument("--cart-velocity-cost", type=float, default=0.1)
+    parser.add_argument("--absolute-angular-velocity-cost", type=float, default=1.0)
+    parser.add_argument("--relative-angle-cost", type=float, default=1.0)
+    parser.add_argument("--relative-angular-velocity-cost", type=float, default=0.01)
+    parser.add_argument("--cart-position-gain-add", type=float, default=0.0)
+    parser.add_argument("--cart-velocity-gain-add", type=float, default=0.0)
     parser.add_argument("--override", action="append", default=[])
     args = parser.parse_args()
 
@@ -119,17 +127,19 @@ def main() -> None:
     a, b = finite_difference_dynamics(cfg, args.progress, args.fd_eps)
     n = int(cfg["env"]["n_links"])
     q_weights = {
-        "cart_position": 0.1,
-        "absolute_angle": 100.0,
-        "cart_velocity": 0.1,
-        "absolute_angular_velocity": 1.0,
-        "relative_angle": 1.0,
-        "relative_angular_velocity": 0.01,
+        "cart_position": float(args.cart_position_cost),
+        "absolute_angle": float(args.absolute_angle_cost),
+        "cart_velocity": float(args.cart_velocity_cost),
+        "absolute_angular_velocity": float(args.absolute_angular_velocity_cost),
+        "relative_angle": float(args.relative_angle_cost),
+        "relative_angular_velocity": float(args.relative_angular_velocity_cost),
     }
     q = absolute_angle_cost(n, q_weights)
     r = np.array([[float(args.control_cost)]], dtype=np.float64)
     p = solve_discrete_are(a, b, q, r)
     gain = np.linalg.solve(b.T @ p @ b + r, b.T @ p @ a).reshape(-1)
+    gain[0] += float(args.cart_position_gain_add)
+    gain[n + 1] += float(args.cart_velocity_gain_add)
 
     probe = NLinkCartPoleEnv(cfg, progress=args.progress, seed=int(cfg["experiment"].get("seed", 0)))
     obs_dim = probe.observation_space.shape[0]
@@ -167,6 +177,8 @@ def main() -> None:
         "policy_scale": float(args.policy_scale),
         "cart_target": float(args.cart_target),
         "q_weights": q_weights,
+        "cart_position_gain_add": float(args.cart_position_gain_add),
+        "cart_velocity_gain_add": float(args.cart_velocity_gain_add),
         "state_gain": gain.astype(float).tolist(),
         "nonzero_observation_weights": {
             str(i): float(v) for i, v in enumerate(obs_weight) if abs(float(v)) > 0.0

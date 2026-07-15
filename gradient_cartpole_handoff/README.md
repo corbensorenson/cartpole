@@ -20,6 +20,24 @@ make roadmap-p0
 
 This regenerates the target MuJoCo XML, records its SHA-256, checks the hanging geometry and reset distribution in MuJoCo, and runs rejection tests for easier plants and incomplete evidence. It does not claim the seven-link control problem is solved.
 
+Phase 1 now has a frozen six-link synthetic capture benchmark:
+
+```bash
+make generate-capture-envelope
+make capture-envelope6
+make eval-capture-envelope6
+```
+
+[`benchmarks/p1_capture_envelope.yaml`](benchmarks/p1_capture_envelope.yaml) fixes the uniform plant, control frequency, 15-second episode, success contract, gate thresholds, and seeded 20,000/2,000/1,000 train/validation/test state splits. The evaluator rejects altered rails, force limits, dynamics, or easier hold criteria and evaluates every held-out state exactly once. The current analytic LQR baseline fails the final gate with `0/1000` successes, `0.04 s` median maximum upright hold, and `1000` rail hits. An honest all-state residual-PPO curriculum currently masters 5% of the envelope scale and stalls at 7.5%; P1 is not passed.
+
+Current generated split hashes:
+
+```text
+train       993d6563c4eccd23ae26aa3f5bd0064751790ad0bcf5376e2a60205d88462837
+validation  aa32b8989d45223fca7e19e9d5eeb7f84da55c6dd5faa9a8508212e21a479de0
+test        5d82bbd33b1cec6847fb26de836284be8623d00d47dd25c335130d68dd85c686
+```
+
 Current achieved artifact set:
 
 ```text

@@ -393,6 +393,16 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
     mx.eval(model.parameters())
     if init_checkpoint:
         load_model(model, init_checkpoint)
+    elif bool(ppo.get("zero_init_actor_output", False)):
+        model.update(
+            {
+                "actor_out": {
+                    "weight": mx.zeros_like(model.actor_out.weight),
+                    "bias": mx.zeros_like(model.actor_out.bias),
+                }
+            }
+        )
+        mx.eval(model.parameters())
 
     optimizer = optim.Adam(learning_rate=float(ppo["learning_rate"]))
     loss_and_grad = nn.value_and_grad(model, ppo_loss_fn)
@@ -433,6 +443,8 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
             rebuild_for_progress = last_env_progress is None or not math.isclose(progress, last_env_progress, rel_tol=0.0, abs_tol=1e-12)
             if update == 1 or rebuild_for_progress or (rebuild_every > 0 and update % rebuild_every == 0):
                 obs, infos = envs.set_progress(progress)
+                ep_returns[:] = 0.0
+                ep_lengths[:] = 0
                 current_morph_info = infos[0]
                 morph_info = current_morph_info
                 last_env_progress = progress

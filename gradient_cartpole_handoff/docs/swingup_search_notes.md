@@ -406,3 +406,40 @@ runs/uniform6_capture_wide_probe_80/eval_capture_wide20.json
 ```
 
 The environment now supports scheduled reset noise (`*_start` / `*_end`) for initial angle, velocity, cart-position, and cart-velocity noise, and `evaluate.py` records both the effective noise at eval progress and the schedule fields in evidence JSON. `configs/uniform6_capture_wide.yaml` uses that support to train a robust final-uniform near-upright capture expert from progressively wider upright perturbations. A bounded `80` update probe did not learn the final wide-noise task: held-out `20` episode eval at progress `1.0` reported `success_rate = 0.0`, `ever_upright_rate = 0.15`, `max_upright_streak_max = 0.06 s`, and `max_capture_quality_mean = 0.0266`. This is not a solution, but it clarifies the next bottleneck: before final swing-up proof, the capture/stabilize expert must learn a much wider near-upright basin than the current analytic LQR baseline.
+
+## Frozen P1 capture envelope (2026-07-15)
+
+The synthetic six-link capture gate is now frozen in `benchmarks/p1_capture_envelope.yaml`. It uses the final uniform six-link morphology, `+/-3 m` rail, `+/-80 N` action contract, 50 Hz policy rate, and 15-second episodes. States independently cover `|x| <= 1.25 m`, maximum absolute link angle `<= 0.15 rad`, `|cart velocity| <= 0.50 m/s`, and a six-dimensional hinge-velocity RMS ball `<= 0.75 rad/s`. The deterministic splits are train seed `61001` (`20,000` states), validation seed `61002` (`2,000`), and test seed `61003` (`1,000`).
+
+Regenerated artifact hashes after freezing the complete plant and gate contract:
+
+```text
+runs/p1_capture_envelope/train.json       993d6563c4eccd23ae26aa3f5bd0064751790ad0bcf5376e2a60205d88462837
+runs/p1_capture_envelope/validation.json  aa32b8989d45223fca7e19e9d5eeb7f84da55c6dd5faa9a8508212e21a479de0
+runs/p1_capture_envelope/test.json        5d82bbd33b1cec6847fb26de836284be8623d00d47dd25c335130d68dd85c686
+```
+
+`scripts/evaluate_capture_gate.py` now validates both the generated dataset and the resolved plant/gate config, runs deterministic batched policy inference across all 1,000 test states, and records per-state capture, hold, rail, termination, and excursion evidence. Diagnostic subsets or curriculum progress below `1.0` cannot pass. The exact final gate remains at least 90% success, median maximum continuous upright hold of at least 10 seconds, and no rail hit among successful episodes.
+
+The existing narrow finite-difference LQR baseline was rerun after the benchmark freeze:
+
+```text
+runs/p1_capture_envelope/eval_lqr_test1000.json
+success_rate = 0.0
+max_upright_streak_median = 0.04 s
+rail_hit_count = 1000
+gate.passed = false
+```
+
+Previous wide PPO, state-list PPO, curriculum-stage PPO, and LQR-residual checkpoints also scored zero successes on the same 1,000 physical test states. Those earlier JSONs predate the expanded spec hash and are retained only as diagnostics, not authoritative gate evidence.
+
+The first honest all-state backward curriculum uses the frozen 20,000-state train split at every stage, with position and velocity amplitudes scaled quadratically by curriculum progress. This avoids the optimistic `quality_prefix` ordering used in earlier probes. Its residual-PPO frontier is:
+
+```text
+runs/swingup6_capture_envelope_allstates_gated_probe_75/checkpoints/frontier.safetensors
+mastered progress = 0.05
+validation success at progress 0.05 = 30/32 internally; 124/128 for pure LQR diagnostic
+validation success at progress 0.075 = 18/32 internally; 130/256 on an external evaluation
+```
+
+A fixed-progress continuation at `0.075` with lower learning rate and action variance remained near 50% success through update 50, so it did not advance the gate. This establishes a measured curriculum boundary, not a solution. The next PPO continuation should use materially smaller envelope increments than `0.025`; the parallel model-based branch should add a terminal stabilizer/value and longer low-dimensional horizon before being judged against the same frozen validation states.

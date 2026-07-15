@@ -21,6 +21,10 @@ from .mjxml import generate_nlink_cartpole_xml
 from .morphology import Morphology, build_morphology
 
 
+_INIT_STATE_FILE_CACHE: dict[Path, list[dict[str, Any]]] = {}
+_INIT_STATE_ORDER_CACHE: dict[Path, list[int]] = {}
+
+
 def wrap_angle(angle: np.ndarray) -> np.ndarray:
     return (angle + np.pi) % (2.0 * np.pi) - np.pi
 
@@ -70,6 +74,8 @@ class NLinkCartPoleEnv(gym.Env):
         self.max_cart_excursion = 0.0
         self.last_init_state_index: int | None = None
         self._init_state_cache: list[dict[str, Any]] | None = None
+        self._init_state_cache_key: Path | None = None
+        self._init_state_order_cache: list[int] | None = None
         self.renderer = None
         self._build_model(self.progress)
 
@@ -145,6 +151,12 @@ class NLinkCartPoleEnv(gym.Env):
         self.data.qvel[:] = 0.0
         angle_noise = self._progress_value(self.env_cfg, "init_angle_noise", 0.02)
         vel_noise = self._progress_value(self.env_cfg, "init_vel_noise", 0.01)
+        if options is not None and ("qpos" in options or "qvel" in options):
+            if "qpos" not in options or "qvel" not in options:
+                raise ValueError("reset options must provide both qpos and qvel")
+            init_qpos = np.asarray(options["qpos"], dtype=np.float64)
+            init_qvel = np.asarray(options["qvel"], dtype=np.float64)
+            return self._reset_to_state(init_qpos, init_qvel, angle_noise, vel_noise)
         init_mode = str(self.env_cfg.get("init_mode", "upright"))
         if init_mode == "upright":
             base_angles = np.zeros(self.n, dtype=np.float64)
@@ -171,7 +183,8 @@ class NLinkCartPoleEnv(gym.Env):
             states = self._load_init_states()
             if not states:
                 raise ValueError("env.init_mode=state_list requires at least one init state")
-            idx = self._select_init_state_index(states)
+            requested_index = None if options is None else options.get("state_index")
+            idx = self._select_init_state_index(states, requested_index=requested_index)
             self.last_init_state_index = idx
             state = states[idx]
             init_qpos = np.asarray(state.get("qpos", []), dtype=np.float64)
@@ -202,9 +215,15 @@ class NLinkCartPoleEnv(gym.Env):
             path = self.env_cfg.get("init_states_path")
             if not path:
                 raise ValueError("env.init_mode=state_list requires env.init_states or env.init_states_path")
-            with open(Path(path), "r", encoding="utf-8") as f:
-                payload = json.load(f)
-            states = payload.get("states", payload) if isinstance(payload, dict) else payload
+            cache_key = Path(path).resolve()
+            self._init_state_cache_key = cache_key
+            states = _INIT_STATE_FILE_CACHE.get(cache_key)
+            if states is None:
+                with open(cache_key, "r", encoding="utf-8") as f:
+                    payload = json.load(f)
+                states = payload.get("states", payload) if isinstance(payload, dict) else payload
+                if isinstance(states, list):
+                    _INIT_STATE_FILE_CACHE[cache_key] = states
         if not isinstance(states, list):
             raise ValueError("state_list initial states must be a list")
         self._init_state_cache = states
@@ -224,13 +243,28 @@ class NLinkCartPoleEnv(gym.Env):
             abs(float(qvel[0])),
         )
 
-    def _select_init_state_index(self, states: list[dict[str, Any]]) -> int:
+    def _select_init_state_index(self, states: list[dict[str, Any]], requested_index: int | None = None) -> int:
+        if requested_index is not None:
+            index = int(requested_index)
+            if index < 0 or index >= len(states):
+                raise IndexError(f"state_index {index} is outside [0, {len(states)})")
+            return index
         mode = str(self.env_cfg.get("init_state_curriculum", "all")).strip().lower()
         if mode in {"", "all", "none"}:
             return int(self.rng.integers(0, len(states)))
         if mode != "quality_prefix":
             raise ValueError("env.init_state_curriculum must be 'all' or 'quality_prefix'")
-        order = sorted(range(len(states)), key=lambda idx: self._state_list_quality(states[idx]))
+        if self._init_state_cache_key is not None:
+            order = _INIT_STATE_ORDER_CACHE.get(self._init_state_cache_key)
+            if order is None:
+                order = sorted(range(len(states)), key=lambda idx: self._state_list_quality(states[idx]))
+                _INIT_STATE_ORDER_CACHE[self._init_state_cache_key] = order
+        else:
+            if self._init_state_order_cache is None:
+                self._init_state_order_cache = sorted(
+                    range(len(states)), key=lambda idx: self._state_list_quality(states[idx])
+                )
+            order = self._init_state_order_cache
         min_count = int(np.clip(int(self.env_cfg.get("init_state_curriculum_min_count", 1)), 1, len(states)))
         power = max(1e-6, float(self.env_cfg.get("init_state_curriculum_power", 1.0)))
         t = float(np.clip(self.progress, 0.0, 1.0)) ** power
@@ -305,6 +339,7 @@ class NLinkCartPoleEnv(gym.Env):
         start = base if start is None else float(start)
         end = base if end is None else float(end)
         t = float(np.clip(self.progress, 0.0, 1.0))
+        t = t ** max(1e-9, float(cfg.get(f"{key}_power", 1.0)))
         return float(start + (end - start) * t)
 
     def _lqr_action_bias(self, cfg: dict[str, Any]) -> tuple[float, float]:
