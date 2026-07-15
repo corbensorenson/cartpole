@@ -52,11 +52,28 @@ def grouped_source_split(
     return np.flatnonzero(~validation_mask), np.flatnonzero(validation_mask)
 
 
-def source_balancing_weights(source_indices: np.ndarray) -> np.ndarray:
+def source_balancing_weights(
+    source_indices: np.ndarray,
+    source_steps: np.ndarray | None = None,
+    *,
+    early_weight: float = 0.0,
+    early_decay_steps: float = 1.0,
+) -> np.ndarray:
     sources = np.asarray(source_indices, dtype=np.int64)
-    unique, counts = np.unique(sources, return_counts=True)
-    inverse = {int(source): 1.0 / float(count) for source, count in zip(unique, counts)}
-    weights = np.asarray([inverse[int(source)] for source in sources], dtype=np.float32)
+    if source_steps is None:
+        temporal = np.ones(len(sources), dtype=np.float64)
+    else:
+        steps = np.asarray(source_steps, dtype=np.float64)
+        if steps.shape != sources.shape or np.any(steps < 0.0):
+            raise ValueError("source steps must be a nonnegative vector matching source indices")
+        temporal = 1.0 + float(early_weight) * np.exp(
+            -steps / max(1e-9, float(early_decay_steps))
+        )
+    weights = np.zeros(len(sources), dtype=np.float64)
+    for source in np.unique(sources):
+        mask = sources == source
+        weights[mask] = temporal[mask] / float(np.sum(temporal[mask]))
+    weights = weights.astype(np.float32)
     return weights / float(np.mean(weights))
 
 
@@ -66,16 +83,25 @@ def weighted_distillation_loss(model: ActorCritic, observations, targets, weight
     return mx.sum(weights * squared_error) / mx.sum(weights)
 
 
-def prediction_metrics(model: ActorCritic, observations: np.ndarray, targets: np.ndarray) -> dict[str, float]:
+def prediction_metrics(
+    model: ActorCritic,
+    observations: np.ndarray,
+    targets: np.ndarray,
+    weights: np.ndarray | None = None,
+) -> dict[str, float]:
     predicted, _ = model(mx.array(observations))
     mx.eval(predicted)
     errors = np.asarray(predicted) - targets
-    return {
+    metrics = {
         "mse": float(np.mean(errors**2)),
         "mae": float(np.mean(np.abs(errors))),
         "max_abs_error": float(np.max(np.abs(errors))),
         "sign_agreement_rate": float(np.mean(np.sign(np.asarray(predicted)) == np.sign(targets))),
     }
+    if weights is not None:
+        sample_error = np.mean(errors**2, axis=-1)
+        metrics["weighted_mse"] = float(np.sum(weights * sample_error) / np.sum(weights))
+    return metrics
 
 
 def main() -> None:
@@ -90,9 +116,17 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=256)
     parser.add_argument("--learning-rate", type=float, default=0.0003)
     parser.add_argument("--validation-fraction", type=float, default=0.20)
+    parser.add_argument("--early-weight", type=float, default=20.0)
+    parser.add_argument("--early-decay-steps", type=float, default=5.0)
     parser.add_argument("--seed", type=int, default=79201)
     args = parser.parse_args()
-    if args.epochs < 1 or args.batch_size < 1 or args.learning_rate <= 0.0:
+    if (
+        args.epochs < 1
+        or args.batch_size < 1
+        or args.learning_rate <= 0.0
+        or args.early_weight < 0.0
+        or args.early_decay_steps <= 0.0
+    ):
         raise ValueError("epochs, batch size, and learning rate must be positive")
     if not 0.0 < args.validation_fraction < 1.0:
         raise ValueError("validation fraction must be in (0, 1)")
@@ -102,10 +136,15 @@ def main() -> None:
     observations = np.asarray(labels["observations"], dtype=np.float32)
     targets = np.asarray(labels["actions"], dtype=np.float32)
     source_indices = np.asarray(labels["source_indices"], dtype=np.int64)
+    source_steps = np.asarray(labels["source_steps"], dtype=np.int64)
     tiers = np.asarray(labels["tiers"]).astype(str)
     if observations.ndim != 2 or targets.shape != (len(observations), 1):
         raise ValueError("supervisor observations or actions have invalid shapes")
-    if source_indices.shape != (len(observations),) or tiers.shape != source_indices.shape:
+    if (
+        source_indices.shape != (len(observations),)
+        or source_steps.shape != source_indices.shape
+        or tiers.shape != source_indices.shape
+    ):
         raise ValueError("supervisor provenance arrays do not match observations")
     train_indices, validation_indices = grouped_source_split(
         source_indices,
@@ -113,7 +152,12 @@ def main() -> None:
         validation_fraction=args.validation_fraction,
         seed=args.seed,
     )
-    weights = source_balancing_weights(source_indices)
+    weights = source_balancing_weights(
+        source_indices,
+        source_steps,
+        early_weight=args.early_weight,
+        early_decay_steps=args.early_decay_steps,
+    )
 
     out_dir = Path(args.out_dir)
     checkpoint_dir = out_dir / "checkpoints"
@@ -169,14 +213,15 @@ def main() -> None:
             model,
             observations[validation_indices],
             targets[validation_indices],
+            weights[validation_indices],
         )
-        if validation["mse"] < best_validation_mse:
-            best_validation_mse = validation["mse"]
+        if validation["weighted_mse"] < best_validation_mse:
+            best_validation_mse = validation["weighted_mse"]
             save_model(model, checkpoint_dir / "best.safetensors")
         row = {
             "epoch": epoch,
             "weighted_train_mse": float(np.mean(train_losses)),
-            "validation_mse": validation["mse"],
+            "validation_mse": validation["weighted_mse"],
         }
         history.append(row)
         if epoch == 1 or epoch % 25 == 0 or epoch == args.epochs:
@@ -187,11 +232,17 @@ def main() -> None:
             )
 
     load_model(model, checkpoint_dir / "best.safetensors")
-    train_metrics = prediction_metrics(model, observations[train_indices], targets[train_indices])
+    train_metrics = prediction_metrics(
+        model,
+        observations[train_indices],
+        targets[train_indices],
+        weights[train_indices],
+    )
     validation_metrics = prediction_metrics(
         model,
         observations[validation_indices],
         targets[validation_indices],
+        weights[validation_indices],
     )
     train_sources = sorted(set(int(source_indices[index]) for index in train_indices))
     validation_sources = sorted(set(int(source_indices[index]) for index in validation_indices))
@@ -203,6 +254,8 @@ def main() -> None:
         "epochs": int(args.epochs),
         "batch_size": int(args.batch_size),
         "learning_rate": float(args.learning_rate),
+        "early_weight": float(args.early_weight),
+        "early_decay_steps": float(args.early_decay_steps),
         "label_count": int(len(observations)),
         "train_label_count": int(len(train_indices)),
         "validation_label_count": int(len(validation_indices)),

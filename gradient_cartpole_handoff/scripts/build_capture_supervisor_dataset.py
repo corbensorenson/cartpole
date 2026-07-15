@@ -51,6 +51,7 @@ def aligned_trajectory_steps(
                 "qvel": qvel.copy(),
                 "action": float(row["action"]),
                 "controller_mode": row.get("controller_mode"),
+                "source_step": int(row.get("step", len(aligned) + 1)) - 1,
             }
         )
         previous_qpos = np.asarray(row["qpos"], dtype=np.float64)
@@ -76,6 +77,7 @@ def append_outside_funnel_labels(
     observations: list[np.ndarray],
     actions: list[float],
     source_indices: list[int],
+    source_steps: list[int],
     tiers: list[str],
 ) -> int:
     added = 0
@@ -86,6 +88,7 @@ def append_outside_funnel_labels(
         observations.append(env._get_obs().copy())
         actions.append(float(np.clip(step["action"], -1.0, 1.0)))
         source_indices.append(int(source_index))
+        source_steps.append(int(step.get("source_step", 0)))
         tiers.append(tier)
         added += 1
     return added
@@ -137,6 +140,7 @@ def main() -> None:
     observations: list[np.ndarray] = []
     actions: list[float] = []
     source_indices: list[int] = []
+    source_steps: list[int] = []
     tiers: list[str] = []
     source_records: list[dict[str, Any]] = []
     baseline_replay_mismatches: list[dict[str, Any]] = []
@@ -181,7 +185,14 @@ def main() -> None:
                     deterministic=True,
                 )
                 action = float(action_batch[0, 0])
-                tier_steps.append({"qpos": qpos, "qvel": qvel, "action": action})
+                tier_steps.append(
+                    {
+                        "qpos": qpos,
+                        "qvel": qvel,
+                        "action": action,
+                        "source_step": int(baseline_env.step_count),
+                    }
+                )
                 observation, _, terminated, truncated, final_info = baseline_env.step([action])
             if not bool(final_info.get("success", False)):
                 baseline_replay_mismatches.append(
@@ -204,6 +215,7 @@ def main() -> None:
                 observations=observations,
                 actions=actions,
                 source_indices=source_indices,
+                source_steps=source_steps,
                 tiers=tiers,
             )
             selected_sources.add(source_index)
@@ -247,6 +259,7 @@ def main() -> None:
                 observations=observations,
                 actions=actions,
                 source_indices=source_indices,
+                source_steps=source_steps,
                 tiers=tiers,
             )
             selected_sources.add(source_index)
@@ -272,6 +285,7 @@ def main() -> None:
                 observations=observations,
                 actions=actions,
                 source_indices=source_indices,
+                source_steps=source_steps,
                 tiers=tiers,
             )
             selected_sources.add(source_index)
@@ -287,6 +301,7 @@ def main() -> None:
     observation_array = np.asarray(observations, dtype=np.float32)
     action_array = np.asarray(actions, dtype=np.float32).reshape(-1, 1)
     source_array = np.asarray(source_indices, dtype=np.int32)
+    source_step_array = np.asarray(source_steps, dtype=np.int32)
     tier_array = np.asarray(tiers, dtype="U16")
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -295,6 +310,7 @@ def main() -> None:
         observations=observation_array,
         actions=action_array,
         source_indices=source_array,
+        source_steps=source_step_array,
         tiers=tier_array,
     )
     metadata_path = Path(args.metadata_out) if args.metadata_out else out_path.with_suffix(".json")

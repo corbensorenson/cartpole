@@ -1,4 +1,4 @@
-.PHONY: setup setup-sb3 smoke roadmap-p0 test-roadmap-p0 verify-roadmap-p0 export-swingup7-xml generate-capture-envelope capture-envelope6 capture-hybrid-policy6 capture-boundary-lqr mine-capture-boundary fit-capture-funnel search-capture-target-teacher build-capture-target-teachers build-feedback-mpc-teachers build-capture-supervisor-dataset distill-capture-supervisor eval-capture-supervisor eval-adaptive-capture-boundary analyze-capture-modal sweep-capture-modal-feedback refine-adaptive-capture-boundary eval-transfer-capture-boundary search-capture-hybrid eval-feedback-mpc-state refine-feedback-mpc-boundary search-ilqr-capture refine-ilqr-capture-chain eval-ilqr-chain-basin search-multiple-shooting-capture analyze-refined-capture-modal capture-sac-boundary mine-capture-failures distill-capture-lqr eval-capture-envelope6 eval-capture-envelope-lqr eval-capture-envelope-mpc swingup7 eval-swingup7-20 eval-swingup7-100 render-swingup7 verify-swingup7 debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture eval-mpc-policy-handoff-stage search-swingup-chain search-swingup-funnel export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-wide6 eval-capture-wide6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-stage capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum-qvel0 eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
+.PHONY: setup setup-sb3 smoke roadmap-p0 test-roadmap-p0 verify-roadmap-p0 export-swingup7-xml generate-capture-envelope capture-envelope6 capture-hybrid-policy6 capture-boundary-lqr mine-capture-boundary fit-capture-funnel search-capture-target-teacher build-capture-target-teachers build-feedback-mpc-teachers build-capture-supervisor-dataset distill-capture-supervisor eval-capture-supervisor collect-capture-dagger label-capture-dagger-lqr label-capture-dagger-target label-capture-dagger-feedback eval-adaptive-capture-boundary analyze-capture-modal sweep-capture-modal-feedback refine-adaptive-capture-boundary eval-transfer-capture-boundary search-capture-hybrid eval-feedback-mpc-state refine-feedback-mpc-boundary search-ilqr-capture refine-ilqr-capture-chain eval-ilqr-chain-basin search-multiple-shooting-capture analyze-refined-capture-modal capture-sac-boundary mine-capture-failures distill-capture-lqr eval-capture-envelope6 eval-capture-envelope-lqr eval-capture-envelope-mpc swingup7 eval-swingup7-20 eval-swingup7-100 render-swingup7 verify-swingup7 debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture eval-mpc-policy-handoff-stage search-swingup-chain search-swingup-funnel export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-wide6 eval-capture-wide6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-stage capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum-qvel0 eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
 
 PYTHON ?= .venv/bin/python
 SWINGUP7_RUN ?= runs/swingup7_uniform
@@ -18,6 +18,9 @@ CAPTURE_FEEDBACK_TEACHERS_OUT ?= runs/p1_capture_feedback_mpc/train_teachers_8_p
 CAPTURE_SUPERVISOR_LABELS ?= runs/p1_capture_supervisor/train_labels_p007.npz
 CAPTURE_SUPERVISOR_RUN ?= runs/swingup6_capture_supervisor_distilled
 CAPTURE_SUPERVISOR_CHECKPOINT ?= $(CAPTURE_SUPERVISOR_RUN)/checkpoints/best.safetensors
+CAPTURE_DAGGER_CHECKPOINT ?= runs/swingup6_capture_hybrid_lyapunov_ppo_probe_100/checkpoints/best.safetensors
+CAPTURE_DAGGER_QUERIES ?= runs/p1_capture_dagger/round1_train_queries.json
+CAPTURE_DAGGER_LQR_LABELS ?= runs/p1_capture_dagger/round1_lqr_labels.json
 CAPTURE_ADAPTIVE_PROGRESS ?= 0.065
 CAPTURE_ADAPTIVE_LIMIT ?= 256
 CAPTURE_ADAPTIVE_OUT ?= runs/p1_capture_target_teachers/eval_adaptive_validation$(CAPTURE_ADAPTIVE_LIMIT)_p$(subst .,,$(CAPTURE_ADAPTIVE_PROGRESS)).json
@@ -198,6 +201,18 @@ distill-capture-supervisor:
 
 eval-capture-supervisor:
 	$(PYTHON) scripts/evaluate_capture_gate.py --config configs/swingup6_capture_hybrid_policy.yaml --checkpoint $(CAPTURE_SUPERVISOR_CHECKPOINT) --dataset $(CAPTURE_ENVELOPE_DIR)/validation.json --split validation --limit 256 --progress 0.07 --out $(CAPTURE_SUPERVISOR_RUN)/eval_validation256_p007.json
+
+collect-capture-dagger:
+	$(PYTHON) scripts/collect_capture_dagger_states.py --checkpoint $(CAPTURE_DAGGER_CHECKPOINT) --out $(CAPTURE_DAGGER_QUERIES)
+
+label-capture-dagger-lqr:
+	$(PYTHON) scripts/label_capture_dagger_lqr.py --queries $(CAPTURE_DAGGER_QUERIES) --out $(CAPTURE_DAGGER_LQR_LABELS)
+
+label-capture-dagger-target:
+	$(PYTHON) scripts/label_capture_dagger_target.py
+
+label-capture-dagger-feedback:
+	$(PYTHON) scripts/label_capture_dagger_feedback_mpc.py
 
 eval-adaptive-capture-boundary: generate-capture-envelope
 	$(PYTHON) scripts/evaluate_adaptive_target_capture.py --config configs/swingup6_capture_envelope.yaml --dataset $(CAPTURE_ENVELOPE_DIR)/validation.json --split validation --progress $(CAPTURE_ADAPTIVE_PROGRESS) --limit $(CAPTURE_ADAPTIVE_LIMIT) --index-seed 61201 --iterations 6 --population 128 --elites 12 --out $(CAPTURE_ADAPTIVE_OUT)

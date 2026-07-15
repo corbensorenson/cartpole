@@ -27,6 +27,7 @@ from scripts.mine_capture_failures import build_mining_mixture
 from scripts.build_feedback_mpc_teachers import failed_state_indices
 from scripts.build_capture_supervisor_dataset import aligned_trajectory_steps
 from scripts.distill_capture_supervisor import grouped_source_split, source_balancing_weights
+from scripts.label_capture_dagger_target import selected_queries
 from scripts.evaluate_linear_mpc_capture import LinearMPC
 from scripts.search_linear_policy import development_seed
 from scripts.search_capture_recovery import recovery_residual
@@ -180,6 +181,27 @@ class CaptureEnvelopeTests(unittest.TestCase):
         weights = source_balancing_weights(sources)
         totals = [float(np.sum(weights[sources == source])) for source in np.unique(sources)]
         np.testing.assert_allclose(totals, np.full(len(totals), totals[0]))
+        early = source_balancing_weights(
+            sources,
+            np.asarray([0, 5, 10, 0, 0, 5, 0, 5, 10, 15]),
+            early_weight=20.0,
+            early_decay_steps=5.0,
+        )
+        self.assertGreater(early[0], early[2])
+        early_totals = [float(np.sum(early[sources == source])) for source in np.unique(sources)]
+        np.testing.assert_allclose(early_totals, np.full(len(early_totals), early_totals[0]))
+
+    def test_dagger_target_query_selection_is_step_bounded_and_deterministic(self) -> None:
+        payload = {
+            "queries": [
+                {"source_index": 3, "step": 1, "dimensionless_lyapunov_value": 40.0},
+                {"source_index": 2, "step": 0, "dimensionless_lyapunov_value": 10.0},
+                {"source_index": 1, "step": 1, "dimensionless_lyapunov_value": 20.0},
+                {"source_index": 2, "step": 1, "dimensionless_lyapunov_value": 30.0},
+            ]
+        }
+        rows = selected_queries(payload, source_step=1, max_lyapunov=35.0, limit=2)
+        self.assertEqual([row["source_index"] for row in rows], [1, 2])
 
     def test_condensed_linear_mpc_matches_unconstrained_lqr(self) -> None:
         a = np.asarray([[0.9]], dtype=np.float64)
