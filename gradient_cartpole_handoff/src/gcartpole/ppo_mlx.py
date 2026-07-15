@@ -314,6 +314,160 @@ def select_evaluation_state_indices(path: str | Path, episodes: int, seed: int) 
     return rng.permutation(len(states))[:episodes].astype(int).tolist()
 
 
+def evaluate_indexed_policy_batched(
+    cfg: dict[str, Any],
+    model: ActorCritic,
+    state_indices: list[int],
+    seed: int,
+    progress: float,
+    batch_size: int = 64,
+) -> dict[str, Any]:
+    """Evaluate exact state-list entries with batched policy inference."""
+    from .env import NLinkCartPoleEnv
+
+    if not state_indices:
+        raise ValueError("state_indices must not be empty")
+    batch_size = max(1, min(int(batch_size), len(state_indices)))
+    reward_cfg = cfg.get("env", {}).get("reward", {})
+    hinge_threshold = float(reward_cfg.get("upright_hinge_vel_threshold", 1.0))
+    cart_threshold = float(reward_cfg.get("upright_cart_vel_threshold", 1.0))
+    min_time = float(reward_cfg.get("low_momentum_min_time_seconds", 0.0))
+    max_cart_abs = reward_cfg.get("low_momentum_max_cart_abs")
+    records: list[dict[str, Any]] = []
+
+    for batch_start in range(0, len(state_indices), batch_size):
+        count = min(batch_size, len(state_indices) - batch_start)
+        envs = [NLinkCartPoleEnv(cfg, progress=progress, seed=seed + batch_start + slot) for slot in range(count)]
+        observations: dict[int, np.ndarray] = {}
+        trackers = [
+            {
+                "return": 0.0,
+                "length": 0,
+                "max_abs_angle": 0.0,
+                "max_capture_quality": 0.0,
+                "low_momentum_upright": False,
+            }
+            for _ in range(count)
+        ]
+        active = set(range(count))
+        try:
+            for slot, env in enumerate(envs):
+                observations[slot], _ = env.reset(
+                    seed=seed + batch_start + slot,
+                    options={"state_index": int(state_indices[batch_start + slot])},
+                )
+            while active:
+                slots = sorted(active)
+                observation_batch = np.stack([observations[slot] for slot in slots])
+                actions, _, _ = sample_action(model, observation_batch, deterministic=True)
+                for action_index, slot in enumerate(slots):
+                    env = envs[slot]
+                    obs, reward, terminated, truncated, info = env.step(actions[action_index])
+                    observations[slot] = obs
+                    tracker = trackers[slot]
+                    tracker["return"] += float(reward)
+                    tracker["length"] += 1
+                    tracker["max_abs_angle"] = max(
+                        float(tracker["max_abs_angle"]), float(info.get("max_abs_angle", 0.0))
+                    )
+                    tracker["max_capture_quality"] = max(
+                        float(tracker["max_capture_quality"]), float(info.get("capture_quality", 0.0))
+                    )
+                    tracker["low_momentum_upright"] = bool(tracker["low_momentum_upright"]) or bool(
+                        info.get("is_upright", False)
+                        and float(tracker["length"]) * env.dt >= min_time
+                        and float(info.get("hinge_velocity_rms", np.inf)) <= hinge_threshold
+                        and abs(float(env.data.qvel[0])) <= cart_threshold
+                        and (max_cart_abs is None or abs(float(env.data.qpos[0])) <= float(max_cart_abs))
+                    )
+                    if not (terminated or truncated):
+                        continue
+                    active.remove(slot)
+                    episode = batch_start + slot
+                    records.append(
+                        {
+                            "episode": episode,
+                            "state_index": int(state_indices[episode]),
+                            "seed": seed + episode,
+                            "return": float(tracker["return"]),
+                            "length": int(tracker["length"]),
+                            "success": bool(info.get("success", False)),
+                            "max_abs_angle": float(tracker["max_abs_angle"]),
+                            "terminated": info.get("termination_reason") not in {None, "time_limit"},
+                            "truncated": info.get("termination_reason") == "time_limit",
+                            "termination_reason": info.get("termination_reason"),
+                            "final_x": float(info.get("x", np.nan)),
+                            "max_cart_excursion": float(info.get("max_cart_excursion", 0.0)),
+                            "time_to_first_upright": info.get("time_to_first_upright"),
+                            "time_to_capture": info.get("time_to_capture"),
+                            "capture_start_time": info.get("capture_start_time"),
+                            "max_upright_streak_seconds": float(info.get("max_upright_streak_seconds", 0.0)),
+                            "final_upright_streak_seconds": float(info.get("upright_streak_seconds", 0.0)),
+                            "max_centered_upright_streak_seconds": float(
+                                info.get("max_centered_upright_streak_seconds", 0.0)
+                            ),
+                            "max_low_momentum_upright_streak_seconds": float(
+                                info.get("max_low_momentum_upright_streak_seconds", 0.0)
+                            ),
+                            "max_capture_quality": float(tracker["max_capture_quality"]),
+                            "low_momentum_upright": bool(tracker["low_momentum_upright"]),
+                        }
+                    )
+        finally:
+            for env in envs:
+                env.close()
+
+    records.sort(key=lambda row: row["episode"])
+    returns = np.asarray([row["return"] for row in records], dtype=np.float64)
+    lengths = np.asarray([row["length"] for row in records], dtype=np.int64)
+    successes = np.asarray([row["success"] for row in records], dtype=np.float64)
+    max_angles = np.asarray([row["max_abs_angle"] for row in records], dtype=np.float64)
+    upright_streaks = np.asarray([row["max_upright_streak_seconds"] for row in records], dtype=np.float64)
+    final_streaks = np.asarray([row["final_upright_streak_seconds"] for row in records], dtype=np.float64)
+    cart_excursions = np.asarray([row["max_cart_excursion"] for row in records], dtype=np.float64)
+    centered_streaks = np.asarray(
+        [row["max_centered_upright_streak_seconds"] for row in records], dtype=np.float64
+    )
+    low_momentum_streaks = np.asarray(
+        [row["max_low_momentum_upright_streak_seconds"] for row in records], dtype=np.float64
+    )
+    capture_qualities = np.asarray([row["max_capture_quality"] for row in records], dtype=np.float64)
+    low_momentum_events = np.asarray([row["low_momentum_upright"] for row in records], dtype=np.float64)
+    upright_times = [float(row["time_to_first_upright"]) for row in records if row["time_to_first_upright"] is not None]
+    capture_times = [float(row["time_to_capture"]) for row in records if row["time_to_capture"] is not None]
+    return {
+        "episodes": len(records),
+        "return_mean": float(np.mean(returns)),
+        "return_std": float(np.std(returns)),
+        "length_mean": float(np.mean(lengths)),
+        "length_min": int(np.min(lengths)),
+        "length_max": int(np.max(lengths)),
+        "success_rate": float(np.mean(successes)),
+        "max_angle_mean": float(np.mean(max_angles)),
+        "max_angle_max": float(np.max(max_angles)),
+        "time_to_first_upright_mean": None if not upright_times else float(np.mean(upright_times)),
+        "time_to_first_upright_success_count": len(upright_times),
+        "ever_upright_rate": float(len(upright_times) / len(records)),
+        "time_to_capture_mean": None if not capture_times else float(np.mean(capture_times)),
+        "capture_count": len(capture_times),
+        "max_upright_streak_mean": float(np.mean(upright_streaks)),
+        "max_upright_streak_min": float(np.min(upright_streaks)),
+        "max_upright_streak_max": float(np.max(upright_streaks)),
+        "final_upright_streak_mean": float(np.mean(final_streaks)),
+        "final_upright_streak_min": float(np.min(final_streaks)),
+        "max_cart_excursion_mean": float(np.mean(cart_excursions)),
+        "max_cart_excursion_max": float(np.max(cart_excursions)),
+        "max_centered_upright_streak_mean": float(np.mean(centered_streaks)),
+        "max_centered_upright_streak_max": float(np.max(centered_streaks)),
+        "max_low_momentum_upright_streak_mean": float(np.mean(low_momentum_streaks)),
+        "max_low_momentum_upright_streak_max": float(np.max(low_momentum_streaks)),
+        "max_capture_quality_mean": float(np.mean(capture_qualities)),
+        "max_capture_quality_max": float(np.max(capture_qualities)),
+        "low_momentum_upright_rate": float(np.mean(low_momentum_events)),
+        "episode_results": records,
+    }
+
+
 def checkpoint_score(eval_metrics: dict[str, Any]) -> tuple[float, ...]:
     """Rank checkpoints by swing-up evidence before shaped return.
 
@@ -415,6 +569,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
         "seed": eval_seed,
         "state_indices": eval_state_indices,
     }
+    curriculum_eval_batch_size = int(ppo.get("curriculum_eval_batch_size", 64))
 
     envs = make_vec_env(cfg, num_envs=num_envs, seed=seed, progress=0.0, backend=vec_backend)
     obs, _ = envs.reset()
@@ -595,14 +750,23 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
 
             if update % int(ppo.get("eval_every", 50)) == 0 or update == total_updates:
                 eval_progress = resolve_eval_progress(ppo, progress)
-                eval_metrics = evaluate_policy(
-                    eval_cfg,
-                    model,
-                    episodes=int(ppo.get("eval_episodes", 5)),
-                    seed=eval_seed if eval_state_indices is not None else seed + update * 17,
-                    progress=eval_progress,
-                    reset_state_indices=eval_state_indices,
-                )
+                if eval_state_indices is None:
+                    eval_metrics = evaluate_policy(
+                        eval_cfg,
+                        model,
+                        episodes=int(ppo.get("eval_episodes", 5)),
+                        seed=seed + update * 17,
+                        progress=eval_progress,
+                    )
+                else:
+                    eval_metrics = evaluate_indexed_policy_batched(
+                        eval_cfg,
+                        model,
+                        state_indices=eval_state_indices,
+                        seed=eval_seed,
+                        progress=eval_progress,
+                        batch_size=curriculum_eval_batch_size,
+                    )
                 eval_score = checkpoint_score(eval_metrics)
                 if best_eval_score is None or eval_score > best_eval_score:
                     best_eval_score = eval_score
