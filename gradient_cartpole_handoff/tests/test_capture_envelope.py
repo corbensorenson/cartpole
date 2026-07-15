@@ -24,6 +24,7 @@ from gcartpole.ilqr import MujocoTransition, data_state, scalar_box_policy, stat
 from gcartpole.multiple_shooting import pack_decision, shooting_sparsity, unpack_decision
 from gcartpole.ppo_mlx import select_evaluation_state_indices
 from scripts.mine_capture_failures import build_mining_mixture
+from scripts.build_feedback_mpc_teachers import failed_state_indices
 from scripts.evaluate_linear_mpc_capture import LinearMPC
 from scripts.search_linear_policy import development_seed
 from scripts.search_capture_recovery import recovery_residual
@@ -128,6 +129,18 @@ class CaptureEnvelopeTests(unittest.TestCase):
         self.assertEqual([row["state_id"] for row in mixture[:4]], [f"state-{index}" for index in range(4)])
         self.assertEqual(sum(bool(row["mining"]["hard_failure"]) for row in mixture), 6)
         self.assertEqual(len({row["state_id"] for row in mixture}), len(mixture))
+
+    def test_feedback_teacher_failure_indices_are_sorted(self) -> None:
+        payload = {
+            "evaluation": {
+                "episode_results": [
+                    {"state_index": 9, "success": False},
+                    {"state_index": 2, "success": True},
+                    {"state_index": 4, "success": False},
+                ]
+            }
+        }
+        self.assertEqual(failed_state_indices(payload), [4, 9])
 
     def test_condensed_linear_mpc_matches_unconstrained_lqr(self) -> None:
         a = np.asarray([[0.9]], dtype=np.float64)
