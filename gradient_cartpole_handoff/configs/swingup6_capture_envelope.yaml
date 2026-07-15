@@ -55,12 +55,12 @@ env:
       - 10.65066300949248
       - -21.451701886956194
       - 17.05171607427916
-    scale_start: 1.0
+    scale_start: 1.2
     scale_end: 0.02
-    scale_power: 1.0
-    residual_scale_start: 0.005
+    scale_power: 4.0
+    residual_scale_start: 0.0
     residual_scale_end: 1.0
-    residual_scale_power: 1.0
+    residual_scale_power: 2.0
     cart_target: 0.0
   reward:
     alive: 0.0
