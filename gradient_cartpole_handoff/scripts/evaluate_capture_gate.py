@@ -111,6 +111,11 @@ def main() -> None:
                         "final_upright_streak_seconds": float(final_info.get("upright_streak_seconds", 0.0)),
                         "max_cart_excursion": float(final_info.get("max_cart_excursion", 0.0)),
                         "final_x": float(final_info.get("x", np.nan)),
+                        "lqr_switch_entry_count": int(final_info.get("lqr_switch_entry_count", 0)),
+                        "lqr_switch_exit_count": int(final_info.get("lqr_switch_exit_count", 0)),
+                        "lqr_switch_first_entry_time": final_info.get("lqr_switch_first_entry_time"),
+                        "lqr_switch_lqr_steps": int(final_info.get("lqr_switch_lqr_steps", 0)),
+                        "lqr_switch_policy_steps": int(final_info.get("lqr_switch_policy_steps", 0)),
                     }
                 )
     episode_results.sort(key=lambda row: row["state_index"])
@@ -120,6 +125,14 @@ def main() -> None:
     successes = np.asarray([row["success"] for row in episode_results], dtype=np.float64)
     holds = np.asarray([row["max_upright_streak_seconds"] for row in episode_results], dtype=np.float64)
     rail_hits = np.asarray([row["rail_hit"] for row in episode_results], dtype=np.float64)
+    policy_steps = np.asarray(
+        [row["lqr_switch_policy_steps"] for row in episode_results],
+        dtype=np.int64,
+    )
+    lqr_steps = np.asarray(
+        [row["lqr_switch_lqr_steps"] for row in episode_results],
+        dtype=np.int64,
+    )
     gate_spec = spec["capture_gate"]
     full_gate_count = int(gate_spec["required_episodes"])
     success_rate = float(np.mean(successes))
@@ -152,6 +165,22 @@ def main() -> None:
         "max_upright_streak_max": float(np.max(holds)),
         "rail_hit_rate": float(np.mean(rail_hits)),
         "rail_hit_count": int(np.sum(rail_hits)),
+        "policy_control_episode_count": int(np.sum(policy_steps > 0)),
+        "policy_control_success_count": int(
+            sum(row["success"] and row["lqr_switch_policy_steps"] > 0 for row in episode_results)
+        ),
+        "lqr_only_episode_count": int(np.sum(policy_steps == 0)),
+        "lqr_only_success_count": int(
+            sum(row["success"] and row["lqr_switch_policy_steps"] == 0 for row in episode_results)
+        ),
+        "lqr_switch_entry_episode_count": int(
+            sum(row["lqr_switch_entry_count"] > 0 for row in episode_results)
+        ),
+        "lqr_switch_exit_episode_count": int(
+            sum(row["lqr_switch_exit_count"] > 0 for row in episode_results)
+        ),
+        "policy_control_step_count": int(np.sum(policy_steps)),
+        "lqr_control_step_count": int(np.sum(lqr_steps)),
         "gate": gate,
         "episode_results": episode_results,
         "evidence": {

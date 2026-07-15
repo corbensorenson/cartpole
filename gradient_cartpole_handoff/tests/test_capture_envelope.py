@@ -25,6 +25,8 @@ from gcartpole.multiple_shooting import pack_decision, shooting_sparsity, unpack
 from gcartpole.ppo_mlx import select_evaluation_state_indices
 from scripts.mine_capture_failures import build_mining_mixture
 from scripts.build_feedback_mpc_teachers import failed_state_indices
+from scripts.build_capture_supervisor_dataset import aligned_trajectory_steps
+from scripts.distill_capture_supervisor import grouped_source_split, source_balancing_weights
 from scripts.evaluate_linear_mpc_capture import LinearMPC
 from scripts.search_linear_policy import development_seed
 from scripts.search_capture_recovery import recovery_residual
@@ -141,6 +143,43 @@ class CaptureEnvelopeTests(unittest.TestCase):
             }
         }
         self.assertEqual(failed_state_indices(payload), [4, 9])
+
+    def test_supervisor_alignment_pairs_actions_with_pre_action_states(self) -> None:
+        legacy = [
+            {"qpos": [1.0, 2.0], "qvel": [3.0, 4.0], "action": 0.25},
+            {"qpos": [5.0, 6.0], "qvel": [7.0, 8.0], "action": -0.5},
+        ]
+        aligned = aligned_trajectory_steps(legacy, [0.0, 0.1], [0.2, 0.3])
+        np.testing.assert_allclose(aligned[0]["qpos"], [0.0, 0.1])
+        np.testing.assert_allclose(aligned[1]["qpos"], [1.0, 2.0])
+        self.assertEqual([row["action"] for row in aligned], [0.25, -0.5])
+
+        explicit = [
+            {
+                "pre_action_qpos": [9.0, 10.0],
+                "pre_action_qvel": [11.0, 12.0],
+                "qpos": [1.0, 2.0],
+                "qvel": [3.0, 4.0],
+                "action": 0.75,
+            }
+        ]
+        aligned = aligned_trajectory_steps(explicit, [0.0, 0.1], [0.2, 0.3])
+        np.testing.assert_allclose(aligned[0]["qpos"], [9.0, 10.0])
+        np.testing.assert_allclose(aligned[0]["qvel"], [11.0, 12.0])
+
+    def test_supervisor_split_is_source_grouped_and_weights_sources_equally(self) -> None:
+        sources = np.asarray([1, 1, 1, 2, 3, 3, 4, 4, 4, 4])
+        tiers = np.asarray(["lqr"] * 4 + ["target"] * 6)
+        train, validation = grouped_source_split(
+            sources,
+            tiers,
+            validation_fraction=0.5,
+            seed=47,
+        )
+        self.assertTrue(set(sources[train]).isdisjoint(set(sources[validation])))
+        weights = source_balancing_weights(sources)
+        totals = [float(np.sum(weights[sources == source])) for source in np.unique(sources)]
+        np.testing.assert_allclose(totals, np.full(len(totals), totals[0]))
 
     def test_condensed_linear_mpc_matches_unconstrained_lqr(self) -> None:
         a = np.asarray([[0.9]], dtype=np.float64)
@@ -334,6 +373,81 @@ class CaptureEnvelopeTests(unittest.TestCase):
             env.reset()
             with self.assertRaisesRegex(ValueError, "mutually exclusive"):
                 env.step([0.0])
+        finally:
+            env.close()
+
+    def test_lqr_policy_switch_can_require_dimensionless_lyapunov_funnel(self) -> None:
+        cfg = load_config(ROOT / "configs/swingup6_capture_envelope.yaml")
+        cfg["env"]["init_mode"] = "upright"
+        cfg["env"]["init_angle_noise"] = 0.0
+        cfg["env"]["init_vel_noise"] = 0.0
+        cfg["env"]["action_lqr_residual"]["enabled"] = False
+        cfg["env"]["action_lqr_switch"] = {
+            "enabled": True,
+            "state_gain": np.zeros(14).tolist(),
+            "scale": 1.0,
+            "cart_target": 0.0,
+            "enter_max_abs_angle": 0.20,
+            "enter_hinge_velocity_rms": 0.20,
+            "enter_cart_abs": 0.50,
+            "enter_cart_velocity_abs": 0.20,
+            "exit_max_abs_angle": 0.30,
+            "exit_hinge_velocity_rms": 0.30,
+            "exit_cart_abs": 0.75,
+            "exit_cart_velocity_abs": 0.30,
+            "enter_lyapunov_max": 0.001,
+            "exit_lyapunov_max": 0.01,
+            "state_transform": np.eye(14).tolist(),
+            "lyapunov_matrix": np.eye(14).tolist(),
+        }
+        env = NLinkCartPoleEnv(cfg, progress=1.0, seed=41)
+        try:
+            env.reset()
+            env.data.qpos[1] = 0.075
+            self.assertEqual(env._applied_action_norm(0.6), 0.6)
+            self.assertFalse(env.lqr_switch_active)
+
+            env.data.qpos[1] = 0.02
+            self.assertEqual(env._applied_action_norm(0.6), 0.0)
+            self.assertTrue(env.lqr_switch_active)
+            self.assertAlmostEqual(
+                env._lqr_switch_lyapunov_value(cfg["env"]["action_lqr_switch"]),
+                0.0004,
+            )
+
+            env.data.qpos[1] = 0.075
+            self.assertEqual(env._applied_action_norm(0.6), 0.0)
+            self.assertTrue(env.lqr_switch_active)
+
+            env.data.qpos[1] = 0.11
+            self.assertEqual(env._applied_action_norm(0.6), 0.6)
+            self.assertFalse(env.lqr_switch_active)
+        finally:
+            env.close()
+
+    def test_lqr_switch_supports_checkpoint_compatible_tanh_squashing(self) -> None:
+        cfg = load_config(ROOT / "configs/swingup6_capture_envelope.yaml")
+        cfg["env"]["init_mode"] = "upright"
+        cfg["env"]["init_angle_noise"] = 0.0
+        cfg["env"]["init_vel_noise"] = 0.0
+        env = NLinkCartPoleEnv(cfg, progress=1.0, seed=43)
+        controller = {
+            "state_gain": [2.0] + [0.0] * 13,
+            "scale": 1.0,
+            "cart_target": 0.0,
+            "action_squash": "tanh",
+        }
+        try:
+            env.reset()
+            env.data.qpos[0] = 0.5
+            action, _ = env._lqr_action_bias(controller)
+            self.assertAlmostEqual(action, -float(np.tanh(1.0)))
+            controller["action_squash"] = "clip"
+            action, _ = env._lqr_action_bias(controller)
+            self.assertEqual(action, -1.0)
+            controller["action_squash"] = "invalid"
+            with self.assertRaisesRegex(ValueError, "action_squash"):
+                env._lqr_action_bias(controller)
         finally:
             env.close()
 

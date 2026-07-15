@@ -383,6 +383,9 @@ def evaluate_feedback_mpc(
     terminated = False
     truncated = False
     final_info: dict[str, Any] = {}
+    initial_qpos = np.asarray(env.data.qpos, dtype=np.float64).copy()
+    initial_qvel = np.asarray(env.data.qvel, dtype=np.float64).copy()
+    initial_observation = env._get_obs().copy()
     initial_value = state_lyapunov(env.data.qpos, env.data.qvel, transform, lyapunov)
     minimum_value = initial_value
     planning_started = time.time()
@@ -471,6 +474,15 @@ def evaluate_feedback_mpc(
                 cart_target=target,
                 residual=residual,
             )
+            pre_action_qpos = np.asarray(env.data.qpos, dtype=np.float64).copy()
+            pre_action_qvel = np.asarray(env.data.qvel, dtype=np.float64).copy()
+            pre_action_observation = env._get_obs().copy()
+            pre_action_value = state_lyapunov(
+                pre_action_qpos,
+                pre_action_qvel,
+                transform,
+                lyapunov,
+            )
             _, reward, terminated, truncated, info = env.step([action])
             episode_return += float(reward)
             value = state_lyapunov(env.data.qpos, env.data.qvel, transform, lyapunov)
@@ -481,6 +493,10 @@ def evaluate_feedback_mpc(
                     "controller_mode": "lqr" if latched or not use_mpc else "feedback_mpc",
                     "cart_target": float(target),
                     "residual": float(residual),
+                    "pre_action_qpos": pre_action_qpos.astype(float).tolist(),
+                    "pre_action_qvel": pre_action_qvel.astype(float).tolist(),
+                    "pre_action_observation": pre_action_observation.astype(float).tolist(),
+                    "pre_action_dimensionless_lyapunov_value": float(pre_action_value),
                     "dimensionless_lyapunov_value": float(value),
                 }
             )
@@ -503,6 +519,9 @@ def evaluate_feedback_mpc(
         ),
         "max_cart_excursion": float(final_info.get("max_cart_excursion", 0.0)),
         "rail_hit": final_info.get("termination_reason") == "rail_violation",
+        "initial_qpos": initial_qpos.astype(float).tolist(),
+        "initial_qvel": initial_qvel.astype(float).tolist(),
+        "initial_observation": initial_observation.astype(float).tolist(),
         "initial_lyapunov": float(initial_value),
         "minimum_lyapunov": float(minimum_value),
         "latched": bool(latched),

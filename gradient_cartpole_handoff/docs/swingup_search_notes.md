@@ -625,3 +625,25 @@ This result is consistent with the measured DDP tube and prior failed behavior c
 A training-only supervisor audit at `p=0.0700` samples 512 frozen training states and finds 131 LQR failures. `build_capture_target_teachers.py` runs six CEM generations of 64 target-schedule candidates on the first 32 indexed failures, but only 4 searches produce a successful 15-second rollout. This teacher family is too sparse for DAgger: training on successful schedules alone would omit 87.5% of the queried hard states and create severe selection bias. The supervisor cascade must use target schedules only as the first budget, escalate unresolved states to feedback MPC, and reserve DDP for the remaining tail. Only successful uninterrupted teacher rollouts may provide action labels, and all teacher generation remains restricted to the training split.
 
 `scripts/build_feedback_mpc_teachers.py` supplies the second supervisor tier using the existing exact-model receding-horizon implementation. It records every replan and uninterrupted trajectory, but counts action labels only when the full 15-second rollout succeeds; unsuccessful plans remain failure evidence. A reduced `2 x 32` smoke budget solves `0/4` first hard states and emits zero labels, demonstrating strict filtering and confirming that the production `4 x 128` budget is a real escalation rather than an equivalent wrapper.
+
+### Lyapunov-gated supervisor cascade
+
+The production `4 x 128` feedback-MPC run takes 777.5 seconds for eight hard training states. States 970 and 1196 succeed, enter the local LQR funnel at 1.46 and 0.26 seconds, and contribute 73 and 13 feedback-MPC actions. The other six traces hit the rail and contribute zero labels. This `2/8` coverage confirms that feedback MPC is a useful second tier but cannot replace the DDP fallback.
+
+Feedback-MPC traces originally stored each action beside its post-action state. The evaluator now stores explicit pre-action `qpos`, `qvel`, observation, and Lyapunov value. `aligned_trajectory_steps` reconstructs the same pairing for legacy traces from the initial state and preceding post-state. `scripts/build_capture_supervisor_dataset.py` rejects non-training inputs, failed full rollouts, and states already assigned to an earlier successful tier. It also replays the historical 44-observation LQR checkpoint from its recorded resolved config; three batched success marks that fail single-episode replay are recorded and excluded.
+
+The accepted dataset contains:
+
+```text
+runs/p1_capture_supervisor/train_labels_p007.npz
+37 source states; 12,957 labels; 59 observation values
+LQR: 31 sources / 11,336 labels
+scheduled target: 4 sources / 1,535 labels
+feedback MPC: 2 sources / 86 labels
+```
+
+The prior geometric switch admitted all curriculum-scaled starts and then exited after one to sixteen LQR steps. A dimensionless Lyapunov audit gives a clean conservative entry set on the 512 sampled training states: all 347 states with `V <= 2200` succeed and all 131 failures have `V >= 2343`. On the first 256 validation states at `p=0.0700`, 187 satisfy the entry condition and all 187 succeed under continuously latched tanh-LQR. Their worst successful transients are maximum absolute angle `0.264 rad`, hinge-velocity RMS `1.872 rad/s`, cart position `1.587 m`, cart speed `2.070 m/s`, and `V=2249.94`. The finite exit bounds therefore use `0.30 rad`, `2.25 rad/s`, `1.75 m`, `2.50 m/s`, and `V=3000`.
+
+With those bounds, the deterministic hybrid reaches `188/256 = 73.44%` and a `13.92 s` median upright hold. For comparison, forcing tanh-LQR from all starts reaches `193/256 = 75.39%`, so conservative routing sacrifices only five recoverable states while withholding LQR from 63 failures. `scripts/distill_capture_supervisor.py` uses source-grouped validation and inverse trajectory-length weighting. Its best held-out action MSE is `1.94e-4`, but the learned actor recovers `0/37` teacher source states and the complete hybrid reaches only `15/256` with the old tight exit bounds. Small nominal action error is therefore not a useful stability certificate.
+
+After fixing exit hysteresis, a PPO continuation from the distilled checkpoint preserves but does not improve the routed baseline. Update 25 reports `187/256 = 73.05%`; update 50 reports `186/256 = 72.66%` after 614,400 environment steps. The run is stopped at its decision gate. The next justified experiment is genuine DAgger: collect learner-controlled disagreement states, invoke the planner cascade from those physical states, retain labels only when the resulting uninterrupted rollout succeeds, and retrain on the aggregated source-grouped dataset. P1 remains unpassed.

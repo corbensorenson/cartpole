@@ -17,6 +17,7 @@ else:
     _MUJOCO_IMPORT_ERROR = None
 
 from .mjxml import generate_nlink_cartpole_xml
+from .modal import StateScales, dimensionless_absolute_transform
 from .morphology import Morphology, build_morphology
 
 
@@ -367,7 +368,15 @@ class NLinkCartPoleEnv(gym.Env):
         state[0] = float(self.data.qpos[0]) - cart_target
         state[1 : 1 + self.n] = wrap_angle(np.asarray(self.data.qpos[1 : 1 + self.n], dtype=np.float64))
         state[self.n + 1 :] = np.asarray(self.data.qvel, dtype=np.float64)
-        return float(np.clip(-scale * float(gain @ state), -1.0, 1.0)), float(cart_target)
+        raw_action = -scale * float(gain @ state)
+        action_squash = str(cfg.get("action_squash", "clip")).lower()
+        if action_squash == "tanh":
+            action = float(np.tanh(raw_action))
+        elif action_squash == "clip":
+            action = float(np.clip(raw_action, -1.0, 1.0))
+        else:
+            raise ValueError("LQR action_squash must be 'clip' or 'tanh'")
+        return action, float(cart_target)
 
     def _within_lqr_switch_bounds(self, cfg: dict[str, Any], prefix: str) -> bool:
         _, abs_angles = self._angles()
@@ -379,12 +388,52 @@ class NLinkCartPoleEnv(gym.Env):
             enter_key = f"enter_{name}"
             return float(cfg.get(f"{prefix}_{name}", cfg[enter_key]))
 
-        return bool(
+        within_box = bool(
             float(np.max(np.abs(abs_angles))) <= limit("max_abs_angle")
             and hinge_velocity_rms <= limit("hinge_velocity_rms")
             and abs(float(qpos[0])) <= limit("cart_abs")
             and abs(float(qvel[0])) <= limit("cart_velocity_abs")
         )
+        lyapunov_limit = cfg.get(
+            f"{prefix}_lyapunov_max",
+            cfg.get("enter_lyapunov_max"),
+        )
+        if not within_box or lyapunov_limit is None:
+            return within_box
+        return self._lqr_switch_lyapunov_value(cfg) <= float(lyapunov_limit)
+
+    def _lqr_switch_lyapunov_value(self, cfg: dict[str, Any]) -> float:
+        state_size = 2 * (self.n + 1)
+        if "state_transform" in cfg:
+            transform = np.asarray(cfg["state_transform"], dtype=np.float64)
+        else:
+            scales = cfg.get("state_scales", {})
+            try:
+                transform = dimensionless_absolute_transform(
+                    self.n,
+                    StateScales(
+                        float(scales["cart_position"]),
+                        float(scales["absolute_angle"]),
+                        float(scales["cart_velocity"]),
+                        float(scales["hinge_velocity"]),
+                    ),
+                )
+            except (KeyError, TypeError, ValueError) as exc:
+                raise ValueError(
+                    "Lyapunov-gated LQR switch requires state_transform or four positive state_scales"
+                ) from exc
+        lyapunov = np.asarray(cfg.get("lyapunov_matrix", []), dtype=np.float64)
+        expected = (state_size, state_size)
+        if transform.shape != expected or lyapunov.shape != expected:
+            raise ValueError(
+                "Lyapunov-gated LQR switch requires state_transform and "
+                f"lyapunov_matrix with shape {expected}"
+            )
+        state = np.r_[np.asarray(self.data.qpos), np.asarray(self.data.qvel)].astype(np.float64)
+        state[1 : 1 + self.n] = wrap_angle(state[1 : 1 + self.n])
+        dimensionless_state = transform @ state
+        value = float(dimensionless_state @ lyapunov @ dimensionless_state)
+        return value if np.isfinite(value) else float("inf")
 
     def _applied_action_norm(self, policy_action_norm: float) -> float:
         residual_cfg = self.env_cfg.get("action_lqr_residual", {})
@@ -461,9 +510,12 @@ class NLinkCartPoleEnv(gym.Env):
             cart_velocity_bound = max(1e-9, float(self.env_cfg.get("capture_feature_cart_velocity_bound", 0.50)))
             hinge_velocity_bound = max(1e-9, float(self.env_cfg.get("capture_feature_hinge_velocity_bound", 0.75)))
             residual_cfg = self.env_cfg.get("action_lqr_residual", {})
+            switch_cfg = self.env_cfg.get("action_lqr_switch", {})
             lqr_bias = 0.0
             if bool(residual_cfg.get("enabled", False)):
                 lqr_bias, _ = self._lqr_action_bias(residual_cfg)
+            elif bool(switch_cfg.get("enabled", False)):
+                lqr_bias, _ = self._lqr_action_bias(switch_cfg)
             capture_features = np.r_[
                 qpos[0] / (cart_position_bound * qpos_scale),
                 qvel[0] / (cart_velocity_bound * qvel_scale),
@@ -711,6 +763,11 @@ class NLinkCartPoleEnv(gym.Env):
             "lqr_cart_target": float(self.last_lqr_cart_target),
             "controller_mode": self.last_controller_mode,
             "lqr_switch_active": bool(self.lqr_switch_active),
+            "lqr_switch_lyapunov_value": (
+                self._lqr_switch_lyapunov_value(self.env_cfg["action_lqr_switch"])
+                if self.env_cfg.get("action_lqr_switch", {}).get("enter_lyapunov_max") is not None
+                else None
+            ),
             "lqr_switch_entry_count": int(self.lqr_switch_entry_count),
             "lqr_switch_exit_count": int(self.lqr_switch_exit_count),
             "lqr_switch_first_entry_step": self.lqr_switch_first_entry_step,
