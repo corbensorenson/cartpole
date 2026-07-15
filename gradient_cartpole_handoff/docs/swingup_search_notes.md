@@ -594,3 +594,20 @@ terminal V = 30,286; planned max |x| = 2.413 m
 The middle terminal state has cart position `0.265 m`, maximum relative-angle magnitude about `0.100 rad`, cart speed `0.083 m/s`, and maximum hinge speed `0.84 rad/s`. Planned and uninterrupted tracking values agree, but none reaches the conservative `V <= 1,800` handoff; nominal LQR after the transient hits the rail. Extending the best control timing from three to four seconds with a zero-action tail regresses terminal `V` to `316M`, so that extension is rejected.
 
 `src/gcartpole/multiple_shooting.py` and `scripts/search_multiple_shooting_capture.py` add sparse state-node/action optimization with exact MuJoCo segment defects, hard action and node-rail bounds, and DDP tracking gains for final replay. Penalized defects as small as `5.8e-3` still diverge under exact replay. Equality-constrained trust-region and SLSQP probes reduce their node objectives only by violating dynamics constraints. The implementation therefore retains only objective improvements whose maximum defect is at most `1e-8`; otherwise it returns the exact feasible warm start. No equality-solver probe improved that warm start. The main actionable result is that trajectory initialization diversity, not further scalar weighting of one local basin, enabled the `37x` reduction from `1.13M` to `30,286`.
+
+### Reset-free settling-tail capture
+
+The `V=30,286` approach terminal is close enough to upright for a distinct settling problem, but handing it directly to saturated LQR fails. `scripts/refine_ilqr_capture_chain.py` freezes the successful 150-step approach, verifies that its controls, states, and time-varying gains are dimensionally consistent, and optimizes a second trajectory from the exact terminal state. `stitch_feedback_trajectories` rejects any state discontinuity at the join, and final evaluation runs the combined controller in one MuJoCo episode without modifying `qpos`, `qvel`, time, or hidden simulator state.
+
+Zero controls, weak-LQR controls at scales `0.005`, `0.01`, and `0.02`, the unused tail of the original direct-action rollout, and one-second target/residual CEM searches at planning scales `0.1`, `0.3`, `0.6`, and `1.3` all fail. Direct-action CEM over 24 force knots gives more useful 1.0, 1.5, and 2.0-second seeds, with the 1.5-second candidate ending at `V=107,732`. Box-constrained DDP refinement of that candidate is the first successful full-envelope state-674 chain:
+
+```text
+runs/p1_capture_ilqr/validation_674_p1_chain_action_cem_tail15_ddp.json
+approach steps = 150; settling-tail steps = 75; total planned time = 4.50 s
+planned tail terminal V = 2,961.94; planned terminal ||z|| = 0.697
+measured funnel entry = step 251 = 5.02 s; minimum V = 0.120
+success = true; termination = time_limit; maximum upright hold = 9.30 s
+maximum cart excursion = 2.413 m; rail violation = false
+```
+
+A zero-iteration replay from the saved 225 controls reproduces the same success, funnel-entry step, upright hold, and cart excursion. The local LQR begins after the planned tail at step 225 and crosses the conservative funnel boundary 26 steps later; the switch does not reset simulator state. This demonstrates that the representative `p=1.0` state is dynamically recoverable and validates the two-stage optimization architecture. It does not pass P1 because the controller is state-specific and has not been amortized or evaluated on the frozen 1,000-state test split.

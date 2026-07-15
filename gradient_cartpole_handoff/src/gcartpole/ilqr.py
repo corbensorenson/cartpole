@@ -35,6 +35,52 @@ class ILQRResult:
     history: list[dict[str, float | int | bool]]
 
 
+def stitch_feedback_trajectories(
+    first_controls: Array,
+    first_states: Array,
+    first_feedback_gains: Array,
+    second_controls: Array,
+    second_states: Array,
+    second_feedback_gains: Array,
+    *,
+    boundary_tolerance: float = 1e-8,
+) -> tuple[Array, Array, Array]:
+    """Join two feedback trajectories without introducing a state reset."""
+    first_controls = np.asarray(first_controls, dtype=np.float64)
+    second_controls = np.asarray(second_controls, dtype=np.float64)
+    first_states = np.asarray(first_states, dtype=np.float64)
+    second_states = np.asarray(second_states, dtype=np.float64)
+    first_feedback_gains = np.asarray(first_feedback_gains, dtype=np.float64)
+    second_feedback_gains = np.asarray(second_feedback_gains, dtype=np.float64)
+    if first_controls.ndim != 1 or second_controls.ndim != 1:
+        raise ValueError("controls must be one-dimensional")
+    if first_states.ndim != 2 or second_states.ndim != 2:
+        raise ValueError("states must be two-dimensional")
+    if first_states.shape[0] != first_controls.size + 1:
+        raise ValueError("first trajectory must have one more state than control")
+    if second_states.shape[0] != second_controls.size + 1:
+        raise ValueError("second trajectory must have one more state than control")
+    if first_states.shape[1] != second_states.shape[1]:
+        raise ValueError("trajectory state dimensions do not match")
+    expected_first_gain_shape = (first_controls.size, first_states.shape[1])
+    expected_second_gain_shape = (second_controls.size, second_states.shape[1])
+    if first_feedback_gains.shape != expected_first_gain_shape:
+        raise ValueError("first feedback-gain dimensions do not match its trajectory")
+    if second_feedback_gains.shape != expected_second_gain_shape:
+        raise ValueError("second feedback-gain dimensions do not match its trajectory")
+    boundary_error = float(np.linalg.norm(first_states[-1] - second_states[0]))
+    if boundary_error > boundary_tolerance:
+        raise ValueError(
+            f"trajectory boundary differs by {boundary_error:.3e}, "
+            f"above tolerance {boundary_tolerance:.3e}"
+        )
+    return (
+        np.concatenate((first_controls, second_controls)),
+        np.vstack((first_states[:-1], second_states)),
+        np.vstack((first_feedback_gains, second_feedback_gains)),
+    )
+
+
 def state_difference(first: Array, second: Array, n_links: int) -> Array:
     delta = np.asarray(first, dtype=np.float64) - np.asarray(second, dtype=np.float64)
     delta = delta.copy()
