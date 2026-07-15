@@ -1,5 +1,7 @@
 # Handoff Packet: Gradient-to-Uniform n-Link Cart-Pole
 
+> Historical scope note: this packet records the original near-upright six-link starting point. The active project goal and authoritative completion gates are now in `ROADMAP.md`: reproduce hanging-start six links as calibration, then solve and publish the canonical seven-link benchmark.
+
 ## Objective
 
 Use this Mac to produce near-upright six-link stabilization artifacts:

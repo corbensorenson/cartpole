@@ -2,7 +2,7 @@
 
 ## Current Goal And Architecture
 
-Working goal: solve the real six-link swing-up benchmark from the hanging/collapsed start, then stabilize the uniform chain upright. Starting from already-upright links is a separate near-upright control baseline and is not the target problem.
+Current roadmap: reproduce the real six-link swing-up benchmark from the hanging/collapsed start as a calibration gate, then solve and publish the canonical seven-link task. Starting from already-upright links remains a separate near-upright control baseline and is not completion evidence. See `ROADMAP.md` for the authoritative project gates.
 
 The current architecture is a two-expert system, not three independent experts:
 

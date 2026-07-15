@@ -1,5 +1,7 @@
 # Six-Link Evidence Runbook
 
+This runbook covers the six-link baseline and calibration evidence. It does not define final project completion. The authoritative seven-link benchmark, phase gates, and final audit are in `ROADMAP.md`.
+
 Use this after `make smoke` and the debug run pass.
 
 There are two tracks:

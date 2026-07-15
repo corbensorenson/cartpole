@@ -1,5 +1,11 @@
 # Gradient n-Link Cart-Pole
 
+## Active Project Goal
+
+The final project target is now a reproducible **7-link hanging-start swing-up and stabilization result**. Six-link end-to-end reproduction is a mandatory calibration gate because six links has already been solved publicly; it is no longer the final research claim.
+
+The authoritative phase gates, benchmark contract, artifacts, and completion audit are in [`ROADMAP.md`](ROADMAP.md). The project is not complete until every required roadmap phase through public fresh-clone reproduction passes.
+
 ## Status
 
 This repository currently contains a reproducible **near-upright stabilization** result for a uniform 6-link MuJoCo cart-pole. It does **not** solve the harder swing-up problem from a collapsed or hanging-down initial state.
@@ -54,11 +60,11 @@ This packet contains a **native Apple Silicon path** using:
 
 The current solved target is **upright stabilization from a very small near-upright perturbation**, not full swing-up from collapsed/hanging initial conditions. If Yacine's target starts below the cart, uses discrete actions, or has different rail/force/reward/termination details, those must be implemented and solved before claiming a direct comparison.
 
-The code is written for `n` links. Six links is just the first target.
+The code is written for `n` links. Six links is the calibration target; seven links is the final roadmap target.
 
-## Swing-Up Target
+## Six-Link Calibration Target
 
-The real target for comparison is now tracked separately from the near-upright baseline:
+The required six-link end-to-end calibration is tracked separately from the near-upright baseline:
 
 ```text
 configs/swingup6_uniform.yaml
@@ -415,22 +421,14 @@ The biggest speed limit is MuJoCo CPU simulation. MLX accelerates neural net tra
 
 # 9. Scaling to n links
 
-After six works, try seven:
-
-```bash
-python scripts/train_mlx_ppo.py \
-  --config configs/gradient6_curriculum.yaml \
-  --override experiment.name=gradient7_curriculum \
-  --override experiment.out_dir=runs/gradient7_curriculum \
-  --override env.n_links=7 \
-  --override env.total_length=3.5
-```
+Seven links is governed by the frozen benchmark and phase gates in `ROADMAP.md`. Do not create the final task by casually overriding the six-link config: the canonical seven-link benchmark keeps total length at `3.0 m`, total link mass at `1.0 kg`, force at `+/-80 N`, and rail at `+/-3 m`.
 
 Notes:
 
 - Changing `n_links` changes observation dimension, so checkpoints are not directly reusable across `n`.
 - If total length is fixed and `n` increases, links get shorter and the fastest unstable mode gets harder.
-- If you increase `n`, consider increasing `total_length` or force limit.
+- Longer links, higher force, or wider rails may be used as labeled training curricula, but they are not final evidence.
+- Complete the integrated six-link calibration gate before expensive seven-link sweeps.
 - Run the linear sweep first to find plausible gradients.
 
 ---
@@ -526,22 +524,4 @@ See `docs/pufferlib4_notes.md`.
 
 # 13. Definition of done
 
-Minimum:
-
-- `scripts/smoke_test.py` passes.
-- `gradient6_curriculum` produces a checkpoint.
-- `uniform6_finetune` produces `best.safetensors`.
-- Deterministic `progress=1.0` eval has nonzero success.
-- Video is rendered.
-
-Strong:
-
-- `success_rate >= 0.80` over 20 deterministic uniform episodes.
-- A 30-second MP4 shows all six links upright without reset.
-- Same command works for `n=7` with adjusted config.
-
-Stronger / public claim:
-
-- Match Yacine's exact environment spec.
-- Match action space, rail, force limit, reward, initial distribution, and termination.
-- Report seeds, wall-clock time, total environment steps, and checkpoint hash.
+`ROADMAP.md` is the only project-level definition of done. In summary, completion requires integrated hanging-start six-link calibration, the canonical seven-link 20- and 100-episode success gates, published weights and hashes, a reset-free 30-second video, and fresh-clone public reproduction. A smoke test, checkpoint, nonzero success rate, curriculum-stage result, or near-upright video is progress but not completion.
