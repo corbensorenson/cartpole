@@ -21,6 +21,7 @@ from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.ilqr import (
     MujocoTransition,
     QuadraticTrajectoryCost,
+    add_terminal_cart_weights,
     data_state,
     optimize_ilqr,
 )
@@ -278,6 +279,8 @@ def main() -> None:
     parser.add_argument("--stage-weight", type=float, default=0.1)
     parser.add_argument("--terminal-weight", type=float, default=1.0)
     parser.add_argument("--terminal-state-weight", type=float, default=0.0)
+    parser.add_argument("--terminal-cart-weight", type=float, default=0.0)
+    parser.add_argument("--terminal-cart-velocity-weight", type=float, default=0.0)
     parser.add_argument("--rail-soft-limit", type=float, default=2.4)
     parser.add_argument("--rail-weight", type=float, default=100_000_000.0)
     parser.add_argument("--handoff-lyapunov", type=float, default=1800.0)
@@ -300,7 +303,12 @@ def main() -> None:
             args.handoff_cart_abs,
         )
         <= 0.0
-        or args.terminal_state_weight < 0.0
+        or min(
+            args.terminal_state_weight,
+            args.terminal_cart_weight,
+            args.terminal_cart_velocity_weight,
+        )
+        < 0.0
         or args.iterations < 1
     ):
         raise ValueError(
@@ -372,6 +380,12 @@ def main() -> None:
         args.terminal_weight * lyapunov / args.handoff_lyapunov
         + args.terminal_state_weight * np.eye(transform.shape[0], dtype=np.float64)
     )
+    terminal_metric = add_terminal_cart_weights(
+        terminal_metric,
+        int(cfg["env"]["n_links"]),
+        cart_weight=args.terminal_cart_weight,
+        cart_velocity_weight=args.terminal_cart_velocity_weight,
+    )
     trajectory_cost = QuadraticTrajectoryCost(
         stage_state=stage_metric,
         terminal_state=terminal_metric,
@@ -441,6 +455,8 @@ def main() -> None:
             "stage_weight": float(args.stage_weight),
             "terminal_weight": float(args.terminal_weight),
             "terminal_state_weight": float(args.terminal_state_weight),
+            "terminal_cart_weight": float(args.terminal_cart_weight),
+            "terminal_cart_velocity_weight": float(args.terminal_cart_velocity_weight),
             "rail_soft_limit": float(args.rail_soft_limit),
             "rail_weight": float(args.rail_weight),
             "handoff_lyapunov": float(args.handoff_lyapunov),

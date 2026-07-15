@@ -35,6 +35,27 @@ class ILQRResult:
     history: list[dict[str, float | int | bool]]
 
 
+def add_terminal_cart_weights(
+    metric: Array,
+    n_links: int,
+    *,
+    cart_weight: float = 0.0,
+    cart_velocity_weight: float = 0.0,
+) -> Array:
+    """Add cart-specific weights in [qpos, qvel] coordinate order."""
+    metric = np.asarray(metric, dtype=np.float64)
+    expected_size = 2 * (int(n_links) + 1)
+    if metric.shape != (expected_size, expected_size):
+        raise ValueError("terminal metric shape does not match link count")
+    if min(cart_weight, cart_velocity_weight) < 0.0:
+        raise ValueError("terminal cart weights must be nonnegative")
+    weighted = metric.copy()
+    weighted[0, 0] += float(cart_weight)
+    cart_velocity_index = int(n_links) + 1
+    weighted[cart_velocity_index, cart_velocity_index] += float(cart_velocity_weight)
+    return weighted
+
+
 def stitch_feedback_trajectories(
     first_controls: Array,
     first_states: Array,

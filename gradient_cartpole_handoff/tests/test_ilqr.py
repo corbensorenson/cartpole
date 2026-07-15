@@ -6,8 +6,12 @@ from tempfile import TemporaryDirectory
 
 import numpy as np
 
-from gcartpole.ilqr import stitch_feedback_trajectories
-from scripts.evaluate_ilqr_chain_basin import aggregate, parse_radii, select_feedback_gains
+from gcartpole.ilqr import add_terminal_cart_weights, stitch_feedback_trajectories
+from scripts.evaluate_ilqr_chain_basin import (
+    aggregate,
+    parse_radii,
+    select_feedback_gains,
+)
 from scripts.evaluate_trajectory_funnel_library import selection_key
 from scripts.evaluate_receding_ilqr_capture import shift_controls
 from scripts.refine_ilqr_capture_chain import (
@@ -29,6 +33,19 @@ from scripts.search_capture_pipeline import (
 
 
 class ILQRTests(unittest.TestCase):
+    def test_terminal_cart_weights_use_qpos_qvel_coordinate_order(self) -> None:
+        base = np.eye(8)
+        weighted = add_terminal_cart_weights(
+            base, 3, cart_weight=10.0, cart_velocity_weight=20.0
+        )
+        self.assertEqual(weighted[0, 0], 11.0)
+        self.assertEqual(weighted[4, 4], 21.0)
+        np.testing.assert_allclose(base, np.eye(8))
+        with self.assertRaisesRegex(ValueError, "shape"):
+            add_terminal_cart_weights(np.eye(6), 3)
+        with self.assertRaisesRegex(ValueError, "nonnegative"):
+            add_terminal_cart_weights(base, 3, cart_weight=-1.0)
+
     def test_stitch_feedback_trajectories_preserves_one_boundary_state(self) -> None:
         first_controls = np.asarray([0.1, 0.2])
         first_states = np.asarray([[0.0, 0.0], [1.0, 2.0], [3.0, 4.0]])

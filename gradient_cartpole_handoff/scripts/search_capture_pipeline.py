@@ -10,7 +10,12 @@ from pathlib import Path
 from typing import Any
 
 from gcartpole.config import dump_json
-from gcartpole.evidence import file_metadata, git_metadata, runtime_metadata, utc_timestamp
+from gcartpole.evidence import (
+    file_metadata,
+    git_metadata,
+    runtime_metadata,
+    utc_timestamp,
+)
 
 
 def parse_state_indices(text: str) -> list[int]:
@@ -48,9 +53,7 @@ def result_summary(payload: dict[str, Any]) -> dict[str, Any]:
         "success": bool(result["success"]),
         "latched": bool(result["latched"]),
         "minimum_lyapunov": float(result["minimum_lyapunov"]),
-        "max_upright_streak_seconds": float(
-            result["max_upright_streak_seconds"]
-        ),
+        "max_upright_streak_seconds": float(result["max_upright_streak_seconds"]),
         "max_cart_excursion": float(result["max_cart_excursion"]),
         "termination_reason": result["termination_reason"],
     }
