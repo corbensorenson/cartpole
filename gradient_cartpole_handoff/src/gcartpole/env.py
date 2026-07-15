@@ -56,6 +56,7 @@ class NLinkCartPoleEnv(gym.Env):
         self.obs_include_morphology = bool(self.env_cfg.get("obs_include_morphology", True))
         self.obs_include_frictionloss = bool(self.env_cfg.get("obs_include_frictionloss", False))
         self.obs_include_time = bool(self.env_cfg.get("obs_include_time", False))
+        self.obs_include_capture_features = bool(self.env_cfg.get("obs_include_capture_features", False))
         self.step_count = 0
         self.last_action_norm = np.zeros(1, dtype=np.float32)
         self.last_policy_action_norm = np.zeros(1, dtype=np.float32)
@@ -389,6 +390,25 @@ class NLinkCartPoleEnv(gym.Env):
             obs_parts.append(self.morphology.fingerprint())
         if self.obs_include_frictionloss:
             obs_parts.append(self.morphology.frictionloss_fingerprint())
+        if self.obs_include_capture_features:
+            qpos_scale = max(1e-9, abs(self._progress_value(self.env_cfg, "init_qpos_scale", 1.0)))
+            qvel_scale = max(1e-9, abs(self._init_qvel_scale()))
+            cart_position_bound = max(1e-9, float(self.env_cfg.get("capture_feature_cart_position_bound", 1.25)))
+            angle_bound = max(1e-9, float(self.env_cfg.get("capture_feature_angle_bound", 0.15)))
+            cart_velocity_bound = max(1e-9, float(self.env_cfg.get("capture_feature_cart_velocity_bound", 0.50)))
+            hinge_velocity_bound = max(1e-9, float(self.env_cfg.get("capture_feature_hinge_velocity_bound", 0.75)))
+            residual_cfg = self.env_cfg.get("action_lqr_residual", {})
+            lqr_bias = 0.0
+            if bool(residual_cfg.get("enabled", False)):
+                lqr_bias, _ = self._lqr_action_bias(residual_cfg)
+            capture_features = np.r_[
+                qpos[0] / (cart_position_bound * qpos_scale),
+                qvel[0] / (cart_velocity_bound * qvel_scale),
+                abs_angles / (angle_bound * qpos_scale),
+                qvel[1 : 1 + self.n] / (hinge_velocity_bound * qvel_scale),
+                lqr_bias,
+            ]
+            obs_parts.append(np.clip(capture_features, -10.0, 10.0))
         if self.obs_include_time:
             time_scale = max(1e-9, float(self.env_cfg.get("obs_time_scale_seconds", self.env_cfg["episode_seconds"])))
             phase = float(self.step_count * self.dt) / time_scale
@@ -417,6 +437,7 @@ class NLinkCartPoleEnv(gym.Env):
         cart_vel_cost = float(qvel[0] ** 2)
         hinge_vel_cost = float(hinge_vel_rms * hinge_vel_rms)
         control_cost = float(action_norm * action_norm)
+        policy_control_cost = float(self.last_policy_action_norm[0] ** 2)
         upright = float(self._is_upright(abs_angles))
         capture_quality = self._capture_quality(max_abs_angle=max_abs_angle, hinge_vel_rms=hinge_vel_rms)
         rail_margin_start = float(reward_cfg.get("rail_margin_start", 1.0))
@@ -479,6 +500,7 @@ class NLinkCartPoleEnv(gym.Env):
         reward -= float(reward_cfg.get("hinge_vel", 0.001)) * hinge_vel_cost
         reward -= float(reward_cfg.get("rail_margin", 0.0)) * rail_margin * rail_margin
         reward -= float(reward_cfg.get("control", 0.0003)) * control_cost
+        reward -= float(reward_cfg.get("policy_control", 0.0)) * policy_control_cost
         return float(np.clip(reward, -100.0, 100.0))
 
     def _capture_quality(self, *, max_abs_angle: float | None = None, hinge_vel_rms: float | None = None) -> float:

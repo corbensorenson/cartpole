@@ -12,14 +12,24 @@ from scipy.linalg import solve_discrete_are
 from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.evidence import data_sha256, git_metadata, runtime_metadata, utc_timestamp
 from gcartpole.env import NLinkCartPoleEnv, wrap_angle
-from make_lqr_checkpoint import absolute_angle_cost, finite_difference_dynamics
-from probe_swingup_trajectory import (
-    DEFAULT_KD,
-    DEFAULT_KNOTS,
-    DEFAULT_KP,
-    DEFAULT_TRAJECTORY_SECONDS,
-    trajectory_action,
-)
+try:
+    from scripts.make_lqr_checkpoint import absolute_angle_cost, finite_difference_dynamics
+    from scripts.probe_swingup_trajectory import (
+        DEFAULT_KD,
+        DEFAULT_KNOTS,
+        DEFAULT_KP,
+        DEFAULT_TRAJECTORY_SECONDS,
+        trajectory_action,
+    )
+except ModuleNotFoundError:
+    from make_lqr_checkpoint import absolute_angle_cost, finite_difference_dynamics
+    from probe_swingup_trajectory import (
+        DEFAULT_KD,
+        DEFAULT_KNOTS,
+        DEFAULT_KP,
+        DEFAULT_TRAJECTORY_SECONDS,
+        trajectory_action,
+    )
 
 
 def lqr_gain(cfg: dict[str, Any], *, progress: float, fd_eps: float, control_cost: float) -> np.ndarray:

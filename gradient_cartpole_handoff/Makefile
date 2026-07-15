@@ -1,4 +1,4 @@
-.PHONY: setup smoke roadmap-p0 test-roadmap-p0 verify-roadmap-p0 export-swingup7-xml generate-capture-envelope capture-envelope6 mine-capture-failures distill-capture-lqr eval-capture-envelope6 eval-capture-envelope-lqr eval-capture-envelope-mpc swingup7 eval-swingup7-20 eval-swingup7-100 render-swingup7 verify-swingup7 debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture eval-mpc-policy-handoff-stage search-swingup-chain export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-wide6 eval-capture-wide6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-stage capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum-qvel0 eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
+.PHONY: setup setup-sb3 smoke roadmap-p0 test-roadmap-p0 verify-roadmap-p0 export-swingup7-xml generate-capture-envelope capture-envelope6 capture-boundary-lqr mine-capture-boundary fit-capture-funnel capture-sac-boundary mine-capture-failures distill-capture-lqr eval-capture-envelope6 eval-capture-envelope-lqr eval-capture-envelope-mpc swingup7 eval-swingup7-20 eval-swingup7-100 render-swingup7 verify-swingup7 debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture eval-mpc-policy-handoff-stage search-swingup-chain search-swingup-funnel export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-wide6 eval-capture-wide6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-stage capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum-qvel0 eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
 
 PYTHON ?= .venv/bin/python
 SWINGUP7_RUN ?= runs/swingup7_uniform
@@ -7,6 +7,10 @@ CAPTURE_ENVELOPE_DIR ?= runs/p1_capture_envelope
 CAPTURE_ENVELOPE_RUN ?= runs/swingup6_capture_envelope
 CAPTURE_ENVELOPE_CHECKPOINT ?= $(CAPTURE_ENVELOPE_RUN)/checkpoints/best.safetensors
 CAPTURE_HARD_STATES ?= $(CAPTURE_ENVELOPE_DIR)/train_hard.json
+CAPTURE_BOUNDARY_PROGRESS ?= 0.0625
+CAPTURE_BOUNDARY_LQR ?= $(CAPTURE_ENVELOPE_DIR)/lqr_direct_scale130/best.safetensors
+CAPTURE_BOUNDARY_ROLLOUTS ?= $(CAPTURE_ENVELOPE_DIR)/train_hard_00625.json
+CAPTURE_FUNNEL_MODEL ?= $(CAPTURE_ENVELOPE_DIR)/funnel_lqr_scale130_p00625.json
 SWING_TRAJECTORY_SEARCH_OUT ?= runs/swingup6_trajectory_search/low_momentum_search.json
 SWING_TRAJECTORY_SUSTAIN_OUT ?= runs/swingup6_trajectory_search/sustain_search.json
 SWING_TRAJECTORY_STATES_OUT ?= runs/swingup6_expert_chain/swing_states_low_momentum.json
@@ -96,6 +100,9 @@ CAPTURE_HANDOFF_VEL_NOISE_END ?= 0.05
 setup:
 	bash scripts/setup_mac.sh
 
+setup-sb3:
+	$(PYTHON) -m pip install -r requirements-sb3.txt
+
 roadmap-p0: test-roadmap-p0 export-swingup7-xml verify-roadmap-p0
 
 test-roadmap-p0:
@@ -112,6 +119,18 @@ generate-capture-envelope:
 
 capture-envelope6: generate-capture-envelope
 	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup6_capture_envelope.yaml
+
+capture-boundary-lqr: generate-capture-envelope
+	$(PYTHON) scripts/make_lqr_checkpoint.py --config configs/swingup6_capture_envelope.yaml --checkpoint $(CAPTURE_BOUNDARY_LQR) --progress $(CAPTURE_BOUNDARY_PROGRESS) --control-cost 1000 --policy-scale 1.30 --override 'ppo.hidden_sizes=[]' --override 'env.action_lqr_residual.enabled=false'
+
+mine-capture-boundary: capture-boundary-lqr
+	$(PYTHON) scripts/mine_capture_failures.py --config configs/swingup6_capture_envelope.yaml --checkpoint $(CAPTURE_BOUNDARY_LQR) --dataset $(CAPTURE_ENVELOPE_DIR)/train.json --progress $(CAPTURE_BOUNDARY_PROGRESS) --sample-count 1024 --hard-repeat 5 --batch-size 64 --seed 61621 --out $(CAPTURE_BOUNDARY_ROLLOUTS) --override 'ppo.hidden_sizes=[]' --override 'env.action_lqr_residual.enabled=false'
+
+fit-capture-funnel: mine-capture-boundary
+	$(PYTHON) scripts/fit_capture_funnel.py --config configs/swingup6_capture_envelope.yaml --dataset $(CAPTURE_ENVELOPE_DIR)/train.json --rollouts $(CAPTURE_BOUNDARY_ROLLOUTS) --progress $(CAPTURE_BOUNDARY_PROGRESS) --out $(CAPTURE_FUNNEL_MODEL)
+
+capture-sac-boundary: mine-capture-boundary
+	$(PYTHON) scripts/train_sb3_sac.py --config configs/swingup6_capture_sac_boundary.yaml
 
 mine-capture-failures: generate-capture-envelope
 	$(PYTHON) scripts/mine_capture_failures.py --config configs/swingup6_capture_envelope.yaml --checkpoint $(CAPTURE_ENVELOPE_CHECKPOINT) --dataset $(CAPTURE_ENVELOPE_DIR)/train.json --progress 0.055 --out $(CAPTURE_HARD_STATES)
@@ -229,6 +248,9 @@ eval-mpc-policy-handoff-stage:
 
 search-swingup-chain:
 	$(PYTHON) scripts/search_swingup_chain.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --capture-config configs/swingup6_capture_state_list_shaped.yaml --capture-checkpoint runs/swingup6_capture_state_list_shaped/checkpoints/best.safetensors --out runs/swingup6_chain_search/search.json
+
+search-swingup-funnel: fit-capture-funnel
+	$(PYTHON) scripts/search_swingup_chain.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --capture-funnel-model $(CAPTURE_FUNNEL_MODEL) --lqr-capture-scale 1.30 --out runs/swingup6_funnel_search/search.json
 
 export-chain-states:
 	$(PYTHON) scripts/search_swingup_chain.py --config configs/swingup6_uniform.yaml --progress 1.0 --zero-noise --capture-config configs/swingup6_capture_state_list_shaped.yaml --capture-checkpoint runs/swingup6_capture_state_list_shaped/checkpoints/best.safetensors --init-controller-json runs/swingup6_chain_search/search.json --iterations 0 --population 1 --elites 1 --seconds 30 --state-max-angle 0.60 --state-max-hinge-rms 3.0 --state-out runs/swingup6_chain_search/centered_chain_states.json --out runs/swingup6_chain_search/eval_chain_state_export.json

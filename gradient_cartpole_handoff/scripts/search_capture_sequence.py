@@ -11,7 +11,10 @@ import numpy as np
 from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.evidence import data_sha256, git_metadata, runtime_metadata, utc_timestamp
 from gcartpole.env import NLinkCartPoleEnv
-from search_swingup_capture import lqr_action, lqr_gain
+try:
+    from scripts.search_swingup_capture import lqr_action, lqr_gain
+except ModuleNotFoundError:
+    from search_swingup_capture import lqr_action, lqr_gain
 
 
 def state_quality(state: dict[str, Any]) -> tuple[float, float, float, float]:

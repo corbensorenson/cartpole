@@ -30,6 +30,17 @@ make eval-capture-envelope6
 
 [`benchmarks/p1_capture_envelope.yaml`](benchmarks/p1_capture_envelope.yaml) fixes the uniform plant, control frequency, 15-second episode, success contract, gate thresholds, and seeded 20,000/2,000/1,000 train/validation/test state splits. The evaluator rejects altered rails, force limits, dynamics, or easier hold criteria and evaluates every held-out state exactly once. PPO curriculum gates replay a fixed seeded subset from the independent validation split and record the exact indices in checkpoint metadata. The current analytic LQR baseline fails the final gate with `0/1000` successes, `0.04 s` median maximum upright hold, and `1000` rail hits. A component-wise curriculum has passed the fixed validation gate at progress `0.06`, where reset positions are scaled by `p^2` and velocities by `p^3`; it stalls at `p=0.0625`. This is still a very narrow fraction of the physical envelope, so P1 is not passed.
 
+The current boundary controller can be labelled and converted into a conservative empirical capture-funnel model with:
+
+```bash
+make fit-capture-funnel
+make search-swingup-funnel
+```
+
+The first command deterministically regenerates the scale-`1.30` LQR checkpoint, evaluates 1,024 training states at `p=0.0625`, and fits a second-order logistic membership model. Its hash-determined training-only holdout reports `0.990` ROC AUC; the calibrated acceptance threshold has `0.951` precision and `1.000` recall. The model rejects states outside its measured coordinate domain and can replace the angle-only target in chain trajectory search. This is a policy-specific training objective at a very narrow curriculum stage, not held-out P1 evidence.
+
+An optional Stable-Baselines3 SAC residual branch is available through `make setup-sb3` and `make capture-sac-boundary`. Scaled capture coordinates fixed an observation-resolution defect, but conservative SAC only preserved the LQR baseline and weaker trust regularization eventually collapsed it. The branch is retained for reproducible ablation work; it has not advanced the accepted frontier.
+
 Current generated split hashes:
 
 ```text

@@ -1,0 +1,4 @@
+# Optional off-policy capture backend. Install after requirements-mac.txt.
+gymnasium==1.2.3
+stable-baselines3==2.7.1
+torch==2.13.0
