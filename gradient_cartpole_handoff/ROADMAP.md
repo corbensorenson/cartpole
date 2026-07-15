@@ -287,7 +287,7 @@ After P7, evaluate 8+ links using the same contract and evidence process. This i
 | Phase | Status | Current evidence |
 |---|---|---|
 | P0 benchmark/verifier | Passed | Canonical config, XML hash export, runtime assertions, rejection tests, and final artifact verifier pass via `make roadmap-p0`. |
-| P1 six-link capture basin | In progress | The seeded 20k/2k/1k envelope and strict gate evaluator are frozen. Analytic LQR scores `0/1000`. Deterministic scheduled-target planning plus LQR feedback scores `233/256` on fixed validation at `p=0.065`, advancing the accepted development frontier from `p=0.06`; it is online state-specific planning at a narrow partial envelope and does not pass P1. A rollout-labelled, domain-bounded empirical funnel provides the current swing objective. |
+| P1 six-link capture basin | In progress | The seeded 20k/2k/1k envelope and strict gate evaluator are frozen. Analytic LQR scores `0/1000`. Deterministic scheduled-target planning plus LQR feedback scores `236/256` on fixed validation at `p=0.065` after budget escalation, advancing the accepted development frontier from `p=0.06`; it is online state-specific planning at a narrow partial envelope and does not pass P1. Dimensionless real-Schur analysis isolates a slow weakly actuated angle-4-to-6 failure block; static gain changes are negative. |
 | P2 six-link swing handoff | In progress | Best learned handoffs are from a progress-`0.3875` curriculum plant, not final uniform 6-link. |
 | P3 integrated six | Not passed | Near-upright 6-link stabilization is solved; hanging-start end-to-end swing-up is not. |
 | P4 seven-link capture basin | Not started | Blocked by the P3 calibration gate. |

@@ -534,3 +534,22 @@ median maximum upright hold 13.94 s; no successful rail hits
 ```
 
 The last result advances the accepted development frontier to `p=0.065`. Its formal gate remains false by construction: P1 requires all 1,000 frozen test states and final progress `p=1.0`. The planner used 41 invocations and about 8.4 minutes wall time for the 256-state run, so compute cost and eventual amortization into a reusable recovery controller remain open problems.
+
+### Dimensionless modal diagnosis and escalation
+
+The browser directive's modal-curriculum proposal was tested against the exact `p=0.065` outcomes rather than adopted on intuition. `src/gcartpole/modal.py` defines an invertible transformation from MuJoCo's relative-hinge state to dimensionless cart position, absolute link angles, cart velocity, and hinge velocities using the frozen envelope bounds. The raw closed-loop eigenvector matrix has condition number about `2.4e4`, so raw eigenvector amplitudes are numerically misleading. The authoritative diagnostic therefore uses orthonormal real-Schur blocks while retaining the eigenvalue and conditioning report.
+
+On the original 41 planner invocations, the strongest recovery separator is a slow weakly actuated pair at `0.9908 +/- 0.0080j`. Its basis energy is concentrated in absolute angles 4–6, and its state-energy share predicts planner failure with ROC AUC `0.824`. After high-budget refinement, the same block separates the remaining 20 failures from the 21 total planner recoveries with AUC `0.869`.
+
+A targeted feedback sweep rules out the simplest response. Multipliers from `0.25` through `3.0` on that Schur block recover no unresolved state and make the linear closed loop unstable away from a very narrow neighborhood of `1.0`. Fine multipliers `0.975` and `0.99` each recover only state `265`, which the target planner had already recovered; all other variants recover zero baseline failures. Permanent mode-gain modification is therefore not the next controller.
+
+Deterministic budget escalation is useful for the near tail. Re-running 12 generations of 256 candidates only on the 23 unresolved states recovered states `1252`, `1008`, and `463`. The complete replayed artifact reports:
+
+```text
+runs/p1_capture_target_teachers/eval_adaptive_refined_validation256_p0065.json
+initial 233/256; refinement recovered 3/23; final 236/256 (92.19%)
+median maximum upright hold 13.94 s; no successful rail hits
+88,256 total candidate rollouts represented in the combined planning history
+```
+
+A subsequent six-generation, 128-candidate pass initialized from each best existing schedule recovered `0/20`, confirming that local search around the two-second schedule family is saturated. The next deep-tail experiment should add a longer horizon or direct transient action/residual knots and rank candidates with dense dimensionless Lyapunov reduction. None of these partial-progress validation artifacts pass P1.

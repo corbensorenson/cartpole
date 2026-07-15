@@ -1,4 +1,4 @@
-.PHONY: setup setup-sb3 smoke roadmap-p0 test-roadmap-p0 verify-roadmap-p0 export-swingup7-xml generate-capture-envelope capture-envelope6 capture-boundary-lqr mine-capture-boundary fit-capture-funnel search-capture-target-teacher build-capture-target-teachers eval-adaptive-capture-boundary capture-sac-boundary mine-capture-failures distill-capture-lqr eval-capture-envelope6 eval-capture-envelope-lqr eval-capture-envelope-mpc swingup7 eval-swingup7-20 eval-swingup7-100 render-swingup7 verify-swingup7 debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture eval-mpc-policy-handoff-stage search-swingup-chain search-swingup-funnel export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-wide6 eval-capture-wide6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-stage capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum-qvel0 eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
+.PHONY: setup setup-sb3 smoke roadmap-p0 test-roadmap-p0 verify-roadmap-p0 export-swingup7-xml generate-capture-envelope capture-envelope6 capture-boundary-lqr mine-capture-boundary fit-capture-funnel search-capture-target-teacher build-capture-target-teachers eval-adaptive-capture-boundary analyze-capture-modal sweep-capture-modal-feedback refine-adaptive-capture-boundary analyze-refined-capture-modal capture-sac-boundary mine-capture-failures distill-capture-lqr eval-capture-envelope6 eval-capture-envelope-lqr eval-capture-envelope-mpc swingup7 eval-swingup7-20 eval-swingup7-100 render-swingup7 verify-swingup7 debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture eval-mpc-policy-handoff-stage search-swingup-chain search-swingup-funnel export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-wide6 eval-capture-wide6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-stage capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum-qvel0 eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
 
 PYTHON ?= .venv/bin/python
 SWINGUP7_RUN ?= runs/swingup7_uniform
@@ -17,6 +17,10 @@ CAPTURE_TARGET_TEACHERS_OUT ?= runs/p1_capture_target_teachers/train_teachers_32
 CAPTURE_ADAPTIVE_PROGRESS ?= 0.065
 CAPTURE_ADAPTIVE_LIMIT ?= 256
 CAPTURE_ADAPTIVE_OUT ?= runs/p1_capture_target_teachers/eval_adaptive_validation$(CAPTURE_ADAPTIVE_LIMIT)_p$(subst .,,$(CAPTURE_ADAPTIVE_PROGRESS)).json
+CAPTURE_MODAL_ANALYSIS_OUT ?= runs/p1_capture_modal/modal_analysis_validation256_p0065.json
+CAPTURE_MODAL_SWEEP_OUT ?= runs/p1_capture_modal/modal_group10_gain_sweep_fine_p0065.json
+CAPTURE_REFINED_ADAPTIVE_OUT ?= runs/p1_capture_target_teachers/eval_adaptive_refined_validation256_p0065.json
+CAPTURE_REFINED_MODAL_ANALYSIS_OUT ?= runs/p1_capture_modal/modal_analysis_refined_validation256_p0065.json
 SWING_TRAJECTORY_SEARCH_OUT ?= runs/swingup6_trajectory_search/low_momentum_search.json
 SWING_TRAJECTORY_SUSTAIN_OUT ?= runs/swingup6_trajectory_search/sustain_search.json
 SWING_TRAJECTORY_STATES_OUT ?= runs/swingup6_expert_chain/swing_states_low_momentum.json
@@ -143,6 +147,18 @@ build-capture-target-teachers: mine-capture-boundary
 
 eval-adaptive-capture-boundary: generate-capture-envelope
 	$(PYTHON) scripts/evaluate_adaptive_target_capture.py --config configs/swingup6_capture_envelope.yaml --dataset $(CAPTURE_ENVELOPE_DIR)/validation.json --split validation --progress $(CAPTURE_ADAPTIVE_PROGRESS) --limit $(CAPTURE_ADAPTIVE_LIMIT) --index-seed 61201 --iterations 6 --population 128 --elites 12 --out $(CAPTURE_ADAPTIVE_OUT)
+
+analyze-capture-modal:
+	$(PYTHON) scripts/analyze_capture_modal_failures.py --evaluation $(CAPTURE_ADAPTIVE_OUT) --out $(CAPTURE_MODAL_ANALYSIS_OUT)
+
+sweep-capture-modal-feedback:
+	$(PYTHON) scripts/sweep_capture_modal_feedback.py --evaluation $(CAPTURE_ADAPTIVE_OUT) --analysis $(CAPTURE_MODAL_ANALYSIS_OUT) --multipliers 0.90,0.95,0.975,0.99,1.0,1.01,1.025,1.05,1.10 --out $(CAPTURE_MODAL_SWEEP_OUT)
+
+refine-adaptive-capture-boundary:
+	$(PYTHON) scripts/refine_adaptive_target_capture.py --initial-evaluation $(CAPTURE_ADAPTIVE_OUT) --out $(CAPTURE_REFINED_ADAPTIVE_OUT)
+
+analyze-refined-capture-modal:
+	$(PYTHON) scripts/analyze_capture_modal_failures.py --evaluation $(CAPTURE_REFINED_ADAPTIVE_OUT) --out $(CAPTURE_REFINED_MODAL_ANALYSIS_OUT)
 
 capture-sac-boundary: mine-capture-boundary
 	$(PYTHON) scripts/train_sb3_sac.py --config configs/swingup6_capture_sac_boundary.yaml

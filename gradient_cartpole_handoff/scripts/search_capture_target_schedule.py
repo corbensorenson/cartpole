@@ -129,9 +129,15 @@ def search_target_schedule(
     initial_lqr_scale: float,
     success_polish_iterations: int,
     verbose: bool = True,
+    initial_controller: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     rng = np.random.default_rng(seed)
-    center = np.r_[np.zeros(knot_count, dtype=np.float64), float(initial_lqr_scale)]
+    if initial_controller is None:
+        center = np.r_[np.zeros(knot_count, dtype=np.float64), float(initial_lqr_scale)]
+    else:
+        center = controller_to_vector(initial_controller)
+        if center.shape != (knot_count + 1,):
+            raise ValueError("initial controller knot count does not match search knot count")
     sigma = np.r_[np.full(knot_count, float(target_sigma), dtype=np.float64), float(scale_sigma)]
     sigma_floor = np.r_[
         np.full(knot_count, float(target_sigma_floor), dtype=np.float64),

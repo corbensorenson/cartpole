@@ -45,9 +45,15 @@ State-specific nonlinear planning can recover part of the boundary that fixed LQ
 make search-capture-target-teacher CAPTURE_TARGET_TEACHER_STATE=735
 make build-capture-target-teachers
 make eval-adaptive-capture-boundary
+make analyze-capture-modal
+make sweep-capture-modal-feedback
+make refine-adaptive-capture-boundary
+make analyze-refined-capture-modal
 ```
 
-The planner searches a short cart-target schedule with deterministic CEM in exact MuJoCo, then executes the selected schedule in one uninterrupted rollout with LQR state feedback. On 256 fixed validation states at `p=0.065`, fixed LQR succeeds on `215/256`; planning is invoked for the 41 failures and recovers 18, producing `233/256 = 91.02%` success with a `13.94 s` median upright hold and no successful rail hits. This advances the accepted development frontier from `p=0.06` to `p=0.065`. It is compute-heavy online model-based planning at a narrow partial envelope, not a learned policy and not P1: the formal gate still requires 1,000 frozen test states at `p=1.0`.
+The planner searches a short cart-target schedule with deterministic CEM in exact MuJoCo, then executes the selected schedule in one uninterrupted rollout with LQR state feedback. On 256 fixed validation states at `p=0.065`, fixed LQR succeeds on `215/256`; the first planning budget recovers 18 failures and deterministic budget escalation recovers 3 more, producing `236/256 = 92.19%` success with a `13.94 s` median upright hold and no successful rail hits. This advances the accepted development frontier from `p=0.06` to `p=0.065`.
+
+Dimensionless real-Schur analysis avoids the ill-conditioned raw eigenvector basis and identifies a slow weakly actuated block, dominated by absolute angles 4–6, as the strongest separator of planner recovery from failure (`0.9908 +/- 0.0080j`, refined-tail AUC `0.869`). Static feedback changes to that block destabilize the linear closed loop, and a seeded second search pass recovers `0/20`; the remaining tail needs a richer transient trajectory parameterization. These are compute-heavy online model-based diagnostics at a narrow partial envelope, not a learned policy and not P1: the formal gate still requires 1,000 frozen test states at `p=1.0`.
 
 An optional Stable-Baselines3 SAC residual branch is available through `make setup-sb3` and `make capture-sac-boundary`. Scaled capture coordinates fixed an observation-resolution defect, but conservative SAC only preserved the LQR baseline and weaker trust regularization eventually collapsed it. The branch is retained for reproducible ablation work; it did not advance the frontier.
 
