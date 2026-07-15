@@ -112,6 +112,20 @@ def controls_from_knots(knots: np.ndarray, horizon_steps: int) -> np.ndarray:
     return np.clip(np.interp(target_time, source_time, knots), -1.0, 1.0)
 
 
+def capture_selection_key(summary: dict[str, Any]) -> tuple[Any, ...]:
+    """Rank candidate tails by uninterrupted nonlinear capture behavior."""
+    result = summary["result"]
+    return (
+        not bool(result["success"]),
+        not bool(result["latched"]),
+        -float(result["max_upright_streak_seconds"]),
+        float(result["minimum_lyapunov"]),
+        float(result["max_cart_excursion"]),
+        float(summary["cost"]),
+        str(summary["label"]),
+    )
+
+
 def search_action_tail(
     transition: MujocoTransition,
     initial_state: np.ndarray,
@@ -232,6 +246,7 @@ def main() -> None:
     parser.add_argument("--cem-population", type=int, default=256)
     parser.add_argument("--cem-elites", type=int, default=24)
     parser.add_argument("--predictive-threads", type=int, default=8)
+    parser.add_argument("--predictive-seed-count", type=int, default=1)
     parser.add_argument("--planning-lqr-scale", type=float, default=1.30)
     parser.add_argument("--lqr-scale", type=float, default=1.30)
     parser.add_argument("--control-cost", type=float, default=0.1)
@@ -278,6 +293,8 @@ def main() -> None:
         or args.cem_population < 2
         or not 1 <= args.cem_elites <= args.cem_population
         or args.predictive_threads < 1
+        or args.predictive_seed_count < 1
+        or args.predictive_seed_count > args.cem_population
     ):
         raise ValueError("invalid CEM iterations, population, or elite count")
     if args.action_knots < 2:
@@ -346,6 +363,7 @@ def main() -> None:
     tail_initial_state = source_states[-1].copy()
     cem_search: dict[str, Any] | None = None
     predictive_search: dict[str, Any] | None = None
+    tail_initial_control_candidates: list[tuple[str, np.ndarray]] = []
     initialization_started = time.time()
     if args.initial_predictive_sampling:
         tail_physical_state = transition.to_physical(tail_initial_state)
@@ -360,6 +378,7 @@ def main() -> None:
             iterations=args.cem_iterations,
             population=args.cem_population,
             elites=args.cem_elites,
+            archive_size=args.predictive_seed_count,
             action_sigma=0.7,
             sigma_decay=0.8,
             sigma_floor=0.025,
@@ -380,9 +399,15 @@ def main() -> None:
             env.data,
             rng=np.random.default_rng(args.seed + 1),
         )
-        tail_initial_controls = np.asarray(
-            predictive_result["actions"], dtype=np.float64
-        )
+        tail_initial_control_candidates = [
+            (
+                f"predictive_archive_{index}",
+                predictive_planner.actions_from_knots(
+                    np.asarray(row["knots"], dtype=np.float64)
+                ),
+            )
+            for index, row in enumerate(predictive_result["archive"])
+        ]
         predictive_search = {
             "config": vars(predictive_config),
             "knots": np.asarray(predictive_result["knots"], dtype=np.float64)
@@ -391,6 +416,16 @@ def main() -> None:
             "score": float(predictive_result["score"]),
             "metrics": predictive_result["metrics"],
             "history": predictive_result["history"],
+            "archive": [
+                {
+                    "score": float(row["score"]),
+                    "knots": np.asarray(row["knots"], dtype=np.float64)
+                    .astype(float)
+                    .tolist(),
+                    "metrics": row["metrics"],
+                }
+                for row in predictive_result["archive"]
+            ],
             "candidate_rollout_count": int(
                 predictive_result["candidate_rollout_count"]
             ),
@@ -484,6 +519,8 @@ def main() -> None:
             offset_steps=args.initial_controller_offset_steps,
             horizon_steps=tail_steps,
         )
+    if not tail_initial_control_candidates:
+        tail_initial_control_candidates = [("single", tail_initial_controls)]
     trajectory_cost = QuadraticTrajectoryCost(
         stage_state=args.stage_weight * np.eye(transform.shape[0], dtype=np.float64),
         terminal_state=(
@@ -497,14 +534,87 @@ def main() -> None:
         wrap_angles=False,
     )
     started = time.time()
-    tail = optimize_ilqr(
-        transition,
-        tail_initial_state,
-        tail_initial_controls,
-        trajectory_cost,
-        max_iterations=args.iterations,
-    )
+    tail_candidates: list[tuple[str, Any]] = []
+    for label, candidate_controls in tail_initial_control_candidates:
+        tail_candidates.append(
+            (
+                label,
+                optimize_ilqr(
+                    transition,
+                    tail_initial_state,
+                    candidate_controls,
+                    trajectory_cost,
+                    max_iterations=args.iterations,
+                ),
+            )
+        )
     search_seconds = time.time() - started
+    tail_seed_results: list[dict[str, Any]] = []
+    candidate_executions: dict[str, dict[str, Any]] = {}
+    for label, candidate in tail_candidates:
+        candidate_values = np.maximum(
+            0.0,
+            np.einsum("ij,jk,ik->i", candidate.states, lyapunov, candidate.states),
+        )
+        candidate_controls, candidate_states, candidate_gains = (
+            stitch_feedback_trajectories(
+                source_controls,
+                source_states,
+                source_gains,
+                candidate.controls,
+                candidate.states,
+                candidate.feedback_gains,
+            )
+        )
+        candidate_result = execute_controller(
+            cfg,
+            seed=args.seed,
+            controls=candidate_controls,
+            nominal_states=candidate_states,
+            feedback_gains=candidate_gains,
+            gain=gain,
+            lqr_scale=args.lqr_scale,
+            transform=transform,
+            lyapunov=lyapunov,
+            handoff_lyapunov=args.handoff_lyapunov,
+            handoff_cart_abs=args.handoff_cart_abs,
+            tracking_mode="ilqr_chain_tracking",
+        )
+        summary = {
+            "label": label,
+            "cost": float(candidate.cost),
+            "iterations": int(candidate.iterations),
+            "converged": bool(candidate.converged),
+            "active_control_steps": int(candidate.active_control_steps),
+            "minimum_lyapunov": float(np.min(candidate_values)),
+            "terminal_lyapunov": float(candidate_values[-1]),
+            "terminal_dimensionless_state_norm": float(
+                np.linalg.norm(candidate.states[-1])
+            ),
+            "result": {
+                key: candidate_result[key]
+                for key in (
+                    "success",
+                    "latched",
+                    "first_handoff_step",
+                    "first_handoff_time",
+                    "minimum_lyapunov",
+                    "max_upright_streak_seconds",
+                    "max_low_momentum_upright_streak_seconds",
+                    "max_cart_excursion",
+                    "termination_reason",
+                )
+            },
+        }
+        tail_seed_results.append(summary)
+        candidate_executions[label] = candidate_result
+    selected_summary = min(tail_seed_results, key=capture_selection_key)
+    selected_tail_label = str(selected_summary["label"])
+    tail = next(
+        candidate
+        for label, candidate in tail_candidates
+        if label == selected_tail_label
+    )
     env.close()
 
     controls, nominal_states, feedback_gains = stitch_feedback_trajectories(
@@ -522,20 +632,7 @@ def main() -> None:
     nominal_physical_states = np.asarray(
         [transition.to_physical(row) for row in nominal_states], dtype=np.float64
     )
-    result = execute_controller(
-        cfg,
-        seed=args.seed,
-        controls=controls,
-        nominal_states=nominal_states,
-        feedback_gains=feedback_gains,
-        gain=gain,
-        lqr_scale=args.lqr_scale,
-        transform=transform,
-        lyapunov=lyapunov,
-        handoff_lyapunov=args.handoff_lyapunov,
-        handoff_cart_abs=args.handoff_cart_abs,
-        tracking_mode="ilqr_chain_tracking",
-    )
+    result = candidate_executions[selected_tail_label]
     payload = {
         "schema_version": 1,
         "generated_at": utc_timestamp(),
@@ -574,6 +671,7 @@ def main() -> None:
             "cem_population": int(args.cem_population),
             "cem_elites": int(args.cem_elites),
             "predictive_threads": int(args.predictive_threads),
+            "predictive_seed_count": int(args.predictive_seed_count),
             "lqr_scale": float(args.lqr_scale),
             "control_cost": float(args.control_cost),
             "stage_weight": float(args.stage_weight),
@@ -601,6 +699,8 @@ def main() -> None:
             ),
             "max_cart_excursion": float(np.max(np.abs(nominal_physical_states[:, 0]))),
             "tail_history": tail.history,
+            "selected_tail_seed": selected_tail_label,
+            "tail_seed_results": tail_seed_results,
             "cem_search": cem_search,
             "predictive_sampling_search": predictive_search,
             "nominal_coordinate_states": nominal_states.astype(float).tolist(),

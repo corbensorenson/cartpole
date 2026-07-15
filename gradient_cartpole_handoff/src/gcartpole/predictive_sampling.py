@@ -19,6 +19,7 @@ class PredictiveSamplingConfig:
     iterations: int = 6
     population: int = 1024
     elites: int = 64
+    archive_size: int = 1
     action_sigma: float = 0.7
     sigma_decay: float = 0.8
     sigma_floor: float = 0.025
@@ -37,14 +38,15 @@ class PredictiveSamplingConfig:
                 self.iterations,
                 self.population,
                 self.elites,
+                self.archive_size,
             )
             < 1
         ):
             raise ValueError("planner counts must be positive")
         if self.knot_count < 2:
             raise ValueError("knot_count must be at least two")
-        if self.elites > self.population:
-            raise ValueError("elites cannot exceed population")
+        if max(self.elites, self.archive_size) > self.population:
+            raise ValueError("elites and archive_size cannot exceed population")
         if (
             min(
                 self.action_sigma,
@@ -284,6 +286,7 @@ class PredictiveSamplingPlanner:
         best_score = np.inf
         best_metrics: dict[str, Any] = {}
         history: list[dict[str, Any]] = []
+        archive: list[dict[str, Any]] = []
 
         for iteration in range(cfg.iterations):
             candidates = np.empty((cfg.population, cfg.knot_count), dtype=np.float64)
@@ -306,6 +309,26 @@ class PredictiveSamplingPlanner:
                 best_metrics = {
                     key: np.asarray(value)[top].item() for key, value in metrics.items()
                 }
+            archive_candidates = min(cfg.population, cfg.archive_size + 2)
+            for candidate_index in order[:archive_candidates]:
+                candidate_knots = candidates[int(candidate_index)].copy()
+                if any(
+                    np.array_equal(candidate_knots, np.asarray(row["knots"]))
+                    for row in archive
+                ):
+                    continue
+                archive.append(
+                    {
+                        "score": float(scores[int(candidate_index)]),
+                        "knots": candidate_knots,
+                        "metrics": {
+                            key: np.asarray(value)[int(candidate_index)].item()
+                            for key, value in metrics.items()
+                        },
+                    }
+                )
+            archive.sort(key=lambda row: float(row["score"]))
+            del archive[cfg.archive_size :]
             history.append(
                 {
                     "iteration": iteration + 1,
@@ -328,5 +351,13 @@ class PredictiveSamplingPlanner:
             "score": best_score,
             "metrics": best_metrics,
             "history": history,
+            "archive": [
+                {
+                    "score": float(row["score"]),
+                    "knots": np.asarray(row["knots"], dtype=np.float64),
+                    "metrics": row["metrics"],
+                }
+                for row in archive
+            ],
             "candidate_rollout_count": cfg.iterations * cfg.population,
         }

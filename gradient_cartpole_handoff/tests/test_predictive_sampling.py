@@ -15,6 +15,10 @@ from gcartpole.predictive_sampling import (
 
 
 class PredictiveSamplingTests(unittest.TestCase):
+    def test_archive_size_cannot_exceed_population(self) -> None:
+        with self.assertRaisesRegex(ValueError, "archive_size"):
+            PredictiveSamplingConfig(population=2, elites=1, archive_size=3)
+
     def test_interpolation_matrix_preserves_endpoints_and_linear_knots(self) -> None:
         matrix = interpolation_matrix(3, 5)
         np.testing.assert_allclose(
