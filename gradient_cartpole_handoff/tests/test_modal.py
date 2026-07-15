@@ -7,6 +7,7 @@ import numpy as np
 from gcartpole.capture_funnel import normalized_capture_coordinates
 from gcartpole.modal import (
     StateScales,
+    closed_loop_lyapunov_matrix,
     conjugate_mode_groups,
     dimensionless_absolute_transform,
     grouped_modal_amplitudes,
@@ -106,6 +107,22 @@ class ModalTests(unittest.TestCase):
     def test_state_scales_reject_nonpositive_values(self) -> None:
         with self.assertRaises(ValueError):
             StateScales(1.0, 0.0, 1.0, 1.0)
+
+    def test_closed_loop_lyapunov_value_decreases(self) -> None:
+        state_matrix = np.asarray([[0.9, 0.1], [0.0, 0.8]], dtype=np.float64)
+        input_matrix = np.zeros((2, 1), dtype=np.float64)
+        gain = np.zeros(2, dtype=np.float64)
+        lyapunov, radius = closed_loop_lyapunov_matrix(
+            state_matrix,
+            input_matrix,
+            gain,
+            np.eye(2, dtype=np.float64),
+            feedback_scale=1.0,
+        )
+        state = np.asarray([0.4, -0.2], dtype=np.float64)
+        next_state = state_matrix @ state
+        self.assertLess(radius, 1.0)
+        self.assertLess(float(next_state @ lyapunov @ next_state), float(state @ lyapunov @ state))
 
 
 if __name__ == "__main__":

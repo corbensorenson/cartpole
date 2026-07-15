@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
-from scipy.linalg import eig, schur
+from scipy.linalg import eig, schur, solve_discrete_lyapunov
 
 
 @dataclass(frozen=True)
@@ -217,6 +217,26 @@ def scale_feedback_by_schur_group(
         schur_gain[:, list(decomposition.groups[group_index])] *= float(multiplier)
     scaled = schur_gain @ decomposition.orthogonal_basis.T
     return scaled.reshape(-1) if vector_input else scaled
+
+
+def closed_loop_lyapunov_matrix(
+    state_matrix: np.ndarray,
+    input_matrix: np.ndarray,
+    gain: np.ndarray,
+    transform: np.ndarray,
+    feedback_scale: float,
+) -> tuple[np.ndarray, float]:
+    dimensionless_a, dimensionless_b = transform_dynamics(state_matrix, input_matrix, transform)
+    dimensionless_gain = transform_feedback_gain(gain, transform).reshape(1, -1)
+    closed_loop = dimensionless_a - dimensionless_b @ (float(feedback_scale) * dimensionless_gain)
+    spectral_radius = float(np.max(np.abs(np.linalg.eigvals(closed_loop))))
+    if spectral_radius >= 1.0:
+        raise ValueError(f"closed-loop system is not stable: spectral radius={spectral_radius}")
+    lyapunov = solve_discrete_lyapunov(
+        closed_loop.T,
+        np.eye(closed_loop.shape[0], dtype=np.float64),
+    )
+    return lyapunov, spectral_radius
 
 
 def conjugate_mode_groups(eigenvalues: np.ndarray, tolerance: float = 1e-8) -> list[tuple[int, ...]]:

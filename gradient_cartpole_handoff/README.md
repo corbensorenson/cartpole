@@ -49,11 +49,15 @@ make analyze-capture-modal
 make sweep-capture-modal-feedback
 make refine-adaptive-capture-boundary
 make analyze-refined-capture-modal
+make eval-transfer-capture-boundary
+make search-capture-hybrid
 ```
 
 The planner searches a short cart-target schedule with deterministic CEM in exact MuJoCo, then executes the selected schedule in one uninterrupted rollout with LQR state feedback. On 256 fixed validation states at `p=0.065`, fixed LQR succeeds on `215/256`; the first planning budget recovers 18 failures and deterministic budget escalation recovers 3 more, producing `236/256 = 92.19%` success with a `13.94 s` median upright hold and no successful rail hits. This advances the accepted development frontier from `p=0.06` to `p=0.065`.
 
 Dimensionless real-Schur analysis avoids the ill-conditioned raw eigenvector basis and identifies a slow weakly actuated block, dominated by absolute angles 4–6, as the strongest separator of planner recovery from failure (`0.9908 +/- 0.0080j`, refined-tail AUC `0.869`). Static feedback changes to that block destabilize the linear closed loop, and a seeded second search pass recovers `0/20`; the remaining tail needs a richer transient trajectory parameterization. These are compute-heavy online model-based diagnostics at a narrow partial envelope, not a learned policy and not P1: the formal gate still requires 1,000 frozen test states at `p=1.0`.
+
+A dimensionless closed-loop Lyapunov diagnostic was then used to search a combined cart-target and bounded residual schedule. On representative unresolved state 475, the planned 3-second hybrid transient improved maximum upright hold from `0.50 s` to `0.90 s` but still hit the rail, while a forced 1-second handoff reached only `0.60 s`. The open-loop residual therefore did not provide the state-feedback correction needed by the slow mode. At the next curriculum increment, `p=0.0675`, fixed LQR transferred `210/256`; a standard target-planning pass reached `225/256`, and a 1,501-second high-budget escalation recovered only one more state for `226/256 = 88.28%`. Because that misses the 90% development threshold, `p=0.065` remains the accepted frontier and the scheduled-target controller family is considered saturated at `p=0.0675`.
 
 An optional Stable-Baselines3 SAC residual branch is available through `make setup-sb3` and `make capture-sac-boundary`. Scaled capture coordinates fixed an observation-resolution defect, but conservative SAC only preserved the LQR baseline and weaker trust regularization eventually collapsed it. The branch is retained for reproducible ablation work; it did not advance the frontier.
 

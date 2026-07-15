@@ -25,6 +25,7 @@ from scripts.mine_capture_failures import build_mining_mixture
 from scripts.evaluate_linear_mpc_capture import LinearMPC
 from scripts.search_linear_policy import development_seed
 from scripts.search_capture_recovery import recovery_residual
+from scripts.search_capture_hybrid_schedule import evaluate_hybrid_schedule, resample_target_controller
 from scripts.search_capture_target_schedule import evaluate_target_schedule, scheduled_cart_target
 
 
@@ -185,6 +186,44 @@ class CaptureEnvelopeTests(unittest.TestCase):
         self.assertIn("capture_start_time", metrics)
         self.assertIn("final_upright_streak_seconds", metrics)
         self.assertGreater(metrics["final_upright_streak_seconds"], 0.0)
+
+    def test_hybrid_rollout_records_lyapunov_and_faded_residual(self) -> None:
+        cfg = load_config(ROOT / "configs/swingup6_capture_envelope.yaml")
+        cfg["env"]["init_mode"] = "upright"
+        cfg["env"]["episode_seconds"] = 0.06
+        cfg["env"]["init_angle_noise"] = 0.0
+        cfg["env"]["init_vel_noise"] = 0.0
+        metrics = evaluate_hybrid_schedule(
+            cfg,
+            progress=1.0,
+            seed=19,
+            gain=np.zeros(14, dtype=np.float64),
+            transform=np.eye(14, dtype=np.float64),
+            lyapunov=np.eye(14, dtype=np.float64),
+            target_knots=np.zeros(2, dtype=np.float64),
+            target_seconds=0.02,
+            residual_knots=np.ones(2, dtype=np.float64),
+            residual_seconds=0.02,
+            fade_fraction=0.5,
+            lqr_scale=1.0,
+            record_trajectory=True,
+        )
+        self.assertEqual(metrics["trajectory"][-1]["recovery_residual"], 0.0)
+        self.assertIn("dimensionless_lyapunov_value", metrics["trajectory"][0])
+        self.assertGreaterEqual(metrics["initial_lyapunov"], metrics["minimum_lyapunov"])
+        self.assertIn("final_upright_streak_seconds", metrics)
+
+    def test_hybrid_resampling_extends_target_and_initializes_zero_residual(self) -> None:
+        controller = resample_target_controller(
+            {"target_knots": [0.0, 1.0, -1.0], "lqr_scale": 1.4},
+            old_seconds=2.0,
+            target_count=5,
+            target_seconds=3.0,
+            residual_count=4,
+        )
+        np.testing.assert_allclose(controller["target_knots"], [0.0, 0.75, 0.0, 0.0, 0.0])
+        np.testing.assert_allclose(controller["residual_knots"], np.zeros(4))
+        self.assertEqual(controller["lqr_scale"], 1.4)
 
     def test_policy_control_penalty_prefers_zero_residual(self) -> None:
         cfg = load_config(ROOT / "configs/swingup6_capture_sac_boundary.yaml")

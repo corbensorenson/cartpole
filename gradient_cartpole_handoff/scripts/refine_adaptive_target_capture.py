@@ -56,6 +56,8 @@ def main() -> None:
         default="runs/p1_capture_target_teachers/eval_adaptive_validation256_p0065.json",
     )
     parser.add_argument("--split", default="validation")
+    parser.add_argument("--progress", type=float, default=None)
+    parser.add_argument("--replay-only", action="store_true")
     parser.add_argument("--planner-seed", type=int, default=62701)
     parser.add_argument("--iterations", type=int, default=12)
     parser.add_argument("--population", type=int, default=256)
@@ -102,7 +104,8 @@ def main() -> None:
     if errors:
         raise ValueError("Adaptive refinement validation failed:\n- " + "\n- ".join(errors))
 
-    progress = float(initial["progress"])
+    source_progress = float(initial["progress"])
+    progress = source_progress if args.progress is None else float(args.progress)
     initial_planner_config = initial["controller"].get("planner") or initial["controller"].get("refinement_planner")
     if not isinstance(initial_planner_config, dict):
         raise ValueError("initial evaluation controller does not declare a planner configuration")
@@ -111,11 +114,21 @@ def main() -> None:
     states = dataset["states"]
     started = time.time()
     refined_rows: list[dict[str, Any]] = []
+    transferred_successes: list[bool] = []
 
     for episode, initial_row in enumerate(rows):
         state_index = int(initial_row["state_index"])
         fixed_cfg = fixed_state_cfg(cfg, states[state_index], float(cfg["env"]["episode_seconds"]))
         selected_controller = initial_row["selected_controller"]
+        baseline = evaluate_target_schedule(
+            fixed_cfg,
+            progress=progress,
+            seed=int(initial_row["seed"]),
+            gain=gain,
+            target_knots=np.zeros(args.knot_count, dtype=np.float64),
+            schedule_seconds=args.schedule_seconds,
+            lqr_scale=1.30,
+        )
         initial_replay = evaluate_target_schedule(
             fixed_cfg,
             progress=progress,
@@ -125,12 +138,15 @@ def main() -> None:
             schedule_seconds=initial_schedule_seconds,
             lqr_scale=float(selected_controller["lqr_scale"]),
         )
-        if bool(initial_replay["success"]) != bool(initial_row["success"]):
+        transferred_successes.append(bool(initial_replay["success"]))
+        if np.isclose(progress, source_progress) and bool(initial_replay["success"]) != bool(
+            initial_row["success"]
+        ):
             raise RuntimeError(f"initial controller replay changed success for state {state_index}")
 
         refinement: dict[str, Any] | None = None
         final = initial_replay
-        if not bool(initial_replay["success"]):
+        if not args.replay_only and not bool(initial_replay["success"]):
             search = search_target_schedule(
                 fixed_cfg,
                 progress=progress,
@@ -178,7 +194,7 @@ def main() -> None:
             "state_index": state_index,
             "state_id": states[state_index].get("state_id"),
             "seed": int(initial_row["seed"]),
-            "baseline": initial_row["baseline"],
+            "baseline": compact_metrics(baseline),
             "planner_invoked": bool(initial_row["planner_invoked"] or refinement is not None),
             "planning_history": row_planning_history(initial_row) + ([refinement] if refinement is not None else []),
             "selected_controller": selected_controller,
@@ -187,7 +203,8 @@ def main() -> None:
         refined_rows.append(refined_row)
         print(
             f"episode={episode + 1}/{len(rows)} state={state_index} "
-            f"initial={initial_row['success']} refined={refinement is not None} "
+            f"source={initial_row['success']} transferred={initial_replay['success']} "
+            f"refined={refinement is not None} "
             f"success={final['success']} hold={final['max_upright_streak_seconds']:.3f}s"
         )
 
@@ -209,7 +226,12 @@ def main() -> None:
         "passed_successful_rail_safety": not any(row["success"] and row["rail_hit"] for row in refined_rows),
     }
     gate["passed"] = all(value for key, value in gate.items() if key.startswith("passed_"))
-    refinement_invocations = int(sum(len(row["planning_history"]) > len(row_planning_history(source)) for row, source in zip(refined_rows, rows)))
+    refinement_invocations = int(
+        sum(
+            len(row["planning_history"]) > len(row_planning_history(source))
+            for row, source in zip(refined_rows, rows)
+        )
+    )
     refinement_recoveries = int(
         sum(
             len(row["planning_history"]) > len(row_planning_history(source)) and row["success"]
@@ -220,7 +242,11 @@ def main() -> None:
         "schema_version": 1,
         "generated_at": utc_timestamp(),
         "not_solution": True,
-        "summary": "Escalated deterministic target planning on unresolved partial P1 validation states.",
+        "summary": (
+            "Replay-only transfer of deterministic target controllers at a new curriculum progress."
+            if args.replay_only
+            else "Escalated deterministic target planning on unresolved partial P1 validation states."
+        ),
         "benchmark": dataset["benchmark"],
         "split": args.split,
         "progress": progress,
@@ -232,7 +258,9 @@ def main() -> None:
         "planner_recovery_count": int(
             sum(bool(row["planner_invoked"] and row["success"]) for row in refined_rows)
         ),
-        "initial_success_count": int(sum(bool(row["success"]) for row in rows)),
+        "source_progress": source_progress,
+        "source_success_count": int(sum(bool(row["success"]) for row in rows)),
+        "initial_success_count": int(sum(transferred_successes)),
         "refinement_invocation_count": refinement_invocations,
         "refinement_recovery_count": refinement_recoveries,
         "max_upright_streak_median": median_hold,
@@ -259,6 +287,7 @@ def main() -> None:
                 "target_limit": float(args.target_limit),
                 "seed": int(args.planner_seed),
                 "success_polish_iterations": int(args.success_polish_iterations),
+                "replay_only": bool(args.replay_only),
             },
         },
         "evidence": {
