@@ -73,6 +73,8 @@ Freezing that approach and optimizing a separate 1.5-second settling tail change
 
 `configs/swingup6_capture_hybrid_policy.yaml` implements the explicit two-controller architecture for learning: deterministic hysteresis gives exact LQR control inside a conservative local region and full normalized-force authority to the neural policy outside it. The environment records every entry, exit, first-entry time, and per-controller action count without resetting state. A 50-update PPO probe at `p=0.0700` improves only from `11/256` zero-policy baseline captures to `12/256`, despite reducing maximum cart excursion to `1.172 m`; PPO learns survival rather than sustained capture, so this reward-only branch is rejected. The switch remains the integration target for planner-supervised on-policy learning.
 
+The first training-only supervisor audit also rejects scheduled-target teachers as the sole DAgger expert. Frozen LQR fails `131/512` sampled training states at `p=0.0700`, and six-generation scheduled-target search solves only `4/32` selected failures. The next supervisor must escalate from feedback MPC to DDP and retain only successful, uninterrupted labels; validation planner artifacts are not training data.
+
 An optional Stable-Baselines3 SAC residual branch is available through `make setup-sb3` and `make capture-sac-boundary`. Scaled capture coordinates fixed an observation-resolution defect, but conservative SAC only preserved the LQR baseline and weaker trust regularization eventually collapsed it. The branch is retained for reproducible ablation work; it did not advance the frontier.
 
 Current generated split hashes:
