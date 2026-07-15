@@ -127,6 +127,8 @@ Work:
 - Compare nonlinear PPO, model-based MPC/iLQR warm starts, supervised policy distillation, and residual feedback using the same state distribution.
 - Penalize rail consumption and measure final upright streak, not just first capture.
 - Fit a capture-value or funnel-membership model from exact capture-policy rollouts. Treat `x^T P x` from local LQR as a candidate feature, not proof of nonlinear constrained recoverability.
+- Express LQR state costs and diagnostics in declared dimensionless coordinates. Record open/closed-loop eigenvalues and identify which modal directions dominate boundary failures before changing rewards or PPO settings.
+- Label frontier states by modal composition and report recovery by mode. Introduce single-mode and small mode-group perturbations as a diagnostic curriculum only when the fixed all-state gate shows a repeatable modal failure pattern.
 
 Gate P1:
 
@@ -202,6 +204,7 @@ Work:
 
 - Add link-count curricula such as `1 -> 2 -> ... -> 7` or `6 -> 7` while preserving total length and mass.
 - Prefer a link-growth homotopy that splits one existing link while preserving total length and mass, initially constrains or nearly removes the new joint's dynamic influence, and gradually releases its mass, inertia, and relative motion before annealing to the canonical uniform plant.
+- During link release, isolate the newly introduced or materially changed unstable modes, replay previously mastered modes, and log per-mode recovery, force, rail use, and control energy.
 - Decide experimentally between per-link-count policies and a shared N-conditioned graph/recurrent policy.
 - Carry forward the proven P4 capture basin and swing-to-capture objective.
 - Apply length, mass, damping, friction, start-angle, and rail curricula one axis at a time so regressions are attributable.
@@ -277,13 +280,14 @@ After P7, evaluate 8+ links using the same contract and evidence process. This i
 - If P3 cannot reproduce six links, investigate benchmark or algorithm mismatch; do not hide the failure by moving directly to seven links.
 - If the canonical rail appears physically limiting, test wider-rail ablations, but do not redefine the canonical benchmark without a documented decision and a separately named claim.
 - If a shared N-conditioned policy underperforms specialized policies, finishing seven links with specialized experts is acceptable; report the comparison honestly.
+- Keep MuJoCo as the authoritative simulator. Build a separate batched planar backend only after profiling shows simulation throughput is a material bottleneck and budget its MuJoCo parity, Jacobian, conservation, and timestep-convergence tests as a distinct engineering phase.
 
 ## Current Status
 
 | Phase | Status | Current evidence |
 |---|---|---|
 | P0 benchmark/verifier | Passed | Canonical config, XML hash export, runtime assertions, rejection tests, and final artifact verifier pass via `make roadmap-p0`. |
-| P1 six-link capture basin | In progress | The seeded 20k/2k/1k envelope and strict gate evaluator are frozen. Analytic LQR scores `0/1000`; the component-wise curriculum passes fixed validation at `p=0.06` and stalls at `p=0.0625`. A rollout-labelled, domain-bounded empirical funnel now provides a policy-specific swing objective, but it is fitted at the narrow boundary and does not pass P1. |
+| P1 six-link capture basin | In progress | The seeded 20k/2k/1k envelope and strict gate evaluator are frozen. Analytic LQR scores `0/1000`. Deterministic scheduled-target planning plus LQR feedback scores `233/256` on fixed validation at `p=0.065`, advancing the accepted development frontier from `p=0.06`; it is online state-specific planning at a narrow partial envelope and does not pass P1. A rollout-labelled, domain-bounded empirical funnel provides the current swing objective. |
 | P2 six-link swing handoff | In progress | Best learned handoffs are from a progress-`0.3875` curriculum plant, not final uniform 6-link. |
 | P3 integrated six | Not passed | Near-upright 6-link stabilization is solved; hanging-start end-to-end swing-up is not. |
 | P4 seven-link capture basin | Not started | Blocked by the P3 calibration gate. |

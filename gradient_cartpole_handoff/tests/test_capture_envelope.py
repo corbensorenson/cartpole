@@ -25,6 +25,7 @@ from scripts.mine_capture_failures import build_mining_mixture
 from scripts.evaluate_linear_mpc_capture import LinearMPC
 from scripts.search_linear_policy import development_seed
 from scripts.search_capture_recovery import recovery_residual
+from scripts.search_capture_target_schedule import evaluate_target_schedule, scheduled_cart_target
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -156,6 +157,34 @@ class CaptureEnvelopeTests(unittest.TestCase):
         self.assertAlmostEqual(recovery_residual(0.0, knots, recovery_seconds=2.0, fade_fraction=0.25), 1.0)
         self.assertAlmostEqual(recovery_residual(1.75, knots, recovery_seconds=2.0, fade_fraction=0.25), 0.5)
         self.assertEqual(recovery_residual(2.0, knots, recovery_seconds=2.0, fade_fraction=0.25), 0.0)
+
+    def test_capture_target_schedule_returns_to_zero(self) -> None:
+        knots = np.asarray([0.0, 1.0, -1.0], dtype=np.float64)
+        self.assertEqual(scheduled_cart_target(0.0, knots, 2.0), 0.0)
+        self.assertAlmostEqual(scheduled_cart_target(0.5, knots, 2.0), 0.5)
+        self.assertEqual(scheduled_cart_target(2.0, knots, 2.0), 0.0)
+        self.assertEqual(scheduled_cart_target(3.0, knots, 2.0), 0.0)
+
+    def test_capture_target_rollout_exposes_required_timing_metrics(self) -> None:
+        cfg = load_config(ROOT / "configs/swingup6_capture_envelope.yaml")
+        cfg["env"]["init_mode"] = "upright"
+        cfg["env"]["episode_seconds"] = 0.04
+        cfg["env"]["init_angle_noise"] = 0.0
+        cfg["env"]["init_vel_noise"] = 0.0
+        metrics = evaluate_target_schedule(
+            cfg,
+            progress=1.0,
+            seed=17,
+            gain=np.zeros(14, dtype=np.float64),
+            target_knots=np.zeros(2, dtype=np.float64),
+            schedule_seconds=0.02,
+            lqr_scale=1.0,
+        )
+        self.assertIn("time_to_first_upright", metrics)
+        self.assertIn("time_to_capture", metrics)
+        self.assertIn("capture_start_time", metrics)
+        self.assertIn("final_upright_streak_seconds", metrics)
+        self.assertGreater(metrics["final_upright_streak_seconds"], 0.0)
 
     def test_policy_control_penalty_prefers_zero_residual(self) -> None:
         cfg = load_config(ROOT / "configs/swingup6_capture_sac_boundary.yaml")

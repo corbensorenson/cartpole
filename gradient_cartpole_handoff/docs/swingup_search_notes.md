@@ -494,3 +494,43 @@ An off-policy SAC residual branch was then tested at `p=0.0625`. Vanilla SAC and
 The exact 1,024 training rollouts now also produce `runs/p1_capture_envelope/funnel_lqr_scale130_p00625.json`. A second-order logistic model is fit on a deterministic stratified development subset and calibrated on a hash-determined 205-state holdout from the training split only. Holdout ROC AUC is `0.990`; at the conservative acceptance threshold, precision is `0.951` and recall is `1.000`. Explicit coordinate-domain limits prevent polynomial extrapolation from labeling energetic out-of-distribution swing states as capture-ready. `search_swingup_chain.py --capture-funnel-model ...` now uses this measured probability for trajectory ranking and requires accepted membership for the swing-to-capture switch. The frozen validation and test splits remain untouched by model fitting and remain authoritative for curriculum and P1 gates.
 
 A hanging-start CEM search against this model confirmed that the present funnel is not yet a practical swing target. After correcting the objective to ignore the reset transient and rank only states after the declared minimum handoff time, 12 generations of 32 candidates reduced normalized distance to the measured domain from `74,224` to `15,812`, but the best arrival remained `0.82 rad` from upright and the search plateaued without entering the domain. This does not rule out a stronger trajectory optimizer; it does show that tuning upright crossings against the current `p=0.0625` funnel is the wrong priority. P1 must expand the recoverable position and especially velocity domain before the coupled P2 loop becomes productive.
+
+## Long-form browser directive review (2026-07-15)
+
+The original signed-in conversation contains a longer Codex directive than the public share snapshot. Its useful engineering additions are dimensionless LQR coordinates, modal failure diagnostics, mode-aware reset curricula, link-growth homotopy, frontier sampling, and explicit MuJoCo reference validation. Those additions are compatible with the current roadmap and the modal/continuation items are now recorded in P1 and P5.
+
+The directive's immediate objective is not compatible with this project's active completion contract. It asks for seven-link near-upright stabilization first and treats full swing-up as a later tier. This repository already has a six-link near-upright baseline, and the user explicitly requires hanging-start swing-up. The authoritative order therefore remains P1/P2 capture and swing handoff, P3 integrated hanging-start six-link calibration, then P4-P6 seven-link work. A seven-link S0 balance result cannot replace any of those gates.
+
+The larger proposed rewrites are deliberately deferred:
+
+- A custom batched planar simulator creates a second dynamics implementation and a substantial parity/Jacobian/conservation test burden. It is justified only if profiling shows MuJoCo throughput is a material blocker.
+- A universal variable-link graph/transformer policy is an ablation after a specialized controller-transfer baseline exists. Introducing it during P1 would add approximation error without addressing the measured capture boundary.
+- A full `n=3..12` ablation matrix and extensive new documentation are publication work after P3/P6 evidence, not prerequisites for solving the current component gate.
+- LQR `V(x)` and modal coordinates remain diagnostic features. Nonlinear constrained MuJoCo rollout is authoritative because force saturation and the finite rail invalidate purely linear membership claims.
+
+The current adaptive scheduled-target planner is a concrete instance of the model-assisted direction recommended in the conversation: it uses exact nonlinear MuJoCo rollouts to choose a short cart-target schedule, executes that schedule with state-feedback LQR, and records planning cost and uninterrupted final-rollout evidence. It is still an online state-specific planner at a narrow curriculum boundary, not a learned capture policy and not P1 evidence.
+
+## Adaptive scheduled-target capture boundary (2026-07-15)
+
+A state-specific teacher search parameterizes eight cart-position targets over the first two seconds and one LQR gain scale. Deterministic CEM evaluates candidates in exact MuJoCo; after the target schedule expires, the cart target returns to zero. The final evidence rollout is separate from candidate scoring and runs without reset or simulator-state overwrite.
+
+At `p=0.0625`, individual high-budget searches recovered five of the six fixed 64-state LQR failures. A training-only batch probe recovered 14 of 32 failed states with a smaller search budget, but controller transfer was strongly state-specific. This motivated online planning rather than a hidden state-to-teacher lookup table.
+
+Strict adaptive evaluation first executes scale-`1.30` LQR. Only baseline failures invoke the fixed-budget planner, and the selected target schedule is then replayed in one authoritative nonlinear rollout. Results:
+
+```text
+runs/p1_capture_target_teachers/eval_adaptive_validation64_p00625.json
+baseline 58/64; planner recovered 5; final 63/64 (98.44%)
+
+runs/p1_capture_target_teachers/eval_adaptive_validation256_p00625.json
+baseline 224/256; planner recovered 18; final 242/256 (94.53%)
+
+runs/p1_capture_target_teachers/eval_adaptive_validation64_p0065.json
+baseline 56/64; planner recovered 3; final 59/64 (92.19%)
+
+runs/p1_capture_target_teachers/eval_adaptive_validation256_p0065.json
+baseline 215/256; planner recovered 18; final 233/256 (91.02%)
+median maximum upright hold 13.94 s; no successful rail hits
+```
+
+The last result advances the accepted development frontier to `p=0.065`. Its formal gate remains false by construction: P1 requires all 1,000 frozen test states and final progress `p=1.0`. The planner used 41 invocations and about 8.4 minutes wall time for the 256-state run, so compute cost and eventual amortization into a reusable recovery controller remain open problems.

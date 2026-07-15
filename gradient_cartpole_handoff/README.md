@@ -39,7 +39,17 @@ make search-swingup-funnel
 
 The first command deterministically regenerates the scale-`1.30` LQR checkpoint, evaluates 1,024 training states at `p=0.0625`, and fits a second-order logistic membership model. Its hash-determined training-only holdout reports `0.990` ROC AUC; the calibrated acceptance threshold has `0.951` precision and `1.000` recall. The model rejects states outside its measured coordinate domain and can replace the angle-only target in chain trajectory search. This is a policy-specific training objective at a very narrow curriculum stage, not held-out P1 evidence.
 
-An optional Stable-Baselines3 SAC residual branch is available through `make setup-sb3` and `make capture-sac-boundary`. Scaled capture coordinates fixed an observation-resolution defect, but conservative SAC only preserved the LQR baseline and weaker trust regularization eventually collapsed it. The branch is retained for reproducible ablation work; it has not advanced the accepted frontier.
+State-specific nonlinear planning can recover part of the boundary that fixed LQR misses:
+
+```bash
+make search-capture-target-teacher CAPTURE_TARGET_TEACHER_STATE=735
+make build-capture-target-teachers
+make eval-adaptive-capture-boundary
+```
+
+The planner searches a short cart-target schedule with deterministic CEM in exact MuJoCo, then executes the selected schedule in one uninterrupted rollout with LQR state feedback. On 256 fixed validation states at `p=0.065`, fixed LQR succeeds on `215/256`; planning is invoked for the 41 failures and recovers 18, producing `233/256 = 91.02%` success with a `13.94 s` median upright hold and no successful rail hits. This advances the accepted development frontier from `p=0.06` to `p=0.065`. It is compute-heavy online model-based planning at a narrow partial envelope, not a learned policy and not P1: the formal gate still requires 1,000 frozen test states at `p=1.0`.
+
+An optional Stable-Baselines3 SAC residual branch is available through `make setup-sb3` and `make capture-sac-boundary`. Scaled capture coordinates fixed an observation-resolution defect, but conservative SAC only preserved the LQR baseline and weaker trust regularization eventually collapsed it. The branch is retained for reproducible ablation work; it did not advance the frontier.
 
 Current generated split hashes:
 
