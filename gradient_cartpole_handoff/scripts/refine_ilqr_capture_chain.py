@@ -257,6 +257,9 @@ def main() -> None:
     parser.add_argument("--rail-weight", type=float, default=100_000_000.0)
     parser.add_argument("--handoff-lyapunov", type=float, default=1800.0)
     parser.add_argument("--handoff-cart-abs", type=float, default=1.5)
+    parser.add_argument("--handoff-angle-abs", type=float, default=None)
+    parser.add_argument("--handoff-cart-velocity-abs", type=float, default=None)
+    parser.add_argument("--handoff-hinge-velocity-rms", type=float, default=None)
     parser.add_argument("--override", action="append", default=[])
     args = parser.parse_args()
     positive = (
@@ -299,6 +302,15 @@ def main() -> None:
         raise ValueError("invalid CEM iterations, population, or elite count")
     if args.action_knots < 2:
         raise ValueError("action CEM requires at least two knots")
+    if any(
+        value is not None and value <= 0.0
+        for value in (
+            args.handoff_angle_abs,
+            args.handoff_cart_velocity_abs,
+            args.handoff_hinge_velocity_rms,
+        )
+    ):
+        raise ValueError("handoff state bounds must be positive")
 
     source_path = Path(args.source_controller)
     source_payload = json.loads(source_path.read_text(encoding="utf-8"))
@@ -578,6 +590,9 @@ def main() -> None:
             lyapunov=lyapunov,
             handoff_lyapunov=args.handoff_lyapunov,
             handoff_cart_abs=args.handoff_cart_abs,
+            handoff_angle_abs=args.handoff_angle_abs,
+            handoff_cart_velocity_abs=args.handoff_cart_velocity_abs,
+            handoff_hinge_velocity_rms=args.handoff_hinge_velocity_rms,
             tracking_mode="ilqr_chain_tracking",
         )
         summary = {
@@ -681,6 +696,9 @@ def main() -> None:
             "rail_weight": float(args.rail_weight),
             "handoff_lyapunov": float(args.handoff_lyapunov),
             "handoff_cart_abs": float(args.handoff_cart_abs),
+            "handoff_angle_abs": args.handoff_angle_abs,
+            "handoff_cart_velocity_abs": args.handoff_cart_velocity_abs,
+            "handoff_hinge_velocity_rms": args.handoff_hinge_velocity_rms,
             "controls": controls.astype(float).tolist(),
             "feedback_gains": feedback_gains.astype(float).tolist(),
         },

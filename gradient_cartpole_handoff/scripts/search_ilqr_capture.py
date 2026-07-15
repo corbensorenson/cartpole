@@ -10,7 +10,13 @@ from typing import Any
 import numpy as np
 
 from gcartpole.config import apply_overrides, dump_json, load_config
-from gcartpole.evidence import data_sha256, file_metadata, git_metadata, runtime_metadata, utc_timestamp
+from gcartpole.evidence import (
+    data_sha256,
+    file_metadata,
+    git_metadata,
+    runtime_metadata,
+    utc_timestamp,
+)
 from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.ilqr import (
     MujocoTransition,
@@ -27,7 +33,11 @@ from gcartpole.modal import (
 
 try:
     from scripts.make_lqr_checkpoint import finite_difference_dynamics
-    from scripts.search_capture_sequence import fixed_state_cfg, load_state, row_from_env
+    from scripts.search_capture_sequence import (
+        fixed_state_cfg,
+        load_state,
+        row_from_env,
+    )
     from scripts.search_swingup_capture import lqr_action, lqr_gain
 except ModuleNotFoundError:
     from make_lqr_checkpoint import finite_difference_dynamics
@@ -35,7 +45,9 @@ except ModuleNotFoundError:
     from search_swingup_capture import lqr_action, lqr_gain
 
 
-def lyapunov_value(state: np.ndarray, transform: np.ndarray, lyapunov: np.ndarray) -> float:
+def lyapunov_value(
+    state: np.ndarray, transform: np.ndarray, lyapunov: np.ndarray
+) -> float:
     dimensionless = dimensionless_wrapped_state(
         state[: transform.shape[0] // 2],
         state[transform.shape[0] // 2 :],
@@ -57,20 +69,24 @@ def initial_controls(
     for step in range(horizon_steps):
         wrapped = transition.to_physical(current)
         wrapped[1 : transition.env.n + 1] = (
-            (wrapped[1 : transition.env.n + 1] + np.pi) % (2.0 * np.pi) - np.pi
-        )
+            wrapped[1 : transition.env.n + 1] + np.pi
+        ) % (2.0 * np.pi) - np.pi
         action = -float(lqr_scale) * float(gain @ wrapped)
         controls[step] = np.clip(action, -1.0, 1.0)
         current = transition(current, float(controls[step]))
     return controls
 
 
-def load_initial_controls(path: str, horizon_steps: int, policy_dt: float) -> np.ndarray:
+def load_initial_controls(
+    path: str, horizon_steps: int, policy_dt: float
+) -> np.ndarray:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
     saved_controls = payload.get("controller", {}).get("controls")
     trajectory_controls = saved_controls is None
     if trajectory_controls:
-        saved_controls = [row["action"] for row in payload.get("result", {}).get("trajectory", [])]
+        saved_controls = [
+            row["action"] for row in payload.get("result", {}).get("trajectory", [])
+        ]
     controls = np.asarray(saved_controls, dtype=np.float64)
     if controls.ndim != 1 or len(controls) < 2:
         raise ValueError("initial controller must contain at least two scalar controls")
@@ -89,6 +105,61 @@ def load_initial_controls(path: str, horizon_steps: int, policy_dt: float) -> np
     return np.clip(np.interp(target_time, source_time, controls, right=0.0), -1.0, 1.0)
 
 
+def interpolate_initial_state(
+    source: dict[str, Any], target: dict[str, Any], alpha: float
+) -> dict[str, Any]:
+    if not 0.0 <= alpha <= 1.0:
+        raise ValueError("interpolation alpha must lie in [0, 1]")
+    source_qpos = np.asarray(source["qpos"], dtype=np.float64)
+    target_qpos = np.asarray(target["qpos"], dtype=np.float64)
+    source_qvel = np.asarray(source["qvel"], dtype=np.float64)
+    target_qvel = np.asarray(target["qvel"], dtype=np.float64)
+    if (
+        source_qpos.shape != target_qpos.shape
+        or source_qvel.shape != target_qvel.shape
+        or source_qpos.size != source_qvel.size
+    ):
+        raise ValueError("source and target states must have matching qpos/qvel")
+    qpos = (1.0 - alpha) * source_qpos + alpha * target_qpos
+    qvel = (1.0 - alpha) * source_qvel + alpha * target_qvel
+    absolute_angles = np.cumsum(qpos[1:])
+    absolute_angles = (absolute_angles + np.pi) % (2.0 * np.pi) - np.pi
+    return {
+        "state_id": (
+            f"interpolation-{source.get('state_id', 'source')}-to-"
+            f"{target.get('state_id', 'target')}-alpha-{alpha:.8f}"
+        ),
+        "source": "state_space_continuation",
+        "qpos": qpos.astype(float).tolist(),
+        "qvel": qvel.astype(float).tolist(),
+        "absolute_angles": absolute_angles.astype(float).tolist(),
+        "cart_velocity": float(qvel[0]),
+        "hinge_velocity_rms": float(np.sqrt(np.mean(qvel[1:] ** 2))),
+    }
+
+
+def handoff_bounds_satisfied(
+    state: np.ndarray,
+    n_links: int,
+    *,
+    angle_abs: float | None,
+    cart_velocity_abs: float | None,
+    hinge_velocity_rms: float | None,
+) -> bool:
+    state = np.asarray(state, dtype=np.float64)
+    nq = n_links + 1
+    relative_angles = (state[1:nq] + np.pi) % (2.0 * np.pi) - np.pi
+    absolute_angles = np.cumsum(relative_angles)
+    return bool(
+        (angle_abs is None or np.max(np.abs(absolute_angles)) <= angle_abs)
+        and (cart_velocity_abs is None or abs(float(state[nq])) <= cart_velocity_abs)
+        and (
+            hinge_velocity_rms is None
+            or float(np.sqrt(np.mean(state[nq + 1 :] ** 2))) <= hinge_velocity_rms
+        )
+    )
+
+
 def execute_controller(
     cfg: dict[str, Any],
     *,
@@ -102,6 +173,9 @@ def execute_controller(
     lyapunov: np.ndarray,
     handoff_lyapunov: float,
     handoff_cart_abs: float,
+    handoff_angle_abs: float | None = None,
+    handoff_cart_velocity_abs: float | None = None,
+    handoff_hinge_velocity_rms: float | None = None,
     tracking_mode: str = "ilqr_tracking",
 ) -> dict[str, Any]:
     env = NLinkCartPoleEnv(cfg, progress=1.0, seed=seed)
@@ -119,7 +193,18 @@ def execute_controller(
             state = data_state(env.data)
             value = lyapunov_value(state, transform, lyapunov)
             minimum_value = min(minimum_value, value)
-            if not latched and value <= handoff_lyapunov and abs(float(state[0])) <= handoff_cart_abs:
+            if (
+                not latched
+                and value <= handoff_lyapunov
+                and abs(float(state[0])) <= handoff_cart_abs
+                and handoff_bounds_satisfied(
+                    state,
+                    env.n,
+                    angle_abs=handoff_angle_abs,
+                    cart_velocity_abs=handoff_cart_velocity_abs,
+                    hinge_velocity_rms=handoff_hinge_velocity_rms,
+                )
+            ):
                 latched = True
                 first_handoff_step = int(env.step_count)
             if not latched and env.step_count < len(controls):
@@ -137,7 +222,9 @@ def execute_controller(
                 mode = "lqr"
             _, reward, terminated, truncated, info = env.step([action])
             episode_return += float(reward)
-            row = row_from_env(env, step=env.step_count, action=action, reward=reward, info=info)
+            row = row_from_env(
+                env, step=env.step_count, action=action, reward=reward, info=info
+            )
             row["controller_mode"] = mode
             row["dimensionless_lyapunov_value"] = lyapunov_value(
                 data_state(env.data), transform, lyapunov
@@ -150,7 +237,9 @@ def execute_controller(
         "return": float(episode_return),
         "length": len(trajectory),
         "termination_reason": info.get("termination_reason"),
-        "max_upright_streak_seconds": float(info.get("max_upright_streak_seconds", 0.0)),
+        "max_upright_streak_seconds": float(
+            info.get("max_upright_streak_seconds", 0.0)
+        ),
         "max_low_momentum_upright_streak_seconds": float(
             info.get("max_low_momentum_upright_streak_seconds", 0.0)
         ),
@@ -158,7 +247,9 @@ def execute_controller(
         "minimum_lyapunov": float(minimum_value),
         "latched": bool(latched),
         "first_handoff_step": first_handoff_step,
-        "first_handoff_time": None if first_handoff_step is None else first_handoff_step * env.dt,
+        "first_handoff_time": None
+        if first_handoff_step is None
+        else first_handoff_step * env.dt,
         "trajectory": trajectory,
         "final_info": info,
     }
@@ -170,8 +261,12 @@ def main() -> None:
     )
     parser.add_argument("--config", default="configs/swingup6_capture_envelope.yaml")
     parser.add_argument("--spec", default="benchmarks/p1_capture_envelope.yaml")
-    parser.add_argument("--state-json", default="runs/p1_capture_envelope/validation.json")
+    parser.add_argument(
+        "--state-json", default="runs/p1_capture_envelope/validation.json"
+    )
     parser.add_argument("--state-index", required=True)
+    parser.add_argument("--interpolate-from-state-index", default=None)
+    parser.add_argument("--interpolation-alpha", type=float, default=1.0)
     parser.add_argument("--seed", type=int, default=63001)
     parser.add_argument("--out", required=True)
     parser.add_argument("--horizon-seconds", type=float, default=3.0)
@@ -186,24 +281,57 @@ def main() -> None:
     parser.add_argument("--rail-soft-limit", type=float, default=2.4)
     parser.add_argument("--rail-weight", type=float, default=100_000_000.0)
     parser.add_argument("--handoff-lyapunov", type=float, default=1800.0)
+    parser.add_argument("--switch-lyapunov", type=float, default=None)
+    parser.add_argument("--switch-angle-abs", type=float, default=None)
+    parser.add_argument("--switch-cart-velocity-abs", type=float, default=None)
+    parser.add_argument("--switch-hinge-velocity-rms", type=float, default=None)
     parser.add_argument("--handoff-cart-abs", type=float, default=1.5)
     parser.add_argument("--override", action="append", default=[])
     args = parser.parse_args()
-    if min(
-        args.horizon_seconds,
-        args.control_cost,
-        args.stage_weight,
-        args.terminal_weight,
-        args.rail_soft_limit,
-        args.rail_weight,
-        args.handoff_lyapunov,
-        args.handoff_cart_abs,
-    ) <= 0.0 or args.terminal_state_weight < 0.0 or args.iterations < 1:
-        raise ValueError("durations, weights, thresholds, and iterations must be positive")
+    if (
+        min(
+            args.horizon_seconds,
+            args.control_cost,
+            args.stage_weight,
+            args.terminal_weight,
+            args.rail_soft_limit,
+            args.rail_weight,
+            args.handoff_lyapunov,
+            args.handoff_cart_abs,
+        )
+        <= 0.0
+        or args.terminal_state_weight < 0.0
+        or args.iterations < 1
+    ):
+        raise ValueError(
+            "durations, weights, thresholds, and iterations must be positive"
+        )
+    if args.switch_lyapunov is not None and args.switch_lyapunov <= 0.0:
+        raise ValueError("switch Lyapunov threshold must be positive")
+    if any(
+        value is not None and value <= 0.0
+        for value in (
+            args.switch_angle_abs,
+            args.switch_cart_velocity_abs,
+            args.switch_hinge_velocity_rms,
+        )
+    ):
+        raise ValueError("switch state bounds must be positive")
 
     base_cfg = apply_overrides(load_config(args.config), args.override)
     base_cfg["env"]["action_lqr_residual"]["enabled"] = False
     state, state_index = load_state(args.state_json, args.state_index)
+    interpolation = None
+    if args.interpolate_from_state_index is not None:
+        source_state, source_index = load_state(
+            args.state_json, args.interpolate_from_state_index
+        )
+        state = interpolate_initial_state(source_state, state, args.interpolation_alpha)
+        interpolation = {
+            "source_index": int(source_index),
+            "target_index": int(state_index),
+            "alpha": float(args.interpolation_alpha),
+        }
     cfg = fixed_state_cfg(base_cfg, state, float(base_cfg["env"]["episode_seconds"]))
     gain = lqr_gain(cfg, progress=1.0, fd_eps=1e-7, control_cost=1000.0)
     spec = load_config(args.spec)
@@ -236,7 +364,9 @@ def main() -> None:
             lqr_scale=args.initial_lqr_scale,
         )
     else:
-        controls = load_initial_controls(args.initial_controller, horizon_steps, policy_dt)
+        controls = load_initial_controls(
+            args.initial_controller, horizon_steps, policy_dt
+        )
     stage_metric = args.stage_weight * np.eye(transform.shape[0], dtype=np.float64)
     terminal_metric = (
         args.terminal_weight * lyapunov / args.handoff_lyapunov
@@ -275,8 +405,15 @@ def main() -> None:
         lqr_scale=args.lqr_scale,
         transform=transform,
         lyapunov=lyapunov,
-        handoff_lyapunov=args.handoff_lyapunov,
+        handoff_lyapunov=(
+            args.handoff_lyapunov
+            if args.switch_lyapunov is None
+            else args.switch_lyapunov
+        ),
         handoff_cart_abs=args.handoff_cart_abs,
+        handoff_angle_abs=args.switch_angle_abs,
+        handoff_cart_velocity_abs=args.switch_cart_velocity_abs,
+        handoff_hinge_velocity_rms=args.switch_hinge_velocity_rms,
     )
     payload = {
         "schema_version": 1,
@@ -285,6 +422,7 @@ def main() -> None:
         "summary": "Single-state constrained nonlinear iLQR capture diagnostic; not P1 evidence.",
         "state_index": state_index,
         "selected_state": state,
+        "state_interpolation": interpolation,
         "seed": int(args.seed),
         "controller": {
             "type": "exact_mujoco_box_constrained_ilqr_tracking_then_lqr",
@@ -306,6 +444,14 @@ def main() -> None:
             "rail_soft_limit": float(args.rail_soft_limit),
             "rail_weight": float(args.rail_weight),
             "handoff_lyapunov": float(args.handoff_lyapunov),
+            "switch_lyapunov": (
+                float(args.handoff_lyapunov)
+                if args.switch_lyapunov is None
+                else float(args.switch_lyapunov)
+            ),
+            "switch_angle_abs": args.switch_angle_abs,
+            "switch_cart_velocity_abs": args.switch_cart_velocity_abs,
+            "switch_hinge_velocity_rms": args.switch_hinge_velocity_rms,
             "handoff_cart_abs": float(args.handoff_cart_abs),
             "controls": search.controls.astype(float).tolist(),
             "feedback_gains": search.feedback_gains.astype(float).tolist(),
@@ -319,7 +465,9 @@ def main() -> None:
             "initial_lyapunov": float(nominal_values[0]),
             "minimum_lyapunov": float(min(nominal_values)),
             "terminal_lyapunov": float(nominal_values[-1]),
-            "terminal_dimensionless_state_norm": float(np.linalg.norm(search.states[-1])),
+            "terminal_dimensionless_state_norm": float(
+                np.linalg.norm(search.states[-1])
+            ),
             "max_cart_excursion": float(np.max(np.abs(nominal_physical_states[:, 0]))),
             "history": search.history,
             "nominal_coordinate_states": search.states.astype(float).tolist(),
@@ -332,7 +480,10 @@ def main() -> None:
         },
         "result": result,
         "evidence": {
-            "config": {"path": str(Path(args.config)), "resolved_sha256": data_sha256(cfg)},
+            "config": {
+                "path": str(Path(args.config)),
+                "resolved_sha256": data_sha256(cfg),
+            },
             "state_source": file_metadata(args.state_json),
             "runtime": runtime_metadata(),
             "git": git_metadata(Path(__file__).resolve().parents[1]),

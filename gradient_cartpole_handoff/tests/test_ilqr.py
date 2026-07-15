@@ -8,10 +8,15 @@ import numpy as np
 
 from gcartpole.ilqr import stitch_feedback_trajectories
 from scripts.evaluate_ilqr_chain_basin import aggregate, parse_radii
+from scripts.evaluate_receding_ilqr_capture import shift_controls
 from scripts.refine_ilqr_capture_chain import (
     capture_selection_key,
     controls_from_knots,
     warm_start_controls,
+)
+from scripts.search_ilqr_capture import (
+    handoff_bounds_satisfied,
+    interpolate_initial_state,
 )
 
 
@@ -95,6 +100,58 @@ class ILQRTests(unittest.TestCase):
         self.assertEqual(
             min([low_cost_failure, captured], key=capture_selection_key)["label"],
             "captured",
+        )
+
+    def test_receding_ilqr_shift_preserves_remaining_controls(self) -> None:
+        np.testing.assert_allclose(
+            shift_controls(np.asarray([0.1, 0.2, 0.3, 0.4]), 2),
+            [0.3, 0.4],
+        )
+        with self.assertRaises(ValueError):
+            shift_controls(np.asarray([0.1, 0.2]), 3)
+
+    def test_initial_state_interpolation_preserves_endpoints(self) -> None:
+        source = {
+            "state_id": "source",
+            "qpos": [0.0, 0.1, 0.2],
+            "qvel": [0.3, 0.4, 0.5],
+        }
+        target = {
+            "state_id": "target",
+            "qpos": [1.0, -0.1, -0.2],
+            "qvel": [-0.3, -0.4, -0.5],
+        }
+
+        start = interpolate_initial_state(source, target, 0.0)
+        end = interpolate_initial_state(source, target, 1.0)
+
+        np.testing.assert_allclose(start["qpos"], source["qpos"])
+        np.testing.assert_allclose(start["qvel"], source["qvel"])
+        np.testing.assert_allclose(end["qpos"], target["qpos"])
+        np.testing.assert_allclose(end["qvel"], target["qvel"])
+
+    def test_strict_handoff_bounds_reject_hot_upright_state(self) -> None:
+        cold = np.asarray([0.0, 0.02, -0.01, 0.1, 0.2, -0.1])
+        hot = cold.copy()
+        hot[4] = 2.0
+
+        self.assertTrue(
+            handoff_bounds_satisfied(
+                cold,
+                2,
+                angle_abs=0.15,
+                cart_velocity_abs=0.5,
+                hinge_velocity_rms=0.75,
+            )
+        )
+        self.assertFalse(
+            handoff_bounds_satisfied(
+                hot,
+                2,
+                angle_abs=0.15,
+                cart_velocity_abs=0.5,
+                hinge_velocity_rms=0.75,
+            )
         )
 
     def test_chain_basin_helpers_validate_and_aggregate(self) -> None:

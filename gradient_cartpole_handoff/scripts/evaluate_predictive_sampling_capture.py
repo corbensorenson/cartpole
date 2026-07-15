@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import time
 from pathlib import Path
 from typing import Any
@@ -21,6 +22,7 @@ from gcartpole.modal import (
     StateScales,
     closed_loop_lyapunov_matrix,
     dimensionless_absolute_transform,
+    dimensionless_wrapped_state,
 )
 from gcartpole.predictive_sampling import (
     PredictiveSamplingConfig,
@@ -30,6 +32,7 @@ from gcartpole.predictive_sampling import (
 
 try:
     from scripts.evaluate_feedback_mpc_capture import state_lyapunov
+    from scripts.refine_ilqr_capture_chain import source_trajectory
     from scripts.make_lqr_checkpoint import finite_difference_dynamics
     from scripts.search_capture_sequence import (
         fixed_state_cfg,
@@ -39,6 +42,7 @@ try:
     from scripts.search_swingup_capture import lqr_action, lqr_gain
 except ModuleNotFoundError:
     from evaluate_feedback_mpc_capture import state_lyapunov
+    from refine_ilqr_capture_chain import source_trajectory
     from make_lqr_checkpoint import finite_difference_dynamics
     from search_capture_sequence import fixed_state_cfg, load_state, row_from_env
     from search_swingup_capture import lqr_action, lqr_gain
@@ -57,6 +61,7 @@ def main() -> None:
     parser.add_argument("--progress", type=float, default=1.0)
     parser.add_argument("--seed", type=int, default=64001)
     parser.add_argument("--out", required=True)
+    parser.add_argument("--source-controller", default=None)
     parser.add_argument("--horizon-seconds", type=float, default=3.0)
     parser.add_argument("--replan-steps", type=int, default=5)
     parser.add_argument("--mpc-seconds", type=float, default=6.0)
@@ -132,7 +137,23 @@ def main() -> None:
         threads=args.threads,
     )
     rng = np.random.default_rng(args.seed)
+    source_controls = np.empty(0, dtype=np.float64)
+    source_states = np.empty((0, transform.shape[0]), dtype=np.float64)
+    source_gains = np.empty((0, transform.shape[0]), dtype=np.float64)
+    source_metadata = None
+    if args.source_controller is not None:
+        source_path = Path(args.source_controller)
+        source_payload = json.loads(source_path.read_text(encoding="utf-8"))
+        source_index = source_payload.get("state_index")
+        if source_index is not None and int(source_index) != int(selected_index):
+            raise ValueError(
+                "source controller state index does not match --state-index"
+            )
+        source_controls, source_states, source_gains = source_trajectory(source_payload)
+        source_metadata = file_metadata(source_path)
     mpc_steps = max(1, int(round(args.mpc_seconds / policy_dt)))
+    mpc_start_step = int(source_controls.size)
+    mpc_stop_step = mpc_start_step + mpc_steps
     latched = False
     first_handoff_step: int | None = None
     knots: np.ndarray | None = None
@@ -154,7 +175,8 @@ def main() -> None:
             if not latched and handoff:
                 latched = True
                 first_handoff_step = int(env.step_count)
-            use_mpc = not latched and env.step_count < mpc_steps
+            use_source = not latched and env.step_count < mpc_start_step
+            use_mpc = not latched and mpc_start_step <= env.step_count < mpc_stop_step
             if use_mpc and (actions is None or controller_step >= args.replan_steps):
                 warm = None
                 if knots is not None:
@@ -185,7 +207,21 @@ def main() -> None:
                     f"cart={search['metrics']['max_cart_abs']:.3f}",
                     flush=True,
                 )
-            if use_mpc and actions is not None:
+            if use_source:
+                step = int(env.step_count)
+                coordinate_state = dimensionless_wrapped_state(
+                    env.data.qpos, env.data.qvel, transform
+                )
+                error = coordinate_state - source_states[step]
+                action = float(
+                    np.clip(
+                        source_controls[step] + source_gains[step] @ error,
+                        -1.0,
+                        1.0,
+                    )
+                )
+                mode = "source_ilqr_tracking"
+            elif use_mpc and actions is not None:
                 action = float(actions[controller_step])
                 controller_step += 1
                 mode = "predictive_sampling"
@@ -235,13 +271,18 @@ def main() -> None:
         "schema_version": 1,
         "generated_at": utc_timestamp(),
         "not_solution": True,
-        "summary": "Single-state exact-model direct-action predictive-sampling diagnostic; not P1 evidence.",
+        "summary": (
+            "Single-state exact-model approach-plus-receding-predictive-sampling "
+            "diagnostic; not P1 evidence."
+        ),
         "state_index": selected_index,
         "selected_state": selected_state,
         "progress": float(args.progress),
         "seed": int(args.seed),
         "controller": {
             "type": "multithreaded_direct_action_predictive_sampling_then_lqr",
+            "source_controller": source_metadata,
+            "source_horizon_steps": int(source_controls.size),
             **vars(planner_config),
             "horizon_seconds": float(planner_config.horizon_steps * policy_dt),
             "mpc_seconds": float(args.mpc_seconds),
