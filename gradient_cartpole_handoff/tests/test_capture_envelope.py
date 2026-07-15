@@ -23,19 +23,25 @@ from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.ilqr import MujocoTransition, data_state, scalar_box_policy, state_difference
 from gcartpole.multiple_shooting import pack_decision, shooting_sparsity, unpack_decision
 from gcartpole.ppo_mlx import select_evaluation_state_indices
-from scripts.mine_capture_failures import build_mining_mixture
-from scripts.build_feedback_mpc_teachers import failed_state_indices
+from gcartpole.trajectory_policy import trajectory_conditioned_features
 from scripts.build_capture_supervisor_dataset import aligned_trajectory_steps
+from scripts.build_feedback_mpc_teachers import failed_state_indices
 from scripts.distill_capture_supervisor import grouped_source_split, source_balancing_weights
-from scripts.label_capture_dagger_target import selected_queries
-from scripts.evaluate_linear_mpc_capture import LinearMPC
-from scripts.search_linear_policy import development_seed
-from scripts.search_capture_recovery import recovery_residual
-from scripts.search_capture_hybrid_schedule import evaluate_hybrid_schedule, resample_target_controller
+from scripts.distill_trajectory_conditioned_capture import parse_hidden_sizes
 from scripts.evaluate_feedback_mpc_capture import feedback_action, shift_schedule
+from scripts.evaluate_linear_mpc_capture import LinearMPC
+from scripts.evaluate_trajectory_conditioned_capture import selected_indices
+from scripts.label_capture_dagger_target import selected_queries
+from scripts.mine_capture_failures import build_mining_mixture
+from scripts.search_capture_hybrid_schedule import (
+    evaluate_hybrid_schedule,
+    resample_target_controller,
+)
+from scripts.search_capture_recovery import recovery_residual
 from scripts.search_capture_target_schedule import evaluate_target_schedule, scheduled_cart_target
-from scripts.search_swingup_capture import lqr_action
 from scripts.search_ilqr_capture import load_initial_controls
+from scripts.search_linear_policy import development_seed
+from scripts.search_swingup_capture import lqr_action
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -50,6 +56,36 @@ class CaptureEnvelopeTests(unittest.TestCase):
         spec = copy.deepcopy(self.spec)
         spec["splits"]["test"]["count"] = 64
         return spec
+
+    def test_trajectory_conditioned_features_include_initial_state_and_phase(self) -> None:
+        observations = np.asarray([[1.0, 2.0], [3.0, 4.0]], dtype=np.float32)
+        initial = np.asarray([[5.0, 6.0], [7.0, 8.0]], dtype=np.float32)
+        features = trajectory_conditioned_features(
+            observations,
+            initial,
+            np.asarray([0, 25]),
+            maximum_steps=100,
+        )
+        np.testing.assert_allclose(
+            features,
+            [[1.0, 2.0, 5.0, 6.0, 0.0], [3.0, 4.0, 7.0, 8.0, 0.25]],
+        )
+        np.testing.assert_allclose(
+            trajectory_conditioned_features(
+                observations,
+                None,
+                np.asarray([0, 25]),
+                maximum_steps=100,
+                include_initial_observation=False,
+            ),
+            [[1.0, 2.0, 0.0], [3.0, 4.0, 0.25]],
+        )
+
+    def test_trajectory_policy_metadata_selects_source_partitions(self) -> None:
+        metadata = {"train_sources": [4, 1], "validation_sources": [3]}
+        self.assertEqual(selected_indices(6, metadata, "train", None), [4, 1])
+        self.assertEqual(selected_indices(6, metadata, "all", 2), [1, 3])
+        self.assertEqual(parse_hidden_sizes("128, 64"), [128, 64])
 
     def test_generation_is_deterministic_and_within_bounds(self) -> None:
         spec = self.small_spec()
