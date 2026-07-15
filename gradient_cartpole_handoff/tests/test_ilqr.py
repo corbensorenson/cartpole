@@ -20,7 +20,12 @@ from scripts.search_ilqr_capture import (
     handoff_bounds_satisfied,
     interpolate_initial_state,
 )
-from scripts.search_capture_pipeline import parse_state_indices, stage_paths
+from scripts.search_capture_pipeline import (
+    best_extension_stage,
+    best_stage,
+    parse_state_indices,
+    stage_paths,
+)
 
 
 class ILQRTests(unittest.TestCase):
@@ -232,6 +237,59 @@ class ILQRTests(unittest.TestCase):
             paths["approach"],
             Path("runs/pipeline/validation_4/approach_ilqr.json"),
         )
+        self.assertEqual(
+            paths["approach_fddp"],
+            Path("runs/pipeline/validation_4/approach_fddp.json"),
+        )
+
+    def test_capture_pipeline_selects_best_authoritative_stage(self) -> None:
+        def payload(
+            *, success: bool, latched: bool, hold: float, value: float, cart: float
+        ) -> dict[str, object]:
+            return {
+                "result": {
+                    "success": success,
+                    "latched": latched,
+                    "max_upright_streak_seconds": hold,
+                    "minimum_lyapunov": value,
+                    "max_cart_excursion": cart,
+                }
+            }
+
+        stages = {
+            "predictive": payload(
+                success=False, latched=False, hold=0.06, value=1100000.0, cart=3.12
+            ),
+            "approach": payload(
+                success=False, latched=False, hold=0.04, value=37000.0, cart=3.02
+            ),
+            "approach_fddp": payload(
+                success=False, latched=False, hold=0.14, value=1700.0, cart=3.01
+            ),
+            "tail_seed": payload(
+                success=False, latched=False, hold=0.04, value=45000.0, cart=3.00
+            ),
+        }
+        name, selected = best_stage(stages)
+        self.assertEqual(name, "approach_fddp")
+        self.assertIs(selected, stages["approach_fddp"])
+
+        stages["approach"]["controller"] = {"controls": [0.0]}
+        stages["approach"]["search"] = {"terminal_lyapunov": 37000.0}
+        stages["approach_fddp"]["controller"] = {"controls": [0.0]}
+        stages["approach_fddp"]["search"] = {"terminal_lyapunov": 1700.0}
+        stages["tail_seed"]["controller"] = {"controls": [0.0]}
+        stages["tail_seed"]["search"] = {"tail_terminal_lyapunov": 220000.0}
+        name, selected = best_extension_stage(stages)
+        self.assertEqual(name, "approach_fddp")
+        self.assertIs(selected, stages["approach_fddp"])
+
+        stages["tail_ddp"] = payload(
+            success=True, latched=True, hold=10.0, value=1.0, cart=2.8
+        )
+        name, selected = best_stage(stages)
+        self.assertEqual(name, "tail_ddp")
+        self.assertIs(selected, stages["tail_ddp"])
 
     def test_funnel_library_selection_prefers_success_then_hold(self) -> None:
         failure = {
