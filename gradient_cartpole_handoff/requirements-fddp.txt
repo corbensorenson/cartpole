@@ -1,0 +1,3 @@
+# Optional feasibility-driven trajectory optimization branch.
+-r requirements-mac.txt
+crocoddyl==3.2.1

@@ -1,4 +1,4 @@
-.PHONY: setup setup-sb3 smoke roadmap-p0 test-roadmap-p0 verify-roadmap-p0 export-swingup7-xml generate-capture-envelope capture-envelope6 capture-hybrid-policy6 capture-boundary-lqr mine-capture-boundary fit-capture-funnel search-capture-target-teacher build-capture-target-teachers build-feedback-mpc-teachers build-capture-supervisor-dataset distill-capture-supervisor eval-capture-supervisor collect-capture-dagger label-capture-dagger-lqr label-capture-dagger-target label-capture-dagger-feedback eval-adaptive-capture-boundary analyze-capture-modal sweep-capture-modal-feedback refine-adaptive-capture-boundary eval-transfer-capture-boundary search-capture-hybrid eval-feedback-mpc-state eval-predictive-sampling-state refine-feedback-mpc-boundary search-ilqr-capture refine-ilqr-capture-chain eval-ilqr-chain-basin search-multiple-shooting-capture analyze-refined-capture-modal capture-sac-boundary mine-capture-failures distill-capture-lqr eval-capture-envelope6 eval-capture-envelope-lqr eval-capture-envelope-mpc swingup7 eval-swingup7-20 eval-swingup7-100 render-swingup7 verify-swingup7 debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture eval-mpc-policy-handoff-stage search-swingup-chain search-swingup-funnel export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-wide6 eval-capture-wide6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-stage capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum-qvel0 eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
+.PHONY: setup setup-sb3 setup-fddp smoke roadmap-p0 test-roadmap-p0 verify-roadmap-p0 export-swingup7-xml generate-capture-envelope capture-envelope6 capture-hybrid-policy6 capture-boundary-lqr mine-capture-boundary fit-capture-funnel search-capture-target-teacher build-capture-target-teachers build-feedback-mpc-teachers build-capture-supervisor-dataset distill-capture-supervisor eval-capture-supervisor collect-capture-dagger label-capture-dagger-lqr label-capture-dagger-target label-capture-dagger-feedback eval-adaptive-capture-boundary analyze-capture-modal sweep-capture-modal-feedback refine-adaptive-capture-boundary eval-transfer-capture-boundary search-capture-hybrid eval-feedback-mpc-state eval-predictive-sampling-state refine-feedback-mpc-boundary search-ilqr-capture search-fddp-capture continue-fddp-capture refine-ilqr-capture-chain eval-ilqr-chain-basin search-multiple-shooting-capture analyze-refined-capture-modal capture-sac-boundary mine-capture-failures distill-capture-lqr eval-capture-envelope6 eval-capture-envelope-lqr eval-capture-envelope-mpc swingup7 eval-swingup7-20 eval-swingup7-100 render-swingup7 verify-swingup7 debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture eval-mpc-policy-handoff-stage search-swingup-chain search-swingup-funnel export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-wide6 eval-capture-wide6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-stage capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum-qvel0 eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
 
 PYTHON ?= .venv/bin/python
 SWINGUP7_RUN ?= runs/swingup7_uniform
@@ -62,6 +62,13 @@ CAPTURE_ILQR_CHAIN_ITERATIONS ?= 400
 CAPTURE_ILQR_CHAIN_INITIAL_LQR_SCALE ?= 0.0
 CAPTURE_ILQR_CHAIN_INITIAL_ARGS ?= --initial-action-cem --action-knots 24 --cem-iterations 20 --cem-population 512 --cem-elites 40
 CAPTURE_ILQR_CHAIN_BASIN_OUT ?= runs/p1_capture_ilqr/validation_674_p1_chain_basin.json
+CAPTURE_FDDP_INITIAL ?= $(CAPTURE_ILQR_CHAIN_OUT)
+CAPTURE_FDDP_OUT ?= runs/p1_capture_fddp/validation_$(CAPTURE_ILQR_STATE).json
+CAPTURE_FDDP_ITERATIONS ?= 100
+CAPTURE_FDDP_SOURCE_STATE ?= 674
+CAPTURE_FDDP_INITIAL_ALPHA ?= 0.0
+CAPTURE_FDDP_TARGET_ALPHA ?= 1.0
+CAPTURE_FDDP_CONTINUATION_OUT ?= runs/p1_capture_fddp/continuation_$(CAPTURE_FDDP_SOURCE_STATE)_to_$(CAPTURE_ILQR_STATE).json
 CAPTURE_MULTIPLE_SHOOTING_OUT ?= runs/p1_capture_multiple_shooting/validation_$(CAPTURE_ILQR_STATE)_p1.json
 CAPTURE_MULTIPLE_SHOOTING_SEGMENT_STEPS ?= 1
 CAPTURE_MULTIPLE_SHOOTING_ITERATIONS ?= 30
@@ -158,6 +165,9 @@ setup:
 setup-sb3:
 	$(PYTHON) -m pip install -r requirements-sb3.txt
 
+setup-fddp:
+	$(PYTHON) -m pip install -r requirements-fddp.txt
+
 roadmap-p0: test-roadmap-p0 export-swingup7-xml verify-roadmap-p0
 
 test-roadmap-p0:
@@ -246,6 +256,12 @@ refine-feedback-mpc-boundary:
 
 search-ilqr-capture:
 	$(PYTHON) scripts/search_ilqr_capture.py --state-index $(CAPTURE_ILQR_STATE) --seed $(CAPTURE_ILQR_SEED) --horizon-seconds $(CAPTURE_ILQR_HORIZON) --iterations $(CAPTURE_ILQR_ITERATIONS) --terminal-weight $(CAPTURE_ILQR_TERMINAL_WEIGHT) --terminal-state-weight $(CAPTURE_ILQR_TERMINAL_STATE_WEIGHT) --rail-weight 100000000 $(CAPTURE_ILQR_INITIAL_ARGS) --out $(CAPTURE_ILQR_OUT)
+
+search-fddp-capture:
+	$(PYTHON) scripts/search_fddp_capture.py --state-index $(CAPTURE_ILQR_STATE) --initial-controller $(CAPTURE_FDDP_INITIAL) --seed $(CAPTURE_ILQR_SEED) --iterations $(CAPTURE_FDDP_ITERATIONS) --terminal-weight 100000 --terminal-state-weight 100000 --out $(CAPTURE_FDDP_OUT)
+
+continue-fddp-capture:
+	$(PYTHON) scripts/continue_fddp_homotopy.py --state-index $(CAPTURE_ILQR_STATE) --source-state-index $(CAPTURE_FDDP_SOURCE_STATE) --initial-alpha $(CAPTURE_FDDP_INITIAL_ALPHA) --target-alpha $(CAPTURE_FDDP_TARGET_ALPHA) --initial-controller $(CAPTURE_FDDP_INITIAL) --iterations $(CAPTURE_FDDP_ITERATIONS) --summary-out $(CAPTURE_FDDP_CONTINUATION_OUT)
 
 refine-ilqr-capture-chain:
 	$(PYTHON) scripts/refine_ilqr_capture_chain.py --source-controller $(CAPTURE_ILQR_CHAIN_SOURCE) --seed $(CAPTURE_ILQR_SEED) --tail-seconds $(CAPTURE_ILQR_CHAIN_TAIL_SECONDS) --iterations $(CAPTURE_ILQR_CHAIN_ITERATIONS) --initial-lqr-scale $(CAPTURE_ILQR_CHAIN_INITIAL_LQR_SCALE) $(CAPTURE_ILQR_CHAIN_INITIAL_ARGS) --out $(CAPTURE_ILQR_CHAIN_OUT)

@@ -142,10 +142,11 @@ class MujocoTransition:
     def __call__(self, state: Array, action: float) -> Array:
         state = self.to_physical(state)
         nq = int(self.env.model.nq)
+        policy_action = float(np.clip(np.asarray(action, dtype=np.float32), -1.0, 1.0))
         mujoco.mj_resetData(self.env.model, self.data)
         self.data.qpos[:] = state[:nq]
         self.data.qvel[:] = state[nq:]
-        self.data.ctrl[0] = float(np.clip(action, -1.0, 1.0)) * self.env.force_limit
+        self.data.ctrl[0] = policy_action * self.env.force_limit
         mujoco.mj_forward(self.env.model, self.data)
         for _ in range(self.env.frame_skip):
             mujoco.mj_step(self.env.model, self.data)

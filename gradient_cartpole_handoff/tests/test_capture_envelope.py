@@ -545,6 +545,13 @@ class CaptureEnvelopeTests(unittest.TestCase):
             initial = transition.to_coordinates(data_state(env.data))
             np.testing.assert_allclose(transition.to_physical(initial), data_state(env.data))
             following = transition(initial, 0.1)
+            env.step([0.1])
+            np.testing.assert_allclose(
+                following,
+                transition.to_coordinates(data_state(env.data)),
+                rtol=0.0,
+                atol=1e-12,
+            )
             state_matrix, input_matrix = transition.linearize(
                 initial,
                 0.1,
