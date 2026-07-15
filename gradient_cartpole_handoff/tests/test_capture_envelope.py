@@ -262,6 +262,68 @@ class CaptureEnvelopeTests(unittest.TestCase):
         )
         np.testing.assert_allclose(shifted, [0.5, 0.5, 0.0])
 
+    def test_lqr_policy_switch_uses_hysteresis_without_changing_state(self) -> None:
+        cfg = load_config(ROOT / "configs/swingup6_capture_envelope.yaml")
+        cfg["env"]["init_mode"] = "upright"
+        cfg["env"]["init_angle_noise"] = 0.0
+        cfg["env"]["init_vel_noise"] = 0.0
+        cfg["env"]["action_lqr_residual"]["enabled"] = False
+        cfg["env"]["action_lqr_switch"] = {
+            "enabled": True,
+            "state_gain": np.zeros(14).tolist(),
+            "scale": 1.0,
+            "cart_target": 0.0,
+            "enter_max_abs_angle": 0.05,
+            "enter_hinge_velocity_rms": 0.10,
+            "enter_cart_abs": 0.25,
+            "enter_cart_velocity_abs": 0.10,
+            "exit_max_abs_angle": 0.10,
+            "exit_hinge_velocity_rms": 0.20,
+            "exit_cart_abs": 0.50,
+            "exit_cart_velocity_abs": 0.20,
+        }
+        env = NLinkCartPoleEnv(cfg, progress=1.0, seed=31)
+        try:
+            env.reset()
+            before_qpos = env.data.qpos.copy()
+            before_qvel = env.data.qvel.copy()
+            self.assertEqual(env._applied_action_norm(0.7), 0.0)
+            self.assertTrue(env.lqr_switch_active)
+            self.assertEqual(env.last_controller_mode, "lqr")
+            self.assertEqual(env.lqr_switch_entry_count, 1)
+            self.assertEqual(env.lqr_switch_lqr_steps, 1)
+            np.testing.assert_allclose(env.data.qpos, before_qpos)
+            np.testing.assert_allclose(env.data.qvel, before_qvel)
+
+            env.data.qpos[1] = 0.075
+            self.assertEqual(env._applied_action_norm(0.7), 0.0)
+            self.assertTrue(env.lqr_switch_active)
+
+            env.data.qpos[1] = 0.20
+            self.assertEqual(env._applied_action_norm(0.7), 0.7)
+            self.assertFalse(env.lqr_switch_active)
+            self.assertEqual(env.last_controller_mode, "policy")
+            self.assertEqual(env.lqr_switch_exit_count, 1)
+            self.assertEqual(env.lqr_switch_policy_steps, 1)
+
+            env.data.qpos[1] = 0.075
+            self.assertEqual(env._applied_action_norm(-0.4), -0.4)
+            self.assertFalse(env.lqr_switch_active)
+            self.assertEqual(env.lqr_switch_policy_steps, 2)
+        finally:
+            env.close()
+
+    def test_lqr_switch_rejects_residual_blending(self) -> None:
+        cfg = load_config(ROOT / "configs/swingup6_capture_envelope.yaml")
+        cfg["env"]["action_lqr_switch"] = {"enabled": True}
+        env = NLinkCartPoleEnv(cfg, progress=1.0, seed=37)
+        try:
+            env.reset()
+            with self.assertRaisesRegex(ValueError, "mutually exclusive"):
+                env.step([0.0])
+        finally:
+            env.close()
+
     def test_ilqr_state_difference_wraps_relative_angles(self) -> None:
         first = np.asarray([0.2, 2.0 * np.pi - 0.1, -2.0 * np.pi + 0.2, 0.4, -0.3])
         second = np.zeros(5, dtype=np.float64)

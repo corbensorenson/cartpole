@@ -265,6 +265,11 @@ def evaluate_policy(
                     "max_low_momentum_upright_streak_seconds": low_momentum_streak,
                     "max_capture_quality": float(ep_max_capture_quality),
                     "low_momentum_upright": bool(ep_low_momentum_upright),
+                    "lqr_switch_entry_count": int(info.get("lqr_switch_entry_count", 0)),
+                    "lqr_switch_exit_count": int(info.get("lqr_switch_exit_count", 0)),
+                    "lqr_switch_first_entry_time": info.get("lqr_switch_first_entry_time"),
+                    "lqr_switch_lqr_steps": int(info.get("lqr_switch_lqr_steps", 0)),
+                    "lqr_switch_policy_steps": int(info.get("lqr_switch_policy_steps", 0)),
                 }
             )
         env.close()
@@ -411,6 +416,11 @@ def evaluate_indexed_policy_batched(
                             ),
                             "max_capture_quality": float(tracker["max_capture_quality"]),
                             "low_momentum_upright": bool(tracker["low_momentum_upright"]),
+                            "lqr_switch_entry_count": int(info.get("lqr_switch_entry_count", 0)),
+                            "lqr_switch_exit_count": int(info.get("lqr_switch_exit_count", 0)),
+                            "lqr_switch_first_entry_time": info.get("lqr_switch_first_entry_time"),
+                            "lqr_switch_lqr_steps": int(info.get("lqr_switch_lqr_steps", 0)),
+                            "lqr_switch_policy_steps": int(info.get("lqr_switch_policy_steps", 0)),
                         }
                     )
         finally:

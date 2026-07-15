@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -63,6 +62,13 @@ class NLinkCartPoleEnv(gym.Env):
         self.last_action_bias_norm = 0.0
         self.last_residual_scale = 1.0
         self.last_lqr_cart_target = 0.0
+        self.lqr_switch_active = False
+        self.last_controller_mode = "policy"
+        self.lqr_switch_entry_count = 0
+        self.lqr_switch_exit_count = 0
+        self.lqr_switch_first_entry_step: int | None = None
+        self.lqr_switch_lqr_steps = 0
+        self.lqr_switch_policy_steps = 0
         self.upright_streak_steps = 0
         self.max_upright_streak_steps = 0
         self.centered_upright_streak_steps = 0
@@ -148,6 +154,13 @@ class NLinkCartPoleEnv(gym.Env):
         self.capture_start_step = None
         self.max_cart_excursion = 0.0
         self.last_init_state_index = None
+        self.lqr_switch_active = False
+        self.last_controller_mode = "policy"
+        self.lqr_switch_entry_count = 0
+        self.lqr_switch_exit_count = 0
+        self.lqr_switch_first_entry_step = None
+        self.lqr_switch_lqr_steps = 0
+        self.lqr_switch_policy_steps = 0
         self.data.qpos[:] = 0.0
         self.data.qvel[:] = 0.0
         angle_noise = self._progress_value(self.env_cfg, "init_angle_noise", 0.02)
@@ -347,7 +360,7 @@ class NLinkCartPoleEnv(gym.Env):
         gain = np.asarray(cfg.get("state_gain", []), dtype=np.float64)
         expected = 2 * (self.n + 1)
         if gain.shape != (expected,):
-            raise ValueError(f"action_lqr_residual.state_gain must have length {expected}; got {gain.shape}")
+            raise ValueError(f"LQR action state_gain must have length {expected}; got {gain.shape}")
         cart_target = self._progress_value(cfg, "cart_target", 0.0)
         scale = self._progress_value(cfg, "scale", 1.0)
         state = np.zeros(expected, dtype=np.float64)
@@ -356,18 +369,68 @@ class NLinkCartPoleEnv(gym.Env):
         state[self.n + 1 :] = np.asarray(self.data.qvel, dtype=np.float64)
         return float(np.clip(-scale * float(gain @ state), -1.0, 1.0)), float(cart_target)
 
+    def _within_lqr_switch_bounds(self, cfg: dict[str, Any], prefix: str) -> bool:
+        _, abs_angles = self._angles()
+        qpos = self.data.qpos
+        qvel = self.data.qvel
+        hinge_velocity_rms = float(np.sqrt(np.mean(qvel[1 : 1 + self.n] ** 2)))
+
+        def limit(name: str) -> float:
+            enter_key = f"enter_{name}"
+            return float(cfg.get(f"{prefix}_{name}", cfg[enter_key]))
+
+        return bool(
+            float(np.max(np.abs(abs_angles))) <= limit("max_abs_angle")
+            and hinge_velocity_rms <= limit("hinge_velocity_rms")
+            and abs(float(qpos[0])) <= limit("cart_abs")
+            and abs(float(qvel[0])) <= limit("cart_velocity_abs")
+        )
+
     def _applied_action_norm(self, policy_action_norm: float) -> float:
         residual_cfg = self.env_cfg.get("action_lqr_residual", {})
-        if not bool(residual_cfg.get("enabled", False)):
+        switch_cfg = self.env_cfg.get("action_lqr_switch", {})
+        residual_enabled = bool(residual_cfg.get("enabled", False))
+        switch_enabled = bool(switch_cfg.get("enabled", False))
+        if residual_enabled and switch_enabled:
+            raise ValueError("action_lqr_residual and action_lqr_switch are mutually exclusive")
+        if switch_enabled:
+            was_active = self.lqr_switch_active
+            if self.lqr_switch_active:
+                self.lqr_switch_active = self._within_lqr_switch_bounds(switch_cfg, "exit")
+            elif self._within_lqr_switch_bounds(switch_cfg, "enter"):
+                self.lqr_switch_active = True
+            if self.lqr_switch_active and not was_active:
+                self.lqr_switch_entry_count += 1
+                if self.lqr_switch_first_entry_step is None:
+                    self.lqr_switch_first_entry_step = self.step_count
+            elif was_active and not self.lqr_switch_active:
+                self.lqr_switch_exit_count += 1
+            if self.lqr_switch_active:
+                bias, cart_target = self._lqr_action_bias(switch_cfg)
+                self.last_action_bias_norm = float(bias)
+                self.last_residual_scale = 0.0
+                self.last_lqr_cart_target = float(cart_target)
+                self.last_controller_mode = "lqr"
+                self.lqr_switch_lqr_steps += 1
+                return float(bias)
             self.last_action_bias_norm = 0.0
             self.last_residual_scale = 1.0
             self.last_lqr_cart_target = 0.0
+            self.last_controller_mode = "policy"
+            self.lqr_switch_policy_steps += 1
+            return float(policy_action_norm)
+        if not residual_enabled:
+            self.last_action_bias_norm = 0.0
+            self.last_residual_scale = 1.0
+            self.last_lqr_cart_target = 0.0
+            self.last_controller_mode = "policy"
             return float(policy_action_norm)
         bias, cart_target = self._lqr_action_bias(residual_cfg)
         residual_scale = self._progress_value(residual_cfg, "residual_scale", 1.0)
         self.last_action_bias_norm = float(bias)
         self.last_residual_scale = float(residual_scale)
         self.last_lqr_cart_target = float(cart_target)
+        self.last_controller_mode = "lqr_residual"
         return float(np.clip(bias + residual_scale * policy_action_norm, -1.0, 1.0))
 
     def _angles(self) -> tuple[np.ndarray, np.ndarray]:
@@ -646,6 +709,18 @@ class NLinkCartPoleEnv(gym.Env):
             "action_bias_norm": float(self.last_action_bias_norm),
             "residual_scale": float(self.last_residual_scale),
             "lqr_cart_target": float(self.last_lqr_cart_target),
+            "controller_mode": self.last_controller_mode,
+            "lqr_switch_active": bool(self.lqr_switch_active),
+            "lqr_switch_entry_count": int(self.lqr_switch_entry_count),
+            "lqr_switch_exit_count": int(self.lqr_switch_exit_count),
+            "lqr_switch_first_entry_step": self.lqr_switch_first_entry_step,
+            "lqr_switch_first_entry_time": (
+                None
+                if self.lqr_switch_first_entry_step is None
+                else float(self.lqr_switch_first_entry_step * self.dt)
+            ),
+            "lqr_switch_lqr_steps": int(self.lqr_switch_lqr_steps),
+            "lqr_switch_policy_steps": int(self.lqr_switch_policy_steps),
             "lengths": self.morphology.lengths.astype(float).tolist(),
             "masses": self.morphology.masses.astype(float).tolist(),
             "damping": self.morphology.damping.astype(float).tolist(),
