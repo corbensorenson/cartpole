@@ -62,7 +62,8 @@ def main() -> None:
     parser.add_argument("--state-index", required=True)
     parser.add_argument("--interpolate-from-state-index", default=None)
     parser.add_argument("--interpolation-alpha", type=float, default=1.0)
-    parser.add_argument("--initial-controller", required=True)
+    parser.add_argument("--initial-controller", default=None)
+    parser.add_argument("--horizon-seconds", type=float, default=4.5)
     parser.add_argument("--initial-feasible", action="store_true")
     parser.add_argument("--rebuild-initial-states", action="store_true")
     parser.add_argument("--seed", type=int, default=67001)
@@ -88,6 +89,7 @@ def main() -> None:
     if (
         min(
             args.iterations,
+            args.horizon_seconds,
             args.initial_regularization,
             args.lqr_scale,
             args.control_cost,
@@ -126,9 +128,6 @@ def main() -> None:
         }
     cfg = fixed_state_cfg(base_cfg, state, float(base_cfg["env"]["episode_seconds"]))
 
-    initial_path = Path(args.initial_controller)
-    initial_payload = json.loads(initial_path.read_text(encoding="utf-8"))
-    initial_controls, initial_states, _ = source_trajectory(initial_payload)
     gain = lqr_gain(cfg, progress=1.0, fd_eps=1e-7, control_cost=1000.0)
     spec = load_config(args.spec)
     distribution = spec["distribution"]
@@ -150,6 +149,16 @@ def main() -> None:
     env.reset(seed=args.seed)
     transition = MujocoTransition(env, coordinate_transform=transform)
     start_state = transition.to_coordinates(data_state(env.data))
+    initial_path = (
+        None if args.initial_controller is None else Path(args.initial_controller)
+    )
+    if initial_path is None:
+        horizon_steps = max(2, int(round(args.horizon_seconds / env.dt)))
+        initial_controls = np.zeros(horizon_steps, dtype=np.float64)
+        initial_states = rollout_controls(transition, start_state, initial_controls)
+    else:
+        initial_payload = json.loads(initial_path.read_text(encoding="utf-8"))
+        initial_controls, initial_states, _ = source_trajectory(initial_payload)
     if initial_states.shape != (initial_controls.size + 1, transform.shape[0]):
         raise ValueError("initial controller state/control horizon is inconsistent")
     initial_states = initial_states.copy()
@@ -184,7 +193,9 @@ def main() -> None:
             initial_xs,
             initial_us,
             args.iterations,
-            args.initial_feasible or args.rebuild_initial_states,
+            args.initial_feasible
+            or args.rebuild_initial_states
+            or initial_path is None,
             args.initial_regularization,
         )
     )
@@ -233,8 +244,14 @@ def main() -> None:
         "seed": int(args.seed),
         "controller": {
             "type": "crocoddyl_box_fddp_exact_mujoco_then_lqr",
-            "initial_controller": file_metadata(initial_path),
-            "initial_feasible": bool(args.initial_feasible),
+            "initial_controller": (
+                None if initial_path is None else file_metadata(initial_path)
+            ),
+            "initial_feasible": bool(
+                args.initial_feasible
+                or args.rebuild_initial_states
+                or initial_path is None
+            ),
             "rebuilt_initial_states": bool(args.rebuild_initial_states),
             "horizon_steps": int(controls.size),
             "horizon_seconds": float(

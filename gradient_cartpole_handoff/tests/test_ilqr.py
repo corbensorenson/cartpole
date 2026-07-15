@@ -20,6 +20,7 @@ from scripts.search_ilqr_capture import (
     handoff_bounds_satisfied,
     interpolate_initial_state,
 )
+from scripts.search_capture_pipeline import parse_state_indices, stage_paths
 
 
 class ILQRTests(unittest.TestCase):
@@ -220,6 +221,16 @@ class ILQRTests(unittest.TestCase):
                 [1.0, 1.1, 1.2, 1.3],
                 [2.0, 2.1, 2.2, 2.3],
             ],
+        )
+
+    def test_capture_pipeline_parses_unique_indices_and_stable_paths(self) -> None:
+        self.assertEqual(parse_state_indices("4, 1,9"), [4, 1, 9])
+        with self.assertRaisesRegex(ValueError, "unique"):
+            parse_state_indices("1,1")
+        paths = stage_paths(Path("runs/pipeline"), 4)
+        self.assertEqual(
+            paths["approach"],
+            Path("runs/pipeline/validation_4/approach_ilqr.json"),
         )
 
     def test_funnel_library_selection_prefers_success_then_hold(self) -> None:
