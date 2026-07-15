@@ -11,6 +11,7 @@ import numpy as np
 from gcartpole.capture_envelope import generate_capture_states, validate_capture_config, validate_capture_states
 from gcartpole.config import load_config
 from gcartpole.env import NLinkCartPoleEnv
+from gcartpole.ppo_mlx import select_evaluation_state_indices
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -85,6 +86,20 @@ class CaptureEnvelopeTests(unittest.TestCase):
         self.assertTrue(any("rail_limit" in error for error in errors))
         self.assertTrue(any("force_limit" in error for error in errors))
         self.assertTrue(any("success_sustain_seconds" in error for error in errors))
+
+    def test_curriculum_validation_indices_are_fixed_and_unique(self) -> None:
+        spec = self.small_spec()
+        payload = generate_capture_states(spec, "test")
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "states.json"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            first = select_evaluation_state_indices(path, episodes=32, seed=61201)
+            second = select_evaluation_state_indices(path, episodes=32, seed=61201)
+            different = select_evaluation_state_indices(path, episodes=32, seed=61202)
+        self.assertEqual(first, second)
+        self.assertNotEqual(first, different)
+        self.assertEqual(len(set(first)), 32)
+        self.assertTrue(all(0 <= index < 64 for index in first))
 
 
 if __name__ == "__main__":

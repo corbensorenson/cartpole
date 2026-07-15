@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import copy
 import csv
+import json
 import math
 import time
 from pathlib import Path
@@ -160,6 +162,7 @@ def evaluate_policy(
     seed: int,
     progress: float = 1.0,
     return_episodes: bool = False,
+    reset_state_indices: list[int] | None = None,
 ) -> dict[str, Any]:
     from .env import NLinkCartPoleEnv
 
@@ -182,9 +185,12 @@ def evaluate_policy(
     low_momentum_cart_threshold = float(reward_cfg.get("upright_cart_vel_threshold", 1.0))
     low_momentum_min_time = float(reward_cfg.get("low_momentum_min_time_seconds", 0.0))
     low_momentum_max_cart_abs = reward_cfg.get("low_momentum_max_cart_abs")
+    if reset_state_indices is not None and len(reset_state_indices) != episodes:
+        raise ValueError("reset_state_indices must contain exactly one index per evaluation episode")
     for ep in range(episodes):
         env = NLinkCartPoleEnv(cfg, progress=progress, seed=seed + 10_000 + ep)
-        obs, _ = env.reset()
+        reset_options = None if reset_state_indices is None else {"state_index": int(reset_state_indices[ep])}
+        obs, _ = env.reset(options=reset_options)
         done = False
         ep_return = 0.0
         ep_len = 0
@@ -239,6 +245,7 @@ def evaluate_policy(
             episode_results.append(
                 {
                     "episode": ep,
+                    "state_index": None if reset_state_indices is None else int(reset_state_indices[ep]),
                     "seed": seed + 10_000 + ep,
                     "return": float(ep_return),
                     "length": int(ep_len),
@@ -294,6 +301,17 @@ def evaluate_policy(
     if return_episodes:
         metrics["episode_results"] = episode_results
     return metrics
+
+
+def select_evaluation_state_indices(path: str | Path, episodes: int, seed: int) -> list[int]:
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    states = payload.get("states", payload) if isinstance(payload, dict) else payload
+    if not isinstance(states, list):
+        raise ValueError("curriculum evaluation state file must contain a state list")
+    if episodes < 1 or episodes > len(states):
+        raise ValueError(f"curriculum eval episodes must be in 1..{len(states)}")
+    rng = np.random.default_rng(seed)
+    return rng.permutation(len(states))[:episodes].astype(int).tolist()
 
 
 def checkpoint_score(eval_metrics: dict[str, Any]) -> tuple[float, ...]:
@@ -378,6 +396,25 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
     last_curriculum_advance_update = 0
     last_env_progress: float | None = None
     current_morph_info: dict[str, Any] = {}
+    eval_cfg = cfg
+    eval_state_indices: list[int] | None = None
+    eval_seed = int(ppo.get("curriculum_eval_seed", seed + 91_001))
+    eval_states_path = ppo.get("curriculum_eval_states_path")
+    if eval_states_path:
+        eval_cfg = copy.deepcopy(cfg)
+        eval_cfg["env"]["init_mode"] = "state_list"
+        eval_cfg["env"]["init_states_path"] = str(eval_states_path)
+        eval_cfg["env"]["init_state_curriculum"] = "all"
+        eval_state_indices = select_evaluation_state_indices(
+            eval_states_path,
+            int(ppo.get("eval_episodes", 5)),
+            eval_seed,
+        )
+    curriculum_eval_metadata = {
+        "states_path": None if eval_states_path is None else str(eval_states_path),
+        "seed": eval_seed,
+        "state_indices": eval_state_indices,
+    }
 
     envs = make_vec_env(cfg, num_envs=num_envs, seed=seed, progress=0.0, backend=vec_backend)
     obs, _ = envs.reset()
@@ -559,11 +596,12 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
             if update % int(ppo.get("eval_every", 50)) == 0 or update == total_updates:
                 eval_progress = resolve_eval_progress(ppo, progress)
                 eval_metrics = evaluate_policy(
-                    cfg,
+                    eval_cfg,
                     model,
                     episodes=int(ppo.get("eval_episodes", 5)),
-                    seed=seed + update * 17,
+                    seed=eval_seed if eval_state_indices is not None else seed + update * 17,
                     progress=eval_progress,
+                    reset_state_indices=eval_state_indices,
                 )
                 eval_score = checkpoint_score(eval_metrics)
                 if best_eval_score is None or eval_score > best_eval_score:
@@ -590,6 +628,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                                 "return_mean",
                             ],
                             "global_steps": global_steps,
+                            "curriculum_evaluation": curriculum_eval_metadata,
                         },
                         ckpt_dir / "best.meta.json",
                     )
@@ -623,6 +662,7 @@ def train(cfg: dict[str, Any], init_checkpoint: str | None = None) -> dict[str, 
                                 "return_mean",
                             ],
                             "global_steps": global_steps,
+                            "curriculum_evaluation": curriculum_eval_metadata,
                         },
                         ckpt_dir / "frontier.meta.json",
                     )

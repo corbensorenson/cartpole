@@ -133,7 +133,9 @@ ppo:
   normalize_advantages: true
   checkpoint_every: 50
   eval_every: 25
-  eval_episodes: 32
+  eval_episodes: 256
+  curriculum_eval_states_path: runs/p1_capture_envelope/validation.json
+  curriculum_eval_seed: 61201
   curriculum_mode: gated
   curriculum_start_progress: 0.025
   curriculum_step: 0.025

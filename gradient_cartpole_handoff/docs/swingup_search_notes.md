@@ -443,3 +443,14 @@ validation success at progress 0.075 = 18/32 internally; 130/256 on an external 
 ```
 
 A fixed-progress continuation at `0.075` with lower learning rate and action variance remained near 50% success through update 50, so it did not advance the gate. This establishes a measured curriculum boundary, not a solution. The next PPO continuation should use materially smaller envelope increments than `0.025`; the parallel model-based branch should add a terminal stabilizer/value and longer low-dimensional horizon before being judged against the same frozen validation states.
+
+Fine-step follow-up and validation-gate correction:
+
+```text
+runs/swingup6_capture_envelope_allstates_finegate_probe_300/
+runs/p1_capture_envelope/eval_finegate_frontier0055_validation256.json
+```
+
+Reducing the curriculum increment from `0.025` to `0.005` allowed the policy to move beyond the previous jump failure. It requalified at progress `0.05` with `62/64` internal successes, then reached `58/64` at progress `0.055` after 60 updates at that stage. At progress `0.06`, three checks scored 72%, 80%, and 72%, so the run was stopped at update 156.
+
+An independent exact-index check of the proposed `0.055` frontier on 256 frozen validation states scored only `84.8%` (`217/256`) with 39 rail hits. Audit showed that the trainer's old internal gate sampled the training state file rather than the independent validation split. The `0.055` advancement is therefore invalidated as a mastered frontier even though it is useful initialization. `ppo_mlx.evaluate_policy` now supports exact indexed resets, and gated training can set `ppo.curriculum_eval_states_path`, `ppo.curriculum_eval_seed`, and `ppo.eval_episodes`. The capture config uses a fixed 256-state subset of `runs/p1_capture_envelope/validation.json`; checkpoint metadata records the path, seed, and every selected index. The accepted held-out frontier remains progress `0.05` until the corrected validation gate passes.
