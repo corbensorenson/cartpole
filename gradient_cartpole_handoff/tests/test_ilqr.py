@@ -7,6 +7,7 @@ from tempfile import TemporaryDirectory
 import numpy as np
 
 from gcartpole.ilqr import stitch_feedback_trajectories
+from scripts.evaluate_ilqr_chain_basin import aggregate, parse_radii
 from scripts.refine_ilqr_capture_chain import controls_from_knots, warm_start_controls
 
 
@@ -59,6 +60,41 @@ class ILQRTests(unittest.TestCase):
         np.testing.assert_allclose(
             controls_from_knots(np.asarray([-2.0, 0.0, 2.0]), 5),
             [-1.0, -1.0, 0.0, 1.0, 1.0],
+        )
+
+    def test_chain_basin_helpers_validate_and_aggregate(self) -> None:
+        self.assertEqual(parse_radii("0.01, 0.2"), [0.01, 0.2])
+        with self.assertRaises(ValueError):
+            parse_radii("0.0")
+        rows = [
+            {
+                "result": {
+                    "success": True,
+                    "latched": True,
+                    "minimum_lyapunov": 10.0,
+                    "max_cart_excursion": 1.0,
+                }
+            },
+            {
+                "result": {
+                    "success": False,
+                    "latched": False,
+                    "minimum_lyapunov": 30.0,
+                    "max_cart_excursion": 2.0,
+                }
+            },
+        ]
+        self.assertEqual(
+            aggregate(rows),
+            {
+                "count": 2,
+                "success_count": 1,
+                "success_rate": 0.5,
+                "latch_count": 1,
+                "latch_rate": 0.5,
+                "median_minimum_lyapunov": 20.0,
+                "maximum_cart_excursion": 2.0,
+            },
         )
 
 
