@@ -31,6 +31,7 @@ class ILQRResult:
     cost: float
     iterations: int
     converged: bool
+    active_control_steps: int
     history: list[dict[str, float | int | bool]]
 
 
@@ -204,6 +205,27 @@ def _terminal_derivatives(
     return vx, vxx
 
 
+def scalar_box_policy(
+    qu: float,
+    quu: float,
+    qux: Array,
+    control: float,
+) -> tuple[float, Array, bool]:
+    if not np.isfinite(quu) or quu <= 0.0:
+        raise np.linalg.LinAlgError("non-positive control curvature")
+    unconstrained = -float(qu) / float(quu)
+    lower = -1.0 - float(control)
+    upper = 1.0 - float(control)
+    feedforward = float(np.clip(unconstrained, lower, upper))
+    active = bool(feedforward != unconstrained)
+    feedback = (
+        np.zeros_like(np.asarray(qux, dtype=np.float64))
+        if active
+        else -np.asarray(qux, dtype=np.float64) / float(quu)
+    )
+    return feedforward, feedback, active
+
+
 def _backward_pass(
     transition: MujocoTransition,
     states: Array,
@@ -213,11 +235,12 @@ def _backward_pass(
     regularization: float,
     state_epsilon: float,
     action_epsilon: float,
-) -> tuple[Array, Array]:
+) -> tuple[Array, Array, Array]:
     horizon = len(controls)
     nx = states.shape[1]
     feedforward = np.empty(horizon, dtype=np.float64)
     feedback = np.empty((horizon, nx), dtype=np.float64)
+    active_constraints = np.empty(horizon, dtype=np.bool_)
     vx, vxx = _terminal_derivatives(states[-1], cost, transition.env.n)
 
     for step in range(horizon - 1, -1, -1):
@@ -235,16 +258,14 @@ def _backward_pass(
         qxx = lxx + a.T @ vxx @ a
         quu = float(luu + (b.T @ vxx @ b).item() + regularization)
         qux = (b.T @ vxx @ a).reshape(-1)
-        if not np.isfinite(quu) or quu <= 0.0:
-            raise np.linalg.LinAlgError("non-positive control curvature")
-        k = -qu / quu
-        gain = -qux / quu
+        k, gain, active = scalar_box_policy(qu, quu, qux, float(controls[step]))
         feedforward[step] = k
         feedback[step] = gain
+        active_constraints[step] = active
         vx = qx + gain * (quu * k + qu) + qux * k
         vxx = qxx + quu * np.outer(gain, gain) + np.outer(gain, qux) + np.outer(qux, gain)
         vxx = 0.5 * (vxx + vxx.T)
-    return feedforward, feedback
+    return feedforward, feedback, active_constraints
 
 
 def optimize_ilqr(
@@ -264,11 +285,12 @@ def optimize_ilqr(
     history: list[dict[str, float | int | bool]] = []
     converged = False
     feedback = np.zeros((len(controls), len(initial_state)), dtype=np.float64)
+    active_constraints = np.zeros(len(controls), dtype=np.bool_)
 
     for iteration in range(max_iterations):
         accepted = False
         try:
-            feedforward, candidate_feedback = _backward_pass(
+            feedforward, candidate_feedback, candidate_active_constraints = _backward_pass(
                 transition,
                 states,
                 controls,
@@ -317,6 +339,7 @@ def optimize_ilqr(
                 states = candidate_states
                 current_cost = float(candidate_cost)
                 feedback = candidate_feedback
+                active_constraints = candidate_active_constraints
                 regularization = max(1e-9, regularization / 3.0)
                 accepted = True
                 break
@@ -330,6 +353,7 @@ def optimize_ilqr(
                 "accepted": bool(accepted),
                 "relative_improvement": float(relative_improvement),
                 "regularization": float(regularization),
+                "active_control_steps": int(np.count_nonzero(candidate_active_constraints)),
             }
         )
         if accepted and relative_improvement < tolerance:
@@ -337,7 +361,7 @@ def optimize_ilqr(
             break
 
     try:
-        _, feedback = _backward_pass(
+        _, feedback, active_constraints = _backward_pass(
             transition,
             states,
             controls,
@@ -355,5 +379,6 @@ def optimize_ilqr(
         cost=float(current_cost),
         iterations=len(history),
         converged=converged,
+        active_control_steps=int(np.count_nonzero(active_constraints)),
         history=history,
     )

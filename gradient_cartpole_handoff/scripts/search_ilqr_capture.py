@@ -67,12 +67,22 @@ def initial_controls(
 
 def load_initial_controls(path: str, horizon_steps: int, policy_dt: float) -> np.ndarray:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
-    controls = np.asarray(payload["controller"]["controls"], dtype=np.float64)
+    saved_controls = payload.get("controller", {}).get("controls")
+    trajectory_controls = saved_controls is None
+    if trajectory_controls:
+        saved_controls = [row["action"] for row in payload.get("result", {}).get("trajectory", [])]
+    controls = np.asarray(saved_controls, dtype=np.float64)
     if controls.ndim != 1 or len(controls) < 2:
         raise ValueError("initial controller must contain at least two scalar controls")
+    if trajectory_controls and len(controls) >= horizon_steps:
+        return np.clip(controls[:horizon_steps], -1.0, 1.0)
     if len(controls) == horizon_steps:
         return np.clip(controls, -1.0, 1.0)
-    source_seconds = float(payload["controller"]["horizon_seconds"])
+    source_seconds = (
+        len(controls) * policy_dt
+        if trajectory_controls
+        else float(payload["controller"]["horizon_seconds"])
+    )
     source_dt = source_seconds / len(controls)
     source_time = np.arange(len(controls), dtype=np.float64) * source_dt
     target_time = np.arange(horizon_steps, dtype=np.float64) * policy_dt
@@ -92,6 +102,7 @@ def execute_controller(
     lyapunov: np.ndarray,
     handoff_lyapunov: float,
     handoff_cart_abs: float,
+    tracking_mode: str = "ilqr_tracking",
 ) -> dict[str, Any]:
     env = NLinkCartPoleEnv(cfg, progress=1.0, seed=seed)
     env.reset(seed=seed)
@@ -120,7 +131,7 @@ def execute_controller(
                 action = float(
                     np.clip(controls[step] + feedback_gains[step] @ error, -1.0, 1.0)
                 )
-                mode = "ilqr_tracking"
+                mode = tracking_mode
             else:
                 action = lqr_action(env, gain, scale=lqr_scale, cart_target=0.0)
                 mode = "lqr"
@@ -171,6 +182,7 @@ def main() -> None:
     parser.add_argument("--control-cost", type=float, default=0.1)
     parser.add_argument("--stage-weight", type=float, default=0.1)
     parser.add_argument("--terminal-weight", type=float, default=1.0)
+    parser.add_argument("--terminal-state-weight", type=float, default=0.0)
     parser.add_argument("--rail-soft-limit", type=float, default=2.4)
     parser.add_argument("--rail-weight", type=float, default=100_000_000.0)
     parser.add_argument("--handoff-lyapunov", type=float, default=1800.0)
@@ -186,7 +198,7 @@ def main() -> None:
         args.rail_weight,
         args.handoff_lyapunov,
         args.handoff_cart_abs,
-    ) <= 0.0 or args.iterations < 1:
+    ) <= 0.0 or args.terminal_state_weight < 0.0 or args.iterations < 1:
         raise ValueError("durations, weights, thresholds, and iterations must be positive")
 
     base_cfg = apply_overrides(load_config(args.config), args.override)
@@ -226,7 +238,10 @@ def main() -> None:
     else:
         controls = load_initial_controls(args.initial_controller, horizon_steps, policy_dt)
     stage_metric = args.stage_weight * np.eye(transform.shape[0], dtype=np.float64)
-    terminal_metric = args.terminal_weight * lyapunov / args.handoff_lyapunov
+    terminal_metric = (
+        args.terminal_weight * lyapunov / args.handoff_lyapunov
+        + args.terminal_state_weight * np.eye(transform.shape[0], dtype=np.float64)
+    )
     trajectory_cost = QuadraticTrajectoryCost(
         stage_state=stage_metric,
         terminal_state=terminal_metric,
@@ -272,7 +287,8 @@ def main() -> None:
         "selected_state": state,
         "seed": int(args.seed),
         "controller": {
-            "type": "exact_mujoco_ilqr_tracking_then_lqr",
+            "type": "exact_mujoco_box_constrained_ilqr_tracking_then_lqr",
+            "control_constraint_method": "scalar_active_set",
             "horizon_steps": horizon_steps,
             "horizon_seconds": horizon_steps * policy_dt,
             "iterations": int(args.iterations),
@@ -286,6 +302,7 @@ def main() -> None:
             "control_cost": float(args.control_cost),
             "stage_weight": float(args.stage_weight),
             "terminal_weight": float(args.terminal_weight),
+            "terminal_state_weight": float(args.terminal_state_weight),
             "rail_soft_limit": float(args.rail_soft_limit),
             "rail_weight": float(args.rail_weight),
             "handoff_lyapunov": float(args.handoff_lyapunov),
@@ -297,10 +314,12 @@ def main() -> None:
             "cost": float(search.cost),
             "iterations": int(search.iterations),
             "converged": bool(search.converged),
+            "active_control_steps": int(search.active_control_steps),
             "wall_time_seconds": float(search_seconds),
             "initial_lyapunov": float(nominal_values[0]),
             "minimum_lyapunov": float(min(nominal_values)),
             "terminal_lyapunov": float(nominal_values[-1]),
+            "terminal_dimensionless_state_norm": float(np.linalg.norm(search.states[-1])),
             "max_cart_excursion": float(np.max(np.abs(nominal_physical_states[:, 0]))),
             "history": search.history,
             "nominal_coordinate_states": search.states.astype(float).tolist(),

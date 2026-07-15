@@ -571,3 +571,26 @@ terminal V = 1,125,027; planned max |x| = 1.638 m
 ```
 
 Live time-varying tracking matches the planned terminal value, but neither trajectory enters the conservative funnel; switching to saturated LQR then causes a rail failure. Raising terminal weight by another factor of ten makes no progress. Preserving the three-second control timing and appending a two-second horizon lowers transient `V` to `1.01M` but regresses terminal `V` to `66.4M`. The current local iLQR formulation is therefore retained as a trajectory diagnostic and warm-start tool, not treated as a P1 controller. The next distinct branch should use box-constrained DDP/direct collocation with an explicit terminal-state constraint or learn a broad recovery policy from a diverse set of optimized feasible trajectories; further scalar weight sweeps on this local optimum are not justified.
+
+### Box-constrained DDP and multiple shooting
+
+The DDP backward pass now solves the scalar box subproblem at each step. If the unconstrained feedforward update exceeds the remaining normalized action interval, the update is clamped and its local feedback gain is disabled. This avoids treating rollout clipping as though it were the optimizer. The final controller records active constraint steps and uses the time-varying feedback gains during uninterrupted MuJoCo evaluation.
+
+The first box-constrained continuation improves the original folded state-674 trajectory from `V=1.13M` to `V=430,908`, but its normalized terminal state norm remains about `64`; extrapolated `x^T P x` had been rewarding a folded, high-velocity state outside the local funnel. Adding explicit terminal dimensionless-state cost to that incumbent barely changes the basin.
+
+Initialization from the direct-action CEM rollout changes the result qualitatively. Successive active-set DDP continuation produces:
+
+```text
+runs/p1_capture_ilqr/validation_674_p1_boxddp_from_cem.json
+terminal V = 60,588; terminal ||z|| = 2.761; planned max |x| = 2.404 m
+
+runs/p1_capture_ilqr/validation_674_p1_boxddp_from_cem_refine10x.json
+terminal V = 35,148; terminal ||z|| = 1.907; planned max |x| = 2.317 m
+
+runs/p1_capture_ilqr/validation_674_p1_boxddp_from_cem_refine100x.json
+terminal V = 30,286; planned max |x| = 2.413 m
+```
+
+The middle terminal state has cart position `0.265 m`, maximum relative-angle magnitude about `0.100 rad`, cart speed `0.083 m/s`, and maximum hinge speed `0.84 rad/s`. Planned and uninterrupted tracking values agree, but none reaches the conservative `V <= 1,800` handoff; nominal LQR after the transient hits the rail. Extending the best control timing from three to four seconds with a zero-action tail regresses terminal `V` to `316M`, so that extension is rejected.
+
+`src/gcartpole/multiple_shooting.py` and `scripts/search_multiple_shooting_capture.py` add sparse state-node/action optimization with exact MuJoCo segment defects, hard action and node-rail bounds, and DDP tracking gains for final replay. Penalized defects as small as `5.8e-3` still diverge under exact replay. Equality-constrained trust-region and SLSQP probes reduce their node objectives only by violating dynamics constraints. The implementation therefore retains only objective improvements whose maximum defect is at most `1e-8`; otherwise it returns the exact feasible warm start. No equality-solver probe improved that warm start. The main actionable result is that trajectory initialization diversity, not further scalar weighting of one local basin, enabled the `37x` reduction from `1.13M` to `30,286`.

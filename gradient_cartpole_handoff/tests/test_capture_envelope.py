@@ -20,7 +20,8 @@ from gcartpole.capture_funnel import (
 )
 from gcartpole.config import load_config
 from gcartpole.env import NLinkCartPoleEnv
-from gcartpole.ilqr import MujocoTransition, data_state, state_difference
+from gcartpole.ilqr import MujocoTransition, data_state, scalar_box_policy, state_difference
+from gcartpole.multiple_shooting import pack_decision, shooting_sparsity, unpack_decision
 from gcartpole.ppo_mlx import select_evaluation_state_indices
 from scripts.mine_capture_failures import build_mining_mixture
 from scripts.evaluate_linear_mpc_capture import LinearMPC
@@ -270,6 +271,27 @@ class CaptureEnvelopeTests(unittest.TestCase):
             atol=1e-12,
         )
 
+    def test_ilqr_scalar_box_policy_clamps_and_disables_feedback(self) -> None:
+        feedforward, feedback, active = scalar_box_policy(
+            qu=-4.0,
+            quu=2.0,
+            qux=np.asarray([1.0, -2.0]),
+            control=0.75,
+        )
+        self.assertEqual(feedforward, 0.25)
+        np.testing.assert_allclose(feedback, np.zeros(2))
+        self.assertTrue(active)
+
+        feedforward, feedback, active = scalar_box_policy(
+            qu=0.4,
+            quu=2.0,
+            qux=np.asarray([1.0, -2.0]),
+            control=0.0,
+        )
+        self.assertAlmostEqual(feedforward, -0.2)
+        np.testing.assert_allclose(feedback, [-0.5, 1.0])
+        self.assertFalse(active)
+
     def test_ilqr_warm_start_preserves_time_and_pads_with_zero(self) -> None:
         payload = {
             "controller": {
@@ -282,6 +304,22 @@ class CaptureEnvelopeTests(unittest.TestCase):
             path.write_text(json.dumps(payload), encoding="utf-8")
             controls = load_initial_controls(str(path), horizon_steps=5, policy_dt=0.02)
         np.testing.assert_allclose(controls, [0.0, 0.5, 1.0, 0.0, 0.0])
+
+    def test_ilqr_warm_start_can_use_recorded_rollout_actions(self) -> None:
+        payload = {
+            "result": {
+                "trajectory": [
+                    {"action": -0.5},
+                    {"action": 0.25},
+                    {"action": 0.75},
+                ]
+            }
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "rollout.json"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            controls = load_initial_controls(str(path), horizon_steps=2, policy_dt=0.02)
+        np.testing.assert_allclose(controls, [-0.5, 0.25])
 
     def test_ilqr_dimensionless_mujoco_transition_linearizes(self) -> None:
         cfg = load_config(ROOT / "configs/swingup6_capture_envelope.yaml")
@@ -309,6 +347,23 @@ class CaptureEnvelopeTests(unittest.TestCase):
         self.assertEqual(input_matrix.shape, (14, 1))
         self.assertTrue(np.all(np.isfinite(state_matrix)))
         self.assertTrue(np.all(np.isfinite(input_matrix)))
+
+    def test_multiple_shooting_decision_and_sparsity(self) -> None:
+        nodes = np.arange(12, dtype=np.float64).reshape(3, 4)
+        controls = np.linspace(-1.0, 1.0, 6, dtype=np.float64)
+        decision = pack_decision(nodes, controls)
+        unpacked_nodes, unpacked_controls = unpack_decision(
+            decision,
+            nx=4,
+            horizon_steps=6,
+            segment_steps=2,
+        )
+        np.testing.assert_allclose(unpacked_nodes, nodes)
+        np.testing.assert_allclose(unpacked_controls, controls)
+
+        pattern = shooting_sparsity(nx=4, horizon_steps=6, segment_steps=2)
+        self.assertEqual(pattern.shape, (28, 18))
+        self.assertTrue(np.all(pattern.getnnz(axis=1) > 0))
 
     def test_policy_control_penalty_prefers_zero_residual(self) -> None:
         cfg = load_config(ROOT / "configs/swingup6_capture_sac_boundary.yaml")
