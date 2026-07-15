@@ -87,6 +87,23 @@ def dimensionless_absolute_transform(n_links: int, scales: StateScales) -> np.nd
     return transform
 
 
+def dimensionless_wrapped_state(
+    qpos: np.ndarray,
+    qvel: np.ndarray,
+    transform: np.ndarray,
+) -> np.ndarray:
+    qpos = np.asarray(qpos, dtype=np.float64).copy()
+    qvel = np.asarray(qvel, dtype=np.float64)
+    transform = np.asarray(transform, dtype=np.float64)
+    state_size = qpos.size + qvel.size
+    if qpos.ndim != 1 or qvel.ndim != 1 or qpos.size != qvel.size:
+        raise ValueError("qpos and qvel must be equal-length vectors")
+    if transform.shape != (state_size, state_size):
+        raise ValueError("transform shape does not match qpos and qvel")
+    qpos[1:] = (qpos[1:] + np.pi) % (2.0 * np.pi) - np.pi
+    return transform @ np.r_[qpos, qvel]
+
+
 def transform_dynamics(
     state_matrix: np.ndarray,
     input_matrix: np.ndarray,

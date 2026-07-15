@@ -10,6 +10,7 @@ from gcartpole.modal import (
     closed_loop_lyapunov_matrix,
     conjugate_mode_groups,
     dimensionless_absolute_transform,
+    dimensionless_wrapped_state,
     grouped_modal_amplitudes,
     modal_decomposition,
     real_schur_decomposition,
@@ -59,6 +60,14 @@ class ModalTests(unittest.TestCase):
         gain = np.asarray([0.2, -0.3, 0.4, -0.5], dtype=np.float64)
         transformed_gain = transform_feedback_gain(gain, transform)
         self.assertAlmostEqual(float(gain @ state), float(transformed_gain @ (transform @ state)))
+
+    def test_dimensionless_state_wraps_relative_angles(self) -> None:
+        transform = dimensionless_absolute_transform(2, StateScales(2.0, 0.2, 1.0, 0.5))
+        qpos = np.asarray([0.4, 2.0 * np.pi + 0.1, -2.0 * np.pi - 0.2])
+        qvel = np.asarray([0.3, -0.4, 0.5])
+        actual = dimensionless_wrapped_state(qpos, qvel, transform)
+        expected = transform @ np.r_[[0.4, 0.1, -0.2], qvel]
+        np.testing.assert_allclose(actual, expected, atol=1e-12)
 
     def test_modal_coordinates_reconstruct_complex_pair(self) -> None:
         state_matrix = np.asarray(

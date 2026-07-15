@@ -26,7 +26,9 @@ from scripts.evaluate_linear_mpc_capture import LinearMPC
 from scripts.search_linear_policy import development_seed
 from scripts.search_capture_recovery import recovery_residual
 from scripts.search_capture_hybrid_schedule import evaluate_hybrid_schedule, resample_target_controller
+from scripts.evaluate_feedback_mpc_capture import feedback_action, shift_schedule
 from scripts.search_capture_target_schedule import evaluate_target_schedule, scheduled_cart_target
+from scripts.search_swingup_capture import lqr_action
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -224,6 +226,38 @@ class CaptureEnvelopeTests(unittest.TestCase):
         np.testing.assert_allclose(controller["target_knots"], [0.0, 0.75, 0.0, 0.0, 0.0])
         np.testing.assert_allclose(controller["residual_knots"], np.zeros(4))
         self.assertEqual(controller["lqr_scale"], 1.4)
+
+    def test_feedback_mpc_action_matches_live_lqr(self) -> None:
+        cfg = load_config(ROOT / "configs/swingup6_capture_envelope.yaml")
+        cfg["env"]["init_mode"] = "upright"
+        cfg["env"]["init_angle_noise"] = 0.0
+        cfg["env"]["init_vel_noise"] = 0.0
+        env = NLinkCartPoleEnv(cfg, progress=1.0, seed=23)
+        gain = np.linspace(-0.2, 0.3, 14, dtype=np.float64)
+        try:
+            env.reset()
+            env.data.qpos[1] = 2.0 * np.pi + 0.03
+            env.data.qvel[:] = np.linspace(-0.1, 0.1, 7)
+            expected = lqr_action(env, gain, scale=1.2, cart_target=0.4)
+            actual = feedback_action(
+                env.data.qpos,
+                env.data.qvel,
+                gain,
+                n_links=6,
+                scale=1.2,
+                cart_target=0.4,
+            )
+        finally:
+            env.close()
+        self.assertAlmostEqual(actual, expected)
+
+    def test_feedback_mpc_warm_start_shifts_and_ends_at_zero(self) -> None:
+        shifted = shift_schedule(
+            np.asarray([0.0, 1.0, 0.0], dtype=np.float64),
+            elapsed_seconds=0.5,
+            horizon_seconds=2.0,
+        )
+        np.testing.assert_allclose(shifted, [0.5, 0.5, 0.0])
 
     def test_policy_control_penalty_prefers_zero_residual(self) -> None:
         cfg = load_config(ROOT / "configs/swingup6_capture_sac_boundary.yaml")
