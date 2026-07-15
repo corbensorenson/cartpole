@@ -7,7 +7,7 @@ from tempfile import TemporaryDirectory
 import numpy as np
 
 from gcartpole.ilqr import stitch_feedback_trajectories
-from scripts.evaluate_ilqr_chain_basin import aggregate, parse_radii
+from scripts.evaluate_ilqr_chain_basin import aggregate, parse_radii, select_feedback_gains
 from scripts.evaluate_receding_ilqr_capture import shift_controls
 from scripts.refine_ilqr_capture_chain import (
     capture_selection_key,
@@ -187,6 +187,18 @@ class ILQRTests(unittest.TestCase):
                 "median_minimum_lyapunov": 20.0,
                 "maximum_cart_excursion": 2.0,
             },
+        )
+
+    def test_chain_basin_selects_raw_solver_gains_with_scale(self) -> None:
+        applied = np.zeros((2, 3))
+        solver = np.arange(6, dtype=np.float64).reshape(2, 3)
+        controller = {"solver_feedback_gains": solver.tolist()}
+        np.testing.assert_allclose(
+            select_feedback_gains(controller, applied, "solver", 0.25),
+            0.25 * solver,
+        )
+        np.testing.assert_allclose(
+            select_feedback_gains(controller, applied, "applied", 1.0), applied
         )
 
 

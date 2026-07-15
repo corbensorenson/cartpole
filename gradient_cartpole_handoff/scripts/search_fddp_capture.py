@@ -262,6 +262,7 @@ def main() -> None:
             "handoff_hinge_velocity_rms": float(args.handoff_hinge_velocity_rms),
             "controls": controls.astype(float).tolist(),
             "feedback_gains": feedback_gains.astype(float).tolist(),
+            "solver_feedback_gains": solver_feedback_gains.astype(float).tolist(),
         },
         "search": {
             "converged": converged,

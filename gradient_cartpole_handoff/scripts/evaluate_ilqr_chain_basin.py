@@ -83,9 +83,25 @@ def aggregate(rows: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def select_feedback_gains(
+    controller: dict[str, Any], applied_gains: np.ndarray, source: str, scale: float
+) -> np.ndarray:
+    if source == "applied":
+        gains = applied_gains
+    elif source == "solver":
+        if "solver_feedback_gains" not in controller:
+            raise ValueError("controller does not contain solver feedback gains")
+        gains = np.asarray(controller["solver_feedback_gains"], dtype=np.float64)
+        if gains.shape != applied_gains.shape:
+            raise ValueError("solver feedback gains do not match the controller horizon")
+    else:
+        raise ValueError(f"unsupported feedback gain source: {source}")
+    return scale * gains
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Measure the local feedback basin of a saved reset-free iLQR chain"
+        description="Measure the local feedback basin of a saved reset-free trajectory"
     )
     parser.add_argument("--config", default="configs/swingup6_capture_envelope.yaml")
     parser.add_argument("--spec", default="benchmarks/p1_capture_envelope.yaml")
@@ -96,20 +112,44 @@ def main() -> None:
     parser.add_argument("--samples-per-radius", type=int, default=32)
     parser.add_argument("--seed", type=int, default=77001)
     parser.add_argument("--lqr-scale", type=float, default=1.30)
+    parser.add_argument(
+        "--feedback-gain-source", choices=("applied", "solver"), default="applied"
+    )
+    parser.add_argument("--feedback-gain-scale", type=float, default=1.0)
     parser.add_argument("--handoff-lyapunov", type=float, default=1800.0)
     parser.add_argument("--handoff-cart-abs", type=float, default=1.5)
+    parser.add_argument("--handoff-angle-abs", type=float, default=0.15)
+    parser.add_argument("--handoff-cart-velocity-abs", type=float, default=0.5)
+    parser.add_argument("--handoff-hinge-velocity-rms", type=float, default=0.75)
     parser.add_argument("--out", required=True)
     parser.add_argument("--override", action="append", default=[])
     args = parser.parse_args()
     radii = parse_radii(args.perturbation_radii)
     if args.nearest_count < 0 or args.samples_per_radius < 1:
         raise ValueError("nearest count must be nonnegative and samples per radius positive")
-    if min(args.lqr_scale, args.handoff_lyapunov, args.handoff_cart_abs) <= 0.0:
+    if (
+        min(
+            args.lqr_scale,
+            args.feedback_gain_scale,
+            args.handoff_lyapunov,
+            args.handoff_cart_abs,
+            args.handoff_angle_abs,
+            args.handoff_cart_velocity_abs,
+            args.handoff_hinge_velocity_rms,
+        )
+        <= 0.0
+    ):
         raise ValueError("controller scales and handoff thresholds must be positive")
 
     controller_path = Path(args.controller)
     controller_payload = json.loads(controller_path.read_text(encoding="utf-8"))
     controls, nominal_states, feedback_gains = source_trajectory(controller_payload)
+    feedback_gains = select_feedback_gains(
+        controller_payload["controller"],
+        feedback_gains,
+        args.feedback_gain_source,
+        args.feedback_gain_scale,
+    )
     selected_state = controller_payload["selected_state"]
     base_cfg = apply_overrides(load_config(args.config), args.override)
     base_cfg["env"]["action_lqr_residual"]["enabled"] = False
@@ -153,6 +193,9 @@ def main() -> None:
                 lyapunov=lyapunov,
                 handoff_lyapunov=args.handoff_lyapunov,
                 handoff_cart_abs=args.handoff_cart_abs,
+                handoff_angle_abs=args.handoff_angle_abs,
+                handoff_cart_velocity_abs=args.handoff_cart_velocity_abs,
+                handoff_hinge_velocity_rms=args.handoff_hinge_velocity_rms,
                 tracking_mode="ilqr_chain_basin_replay",
             )
         )
@@ -211,7 +254,7 @@ def main() -> None:
         "schema_version": 1,
         "generated_at": utc_timestamp(),
         "not_solution": True,
-        "summary": "Local feedback-basin diagnostic for one saved iLQR chain; not P1 evidence.",
+        "summary": "Local feedback-basin diagnostic for one saved trajectory; not P1 evidence.",
         "controller": file_metadata(controller_path),
         "source_state_id": selected_state.get("state_id"),
         "source_result": source_result,
@@ -226,8 +269,13 @@ def main() -> None:
             "samples_per_radius": int(args.samples_per_radius),
             "seed": int(args.seed),
             "lqr_scale": float(args.lqr_scale),
+            "feedback_gain_source": args.feedback_gain_source,
+            "feedback_gain_scale": float(args.feedback_gain_scale),
             "handoff_lyapunov": float(args.handoff_lyapunov),
             "handoff_cart_abs": float(args.handoff_cart_abs),
+            "handoff_angle_abs": float(args.handoff_angle_abs),
+            "handoff_cart_velocity_abs": float(args.handoff_cart_velocity_abs),
+            "handoff_hinge_velocity_rms": float(args.handoff_hinge_velocity_rms),
         },
         "lyapunov": {
             "coordinate_source": file_metadata(args.spec),
@@ -250,7 +298,7 @@ def main() -> None:
     for group in perturbation_groups:
         group_summary = group["summary"]
         print(
-            f"radius={group['normalized_radius']:.4f} success="
+            f"radius={group['normalized_radius']:.6g} success="
             f"{group_summary['success_count']}/{group_summary['count']} "
             f"latch={group_summary['latch_count']}/{group_summary['count']}"
         )
