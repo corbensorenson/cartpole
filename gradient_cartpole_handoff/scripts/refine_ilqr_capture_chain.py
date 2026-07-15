@@ -30,6 +30,10 @@ from gcartpole.modal import (
     closed_loop_lyapunov_matrix,
     dimensionless_absolute_transform,
 )
+from gcartpole.predictive_sampling import (
+    PredictiveSamplingConfig,
+    PredictiveSamplingPlanner,
+)
 
 try:
     from scripts.evaluate_feedback_mpc_capture import (
@@ -57,20 +61,24 @@ def source_trajectory(
     payload: dict[str, Any],
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     controls = np.asarray(payload["controller"]["controls"], dtype=np.float64)
-    states = np.asarray(payload["search"]["nominal_coordinate_states"], dtype=np.float64)
+    states = np.asarray(
+        payload["search"]["nominal_coordinate_states"], dtype=np.float64
+    )
     gains = np.asarray(payload["controller"]["feedback_gains"], dtype=np.float64)
     if states.ndim != 2:
         raise ValueError("source controller states must be two-dimensional")
     # Reuse the stitch validator so malformed source evidence cannot enter a chain.
     empty_controls = np.empty(0, dtype=np.float64)
     empty_gains = np.empty((0, states.shape[1]), dtype=np.float64)
-    validated_controls, validated_states, validated_gains = stitch_feedback_trajectories(
-        controls,
-        states,
-        gains,
-        empty_controls,
-        states[-1:],
-        empty_gains,
+    validated_controls, validated_states, validated_gains = (
+        stitch_feedback_trajectories(
+            controls,
+            states,
+            gains,
+            empty_controls,
+            states[-1:],
+            empty_gains,
+        )
     )
     return validated_controls, validated_states, validated_gains
 
@@ -84,10 +92,14 @@ def warm_start_controls(
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
     saved_controls = payload.get("controller", {}).get("controls")
     if saved_controls is None:
-        saved_controls = [row["action"] for row in payload.get("result", {}).get("trajectory", [])]
+        saved_controls = [
+            row["action"] for row in payload.get("result", {}).get("trajectory", [])
+        ]
     controls = np.asarray(saved_controls, dtype=np.float64)
     if controls.ndim != 1 or controls.size <= offset_steps:
-        raise ValueError("tail warm start has no scalar controls at the requested offset")
+        raise ValueError(
+            "tail warm start has no scalar controls at the requested offset"
+        )
     selected = controls[offset_steps : offset_steps + horizon_steps]
     if selected.size < horizon_steps:
         selected = np.pad(selected, (0, horizon_steps - selected.size))
@@ -121,7 +133,9 @@ def search_action_tail(
     history: list[dict[str, Any]] = []
     for iteration in range(iterations):
         candidates = [center.copy(), np.zeros_like(center)]
-        candidates.extend(center + rng.normal(0.0, sigma) for _ in range(population - 2))
+        candidates.extend(
+            center + rng.normal(0.0, sigma) for _ in range(population - 2)
+        )
         records: list[dict[str, Any]] = []
         for candidate in candidates:
             knots = np.clip(candidate, -1.0, 1.0)
@@ -144,7 +158,9 @@ def search_action_tail(
                 rail_hit = rail_hit or cart_abs > transition.env.rail_limit
                 value = float(max(0.0, state @ lyapunov @ state))
                 values.append(value)
-                latched = latched or (value <= handoff_lyapunov and cart_abs <= handoff_cart_abs)
+                latched = latched or (
+                    value <= handoff_lyapunov and cart_abs <= handoff_cart_abs
+                )
                 if rail_hit:
                     break
             minimum_value = min(values)
@@ -210,10 +226,12 @@ def main() -> None:
     parser.add_argument("--initial-controller-offset-steps", type=int, default=0)
     parser.add_argument("--initial-feedback-cem", action="store_true")
     parser.add_argument("--initial-action-cem", action="store_true")
+    parser.add_argument("--initial-predictive-sampling", action="store_true")
     parser.add_argument("--action-knots", type=int, default=24)
     parser.add_argument("--cem-iterations", type=int, default=8)
     parser.add_argument("--cem-population", type=int, default=256)
     parser.add_argument("--cem-elites", type=int, default=24)
+    parser.add_argument("--predictive-threads", type=int, default=8)
     parser.add_argument("--planning-lqr-scale", type=float, default=1.30)
     parser.add_argument("--lqr-scale", type=float, default=1.30)
     parser.add_argument("--control-cost", type=float, default=0.1)
@@ -237,7 +255,11 @@ def main() -> None:
         args.handoff_lyapunov,
         args.handoff_cart_abs,
     )
-    if min(positive) <= 0.0 or args.iterations < 0 or args.initial_controller_offset_steps < 0:
+    if (
+        min(positive) <= 0.0
+        or args.iterations < 0
+        or args.initial_controller_offset_steps < 0
+    ):
         raise ValueError(
             "durations, weights, and thresholds must be positive; iterations nonnegative"
         )
@@ -245,6 +267,7 @@ def main() -> None:
         (
             args.initial_feedback_cem,
             args.initial_action_cem,
+            args.initial_predictive_sampling,
             args.initial_controller is not None,
         )
     )
@@ -254,6 +277,7 @@ def main() -> None:
         args.cem_iterations < 1
         or args.cem_population < 2
         or not 1 <= args.cem_elites <= args.cem_population
+        or args.predictive_threads < 1
     ):
         raise ValueError("invalid CEM iterations, population, or elite count")
     if args.action_knots < 2:
@@ -263,7 +287,9 @@ def main() -> None:
     source_payload = json.loads(source_path.read_text(encoding="utf-8"))
     source_controls, source_states, source_gains = source_trajectory(source_payload)
     if "selected_state" not in source_payload:
-        raise ValueError("source controller does not identify its selected initial state")
+        raise ValueError(
+            "source controller does not identify its selected initial state"
+        )
 
     base_cfg = apply_overrides(load_config(args.config), args.override)
     base_cfg["env"]["action_lqr_residual"]["enabled"] = False
@@ -272,7 +298,9 @@ def main() -> None:
         source_payload["selected_state"],
         float(base_cfg["env"]["episode_seconds"]),
     )
-    source_config_hash = source_payload.get("evidence", {}).get("config", {}).get("resolved_sha256")
+    source_config_hash = (
+        source_payload.get("evidence", {}).get("config", {}).get("resolved_sha256")
+    )
     resolved_config_hash = data_sha256(cfg)
     if source_config_hash is not None and source_config_hash != resolved_config_hash:
         raise ValueError(
@@ -292,7 +320,9 @@ def main() -> None:
         ),
     )
     if source_states.shape[1] != transform.shape[0]:
-        raise ValueError("source controller state dimension differs from the requested plant")
+        raise ValueError(
+            "source controller state dimension differs from the requested plant"
+        )
     state_matrix, input_matrix = finite_difference_dynamics(cfg, 1.0, 1e-7)
     lyapunov, spectral_radius = closed_loop_lyapunov_matrix(
         state_matrix,
@@ -309,12 +339,63 @@ def main() -> None:
     source_seconds = source_controls.size * policy_dt
     declared_source_seconds = float(source_payload["controller"]["horizon_seconds"])
     if not np.isclose(source_seconds, declared_source_seconds, atol=1e-9):
-        raise ValueError("source controller action frequency differs from the requested plant")
+        raise ValueError(
+            "source controller action frequency differs from the requested plant"
+        )
     tail_steps = max(2, int(round(args.tail_seconds / policy_dt)))
     tail_initial_state = source_states[-1].copy()
     cem_search: dict[str, Any] | None = None
+    predictive_search: dict[str, Any] | None = None
     initialization_started = time.time()
-    if args.initial_action_cem:
+    if args.initial_predictive_sampling:
+        tail_physical_state = transition.to_physical(tail_initial_state)
+        nq = int(env.model.nq)
+        env.data.qpos[:] = tail_physical_state[:nq]
+        env.data.qvel[:] = tail_physical_state[nq:]
+        mujoco.mj_forward(env.model, env.data)
+        predictive_config = PredictiveSamplingConfig(
+            horizon_steps=tail_steps,
+            replan_steps=tail_steps,
+            knot_count=args.action_knots,
+            iterations=args.cem_iterations,
+            population=args.cem_population,
+            elites=args.cem_elites,
+            action_sigma=0.7,
+            sigma_decay=0.8,
+            sigma_floor=0.025,
+            handoff_lyapunov=args.handoff_lyapunov,
+            handoff_cart_abs=args.handoff_cart_abs,
+        )
+        predictive_planner = PredictiveSamplingPlanner(
+            env.model,
+            frame_skip=env.frame_skip,
+            force_limit=env.force_limit,
+            coordinate_transform=transform,
+            lyapunov=lyapunov,
+            config=predictive_config,
+            rail_limit=env.rail_limit,
+            threads=args.predictive_threads,
+        )
+        predictive_result = predictive_planner.search(
+            env.data,
+            rng=np.random.default_rng(args.seed + 1),
+        )
+        tail_initial_controls = np.asarray(
+            predictive_result["actions"], dtype=np.float64
+        )
+        predictive_search = {
+            "config": vars(predictive_config),
+            "knots": np.asarray(predictive_result["knots"], dtype=np.float64)
+            .astype(float)
+            .tolist(),
+            "score": float(predictive_result["score"]),
+            "metrics": predictive_result["metrics"],
+            "history": predictive_result["history"],
+            "candidate_rollout_count": int(
+                predictive_result["candidate_rollout_count"]
+            ),
+        }
+    elif args.initial_action_cem:
         cem_search = search_action_tail(
             transition,
             tail_initial_state,
@@ -373,8 +454,12 @@ def main() -> None:
         current = tail_initial_state.copy()
         for step in range(tail_steps):
             physical = transition.to_physical(current)
-            target = schedule_value(step * policy_dt, target_knots, tail_steps * policy_dt)
-            residual = schedule_value(step * policy_dt, residual_knots, tail_steps * policy_dt)
+            target = schedule_value(
+                step * policy_dt, target_knots, tail_steps * policy_dt
+            )
+            residual = schedule_value(
+                step * policy_dt, residual_knots, tail_steps * policy_dt
+            )
             tail_initial_controls[step] = feedback_action(
                 physical[:nq],
                 physical[nq:],
@@ -473,16 +558,22 @@ def main() -> None:
             "iterations": int(args.iterations),
             "initial_lqr_scale": float(args.initial_lqr_scale),
             "initial_controller": (
-                None if args.initial_controller is None else file_metadata(args.initial_controller)
+                None
+                if args.initial_controller is None
+                else file_metadata(args.initial_controller)
             ),
-            "initial_controller_offset_steps": int(args.initial_controller_offset_steps),
+            "initial_controller_offset_steps": int(
+                args.initial_controller_offset_steps
+            ),
             "initial_feedback_cem": bool(args.initial_feedback_cem),
             "initial_action_cem": bool(args.initial_action_cem),
+            "initial_predictive_sampling": bool(args.initial_predictive_sampling),
             "action_knots": int(args.action_knots),
             "planning_lqr_scale": float(args.planning_lqr_scale),
             "cem_iterations": int(args.cem_iterations),
             "cem_population": int(args.cem_population),
             "cem_elites": int(args.cem_elites),
+            "predictive_threads": int(args.predictive_threads),
             "lqr_scale": float(args.lqr_scale),
             "control_cost": float(args.control_cost),
             "stage_weight": float(args.stage_weight),
@@ -505,10 +596,13 @@ def main() -> None:
             "boundary_lyapunov": float(tail_values[0]),
             "tail_minimum_lyapunov": float(np.min(tail_values)),
             "tail_terminal_lyapunov": float(tail_values[-1]),
-            "tail_terminal_dimensionless_state_norm": float(np.linalg.norm(tail.states[-1])),
+            "tail_terminal_dimensionless_state_norm": float(
+                np.linalg.norm(tail.states[-1])
+            ),
             "max_cart_excursion": float(np.max(np.abs(nominal_physical_states[:, 0]))),
             "tail_history": tail.history,
             "cem_search": cem_search,
+            "predictive_sampling_search": predictive_search,
             "nominal_coordinate_states": nominal_states.astype(float).tolist(),
             "nominal_physical_states": nominal_physical_states.astype(float).tolist(),
         },
