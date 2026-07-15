@@ -15,6 +15,7 @@ from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.ppo_mlx import select_evaluation_state_indices
 from scripts.mine_capture_failures import build_mining_mixture
 from scripts.evaluate_linear_mpc_capture import LinearMPC
+from scripts.search_linear_policy import development_seed
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -134,6 +135,12 @@ class CaptureEnvelopeTests(unittest.TestCase):
         self.assertEqual(status, "solved")
         expected = float((-gain @ np.asarray([0.5])).item())
         self.assertAlmostEqual(action, expected, places=4)
+
+    def test_linear_search_development_cohort_is_fixed_by_default(self) -> None:
+        self.assertEqual(development_seed(100, 0, 0), 100)
+        self.assertEqual(development_seed(100, 99, 0), 100)
+        self.assertEqual(development_seed(100, 4, 5), 100)
+        self.assertEqual(development_seed(100, 5, 5), 1100)
 
 
 if __name__ == "__main__":

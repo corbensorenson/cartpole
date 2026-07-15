@@ -90,6 +90,8 @@ A single policy or a two-expert swing/capture policy is acceptable. A two-expert
 - Swing terminal states used to train capture are saved from actual swing-policy rollouts, split by episode seed, and hashed.
 - Final evaluation starts from hanging; it may not start from a saved handoff state.
 - All expert checkpoints, preprocessing, switch thresholds, and recurrent state rules are published.
+- The switch uses hysteresis. Enter and exit thresholds may use an LQR Lyapunov score, a learned capture value, or both, but final acceptance is established by uninterrupted nonlinear rollout under the canonical force and rail limits.
+- Distillation into one policy is optional and may begin only after the explicit hybrid expert chain passes its component gates. The working expert chain remains the fallback and reference evaluator.
 
 An open-loop trajectory may be used for diagnostics or warm starts, but final evidence must use state feedback and pass the held-out initial-state distribution.
 
@@ -124,6 +126,7 @@ Work:
 - Restore saved handoff velocities from zero to full scale while keeping the plant fixed.
 - Compare nonlinear PPO, model-based MPC/iLQR warm starts, supervised policy distillation, and residual feedback using the same state distribution.
 - Penalize rail consumption and measure final upright streak, not just first capture.
+- Fit a capture-value or funnel-membership model from exact capture-policy rollouts. Treat `x^T P x` from local LQR as a candidate feature, not proof of nonlinear constrained recoverability.
 
 Gate P1:
 
@@ -142,6 +145,7 @@ Work:
 - Use longer rails, mass/length/damping gradients, friction, and easier starts only as training curricula.
 - Anneal each training wheel independently and log the frontier where mastery fails.
 - Save one best valid handoff per rollout episode for train/validation/test splits.
+- Add direct collocation, DDP/iLQR, or nonlinear MPC trajectory generation whose terminal cost is entry into the measured P1 capture funnel, then train feedback tracking or imitation policies from successful trajectories.
 
 Gate P2:
 
@@ -197,6 +201,7 @@ Gate P4:
 Work:
 
 - Add link-count curricula such as `1 -> 2 -> ... -> 7` or `6 -> 7` while preserving total length and mass.
+- Prefer a link-growth homotopy that splits one existing link while preserving total length and mass, initially constrains or nearly removes the new joint's dynamic influence, and gradually releases its mass, inertia, and relative motion before annealing to the canonical uniform plant.
 - Decide experimentally between per-link-count policies and a shared N-conditioned graph/recurrent policy.
 - Carry forward the proven P4 capture basin and swing-to-capture objective.
 - Apply length, mass, damping, friction, start-angle, and rail curricula one axis at a time so regressions are attributable.
@@ -262,6 +267,7 @@ After P7, evaluate 8+ links using the same contract and evidence process. This i
 - Failed runs remain documented with the specific gate they failed.
 - Training-wheel ablations change one major axis at a time whenever practical.
 - Runs on nonuniform morphology or rails wider than `+/-3 m` are labeled curriculum evidence only.
+- Keep canonical equal-link and co-designed morphology results as separate tracks. Optimized lengths, masses, damping, friction, rail, or force may initialize training and support ablations but never substitute for a canonical gate.
 - Do not claim a record without a dated literature/repository search and an exact benchmark comparison.
 
 ## Decision Rules

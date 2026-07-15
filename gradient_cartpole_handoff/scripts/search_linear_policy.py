@@ -243,6 +243,12 @@ def evaluate_candidate_job(job: dict[str, Any]) -> dict[str, Any]:
     return {"score": float(metrics["score"]), "vector": vector, "metrics": metrics}
 
 
+def development_seed(base_seed: int, iteration: int, resample_every: int) -> int:
+    if resample_every <= 0:
+        return int(base_seed)
+    return int(base_seed + 1000 * (iteration // resample_every))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="CEM search for a closed-loop linear tanh swing-up policy")
     parser.add_argument("--config", default="configs/swingup6_uniform.yaml")
@@ -258,6 +264,12 @@ def main() -> None:
     parser.add_argument("--population", type=int, default=128)
     parser.add_argument("--elites", type=int, default=12)
     parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument(
+        "--resample-every",
+        type=int,
+        default=0,
+        help="Change the development cohort every N iterations; 0 keeps it fixed",
+    )
     parser.add_argument("--sigma-decay", type=float, default=0.88)
     parser.add_argument("--sigma-floor", type=float, default=0.002)
     parser.add_argument("--cart-sigma", type=float, default=0.25)
@@ -326,14 +338,15 @@ def main() -> None:
             if iteration == 0:
                 candidates = [center.copy()]
             else:
-                candidates = [center.copy()]
+                candidates = [best_vec.copy()]
                 for _ in range(args.population - 1):
                     candidates.append(center + rng.normal(0.0, sigma))
+            cohort_seed = development_seed(args.seed, iteration, args.resample_every)
             jobs = [
                 {
                     "cfg": cfg,
                     "progress": float(args.progress),
-                    "seed": int(args.seed + 1000 * iteration),
+                    "seed": cohort_seed,
                     "episodes": int(args.episodes),
                     "vector": np.asarray(candidate, dtype=np.float64),
                     "obs_dim": int(obs_dim),
@@ -376,7 +389,7 @@ def main() -> None:
 
             if iteration > 0:
                 elite_arr = np.asarray([row["vector"] for row in records[: args.elites]], dtype=np.float64)
-                center = elite_arr.mean(axis=0)
+                center = best_vec.copy()
                 sigma = np.maximum(elite_arr.std(axis=0), float(args.sigma_floor)) * float(args.sigma_decay)
     finally:
         if executor is not None:
@@ -400,7 +413,7 @@ def main() -> None:
     payload = {
         "generated_at": utc_timestamp(),
         "not_solution": bool(eval_metrics.get("success_rate", 0.0) < 0.80),
-        "summary": "Closed-loop linear tanh CEM search for the hanging-start six-link swing-up task.",
+        "summary": "Closed-loop linear tanh CEM policy search on the configured task and reset distribution.",
         "config_path": str(Path(args.config)),
         "out_dir": str(out_dir),
         "checkpoint": file_metadata(checkpoint),
@@ -415,6 +428,7 @@ def main() -> None:
             "population": int(args.population),
             "elites": int(args.elites),
             "workers": int(args.workers),
+            "resample_every": int(args.resample_every),
             "sigma_decay": float(args.sigma_decay),
             "sigma_floor": float(args.sigma_floor),
         },
