@@ -38,6 +38,10 @@ def data_sha256(data: Any) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
+def text_sha256(text: str) -> str:
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
 def _package_version(name: str) -> str | None:
     try:
         return importlib.metadata.version(name)

@@ -65,6 +65,9 @@ class NLinkCartPoleEnv(gym.Env):
         self.low_momentum_upright_streak_steps = 0
         self.max_low_momentum_upright_streak_steps = 0
         self.first_upright_step: int | None = None
+        self.capture_step: int | None = None
+        self.capture_start_step: int | None = None
+        self.max_cart_excursion = 0.0
         self.last_init_state_index: int | None = None
         self._init_state_cache: list[dict[str, Any]] | None = None
         self.renderer = None
@@ -134,6 +137,9 @@ class NLinkCartPoleEnv(gym.Env):
         self.low_momentum_upright_streak_steps = 0
         self.max_low_momentum_upright_streak_steps = 0
         self.first_upright_step = None
+        self.capture_step = None
+        self.capture_start_step = None
+        self.max_cart_excursion = 0.0
         self.last_init_state_index = None
         self.data.qpos[:] = 0.0
         self.data.qvel[:] = 0.0
@@ -184,6 +190,7 @@ class NLinkCartPoleEnv(gym.Env):
         self.last_residual_scale = 1.0
         self.last_lqr_cart_target = 0.0
         mujoco.mj_forward(self.model, self.data)
+        self.max_cart_excursion = abs(float(self.data.qpos[0]))
         self._update_upright_tracking()
         return self._get_obs(), self._info()
 
@@ -260,6 +267,7 @@ class NLinkCartPoleEnv(gym.Env):
         self.last_residual_scale = 1.0
         self.last_lqr_cart_target = 0.0
         mujoco.mj_forward(self.model, self.data)
+        self.max_cart_excursion = abs(float(self.data.qpos[0]))
         self._update_upright_tracking()
         return self._get_obs(), self._info()
 
@@ -273,15 +281,18 @@ class NLinkCartPoleEnv(gym.Env):
         for _ in range(self.frame_skip):
             mujoco.mj_step(self.model, self.data)
         self.step_count += 1
+        self.max_cart_excursion = max(self.max_cart_excursion, abs(float(self.data.qpos[0])))
         self._update_upright_tracking()
 
         obs = self._get_obs()
         reward = self._reward(action_norm)
-        terminated = self._terminated()
+        termination_reason = self._termination_reason()
+        terminated = termination_reason is not None
         truncated = self.step_count >= self.max_steps
         if terminated and not truncated:
             reward += float(self.env_cfg.get("reward", {}).get("terminal_penalty", 0.0))
         info = self._info()
+        info["termination_reason"] = termination_reason if terminated else ("time_limit" if truncated else None)
         info["success"] = bool(truncated and not terminated and self._success())
         return obs, reward, terminated, truncated, info
 
@@ -462,16 +473,19 @@ class NLinkCartPoleEnv(gym.Env):
         )
         return float(np.exp(-min(50.0, cost)))
 
-    def _terminated(self) -> bool:
+    def _termination_reason(self) -> str | None:
+        if not np.all(np.isfinite(self.data.qpos)) or not np.all(np.isfinite(self.data.qvel)):
+            return "non_finite_state"
         if abs(float(self.data.qpos[0])) > self.rail_limit:
-            return True
+            return "rail_violation"
         _, abs_angles = self._angles()
         terminate_abs_angle = self.env_cfg.get("terminate_abs_angle", 1.25)
         if terminate_abs_angle is not None and float(np.max(np.abs(abs_angles))) > float(terminate_abs_angle):
-            return True
-        if not np.all(np.isfinite(self.data.qpos)) or not np.all(np.isfinite(self.data.qvel)):
-            return True
-        return False
+            return "angle_limit"
+        return None
+
+    def _terminated(self) -> bool:
+        return self._termination_reason() is not None
 
     def _is_upright(self, abs_angles: np.ndarray | None = None) -> bool:
         if abs_angles is None:
@@ -527,6 +541,10 @@ class NLinkCartPoleEnv(gym.Env):
             self.max_low_momentum_upright_streak_steps,
             self.low_momentum_upright_streak_steps,
         )
+        sustain_steps = int(np.ceil(float(self.env_cfg.get("success_sustain_seconds", 0.0)) / self.dt))
+        if self.capture_step is None and self.upright_streak_steps >= max(1, sustain_steps):
+            self.capture_step = self.step_count
+            self.capture_start_step = self.step_count - self.upright_streak_steps + 1
 
     def _success(self) -> bool:
         sustain_seconds = float(self.env_cfg.get("success_sustain_seconds", 0.0))
@@ -536,6 +554,8 @@ class NLinkCartPoleEnv(gym.Env):
     def _info(self) -> dict[str, Any]:
         rel, abs_angles = self._angles()
         first_upright_time = None if self.first_upright_step is None else float(self.first_upright_step * self.dt)
+        capture_time = None if self.capture_step is None else float(self.capture_step * self.dt)
+        capture_start_time = None if self.capture_start_step is None else float(max(0, self.capture_start_step) * self.dt)
         hinge_vel_rms = float(np.sqrt(np.mean(self.data.qvel[1 : 1 + self.n] ** 2)))
         max_abs_angle = float(np.max(np.abs(abs_angles)))
         return {
@@ -552,6 +572,10 @@ class NLinkCartPoleEnv(gym.Env):
             "low_momentum_upright_streak_seconds": float(self.low_momentum_upright_streak_steps * self.dt),
             "max_low_momentum_upright_streak_seconds": float(self.max_low_momentum_upright_streak_steps * self.dt),
             "time_to_first_upright": first_upright_time,
+            "time_to_capture": capture_time,
+            "capture_start_time": capture_start_time,
+            "max_cart_excursion": float(self.max_cart_excursion),
+            "termination_reason": None,
             "progress": float(self.progress),
             "plant_progress": float(self.plant_progress),
             "rail_limit": float(self.rail_limit),

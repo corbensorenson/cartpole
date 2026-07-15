@@ -1,6 +1,8 @@
-.PHONY: setup smoke debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture eval-mpc-policy-handoff-stage search-swingup-chain export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-wide6 eval-capture-wide6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-stage capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum-qvel0 eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
+.PHONY: setup smoke roadmap-p0 test-roadmap-p0 verify-roadmap-p0 export-swingup7-xml swingup7 eval-swingup7-20 eval-swingup7-100 render-swingup7 verify-swingup7 debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture eval-mpc-policy-handoff-stage search-swingup-chain export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-wide6 eval-capture-wide6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-stage capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum-qvel0 eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
 
 PYTHON ?= .venv/bin/python
+SWINGUP7_RUN ?= runs/swingup7_uniform
+SWINGUP7_CHECKPOINT ?= $(SWINGUP7_RUN)/checkpoints/best.safetensors
 SWING_TRAJECTORY_SEARCH_OUT ?= runs/swingup6_trajectory_search/low_momentum_search.json
 SWING_TRAJECTORY_SUSTAIN_OUT ?= runs/swingup6_trajectory_search/sustain_search.json
 SWING_TRAJECTORY_STATES_OUT ?= runs/swingup6_expert_chain/swing_states_low_momentum.json
@@ -89,6 +91,32 @@ CAPTURE_HANDOFF_VEL_NOISE_END ?= 0.05
 
 setup:
 	bash scripts/setup_mac.sh
+
+roadmap-p0: test-roadmap-p0 export-swingup7-xml verify-roadmap-p0
+
+test-roadmap-p0:
+	$(PYTHON) -m unittest discover -s tests -p 'test_*.py'
+
+verify-roadmap-p0:
+	$(PYTHON) scripts/verify_roadmap.py --benchmark-only --report runs/roadmap_p0/benchmark_verification.json
+
+export-swingup7-xml:
+	$(PYTHON) scripts/export_xml.py --config configs/swingup7_uniform.yaml --progress 1.0 --out runs/swingup7_uniform/model.xml
+
+swingup7:
+	$(PYTHON) scripts/train_mlx_ppo.py --config configs/swingup7_uniform.yaml
+
+eval-swingup7-20:
+	$(PYTHON) scripts/evaluate.py --config configs/swingup7_uniform.yaml --checkpoint $(SWINGUP7_CHECKPOINT) --episodes 20 --progress 1.0 --out $(SWINGUP7_RUN)/eval_swingup7_20.json
+
+eval-swingup7-100:
+	$(PYTHON) scripts/evaluate.py --config configs/swingup7_uniform.yaml --checkpoint $(SWINGUP7_CHECKPOINT) --episodes 100 --progress 1.0 --out $(SWINGUP7_RUN)/eval_swingup7_100.json
+
+render-swingup7:
+	$(PYTHON) scripts/render_video.py --config configs/swingup7_uniform.yaml --checkpoint $(SWINGUP7_CHECKPOINT) --out $(SWINGUP7_RUN)/seven_link_swingup_success.mp4 --seconds 30 --progress 1.0 --seed 14551 --metadata-out $(SWINGUP7_RUN)/seven_link_swingup_success.video.json --no-reset-on-done --fail-on-reset
+
+verify-swingup7:
+	$(PYTHON) scripts/verify_roadmap.py --run-dir $(SWINGUP7_RUN) --report $(SWINGUP7_RUN)/verification.json
 
 smoke:
 	$(PYTHON) scripts/smoke_test.py

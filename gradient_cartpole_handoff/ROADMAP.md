@@ -97,6 +97,8 @@ An open-loop trajectory may be used for diagnostics or warm starts, but final ev
 
 ### Phase 0: Lock The Benchmark And Verifier
 
+Status: **Passed (2026-07-15)**. Run `make roadmap-p0` to regenerate the XML, exercise the rejection tests, and verify the runtime benchmark contract.
+
 Deliverables:
 
 - `configs/swingup7_uniform.yaml` implementing the canonical contract.
@@ -274,7 +276,7 @@ After P7, evaluate 8+ links using the same contract and evidence process. This i
 
 | Phase | Status | Current evidence |
 |---|---|---|
-| P0 benchmark/verifier | Partial | Generic n-link environment and evidence metadata exist; canonical 7-link config and verifier do not. |
+| P0 benchmark/verifier | Passed | Canonical config, XML hash export, runtime assertions, rejection tests, and final artifact verifier pass via `make roadmap-p0`. |
 | P1 six-link capture basin | In progress | Best held-out capture streak is subsecond and ends at the rail. |
 | P2 six-link swing handoff | In progress | Best learned handoffs are from a progress-`0.3875` curriculum plant, not final uniform 6-link. |
 | P3 integrated six | Not passed | Near-upright 6-link stabilization is solved; hanging-start end-to-end swing-up is not. |
@@ -285,7 +287,7 @@ After P7, evaluate 8+ links using the same contract and evidence process. This i
 
 ## Final Completion Audit
 
-- [ ] P0 passed and canonical benchmark frozen.
+- [x] P0 passed and canonical benchmark frozen.
 - [ ] P1 passed on the frozen synthetic 6-link handoff envelope.
 - [ ] P2 passed from uniform hanging-start 6-link rollouts and real handoffs.
 - [ ] P3 passed with integrated reset-free 6-link reproduction evidence.

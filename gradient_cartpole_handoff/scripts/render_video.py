@@ -10,7 +10,7 @@ import mlx.core as mx
 import numpy as np
 
 from gcartpole.config import apply_overrides, dump_json, load_config
-from gcartpole.evidence import data_sha256, file_metadata, git_metadata, runtime_metadata, utc_timestamp
+from gcartpole.evidence import data_sha256, file_metadata, git_metadata, runtime_metadata, text_sha256, utc_timestamp
 from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.ppo_mlx import ActorCritic, load_model, sample_action
 
@@ -35,6 +35,7 @@ def main() -> None:
     cfg = apply_overrides(load_config(args.config), args.override)
     env = NLinkCartPoleEnv(cfg, progress=args.progress, seed=args.seed)
     obs, _ = env.reset()
+    xml_sha256 = text_sha256(env.xml)
 
     ppo = cfg["ppo"]
     model = ActorCritic(env.observation_space.shape[0], env.action_space.shape[0], list(ppo.get("hidden_sizes", [256, 256])), float(ppo.get("action_std_init", 0.7)))
@@ -69,10 +70,14 @@ def main() -> None:
                     "terminated": bool(term),
                     "truncated": bool(trunc),
                     "success": bool(info.get("success", False)),
+                    "termination_reason": info.get("termination_reason"),
                     "x": float(info.get("x", np.nan)),
                     "max_abs_angle": float(info.get("max_abs_angle", np.nan)),
                     "time_to_first_upright": info.get("time_to_first_upright"),
+                    "time_to_capture": info.get("time_to_capture"),
                     "max_upright_streak_seconds": float(info.get("max_upright_streak_seconds", 0.0)),
+                    "final_upright_streak_seconds": float(info.get("upright_streak_seconds", 0.0)),
+                    "max_cart_excursion": float(info.get("max_cart_excursion", 0.0)),
                 }
                 done_events.append(event)
                 if step < sim_steps - 1:
@@ -89,6 +94,7 @@ def main() -> None:
         "generated_at": utc_timestamp(),
         "video": file_metadata(out),
         "checkpoint": file_metadata(args.checkpoint),
+        "generated_xml_sha256": xml_sha256,
         "config": {
             "path": str(Path(args.config)),
             "resolved_sha256": data_sha256(cfg),
@@ -99,6 +105,7 @@ def main() -> None:
             "simulated_seconds": float(completed_steps * env.dt),
             "completed_requested_steps": completed_steps == sim_steps,
             "dt": float(env.dt),
+            "action_frequency_hz": float(1.0 / env.dt),
             "fps": int(args.fps),
             "frames": int(frames),
             "width": int(args.width),
@@ -112,6 +119,8 @@ def main() -> None:
         },
         "environment": {
             "n_links": int(cfg["env"]["n_links"]),
+            "observation_dim": int(env.observation_space.shape[0]),
+            "action_dim": int(env.action_space.shape[0]),
             "init_mode": str(cfg["env"].get("init_mode", "upright")),
             "init_angle_noise": float(cfg["env"].get("init_angle_noise", 0.02)),
             "init_vel_noise": float(cfg["env"].get("init_vel_noise", 0.01)),

@@ -5,6 +5,7 @@ import argparse
 from pathlib import Path
 
 from gcartpole.config import apply_overrides, load_config
+from gcartpole.evidence import text_sha256
 from gcartpole.morphology import build_morphology
 from gcartpole.mjxml import generate_nlink_cartpole_xml
 
@@ -38,6 +39,7 @@ def main() -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(xml, encoding="utf-8")
     print(f"Wrote {out}")
+    print("sha256:", text_sha256(xml))
     print("lengths:", morph.lengths)
     print("masses: ", morph.masses)
     print("damping:", morph.damping)

@@ -7,7 +7,7 @@ from pathlib import Path
 import mlx.core as mx
 
 from gcartpole.config import apply_overrides, dump_json, load_config
-from gcartpole.evidence import data_sha256, file_metadata, git_metadata, runtime_metadata, utc_timestamp
+from gcartpole.evidence import data_sha256, file_metadata, git_metadata, runtime_metadata, text_sha256, utc_timestamp
 from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.ppo_mlx import ActorCritic, evaluate_policy, load_model
 
@@ -26,6 +26,11 @@ def main() -> None:
     probe = NLinkCartPoleEnv(cfg, progress=args.progress, seed=int(cfg["experiment"].get("seed", 0)))
     obs_dim = probe.observation_space.shape[0]
     act_dim = probe.action_space.shape[0]
+    plant_progress = float(probe.plant_progress)
+    rail_limit = float(probe.rail_limit)
+    max_steps = int(probe.max_steps)
+    action_frequency_hz = float(1.0 / probe.dt)
+    xml_sha256 = text_sha256(probe.xml)
     probe.close()
 
     ppo = cfg["ppo"]
@@ -46,7 +51,7 @@ def main() -> None:
         "deterministic_policy": True,
         "progress": float(args.progress),
         "reset_schedule_progress": float(args.progress),
-        "plant_progress": float(probe.plant_progress),
+        "plant_progress": plant_progress,
         "eval_seed": eval_seed,
         "config": {
             "path": str(Path(args.config)),
@@ -54,6 +59,7 @@ def main() -> None:
             "overrides": list(args.override),
         },
         "checkpoint": file_metadata(args.checkpoint),
+        "generated_xml_sha256": xml_sha256,
         "environment": {
             "n_links": int(cfg["env"]["n_links"]),
             "init_mode": str(cfg["env"].get("init_mode", "upright")),
@@ -86,13 +92,16 @@ def main() -> None:
                 if key in cfg["env"]
             },
             "episode_seconds": float(cfg["env"]["episode_seconds"]),
-            "max_steps": int(probe.max_steps),
+            "max_steps": max_steps,
+            "observation_dim": int(obs_dim),
+            "action_dim": int(act_dim),
+            "action_frequency_hz": action_frequency_hz,
             "force_limit": float(cfg["env"]["force_limit"]),
-            "rail_limit": float(probe.rail_limit),
+            "rail_limit": rail_limit,
             "configured_rail_limit": float(cfg["env"]["rail_limit"]),
             "rail_limit_start": float(cfg["env"].get("rail_limit_start", cfg["env"]["rail_limit"])),
             "rail_limit_end": float(cfg["env"].get("rail_limit_end", cfg["env"]["rail_limit"])),
-            "plant_progress": float(probe.plant_progress),
+            "plant_progress": plant_progress,
             "terminate_abs_angle": cfg["env"].get("terminate_abs_angle", 1.25),
             "success_upright_threshold": float(cfg["env"].get("success_upright_threshold", cfg["env"].get("reward", {}).get("upright_threshold", 0.10))),
             "success_sustain_seconds": float(cfg["env"].get("success_sustain_seconds", 0.0)),

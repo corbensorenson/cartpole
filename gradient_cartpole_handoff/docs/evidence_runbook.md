@@ -1,6 +1,42 @@
-# Six-Link Evidence Runbook
+# Evidence Runbook
 
 This runbook covers the six-link baseline and calibration evidence. It does not define final project completion. The authoritative seven-link benchmark, phase gates, and final audit are in `ROADMAP.md`.
+
+## Seven-link benchmark and final audit
+
+Freeze and test the benchmark before accepting training results:
+
+```bash
+make roadmap-p0
+```
+
+The final single-policy path uses:
+
+```bash
+make eval-swingup7-20
+make eval-swingup7-100
+make render-swingup7
+make verify-swingup7
+```
+
+`runs/swingup7_uniform/policy_manifest.json` is required for either architecture. Its top-level fields are:
+
+```json
+{
+  "architecture": "single_policy",
+  "config_sha256": "...",
+  "generated_xml_sha256": "...",
+  "training": {
+    "wall_clock_seconds": 0,
+    "environment_steps": 0
+  },
+  "checkpoints": [
+    {"role": "policy", "path": "runs/swingup7_uniform/checkpoints/best.safetensors", "sha256": "..."}
+  ]
+}
+```
+
+For `architecture: two_expert`, list both checkpoint roles and add a versioned `switch` object containing the deterministic handoff rule and hysteresis. Paths must be repository-relative. The verifier also requires `SHA256SUMS`, complete 20/100 episode JSON, a clean-commit evidence record, and a reset-free held-out video ending in a successful time-limit event.
 
 Use this after `make smoke` and the debug run pass.
 

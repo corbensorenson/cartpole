@@ -168,7 +168,10 @@ def evaluate_policy(
     successes = []
     max_angles = []
     time_to_uprights = []
+    time_to_captures = []
     max_upright_streaks = []
+    final_upright_streaks = []
+    max_cart_excursions = []
     max_centered_upright_streaks = []
     max_low_momentum_upright_streaks = []
     max_capture_qualities = []
@@ -217,12 +220,19 @@ def evaluate_policy(
         max_capture_qualities.append(ep_max_capture_quality)
         low_momentum_upright_events.append(float(ep_low_momentum_upright))
         ttu = info.get("time_to_first_upright")
+        ttc = info.get("time_to_capture")
         streak = float(info.get("max_upright_streak_seconds", 0.0))
+        final_streak = float(info.get("upright_streak_seconds", 0.0))
+        max_cart_excursion = float(info.get("max_cart_excursion", abs(float(info.get("x", 0.0)))))
         centered_streak = float(info.get("max_centered_upright_streak_seconds", 0.0))
         low_momentum_streak = float(info.get("max_low_momentum_upright_streak_seconds", 0.0))
         if ttu is not None:
             time_to_uprights.append(float(ttu))
+        if ttc is not None:
+            time_to_captures.append(float(ttc))
         max_upright_streaks.append(streak)
+        final_upright_streaks.append(final_streak)
+        max_cart_excursions.append(max_cart_excursion)
         max_centered_upright_streaks.append(centered_streak)
         max_low_momentum_upright_streaks.append(low_momentum_streak)
         if return_episodes:
@@ -234,10 +244,16 @@ def evaluate_policy(
                     "length": int(ep_len),
                     "success": success,
                     "max_abs_angle": float(ep_max_angle),
-                    "terminated": not success and ep_len < env.max_steps,
+                    "terminated": info.get("termination_reason") not in {None, "time_limit"},
+                    "truncated": info.get("termination_reason") == "time_limit",
+                    "termination_reason": info.get("termination_reason"),
                     "final_x": float(info.get("x", np.nan)),
+                    "max_cart_excursion": max_cart_excursion,
                     "time_to_first_upright": None if ttu is None else float(ttu),
+                    "time_to_capture": None if ttc is None else float(ttc),
+                    "capture_start_time": info.get("capture_start_time"),
                     "max_upright_streak_seconds": streak,
+                    "final_upright_streak_seconds": final_streak,
                     "max_centered_upright_streak_seconds": centered_streak,
                     "max_low_momentum_upright_streak_seconds": low_momentum_streak,
                     "max_capture_quality": float(ep_max_capture_quality),
@@ -258,9 +274,15 @@ def evaluate_policy(
         "time_to_first_upright_mean": None if not time_to_uprights else float(np.mean(time_to_uprights)),
         "time_to_first_upright_success_count": int(len(time_to_uprights)),
         "ever_upright_rate": float(len(time_to_uprights) / max(1, episodes)),
+        "time_to_capture_mean": None if not time_to_captures else float(np.mean(time_to_captures)),
+        "capture_count": int(len(time_to_captures)),
         "max_upright_streak_mean": float(np.mean(max_upright_streaks)),
         "max_upright_streak_min": float(np.min(max_upright_streaks)),
         "max_upright_streak_max": float(np.max(max_upright_streaks)),
+        "final_upright_streak_mean": float(np.mean(final_upright_streaks)),
+        "final_upright_streak_min": float(np.min(final_upright_streaks)),
+        "max_cart_excursion_mean": float(np.mean(max_cart_excursions)),
+        "max_cart_excursion_max": float(np.max(max_cart_excursions)),
         "max_centered_upright_streak_mean": float(np.mean(max_centered_upright_streaks)),
         "max_centered_upright_streak_max": float(np.max(max_centered_upright_streaks)),
         "max_low_momentum_upright_streak_mean": float(np.mean(max_low_momentum_upright_streaks)),

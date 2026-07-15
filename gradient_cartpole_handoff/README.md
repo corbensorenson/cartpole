@@ -12,6 +12,14 @@ This repository currently contains a reproducible **near-upright stabilization**
 
 That distinction matters. If Yacine's benchmark starts with the links below the cart and requires swinging them upright, this repo should be treated as a baseline/tooling repo, not as a benchmark beat.
 
+Roadmap Phase 0 is complete. The canonical seven-link config and verifier can be checked with:
+
+```bash
+make roadmap-p0
+```
+
+This regenerates the target MuJoCo XML, records its SHA-256, checks the hanging geometry and reset distribution in MuJoCo, and runs rejection tests for easier plants and incomplete evidence. It does not claim the seven-link control problem is solved.
+
 Current achieved artifact set:
 
 ```text
