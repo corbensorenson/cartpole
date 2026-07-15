@@ -64,7 +64,7 @@ class PredictiveSamplingTests(unittest.TestCase):
             threads=2,
         )
         initial = planner.full_physics_state(env.data)
-        actions = np.asarray([0.0, 0.2, -0.1, 0.3, 0.0])
+        actions = np.asarray([0.0, 0.200000003, -0.100000007, 0.300000011, 0.0])
         rollout_states, rollout_actions = planner.rollout(initial, actions)
         expected = []
         for action in actions:
@@ -78,7 +78,8 @@ class PredictiveSamplingTests(unittest.TestCase):
             ),
             axis=1,
         )
-        np.testing.assert_allclose(rollout_actions[0], actions, atol=1e-12)
+        expected_actions = actions.astype(np.float32).astype(np.float64)
+        np.testing.assert_array_equal(rollout_actions[0], expected_actions)
         np.testing.assert_allclose(actual, np.asarray(expected), atol=1e-11)
 
     def test_handoff_requires_cold_velocity_at_the_same_state(self) -> None:

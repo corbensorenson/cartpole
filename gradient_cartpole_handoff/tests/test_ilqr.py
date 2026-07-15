@@ -8,12 +8,14 @@ import numpy as np
 
 from gcartpole.ilqr import stitch_feedback_trajectories
 from scripts.evaluate_ilqr_chain_basin import aggregate, parse_radii, select_feedback_gains
+from scripts.evaluate_trajectory_funnel_library import selection_key
 from scripts.evaluate_receding_ilqr_capture import shift_controls
 from scripts.refine_ilqr_capture_chain import (
     capture_selection_key,
     controls_from_knots,
     warm_start_controls,
 )
+from scripts.recenter_trajectory_controller import realized_trajectory
 from scripts.search_ilqr_capture import (
     handoff_bounds_satisfied,
     interpolate_initial_state,
@@ -199,6 +201,57 @@ class ILQRTests(unittest.TestCase):
         )
         np.testing.assert_allclose(
             select_feedback_gains(controller, applied, "applied", 1.0), applied
+        )
+
+    def test_recentered_trajectory_aligns_pre_action_states_and_controls(self) -> None:
+        initial = {"qpos": [0.0, 0.1], "qvel": [0.2, 0.3]}
+        trajectory = [
+            {"qpos": [1.0, 1.1], "qvel": [1.2, 1.3], "action": 0.4},
+            {"qpos": [2.0, 2.1], "qvel": [2.2, 2.3], "action": -0.5},
+        ]
+        controls, states = realized_trajectory(
+            initial, trajectory, np.eye(4), horizon_steps=2
+        )
+        np.testing.assert_allclose(controls, [0.4, -0.5])
+        np.testing.assert_allclose(
+            states,
+            [
+                [0.0, 0.1, 0.2, 0.3],
+                [1.0, 1.1, 1.2, 1.3],
+                [2.0, 2.1, 2.2, 2.3],
+            ],
+        )
+
+    def test_funnel_library_selection_prefers_success_then_hold(self) -> None:
+        failure = {
+            "controller_index": 0,
+            "result": {
+                "success": False,
+                "max_upright_streak_seconds": 12.0,
+                "minimum_lyapunov": 0.0,
+                "max_cart_excursion": 0.0,
+            },
+        }
+        short_success = {
+            "controller_index": 1,
+            "result": {
+                "success": True,
+                "max_upright_streak_seconds": 9.0,
+                "minimum_lyapunov": 10.0,
+                "max_cart_excursion": 2.0,
+            },
+        }
+        long_success = {
+            "controller_index": 2,
+            "result": {
+                "success": True,
+                "max_upright_streak_seconds": 10.0,
+                "minimum_lyapunov": 20.0,
+                "max_cart_excursion": 2.0,
+            },
+        }
+        self.assertIs(
+            min([failure, short_success, long_success], key=selection_key), long_success
         )
 
 

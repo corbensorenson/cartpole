@@ -158,10 +158,12 @@ class PredictiveSamplingPlanner:
         if knots.ndim == 1:
             if knots.shape != (self.config.knot_count,):
                 raise ValueError("knot vector has the wrong length")
-            return np.clip(self._interpolation @ knots, -1.0, 1.0)
+            actions = np.clip(self._interpolation @ knots, -1.0, 1.0)
+            return actions.astype(np.float32).astype(np.float64)
         if knots.ndim != 2 or knots.shape[1] != self.config.knot_count:
             raise ValueError("knot matrix has the wrong shape")
-        return np.clip(knots @ self._interpolation.T, -1.0, 1.0)
+        actions = np.clip(knots @ self._interpolation.T, -1.0, 1.0)
+        return actions.astype(np.float32).astype(np.float64)
 
     def handoff_state(self, qpos: Array, qvel: Array) -> tuple[bool, float]:
         qpos = np.asarray(qpos, dtype=np.float64).copy()
