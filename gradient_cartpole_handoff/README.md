@@ -28,7 +28,7 @@ make capture-envelope6
 make eval-capture-envelope6
 ```
 
-[`benchmarks/p1_capture_envelope.yaml`](benchmarks/p1_capture_envelope.yaml) fixes the uniform plant, control frequency, 15-second episode, success contract, gate thresholds, and seeded 20,000/2,000/1,000 train/validation/test state splits. The evaluator rejects altered rails, force limits, dynamics, or easier hold criteria and evaluates every held-out state exactly once. PPO curriculum gates replay a fixed seeded subset from the independent validation split and record the exact indices in checkpoint metadata. The current analytic LQR baseline fails the final gate with `0/1000` successes, `0.04 s` median maximum upright hold, and `1000` rail hits. The accepted all-state residual-PPO frontier is currently 5% of the envelope scale; P1 is not passed.
+[`benchmarks/p1_capture_envelope.yaml`](benchmarks/p1_capture_envelope.yaml) fixes the uniform plant, control frequency, 15-second episode, success contract, gate thresholds, and seeded 20,000/2,000/1,000 train/validation/test state splits. The evaluator rejects altered rails, force limits, dynamics, or easier hold criteria and evaluates every held-out state exactly once. PPO curriculum gates replay a fixed seeded subset from the independent validation split and record the exact indices in checkpoint metadata. The current analytic LQR baseline fails the final gate with `0/1000` successes, `0.04 s` median maximum upright hold, and `1000` rail hits. A component-wise curriculum has passed the fixed validation gate at progress `0.06`, where reset positions are scaled by `p^2` and velocities by `p^3`; it stalls at `p=0.0625`. This is still a very narrow fraction of the physical envelope, so P1 is not passed.
 
 Current generated split hashes:
 

@@ -7,12 +7,14 @@ import unittest
 from pathlib import Path
 
 import numpy as np
+from scipy.linalg import solve_discrete_are
 
 from gcartpole.capture_envelope import generate_capture_states, validate_capture_config, validate_capture_states
 from gcartpole.config import load_config
 from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.ppo_mlx import select_evaluation_state_indices
 from scripts.mine_capture_failures import build_mining_mixture
+from scripts.evaluate_linear_mpc_capture import LinearMPC
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -109,6 +111,29 @@ class CaptureEnvelopeTests(unittest.TestCase):
         self.assertEqual([row["state_id"] for row in mixture[:4]], [f"state-{index}" for index in range(4)])
         self.assertEqual(sum(bool(row["mining"]["hard_failure"]) for row in mixture), 6)
         self.assertEqual(len({row["state_id"] for row in mixture}), len(mixture))
+
+    def test_condensed_linear_mpc_matches_unconstrained_lqr(self) -> None:
+        a = np.asarray([[0.9]], dtype=np.float64)
+        b = np.asarray([[1.0]], dtype=np.float64)
+        q = np.asarray([[1.0]], dtype=np.float64)
+        r = np.asarray([[0.1]], dtype=np.float64)
+        terminal = solve_discrete_are(a, b, q, r)
+        gain = np.linalg.solve(b.T @ terminal @ b + r, b.T @ terminal @ a)
+        controller = LinearMPC(
+            a,
+            b,
+            q,
+            r,
+            terminal,
+            horizon=5,
+            rail_constraint=100.0,
+        )
+
+        action, status, _ = controller.action(np.asarray([0.5], dtype=np.float64))
+
+        self.assertEqual(status, "solved")
+        expected = float((-gain @ np.asarray([0.5])).item())
+        self.assertAlmostEqual(action, expected, places=4)
 
 
 if __name__ == "__main__":

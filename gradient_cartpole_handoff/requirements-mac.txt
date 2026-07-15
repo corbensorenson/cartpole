@@ -2,6 +2,7 @@
 # Use a native arm64 Python 3.10+; Python 3.12 is recommended.
 numpy>=1.26
 scipy>=1.11
+osqp>=1.1
 mujoco>=3.3.0
 gymnasium>=1.0.0
 PyYAML>=6.0
