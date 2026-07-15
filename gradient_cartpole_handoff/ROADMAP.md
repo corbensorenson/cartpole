@@ -287,7 +287,7 @@ After P7, evaluate 8+ links using the same contract and evidence process. This i
 | Phase | Status | Current evidence |
 |---|---|---|
 | P0 benchmark/verifier | Passed | Canonical config, XML hash export, runtime assertions, rejection tests, and final artifact verifier pass via `make roadmap-p0`. |
-| P1 six-link capture basin | In progress | The seeded 20k/2k/1k envelope and strict gate evaluator are frozen. Scheduled-target planning plus LQR reaches `226/256` at `p=0.0675`. Exact-model receding-horizon target/residual planning recomputes LQR feedback inside candidate rollouts and recovers 8 more states, producing `234/256 = 91.41%`, a `13.92 s` median hold, and no successful rail hits. This advances the accepted development frontier to `p=0.0675`, but the online model-based controller remains far from the `p=1.0`, 1,000-state P1 gate. |
+| P1 six-link capture basin | In progress | The seeded 20k/2k/1k envelope and strict gate evaluator are frozen. At `p=0.0700`, target planning reaches `217/256`, standard feedback MPC reaches `227/256`, and a deterministic high-budget feedback escalation reaches `233/256 = 91.02%` with a `13.90 s` median hold and no successful rail hits. This advances the accepted development frontier to `p=0.0700`, but the online model-based controller remains far from the `p=1.0`, 1,000-state P1 gate. |
 | P2 six-link swing handoff | In progress | Best learned handoffs are from a progress-`0.3875` curriculum plant, not final uniform 6-link. |
 | P3 integrated six | Not passed | Near-upright 6-link stabilization is solved; hanging-start end-to-end swing-up is not. |
 | P4 seven-link capture basin | Not started | Blocked by the P3 calibration gate. |

@@ -31,6 +31,11 @@ CAPTURE_FEEDBACK_MPC_SEED ?= 62636
 CAPTURE_FEEDBACK_MPC_OUT ?= runs/p1_capture_feedback_mpc/validation_$(CAPTURE_FEEDBACK_MPC_STATE)_p0065.json
 CAPTURE_FEEDBACK_MPC_INITIAL ?= $(CAPTURE_REFINED_ADAPTIVE_OUT)
 CAPTURE_FEEDBACK_MPC_BATCH_OUT ?= runs/p1_capture_feedback_mpc/eval_refined_validation256_p0065.json
+CAPTURE_FEEDBACK_MPC_SECONDS ?= 2.0
+CAPTURE_FEEDBACK_MPC_HANDOFF_CART ?= 2.4
+CAPTURE_FEEDBACK_MPC_ITERATIONS ?= 3
+CAPTURE_FEEDBACK_MPC_POPULATION ?= 64
+CAPTURE_FEEDBACK_MPC_ELITES ?= 8
 SWING_TRAJECTORY_SEARCH_OUT ?= runs/swingup6_trajectory_search/low_momentum_search.json
 SWING_TRAJECTORY_SUSTAIN_OUT ?= runs/swingup6_trajectory_search/sustain_search.json
 SWING_TRAJECTORY_STATES_OUT ?= runs/swingup6_expert_chain/swing_states_low_momentum.json
@@ -174,10 +179,10 @@ search-capture-hybrid:
 	$(PYTHON) scripts/search_capture_hybrid_schedule.py --state-index $(CAPTURE_HYBRID_STATE) --initial-evaluation $(CAPTURE_REFINED_ADAPTIVE_OUT) --seed $(CAPTURE_HYBRID_SEED) --out $(CAPTURE_HYBRID_OUT)
 
 eval-feedback-mpc-state:
-	$(PYTHON) scripts/evaluate_feedback_mpc_capture.py --state-index $(CAPTURE_FEEDBACK_MPC_STATE) --seed $(CAPTURE_FEEDBACK_MPC_SEED) --out $(CAPTURE_FEEDBACK_MPC_OUT)
+	$(PYTHON) scripts/evaluate_feedback_mpc_capture.py --state-index $(CAPTURE_FEEDBACK_MPC_STATE) --seed $(CAPTURE_FEEDBACK_MPC_SEED) --mpc-seconds $(CAPTURE_FEEDBACK_MPC_SECONDS) --handoff-cart-abs $(CAPTURE_FEEDBACK_MPC_HANDOFF_CART) --iterations $(CAPTURE_FEEDBACK_MPC_ITERATIONS) --population $(CAPTURE_FEEDBACK_MPC_POPULATION) --elites $(CAPTURE_FEEDBACK_MPC_ELITES) --out $(CAPTURE_FEEDBACK_MPC_OUT)
 
 refine-feedback-mpc-boundary:
-	$(PYTHON) scripts/refine_feedback_mpc_capture.py --initial-evaluation $(CAPTURE_FEEDBACK_MPC_INITIAL) --out $(CAPTURE_FEEDBACK_MPC_BATCH_OUT)
+	$(PYTHON) scripts/refine_feedback_mpc_capture.py --initial-evaluation $(CAPTURE_FEEDBACK_MPC_INITIAL) --mpc-seconds $(CAPTURE_FEEDBACK_MPC_SECONDS) --handoff-cart-abs $(CAPTURE_FEEDBACK_MPC_HANDOFF_CART) --iterations $(CAPTURE_FEEDBACK_MPC_ITERATIONS) --population $(CAPTURE_FEEDBACK_MPC_POPULATION) --elites $(CAPTURE_FEEDBACK_MPC_ELITES) --out $(CAPTURE_FEEDBACK_MPC_BATCH_OUT)
 
 analyze-refined-capture-modal:
 	$(PYTHON) scripts/analyze_capture_modal_failures.py --evaluation $(CAPTURE_REFINED_ADAPTIVE_OUT) --out $(CAPTURE_REFINED_MODAL_ANALYSIS_OUT)
