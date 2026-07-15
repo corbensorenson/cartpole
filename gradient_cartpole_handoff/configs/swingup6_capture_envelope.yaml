@@ -22,7 +22,7 @@ env:
   init_qpos_cart_target: 0.0
   init_qvel_scale_start: 0.0
   init_qvel_scale_end: 1.0
-  init_qvel_scale_power: 2.0
+  init_qvel_scale_power: 3.0
   init_cart_noise: 0.0
   init_cart_vel_noise: 0.0
   init_angle_noise: 0.0
@@ -55,7 +55,7 @@ env:
       - 10.65066300949248
       - -21.451701886956194
       - 17.05171607427916
-    scale_start: 1.2
+    scale_start: 1.3
     scale_end: 0.02
     scale_power: 4.0
     residual_scale_start: 0.0
