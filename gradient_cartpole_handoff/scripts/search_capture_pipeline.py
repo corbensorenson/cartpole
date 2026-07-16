@@ -35,11 +35,14 @@ def stage_paths(run_dir: Path, state_index: int) -> dict[str, Path]:
         "approach_fddp": state_dir / "approach_fddp.json",
         "tail_seed": state_dir / "tail_cem.json",
         "tail_ddp": state_dir / "tail_ddp.json",
+        "scp_summary": state_dir / "scp" / "curriculum_summary.json",
     }
 
 
-def run_stage(command: list[str], artifact: Path, *, resume: bool) -> dict[str, Any]:
-    if not (resume and artifact.exists()):
+def run_stage(
+    command: list[str], artifact: Path, *, resume: bool, always_run: bool = False
+) -> dict[str, Any]:
+    if always_run or not (resume and artifact.exists()):
         artifact.parent.mkdir(parents=True, exist_ok=True)
         print(f"Running {' '.join(command)}", flush=True)
         subprocess.run(command, check=True)
@@ -125,6 +128,7 @@ def main() -> None:
     parser.add_argument("--no-resume", action="store_true")
     parser.add_argument("--no-fddp-refinement", action="store_true")
     parser.add_argument("--no-ddp-fallback", action="store_true")
+    parser.add_argument("--scp-fallback", action="store_true")
     args = parser.parse_args()
     indices = parse_state_indices(args.state_indices)
     run_dir = Path(args.run_dir)
@@ -303,6 +307,39 @@ def main() -> None:
                 )
                 stage_payloads["tail_ddp"] = tail_ddp
                 final_stage, final_payload = best_stage(stage_payloads)
+        if args.scp_fallback and not final_payload["result"]["success"]:
+            source_stage, _ = best_extension_stage(stage_payloads)
+            scp_command = [
+                python,
+                "scripts/continue_scp_capture.py",
+                "--state-index",
+                str(state_index),
+                "--seed",
+                str(state_seed),
+                "--initial-controller",
+                str(paths[source_stage]),
+                "--run-dir",
+                str(paths["scp_summary"].parent),
+                "--summary-out",
+                str(paths["scp_summary"]),
+            ]
+            if not resume:
+                scp_command.append("--no-resume")
+            scp_summary = run_stage(
+                scp_command,
+                paths["scp_summary"],
+                resume=resume,
+                # The child validates every resumed stage against the current source.
+                always_run=True,
+            )
+            scp_path = Path(scp_summary["final_controller"]["path"])
+            if (
+                file_metadata(scp_path)["sha256"]
+                != scp_summary["final_controller"]["sha256"]
+            ):
+                raise ValueError("SCP curriculum final-controller hash mismatch")
+            stage_payloads["scp"] = json.loads(scp_path.read_text(encoding="utf-8"))
+            final_stage, final_payload = best_stage(stage_payloads)
         summary = result_summary(final_payload)
         records.append(
             {

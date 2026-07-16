@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -28,6 +29,7 @@ from scripts.search_capture_pipeline import (
     best_extension_stage,
     best_stage,
     parse_state_indices,
+    run_stage,
     stage_paths,
 )
 
@@ -258,6 +260,25 @@ class ILQRTests(unittest.TestCase):
             paths["approach_fddp"],
             Path("runs/pipeline/validation_4/approach_fddp.json"),
         )
+        self.assertEqual(
+            paths["scp_summary"],
+            Path("runs/pipeline/validation_4/scp/curriculum_summary.json"),
+        )
+
+    def test_capture_pipeline_can_force_resumed_orchestrator_validation(self) -> None:
+        with TemporaryDirectory() as temporary_directory:
+            artifact = Path(temporary_directory) / "artifact.json"
+            artifact.write_text('{"value": 1}', encoding="utf-8")
+            command = [
+                sys.executable,
+                "-c",
+                (
+                    "from pathlib import Path; "
+                    f"Path({str(artifact)!r}).write_text('{{\"value\": 2}}')"
+                ),
+            ]
+            payload = run_stage(command, artifact, resume=True, always_run=True)
+            self.assertEqual(payload["value"], 2)
 
     def test_capture_pipeline_selects_best_authoritative_stage(self) -> None:
         def payload(

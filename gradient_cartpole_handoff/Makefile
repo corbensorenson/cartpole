@@ -1,5 +1,5 @@
 .PHONY: setup setup-sb3 setup-fddp smoke roadmap-p0 test-roadmap-p0 verify-roadmap-p0 export-swingup7-xml generate-capture-envelope capture-envelope6 capture-hybrid-policy6 capture-boundary-lqr mine-capture-boundary fit-capture-funnel search-capture-target-teacher build-capture-target-teachers build-feedback-mpc-teachers build-capture-supervisor-dataset distill-capture-supervisor eval-capture-supervisor distill-capture-trajectory eval-capture-trajectory-sources eval-capture-trajectory-validation collect-capture-dagger label-capture-dagger-lqr label-capture-dagger-target label-capture-dagger-feedback eval-adaptive-capture-boundary analyze-capture-modal sweep-capture-modal-feedback refine-adaptive-capture-boundary eval-transfer-capture-boundary search-capture-hybrid eval-feedback-mpc-state eval-predictive-sampling-state refine-feedback-mpc-boundary search-ilqr-capture search-fddp-capture continue-fddp-capture refine-ilqr-capture-chain eval-ilqr-chain-basin recenter-trajectory-controller eval-trajectory-funnel-library audit-capture-pipeline search-constrained-shooting-capture search-multiple-shooting-capture analyze-refined-capture-modal capture-sac-boundary mine-capture-failures distill-capture-lqr eval-capture-envelope6 eval-capture-envelope-lqr eval-capture-envelope-mpc swingup7 eval-swingup7-20 eval-swingup7-100 render-swingup7 verify-swingup7 debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture eval-mpc-policy-handoff-stage search-swingup-chain search-swingup-funnel export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-wide6 eval-capture-wide6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-stage capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum-qvel0 eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
-.PHONY: setup-aligator search-proxddp-capture search-scp-capture replay-scp-capture
+.PHONY: setup-aligator search-proxddp-capture search-scp-capture continue-scp-capture replay-scp-capture audit-capture-pipeline-scp
 
 PYTHON ?= .venv/bin/python
 ALIGATOR_PYTHON ?= .conda-aligator/bin/python
@@ -94,6 +94,8 @@ CAPTURE_PROXDDP_OUT ?= runs/p1_capture_proxddp/validation_$(CAPTURE_CONSTRAINED_
 CAPTURE_SCP_OUT ?= runs/p1_capture_scp/validation_$(CAPTURE_CONSTRAINED_STATE).json
 CAPTURE_SCP_CONTROLLER ?= $(CAPTURE_SCP_OUT)
 CAPTURE_SCP_REPLAY_OUT ?= runs/p1_capture_scp/replay_validation_$(CAPTURE_CONSTRAINED_STATE).json
+CAPTURE_SCP_RUN ?= runs/p1_capture_scp/validation_$(CAPTURE_CONSTRAINED_STATE)
+CAPTURE_SCP_SUMMARY ?= $(CAPTURE_SCP_RUN)/curriculum_summary.json
 CAPTURE_SCP_ITERATIONS ?= 800
 CAPTURE_SCP_ARGS ?= --window-steps 30 --window-offsets 0,5,10,15,20 --box-penalty 10 --cart-penalty 30
 CAPTURE_MULTIPLE_SHOOTING_OUT ?= runs/p1_capture_multiple_shooting/validation_$(CAPTURE_ILQR_STATE)_p1.json
@@ -317,6 +319,9 @@ eval-trajectory-funnel-library:
 audit-capture-pipeline:
 	$(PYTHON) scripts/search_capture_pipeline.py --state-indices $(CAPTURE_PIPELINE_STATES) --run-dir $(CAPTURE_PIPELINE_RUN) --summary-out $(CAPTURE_PIPELINE_OUT)
 
+audit-capture-pipeline-scp:
+	$(PYTHON) scripts/search_capture_pipeline.py --state-indices $(CAPTURE_PIPELINE_STATES) --run-dir $(CAPTURE_PIPELINE_RUN) --summary-out $(CAPTURE_PIPELINE_OUT) --scp-fallback
+
 search-constrained-shooting-capture:
 	$(PYTHON) scripts/search_constrained_shooting_capture.py --state-index $(CAPTURE_CONSTRAINED_STATE) --seed $(CAPTURE_CONSTRAINED_SEED) --initial-controller $(CAPTURE_CONSTRAINED_INITIAL) --iterations $(CAPTURE_CONSTRAINED_ITERATIONS) --out $(CAPTURE_CONSTRAINED_OUT)
 
@@ -325,6 +330,9 @@ search-proxddp-capture:
 
 search-scp-capture:
 	$(PYTHON) scripts/search_scp_capture.py --state-index $(CAPTURE_CONSTRAINED_STATE) --seed $(CAPTURE_CONSTRAINED_SEED) --initial-controller $(CAPTURE_CONSTRAINED_INITIAL) --iterations $(CAPTURE_SCP_ITERATIONS) $(CAPTURE_SCP_ARGS) --out $(CAPTURE_SCP_OUT)
+
+continue-scp-capture:
+	$(PYTHON) scripts/continue_scp_capture.py --state-index $(CAPTURE_CONSTRAINED_STATE) --seed $(CAPTURE_CONSTRAINED_SEED) --initial-controller $(CAPTURE_CONSTRAINED_INITIAL) --run-dir $(CAPTURE_SCP_RUN) --summary-out $(CAPTURE_SCP_SUMMARY)
 
 replay-scp-capture:
 	$(PYTHON) scripts/replay_scp_capture.py --controller $(CAPTURE_SCP_CONTROLLER) --out $(CAPTURE_SCP_REPLAY_OUT)
