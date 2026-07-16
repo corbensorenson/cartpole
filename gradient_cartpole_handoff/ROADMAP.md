@@ -116,6 +116,8 @@ Gate P0:
 
 ### Phase 1: Build A Reliable Six-Link Capture Basin
 
+Status: **Active**. The exact-MuJoCo local-SCP teacher now solves all six fixed full-envelope development states, including reset-free recoveries for prior rail failures 4 and 5. This `6/6` model-based development audit validates teacher generation but does not satisfy the 1,000-state policy gate below.
+
 Purpose: solve the current bottleneck independently before spending compute on increasingly energetic swing policies.
 
 Work:

@@ -1,6 +1,8 @@
 .PHONY: setup setup-sb3 setup-fddp smoke roadmap-p0 test-roadmap-p0 verify-roadmap-p0 export-swingup7-xml generate-capture-envelope capture-envelope6 capture-hybrid-policy6 capture-boundary-lqr mine-capture-boundary fit-capture-funnel search-capture-target-teacher build-capture-target-teachers build-feedback-mpc-teachers build-capture-supervisor-dataset distill-capture-supervisor eval-capture-supervisor distill-capture-trajectory eval-capture-trajectory-sources eval-capture-trajectory-validation collect-capture-dagger label-capture-dagger-lqr label-capture-dagger-target label-capture-dagger-feedback eval-adaptive-capture-boundary analyze-capture-modal sweep-capture-modal-feedback refine-adaptive-capture-boundary eval-transfer-capture-boundary search-capture-hybrid eval-feedback-mpc-state eval-predictive-sampling-state refine-feedback-mpc-boundary search-ilqr-capture search-fddp-capture continue-fddp-capture refine-ilqr-capture-chain eval-ilqr-chain-basin recenter-trajectory-controller eval-trajectory-funnel-library audit-capture-pipeline search-constrained-shooting-capture search-multiple-shooting-capture analyze-refined-capture-modal capture-sac-boundary mine-capture-failures distill-capture-lqr eval-capture-envelope6 eval-capture-envelope-lqr eval-capture-envelope-mpc swingup7 eval-swingup7-20 eval-swingup7-100 render-swingup7 verify-swingup7 debug sweep train6 eval6 render6 uniform6 lqr6 swingup-debug swingup6 swingup6-gradient-low-momentum swingup6-uniform-low-momentum eval-swingup6 eval-swingup6-low-momentum render-swingup6 probe-swingup-trajectory search-swingup-trajectory search-swingup-low-momentum search-swingup-sustain search-swingup-action-low-momentum search-swingup-action-cold search-linear-policy search-swingup-capture search-capture-sequence eval-mpc-capture eval-mpc-policy-handoff-stage search-swingup-chain search-swingup-funnel export-swingup-states export-low-momentum-swingup-states export-policy-handoff-states export-chain-states eval-expert-chain eval-expert-chain-learned capture-handoff6 eval-capture-handoff6 capture-state-list6 eval-capture-state-list6 capture-state-list-shaped6 eval-capture-state-list-shaped6 capture-wide6 eval-capture-wide6 capture-low-momentum-velocity-curriculum capture-state-curriculum eval-capture-state-curriculum capture-lqr-residual-velocity-curriculum eval-capture-lqr-residual capture-state-curriculum-lqr-init eval-capture-state-curriculum-lqr-init capture-policy-handoff-shaped6 capture-policy-handoff-stage eval-capture-policy-handoff-stage capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum eval-capture-policy-handoff-curriculum-qvel0 eval-capture-policy-handoff-shaped6 chain-state-list-shaped6 eval-chain-state-list-shaped6
+.PHONY: setup-aligator search-proxddp-capture search-scp-capture replay-scp-capture
 
 PYTHON ?= .venv/bin/python
+ALIGATOR_PYTHON ?= .conda-aligator/bin/python
 SWINGUP7_RUN ?= runs/swingup7_uniform
 SWINGUP7_CHECKPOINT ?= $(SWINGUP7_RUN)/checkpoints/best.safetensors
 CAPTURE_ENVELOPE_DIR ?= runs/p1_capture_envelope
@@ -88,6 +90,12 @@ CAPTURE_CONSTRAINED_SEED ?= 64015
 CAPTURE_CONSTRAINED_INITIAL ?= runs/p1_capture_pipeline/validation_5/approach_fddp.json
 CAPTURE_CONSTRAINED_OUT ?= runs/p1_capture_constrained_shooting/validation_5.json
 CAPTURE_CONSTRAINED_ITERATIONS ?= 40
+CAPTURE_PROXDDP_OUT ?= runs/p1_capture_proxddp/validation_$(CAPTURE_CONSTRAINED_STATE).json
+CAPTURE_SCP_OUT ?= runs/p1_capture_scp/validation_$(CAPTURE_CONSTRAINED_STATE).json
+CAPTURE_SCP_CONTROLLER ?= $(CAPTURE_SCP_OUT)
+CAPTURE_SCP_REPLAY_OUT ?= runs/p1_capture_scp/replay_validation_$(CAPTURE_CONSTRAINED_STATE).json
+CAPTURE_SCP_ITERATIONS ?= 800
+CAPTURE_SCP_ARGS ?= --window-steps 30 --window-offsets 0,5,10,15,20 --box-penalty 10 --cart-penalty 30
 CAPTURE_MULTIPLE_SHOOTING_OUT ?= runs/p1_capture_multiple_shooting/validation_$(CAPTURE_ILQR_STATE)_p1.json
 CAPTURE_MULTIPLE_SHOOTING_SEGMENT_STEPS ?= 1
 CAPTURE_MULTIPLE_SHOOTING_ITERATIONS ?= 30
@@ -186,6 +194,9 @@ setup-sb3:
 
 setup-fddp:
 	$(PYTHON) -m pip install -r requirements-fddp.txt
+
+setup-aligator:
+	bash scripts/setup_aligator.sh
 
 roadmap-p0: test-roadmap-p0 export-swingup7-xml verify-roadmap-p0
 
@@ -308,6 +319,15 @@ audit-capture-pipeline:
 
 search-constrained-shooting-capture:
 	$(PYTHON) scripts/search_constrained_shooting_capture.py --state-index $(CAPTURE_CONSTRAINED_STATE) --seed $(CAPTURE_CONSTRAINED_SEED) --initial-controller $(CAPTURE_CONSTRAINED_INITIAL) --iterations $(CAPTURE_CONSTRAINED_ITERATIONS) --out $(CAPTURE_CONSTRAINED_OUT)
+
+search-proxddp-capture:
+	$(ALIGATOR_PYTHON) scripts/search_proxddp_capture.py --state-index $(CAPTURE_CONSTRAINED_STATE) --seed $(CAPTURE_CONSTRAINED_SEED) --initial-controller $(CAPTURE_CONSTRAINED_INITIAL) --out $(CAPTURE_PROXDDP_OUT)
+
+search-scp-capture:
+	$(PYTHON) scripts/search_scp_capture.py --state-index $(CAPTURE_CONSTRAINED_STATE) --seed $(CAPTURE_CONSTRAINED_SEED) --initial-controller $(CAPTURE_CONSTRAINED_INITIAL) --iterations $(CAPTURE_SCP_ITERATIONS) $(CAPTURE_SCP_ARGS) --out $(CAPTURE_SCP_OUT)
+
+replay-scp-capture:
+	$(PYTHON) scripts/replay_scp_capture.py --controller $(CAPTURE_SCP_CONTROLLER) --out $(CAPTURE_SCP_REPLAY_OUT)
 
 search-multiple-shooting-capture:
 	$(PYTHON) scripts/search_multiple_shooting_capture.py --state-index $(CAPTURE_ILQR_STATE) --seed $(CAPTURE_ILQR_SEED) --horizon-seconds $(CAPTURE_ILQR_HORIZON) --segment-steps $(CAPTURE_MULTIPLE_SHOOTING_SEGMENT_STEPS) --max-evaluations $(CAPTURE_MULTIPLE_SHOOTING_ITERATIONS) $(CAPTURE_MULTIPLE_SHOOTING_INITIAL_ARGS) --out $(CAPTURE_MULTIPLE_SHOOTING_OUT)
