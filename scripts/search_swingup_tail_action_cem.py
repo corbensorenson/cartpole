@@ -157,6 +157,29 @@ def replay_to_tail(
                     f"source swing ended before tail start at step {step}: "
                     f"{info.get('termination_reason')} x={float(env.data.qpos[0]):.3f}"
                 )
+    elif "controls" in controller:
+        source_controls = np.asarray(controller["controls"], dtype=np.float64)
+        if source_controls.ndim != 1 or source_controls.size < 2:
+            raise ValueError("FDDP source controller must contain at least two controls")
+        source_seconds = float(
+            controller.get("horizon_seconds", source_controls.size * env.dt)
+        )
+        source_times = np.linspace(0.0, max(source_seconds, 1e-9), source_controls.size)
+        target_times = np.linspace(0.0, float(tail_start_seconds), horizon)
+        for step, target_time in enumerate(target_times):
+            action = float(
+                np.clip(
+                    np.interp(float(target_time), source_times, source_controls),
+                    -1.0,
+                    1.0,
+                )
+            )
+            _, _, terminated, truncated, info = env.step([action])
+            if terminated or truncated:
+                raise RuntimeError(
+                    f"source swing ended before tail start at step {step}: "
+                    f"{info.get('termination_reason')} x={float(env.data.qpos[0]):.3f}"
+                )
     else:
         knots = np.asarray(controller["knots"], dtype=np.float64)
         trajectory_seconds = float(controller["trajectory_seconds"])

@@ -778,6 +778,23 @@ the tail by the actual post-tail capture/LQR replay while preserving the
 canonical rail and the fixed swing prefix. It must not restart broad global or
 morphology search merely because this tail objective is incomplete.
 
+Capture-value continuation update (2026-09-12): the inherited eight-link tail
+was then ranked by the actual seven-link-style terminal LQR from each emitted
+state. Endpoint-only CEM reduced the selected angle to `0.481 rad`, but the
+same state carried `7.27 rad/s` hinge RMS, `6.33 m/s` cart velocity, and
+`2.66 m` cart position; the downstream LQR hold was `0.00 s`. The multi-state
+window evaluator likewise found no upright streak before its short diagnostic
+budget was stopped. A 10-second exact Box-FDDP capture search from that
+measured endpoint reached live `min_v=388.15`, cart `3.006 m`, and `0.00 s`
+hold. A switch-time sweep from `2.0` through `4.56 s`, LQR scales `0.25` through
+`2.0`, and discovery rails through `+/-12 m` also produced no upright interval.
+This closes the current terminal-LQR/timing branch without an eight-link
+claim. The next permitted inherited-method step is a protected capture expert:
+retain a known stabilizing teacher, train it on measured eight-link internal
+modes, and only then rerank the same swing tail by that expert. Unconstrained
+PPO is not an acceptable capture learner; the first eight-link maintenance
+probe collapsed to `0/8` at progress `0` and was stopped at update `199`.
+
 ### Current Canonical Seven-Link Result
 
 The final canonical control evaluation now passes independently of the earlier

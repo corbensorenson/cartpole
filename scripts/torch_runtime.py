@@ -8,7 +8,13 @@ from pathlib import Path
 
 def prepare_runtime() -> None:
     root = Path(__file__).resolve().parents[1]
-    native_site = (root / ".conda-aligator" / "lib" / "python3.12" / "site-packages").resolve()
+    native_site = root / ".conda-aligator" / "lib" / "python3.12" / "site-packages"
+    if not native_site.is_dir():
+        # The handoff packet keeps the native MuJoCo environment one directory
+        # below the repository.  Prefer the repository-local environment when
+        # it exists, but retain compatibility with the original layout.
+        native_site = root / "gradient_cartpole_handoff" / ".conda-aligator" / "lib" / "python3.12" / "site-packages"
+    native_site = native_site.resolve()
     src = str((root / "src").resolve())
     native_text = str(native_site)
 

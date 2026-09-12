@@ -35,6 +35,11 @@ from search_swingup_tail_action_cem import (
     score_batch,
 )
 
+try:
+    from scripts.search_swingup_capture import lqr_action, lqr_gain
+except ModuleNotFoundError:
+    from search_swingup_capture import lqr_action, lqr_gain
+
 
 def load_capture_policy(
     cfg: dict[str, Any],
@@ -94,6 +99,10 @@ def evaluate_capture_batch(
     qpos_batch: np.ndarray,
     qvel_batch: np.ndarray,
     capture_steps: int,
+    *,
+    capture_mode: str,
+    capture_gain: np.ndarray | None,
+    capture_lqr_scale: float,
 ) -> dict[str, np.ndarray]:
     best_cost = np.full(len(qpos_batch), np.inf, dtype=np.float64)
     terminal_cost = np.full(len(qpos_batch), np.inf, dtype=np.float64)
@@ -109,13 +118,24 @@ def evaluate_capture_batch(
         costs: list[float] = []
         final_info: dict[str, Any] = {}
         for _ in range(capture_steps):
-            obs = env._get_obs()
-            action, _, _ = sample_action(
-                model,
-                obs[None, :],
-                deterministic=True,
-            )
-            _, _, terminated, truncated, info = env.step([float(action[0, 0])])
+            if capture_mode == "lqr":
+                if capture_gain is None:
+                    raise ValueError("LQR capture mode requires a capture gain")
+                action = lqr_action(
+                    env,
+                    capture_gain,
+                    scale=capture_lqr_scale,
+                    cart_target=0.0,
+                )
+            else:
+                obs = env._get_obs()
+                action, _, _ = sample_action(
+                    model,
+                    obs[None, :],
+                    deterministic=True,
+                )
+                action = float(action[0, 0])
+            _, _, terminated, truncated, info = env.step([float(action)])
             info["cart_velocity"] = float(env.data.qvel[0])
             costs.append(capture_cost_from_info(info))
             final_info = info
@@ -160,8 +180,11 @@ def main() -> None:
     parser.add_argument("--controller-key", default=None)
     parser.add_argument("--init-tail-json", default=None)
     parser.add_argument("--init-tail-key", default="best")
-    parser.add_argument("--capture-checkpoint", required=True)
+    parser.add_argument("--capture-mode", choices=("torch", "lqr"), default="torch")
+    parser.add_argument("--capture-checkpoint", default=None)
     parser.add_argument("--capture-hidden-sizes", default="")
+    parser.add_argument("--capture-lqr-scale", type=float, default=0.5)
+    parser.add_argument("--capture-lqr-control-cost", type=float, default=1000.0)
     parser.add_argument("--tail-start-seconds", type=float, default=11.0)
     parser.add_argument("--tail-seconds", type=float, default=5.0)
     parser.add_argument("--capture-seconds", type=float, default=2.0)
@@ -196,6 +219,10 @@ def main() -> None:
 
     if args.knot_count < 2 or args.population < 2 or not (1 <= args.elites <= args.population):
         raise ValueError("invalid CEM dimensions")
+    if args.capture_mode == "torch" and not args.capture_checkpoint:
+        raise ValueError("--capture-checkpoint is required for torch capture mode")
+    if args.capture_lqr_scale < 0.0 or args.capture_lqr_control_cost <= 0.0:
+        raise ValueError("capture LQR scale must be nonnegative and control cost positive")
     cfg = apply_overrides(load_config(args.config), args.override)
     cfg["env"] = {
         **cfg["env"],
@@ -228,7 +255,20 @@ def main() -> None:
     hidden_sizes = [int(value) for value in args.capture_hidden_sizes.split(",") if value.strip()]
     if capture_residual_enabled:
         capture_residual_cfg["enabled"] = True
-    capture_model, sample_action = load_capture_policy(cfg, args.capture_checkpoint, hidden_sizes)
+    capture_model = None
+    sample_action = None
+    capture_gain = None
+    if args.capture_mode == "torch":
+        capture_model, sample_action = load_capture_policy(
+            cfg, str(args.capture_checkpoint), hidden_sizes
+        )
+    else:
+        capture_gain = lqr_gain(
+            cfg,
+            progress=1.0,
+            fd_eps=1e-7,
+            control_cost=args.capture_lqr_control_cost,
+        )
     rng = np.random.default_rng(args.seed)
     center = load_tail_center(args.init_tail_json, args.knot_count, args.init_tail_key)
     sigma = np.full(args.knot_count, args.action_sigma, dtype=np.float64)
@@ -271,6 +311,9 @@ def main() -> None:
             metrics["qpos"][:, -1, :],
             metrics["qvel"][:, -1, :],
             capture_steps,
+            capture_mode=args.capture_mode,
+            capture_gain=capture_gain,
+            capture_lqr_scale=args.capture_lqr_scale,
         )
         cost = args.physical_weight * physical_cost + args.capture_weight * capture["capture_cost"]
         order = np.argsort(cost)
@@ -333,7 +376,12 @@ def main() -> None:
         "controller_key": args.controller_key,
         "init_tail_json": args.init_tail_json,
         "init_tail_key": args.init_tail_key,
-        "capture_checkpoint": str(args.capture_checkpoint),
+        "capture_mode": args.capture_mode,
+        "capture_checkpoint": (
+            None if args.capture_checkpoint is None else str(args.capture_checkpoint)
+        ),
+        "capture_lqr_scale": float(args.capture_lqr_scale),
+        "capture_lqr_control_cost": float(args.capture_lqr_control_cost),
         "tail_start_seconds": float(args.tail_start_seconds),
         "tail_horizon_steps": int(horizon_steps),
         "tail_horizon_seconds": float(horizon_steps * env.dt),

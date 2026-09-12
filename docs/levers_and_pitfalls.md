@@ -1098,3 +1098,36 @@ and the tail CEM can seed a new run from a prior best knot vector. The next
 permitted inherited-method test is to score candidate tails by an actual
 post-tail capture/LQR replay, using this rail-safe warm start; no new global
 policy or morphology search is justified by the current evidence.
+
+## Inherited Eight-Link Capture-Value Boundary (2026-09-12)
+
+The requested continuation stayed on the seven-link method: inherited swing
+prefix, exact-MuJoCo arrest tail, then a separate capture expert. The new
+capture-value path was tested with the same upright LQR used by the released
+seven-link controller, first at the tail endpoint and then at several real
+states along each candidate tail. None of these artifacts is eight-link
+evidence.
+
+| Attempt | Exact setup | Result | Decision |
+|---|---|---|---|
+| LQR-valued endpoint tail | Uniform 8 links, fixed 3.50 s inherited prefix, 5 s tail, 5 s downstream LQR, canonical rail penalty | Initial CEM had no hold; best endpoint was `1.489 rad`, `4.10 rad/s` hinge RMS, `2.47 m` cart position, and `4.18 m/s` cart velocity | Capture value improves ranking but does not create a handoff |
+| LQR-valued local refinement | Same route, seeded from the prior tail, tighter CEM and heavier downstream value | Best endpoint angle `0.481 rad`, hinge RMS `7.27 rad/s`, cart `2.66 m`, cart velocity `6.33 m/s`; downstream LQR streak `0.00 s` | Low angle is a high-momentum false positive |
+| Real-state LQR window | Existing multi-state tail evaluator, LQR replay from actual serialized states along each tail | Twelve diagnostic iterations produced no upright streak; best logged state was about `0.735 rad` at `3.12 s` and reached the canonical rail | Keep the window evaluator, but replace the capture expert before spending a long budget |
+| Long capture FDDP | Exact measured best-tail state, 10 s Box-FDDP capture horizon, canonical rail | `min_v=388.15`, terminal value `9846.94`, live cart `3.006 m`, hold `0.00 s` | More capture time without a better basin does not solve the extra mode |
+| Switch/scale sweep | Inherited FDDP route, LQR switch times `2.0-4.56 s`, scales `0.25-2.0`, rails `3-12 m` | Every case had no upright interval and terminated at its rail | Timing and rail width are not the missing capture mechanism |
+| Protected-capture prerequisite probe | 8-link upright maintenance PPO from the seven-link maintenance recipe, uniform plant, p0 gated stage | Repeated p0 checks stayed at `0/8`; the stopped run reached update `199` and its best deterministic replay drove to the `9 m` training rail | Reject unconstrained PPO; preserve a stabilizing teacher before widening internal-mode disturbances |
+
+The multi-state evaluator initially used the old `score_batch` call
+signature. It now supplies the explicit absolute-rate, rail, and endpoint
+weights introduced by the newer tail scorer. The Torch runtime helper also
+resolves the repository's handoff layout (`gradient_cartpole_handoff/.conda-aligator`)
+before importing the system PyTorch, so the documented CPU training path loads
+Torch, MuJoCo, and Gymnasium together. These are infrastructure fixes, not
+control evidence.
+
+The next inherited-method experiment is a protected capture expert trained on
+real eight-link states and measured internal modes, with the stabilizing
+teacher retained until each envelope gate passes. Reuse the existing
+capture-value tail search only after that expert demonstrates recovery from
+held-out states; do not create an 8-link paper, video, or record claim from
+these endpoint or upright-origin diagnostics.

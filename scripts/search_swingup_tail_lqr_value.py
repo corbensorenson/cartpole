@@ -186,8 +186,14 @@ def main() -> None:
             angle_weight=15.0,
             hinge_weight=100.0,
             max_hinge_weight=12.0,
+            absolute_velocity_weight=0.0,
             cart_weight=1.5,
             cart_velocity_weight=2.0,
+            rail_penalty_limit=2.90,
+            rail_penalty_weight=20_000.0,
+            best_score_weight=0.55,
+            terminal_score_weight=0.25,
+            tail_average_weight=0.20,
             robust_window_steps=0,
         )
         capture_rows = [
