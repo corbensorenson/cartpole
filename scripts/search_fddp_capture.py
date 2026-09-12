@@ -82,6 +82,18 @@ def main() -> None:
     parser.add_argument("--terminal-state-weight", type=float, default=100_000.0)
     parser.add_argument("--terminal-cart-weight", type=float, default=0.0)
     parser.add_argument("--terminal-cart-velocity-weight", type=float, default=0.0)
+    parser.add_argument(
+        "--terminal-cart-velocity-factor",
+        type=float,
+        default=1.0,
+        help="multiply the terminal cart-velocity block in the full-state objective",
+    )
+    parser.add_argument(
+        "--terminal-hinge-velocity-factor",
+        type=float,
+        default=1.0,
+        help="multiply the terminal hinge-velocity block in the full-state objective",
+    )
     parser.add_argument("--rail-soft-limit", type=float, default=2.4)
     parser.add_argument("--rail-weight", type=float, default=100_000_000.0)
     parser.add_argument("--handoff-lyapunov", type=float, default=1800.0)
@@ -119,6 +131,8 @@ def main() -> None:
             args.handoff_angle_abs,
             args.handoff_cart_velocity_abs,
             args.handoff_hinge_velocity_rms,
+            args.terminal_cart_velocity_factor,
+            args.terminal_hinge_velocity_factor,
         )
         <= 0.0
         or min(
@@ -210,9 +224,13 @@ def main() -> None:
     initial_states[0] = start_state
     if args.rebuild_initial_states:
         initial_states = rollout_controls(transition, start_state, initial_controls)
+    terminal_identity = np.eye(transform.shape[0], dtype=np.float64)
+    state_half = transform.shape[0] // 2
+    terminal_identity[state_half, state_half] *= args.terminal_cart_velocity_factor
+    terminal_identity[state_half + 1 :, state_half + 1 :] *= args.terminal_hinge_velocity_factor
     terminal_metric = (
         args.terminal_weight * lyapunov / args.handoff_lyapunov
-        + args.terminal_state_weight * np.eye(transform.shape[0], dtype=np.float64)
+        + args.terminal_state_weight * terminal_identity
     )
     terminal_metric = add_terminal_cart_weights(
         terminal_metric,
@@ -320,6 +338,8 @@ def main() -> None:
             "terminal_state_weight": float(args.terminal_state_weight),
             "terminal_cart_weight": float(args.terminal_cart_weight),
             "terminal_cart_velocity_weight": float(args.terminal_cart_velocity_weight),
+            "terminal_cart_velocity_factor": float(args.terminal_cart_velocity_factor),
+            "terminal_hinge_velocity_factor": float(args.terminal_hinge_velocity_factor),
             "rail_soft_limit": float(args.rail_soft_limit),
             "rail_weight": float(args.rail_weight),
             "handoff_lyapunov": float(args.handoff_lyapunov),

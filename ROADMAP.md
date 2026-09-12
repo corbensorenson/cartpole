@@ -753,6 +753,19 @@ The same rule applies recursively: after an `n`-link frontier passes, create
 the `n+1`-link campaign and repeat the full evidence bundle. There is no fixed
 upper stopping point in this roadmap; the user decides when to stop the ladder.
 
+Latest inherited-method continuation update (2026-09-12): the exact released
+seven-link force route was replayed through genuine uniform-eight dynamics,
+retimed, repeated for longer windup, optimized open-loop and with feedback,
+and handed to capture FDDP from measured upper-neighborhood states. The best
+open-loop route crossed `0.243 rad` at `4.44 s` but reached the planned
+handoff at `1.122 rad` and `x=2.807 m`; the best terminal-velocity homotopy
+ended at about `1.50 rad` with `1.35 rad/s` hinge RMS and still failed capture.
+The new terminal velocity factors are committed in
+`scripts/search_fddp_capture.py` with `1.0` defaults. This remains an
+inherited-method diagnostic boundary, not an eight-link result; the next
+experiment must improve the same swing-to-low-momentum route before any
+canonical 8-link evidence bundle is created.
+
 ### Current Canonical Seven-Link Result
 
 The final canonical control evaluation now passes independently of the earlier

@@ -1043,3 +1043,27 @@ Artifacts: `runs/p1_capture_full_curriculum_probe/` and
 address high internal-rate modes with a reusable state-feedback recovery
 teacher and then rerun the same full 1,000-state gate; no rail or benchmark
 threshold is relaxed.
+
+## Inherited Eight-Link Route Boundary (2026-09-12)
+
+The eight-link campaign stayed on the seven-link recipe: an exact-MuJoCo
+Box-FDDP swing route followed by a terminal capture expert. These runs are
+all genuine uniform-eight diagnostics or measured handoff states; none is
+canonical eight-link evidence.
+
+| Attempt | Exact setup | Result | Decision |
+|---|---|---|---|
+| Wider-rail time stretch | Seven-link force route retimed to `5.0 s`, replayed and optimized on a `+/-12 m` discovery rail | FDDP stopped at `min_v=1613.96` and `12.073 m`; stronger rail shaping stopped at `min_v=416.87` and `12.046 m`; canonical replays hit `3.014 m` and `3.098 m` with no hold | A longer rail alone does not create a capture route |
+| Exact canonical route, feasible FDDP | Dynamically consistent 8-link replay of the 4.56-second released force route, feasible Box-FDDP, canonical rail | `min_v=374.37`, live rail `3.069 m`, hold `0 s` | Direct link-count continuation remains outside the basin |
+| Open-loop route | Same exact replay, zero trajectory feedback, handoff deferred to the route horizon | Best transient angle `0.243 rad` at `4.44 s`; at `4.56 s`, angle `1.122 rad`, hinge RMS `2.25 rad/s`, `x=2.807 m`; live rail `3.027 m` | Feedback amplification is not the only blocker; the cart arrives too close to the rail |
+| Repeated windup | Two and three repetitions of the released seven-link force cycle, then FDDP on canonical rail | Live routes reached `3.050 m` and `3.148 m` with `0 s` hold | Repeating the proven swing does not rephase the eighth mode |
+| Measured two-expert handoffs | Capture-only Box-FDDP from measured upper-neighborhood states: `(0.671 rad, 18.23 rad/s)`, `(0.898 rad, 6.53 rad/s)`, and `(0.243 rad, 8.45 rad/s)` | Canonical or discovery-rail tails all failed; the near-top tail reached `4.589 m` on a `4.5 m` rail | Capture must receive a substantially quieter and more centered state |
+| Terminal momentum homotopy | Added configurable terminal cart/hinge velocity factors to `scripts/search_fddp_capture.py`; continued factors `20 -> 5 -> 1` from the exact route | Handoff moved from `(1.672 rad, 1.63 rad/s)` to `(1.498 rad, 1.35 rad/s)` and then `(1.506 rad, 1.41 rad/s)`, but never entered capture; an exact tail extension also failed at `3.011 m` | Low momentum is necessary but not sufficient; the remaining angle must be removed without spending the rail |
+
+The new terminal velocity factors default to `1.0`, preserving prior behavior.
+The focused FDDP and roadmap tests pass (`11 passed`). The reproducible
+frontier is therefore a low-momentum but still non-upright terminal state,
+not an eight-link solution. The next inherited-method experiment should
+continue from this route family with a longer swing-and-brake trajectory or a
+capture teacher trained on these measured internal modes; broad policy or
+global-CEM exploration remains out of scope.
