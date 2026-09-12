@@ -425,6 +425,9 @@ class CaptureEnvelopeTests(unittest.TestCase):
 
     def test_lqr_switch_rejects_residual_blending(self) -> None:
         cfg = load_config(ROOT / "configs/swingup6_capture_envelope.yaml")
+        cfg["env"]["init_mode"] = "upright"
+        cfg["env"]["init_angle_noise"] = 0.0
+        cfg["env"]["init_vel_noise"] = 0.0
         cfg["env"]["action_lqr_switch"] = {"enabled": True}
         env = NLinkCartPoleEnv(cfg, progress=1.0, seed=37)
         try:
