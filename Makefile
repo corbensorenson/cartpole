@@ -382,11 +382,11 @@ render-swingup7:
 	$(PYTHON) scripts/render_fddp_two_expert_2d.py --config configs/swingup7_uniform.yaml --spec benchmarks/p1_capture_envelope.yaml --controller $(SWINGUP7_CONTROLLER) --hanging-start --seconds 30 --seed $(SWINGUP7_VIDEO_SEED) --prelude-seconds 10 --settle-mode hanging_lqr --settle-scale 1.0 --settle-control-cost 1000 --tracking-gain-scale 2.0 --shift-cart-nominal --fail-on-failure --out $(SWINGUP7_RUN)/seven_link_swingup_success.mp4 --metadata-out $(SWINGUP7_RUN)/seven_link_swingup_success.video.json
 
 release-swingup7:
-	$(PYTHON) scripts/release_swingup7.py --twenty-seed $(SWINGUP7_20_SEED) --hundred-seed $(SWINGUP7_100_SEED) --video-seed $(SWINGUP7_VIDEO_SEED)
+	PYTHONPATH=src:scripts $(PYTHON) scripts/release_swingup7.py --twenty-seed $(SWINGUP7_20_SEED) --hundred-seed $(SWINGUP7_100_SEED) --video-seed $(SWINGUP7_VIDEO_SEED)
 	$(MAKE) verify-swingup7 PYTHON=$(PYTHON)
 
 verify-swingup7:
-	$(PYTHON) scripts/verify_roadmap.py --run-dir $(SWINGUP7_RUN) --report $(SWINGUP7_RUN)/verification.json
+	PYTHONPATH=src:scripts $(PYTHON) scripts/verify_roadmap.py --run-dir $(SWINGUP7_RUN) --report $(SWINGUP7_RUN)/verification.json
 
 smoke:
 	$(PYTHON) scripts/smoke_test.py
