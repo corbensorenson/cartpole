@@ -28,6 +28,31 @@ They never advance the frontier. After a frontier advances, the next campaign
 inherits the same evidence checklist and creates `n+1` config, manifest,
 evaluation, video, and paper artifacts. The current ladder is:
 
+### Method Inheritance Rule
+
+Frontiers 8 and above inherit the released seven-link controller architecture
+before any new discovery method is considered. The default campaign is:
+
+1. Condition the noisy hanging state with the same hanging-equilibrium LQR.
+2. Replay the released swing controls through the exact target-link MuJoCo
+   plant and save the resulting target-chain states.
+3. Re-optimize that state-consistent route with the same Box-FDDP terminal
+   objective and time-varying feedback.
+4. Hand the real terminal states to a capture/stabilize expert in the same
+   uninterrupted episode; use terminal LQR where it is demonstrably stable,
+   otherwise keep the capture controller inside the same exact FDDP family.
+5. Evaluate the complete chain on the canonical target plant before promoting
+   the next morphology or link count.
+
+Only one continuation lever may change at a time. Rail widening, morphology
+gradients, friction, damping, and longer horizons are temporary continuation
+conditions and must be replayed back on the canonical target before they are
+accepted. Broad PPO, global CEM, or unrelated controller-family searches are
+not the default next step for a frontier that already has a working predecessor;
+they require an explicit ledger entry explaining why the inherited chain was
+falsified. Every inherited-route attempt must record its exact replay artifact,
+terminal state, rail outcome, and capture outcome in `docs/levers_and_pitfalls.md`.
+
 | Frontier | Status | Advancement target |
 |---:|---|---|
 | 6 | Calibration required | Complete the frozen six-link end-to-end gates |
@@ -106,8 +131,9 @@ If a different observation, action space, rail, force limit, or success definiti
 
 ## Permitted Solution Architecture
 
-A single policy or an explicit phased expert chain is acceptable. The preferred
-seven-link runtime chain has two experts: a swing-up expert and a
+A single policy or an explicit phased expert chain is acceptable. The released
+seven-link runtime chain is the reference architecture for later frontiers and
+has two experts: a swing-up expert and a
 capture/stabilize expert. Maintenance is a separate training prerequisite for
 the second expert and may be folded into its final checkpoint or switch logic.
 Its gate and evidence remain separate. Any multi-expert result must satisfy

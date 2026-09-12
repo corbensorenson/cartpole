@@ -992,3 +992,29 @@ too much hinge energy and consumes the rail before capture. The next allowed
 lever is staged feedback homotopy from the explicit ghost profile, with exact
 serial replay after every morphology step. No 8-link paper, video, or public
 claim is created until the canonical 20/100 and reset-free video gates pass.
+
+## Inherited Seven-Link Method Continuation (2026-09-12)
+
+The latest campaign was narrowed to the method that actually passed seven
+links. The new `scripts/force_proposal_to_fddp.py` adapter replays a saved
+force route through the target-chain MuJoCo model and records dynamically
+consistent target-chain states before Box-FDDP starts. This removes the
+duplicated-coordinate warm-start artifact from the earlier padded runs.
+
+| Attempt | Exact setup | Result | Decision |
+|---|---|---|---|
+| 7-route replay | Released 228-step seven-link controls replayed on uniform 8 links for 4.56 s | Best absolute-link angle about `0.688 rad`; replay cart excursion `2.124 m`; subsequent upright LQR hit the `3 m` rail | Failed; the predecessor waveform is not a target-chain route |
+| State-consistent Box-FDDP | Exact 8-link replay warm start, 4.56 s, same terminal-state objective and time-varying feedback | Solver/live route remained outside capture (`min_v` about `1.89e6` after the unstable pass) | Failed; direct link increment is too large |
+| Ghost-profile continuation | Seven-link route continued into the explicit eight-body ghost plant at progress `0.0` | FDDP reached terminal Lyapunov about `0.03`; terminal LQR still left the intermediate plant through the rail | Partial only; the ghost endpoint is not a usable capture expert |
+| Fine ghost step | Progress `0.02`, gentle terminal-state homotopy, exact replay between stages | Terminal Lyapunov about `6.55`; progress `0.04` and `0.10` did not retain the capture neighborhood | Failed continuation; smaller steps or a better capture handoff are required |
+| Upright capture probe | Uniform 8 links, exact upright plus a `0.001 rad` link-3 perturbation, ordinary LQR and finite-horizon FDDP feedback | Link-3-and-later internal-mode perturbations reached the rail; exact upright alone is misleadingly successful | Capture basin is the current blocker |
+
+The modal probe explains why the seven-link recipe cannot simply be copied:
+the uniform eight-link plant is substantially more ill-conditioned in its
+single-cart controllability directions. A zero-noise upright origin is not a
+capture result. The next permitted work is therefore still the same two-expert
+chain: save real low-momentum terminal states from the eight-link FDDP swing
+route, train or optimize capture on those states and their measured internal
+modes, then replay the complete chain on the canonical `+/-3 m` rail. Broad
+PPO/global-CEM exploration is deliberately paused; it does not answer the
+current inherited-method question.
