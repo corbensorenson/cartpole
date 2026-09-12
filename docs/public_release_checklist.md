@@ -17,11 +17,14 @@ and hold result:
   frame during the upright hold.
 - Maximum cart excursion 2.3709 m across the 100-episode gate.
 
-The final project roadmap is not yet marked complete because fresh-clone
-reproduction and earlier calibration phases remain open. Public material may
-describe this as a canonical seven-link 20/100-gate result, but should not call
-it a world record unless an external competition's exact rules and submission
-requirements have also been verified.
+Public commit `54a70a6` passed a clean fresh-clone audit on 2026-09-12: all 78
+tests passed, the benchmark verifier reported no contract errors, and the
+generated MuJoCo XML reproduced the published SHA-256. The final project
+roadmap is not yet marked complete because earlier calibration phases remain
+open. Public material may describe this as a released canonical seven-link
+20/100-gate result, but should not call it a universal world record unless an
+external competition's exact rules and submission requirements have also been
+verified.
 
 ## Evidence Inventory
 
@@ -53,8 +56,8 @@ Use language such as:
 > A settled-launch hybrid controller passes 20/20 and 100/100 noisy
 > hanging-start episodes, then holds the uniform chain upright for the rest of
 > the 30-second episode. The artifact, video, hashes, and negative controls
-> are public. The project remains a hybrid model-based result pending fresh-
-> clone audit and external-rule comparison.
+> are public. The project remains a hybrid model-based result pending
+> external-rule comparison.
 
 Avoid:
 
@@ -80,6 +83,7 @@ Do not check the final roadmap boxes until all of these are present:
 6. The post and paper are updated to identify the exact held-out seeds and
    benchmark configuration.
 
-Until then, the canonical result is publishable as an honest, reproducible
-research milestone. A world-record claim still requires matching the external
-competition's exact plant, timing, scoring, and submission rules.
+Items 1–6 have been satisfied for the repository's canonical result. Earlier
+project-roadmap phases remain open, and a universal world-record claim still
+requires matching the external competition's exact plant, timing, scoring,
+and submission rules.

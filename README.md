@@ -71,6 +71,7 @@ in **[Seven-Link Cart-Pole Swing-Up: A Settled-Launch Two-Expert Controller](doc
 | [Video metadata](runs/swingup7_uniform/seven_link_swingup_success.video.json) | Seed, runtime, frame count, reset count, final metrics, and hashes |
 | [20-episode evaluation](runs/swingup7_uniform/eval_swingup7_20.json) | First canonical acceptance gate: 20/20 |
 | [100-episode evaluation](runs/swingup7_uniform/eval_swingup7_100.json) | Final canonical acceptance gate: 100/100 |
+| [No-settle negative control](runs/eval_swingup7_fddp_two_expert_canonical20.json) | Same noisy-start gate without conditioning: 0/20 |
 | [Controller manifest](runs/swingup7_uniform/seven_link_swingup_manifest.json) | Conditioning, swing, capture, switching rules, preprocessing, and hashes |
 | [FDDP route](runs/swingup7_fddp_full_hanging_ilqr_terminal100k_deferred_lqr1.json) | Nominal states, controls, and feedback gains |
 | [Method paper](docs/seven_link_swingup_paper.md) | Benchmark, method, results, limitations, and reproduction |

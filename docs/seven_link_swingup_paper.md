@@ -2,7 +2,7 @@
 
 ## A Settled-Launch Two-Expert Controller That Passes the Canonical Gates
 
-**Status:** reproducible canonical 20/100-gate result; fresh-clone audit remains
+**Status:** released canonical 20/100-gate result; public fresh-clone audit passed
 **Date:** 2026-09-12
 **Target:** uniform seven-link MuJoCo cart-pole, hanging-start swing-up and hold
 
@@ -17,11 +17,12 @@ maintenance. The same frozen chain reaches 20/20 success and 100/100 success
 from the declared noisy initial distribution. A held-out noisy-start video
 completes for 30.00 s with zero resets and full seven-link framing.
 
-The result is a strong canonical benchmark result, but the project is not
-marked complete until the remaining roadmap audit, public commit, and
-fresh-clone reproduction are completed. The method intentionally spends the
-first 10 seconds conditioning the initial state; this is part of the policy,
-not a reset or an omitted warm-up.
+The result is a released canonical benchmark result. Public commit `54a70a6`
+passed a fresh-clone audit: all 78 tests passed, the benchmark verifier reported
+no contract errors, and the generated MuJoCo XML reproduced the published
+SHA-256. Earlier roadmap calibration phases and external-rule comparison remain
+open. The method intentionally spends the first 10 seconds conditioning the
+initial state; this is part of the policy, not a reset or an omitted warm-up.
 
 ## 1. Benchmark and admissibility
 
@@ -247,9 +248,10 @@ conversion, a terminal quieting objective, an explicit active hanging-state
 conditioning phase, cart-centered nominal translation, doubled route
 feedback, delayed LQR handoff, and a sufficiently strong terminal LQR.
 
-The remaining work is evidentiary and project-governance work rather than a
-missing 7-link trajectory: complete the roadmap's earlier calibration phases,
-commit the public artifacts cleanly, and reproduce the gates from a fresh
-clone. Until those audits are complete, the defensible public description is
-“canonical seven-link 20/100-gate result with a hybrid settled-launch
-controller,” not an unsupported world-record claim.
+The missing seven-link trajectory and release work are complete. Public commit
+`54a70a6` passed a clean fresh-clone test and canonical benchmark-verifier run.
+The remaining work is the roadmap's earlier calibration phases, independent
+reproduction, and exact external-rule comparison. The defensible public
+description is therefore “released canonical seven-link 20/100-gate result
+with a hybrid settled-launch controller,” not an unsupported universal
+world-record claim. The active control frontier is now eight links.
