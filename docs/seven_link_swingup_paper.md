@@ -3,7 +3,9 @@
 ## A Settled-Launch Two-Expert Controller That Passes the Canonical Gates
 
 **Status:** released canonical 20/100-gate result; public fresh-clone audit passed
+
 **Date:** 2026-09-12
+
 **Target:** uniform seven-link MuJoCo cart-pole, hanging-start swing-up and hold
 
 ## Abstract
