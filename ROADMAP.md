@@ -444,6 +444,16 @@ After P7, turn the seven-link result into an arbitrary-`n` scaling experiment. T
 | P6 integrated seven | Passed | Frozen settled-launch hybrid passes disjoint 20/20 and 100/100 cohorts with a reset-free, independently seeded 30-second video. |
 | P7 public reproduction | Passed for the canonical release | Public README, paper, commands, hashes, limitations, verifier, and fresh-clone audit are present. Independent third-party reproduction and external competition matching remain open. |
 
+Latest P1 boundary update (2026-09-12): exact-state LQR sweeps across the
+first 64 frozen full-envelope test states produced `0/64` success and `64/64`
+rail exits across gain scales and control costs. A linear continuation from
+the existing supervisor reached `87.5%` only at progress `0.05956`, then fell
+to `28%` at `0.122` and `9%` at `0.185`. A gated continuation reproduced the
+boundary: `78.125%` at `0.070`, followed by `59%` at `0.080` with no further
+frontier advance. These runs are diagnostic only; P1 remains open and the
+next inherited method is a reusable internal-mode recovery teacher evaluated
+against the same frozen 1,000-state gate.
+
 Latest P4/P5 update (2026-09-11): the CPU Torch finite-difference-LQR
 residual curriculum advanced a narrow seven-link capture frontier through
 `plant_progress=0.999`, but its checkpoint retained

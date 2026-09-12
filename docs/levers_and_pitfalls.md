@@ -1024,3 +1024,22 @@ route, train or optimize capture on those states and their measured internal
 modes, then replay the complete chain on the canonical `+/-3 m` rail. Broad
 PPO/global-CEM exploration is deliberately paused; it does not answer the
 current inherited-method question.
+
+## P1 Full-Envelope Capture Boundary (2026-09-12)
+
+The first unmet roadmap gate was re-audited against the frozen six-link
+synthetic envelope rather than scaled curriculum checkpoints. These are
+development diagnostics only; none is P1 evidence.
+
+| Attempt | Exact setup | Result | Decision |
+|---|---|---|---|
+| Exact-state LQR scale sweep | First 64 frozen P1 test states, progress `1.0`, residual and switch disabled, scales `0.25` through `3.0` | Every scale: `0/64` success, `64/64` rail, median hold `0.04 s` | Full envelope is outside direct upright-LQR nonlinear basin |
+| Exact-state LQR control-cost sweep | Same states and plant, control costs `0.001` through `1000` | Every cost: `0/64`, `64/64` rail; the highest-cost case still rails in about `0.04 s` | Gain tuning alone is not the fix |
+| Full linear PPO curriculum | Existing capture supervisor checkpoint, same state features and LQR switch, linear progress toward `1.0` | Best saved checkpoint at progress `0.05956`: `56/64 = 87.5%`; later checks fell to `28%` at `0.122` and `9%` at `0.185` | Linear exposure is too aggressive |
+| Gated continuation | Supervisor checkpoint, `0.01` progress increments, held-out check every 10 updates | `0.070`: `50/64 = 78.125%`, advanced to `0.080`; `0.080`: `59%` at updates 20 and 40, no next frontier | Reproducible boundary is between `0.07` and `0.08` |
+
+Artifacts: `runs/p1_capture_full_curriculum_probe/` and
+`runs/p1_capture_gated_continuation_probe/`. The next P1 experiment must
+address high internal-rate modes with a reusable state-feedback recovery
+teacher and then rerun the same full 1,000-state gate; no rail or benchmark
+threshold is relaxed.
