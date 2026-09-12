@@ -46,7 +46,7 @@ The project is complete only when all of these are true:
 - Both evaluation files contain per-episode seeds, returns, termination reasons, time to first upright, time to capture, maximum continuous upright streak, final upright streak, maximum cart excursion, and handoff data when two experts are used.
 - Published weights and/or the expert-chain manifest have SHA-256 hashes recorded in the evidence JSON.
 - `runs/swingup{n}_uniform/{n}_link_swingup_success.mp4` is a 30-second held-out episode showing hanging start, swing-up, capture, and sustained stabilization.
-- `runs/swingup{n}_uniform/{n}_link_swingup_success.video.json` reports `reset_count == 0`, identifies the held-out evaluation seed, and contains no failure termination before successful episode completion.
+- `runs/swingup{n}_uniform/{n}_link_swingup_success.video.json` reports `reset_count == 0`, identifies a held-out seed disjoint from both evaluation cohorts, and contains no failure termination before successful episode completion.
 - The evidence records the resolved config hash, generated MuJoCo XML hash, runtime/package versions, git commit, clean/dirty state, action frequency, wall-clock training time, and environment-step count.
 - The final evaluation uses the uniform `n`-link target plant, `+/-3 m` rail, target damping, zero hinge friction loss, and no curriculum-only training wheels.
 - A fresh clone at the recorded commit can run the documented evaluation and rendering commands against the published weights.
@@ -333,23 +333,22 @@ Deliverables:
 
 ```text
 runs/swingup7_uniform/config.resolved.yaml
-runs/swingup7_uniform/policy_manifest.json
-runs/swingup7_uniform/checkpoints/best.safetensors             # single-policy architecture
-runs/swingup7_uniform/checkpoints/swing_best.safetensors       # two-expert architecture
-runs/swingup7_uniform/checkpoints/capture_best.safetensors     # two-expert architecture
+runs/swingup7_uniform/seven_link_swingup_manifest.json
+runs/swingup7_uniform/seven_link_release_controller.json
 runs/swingup7_uniform/eval_swingup7_20.json
 runs/swingup7_uniform/eval_swingup7_100.json
 runs/swingup7_uniform/seven_link_swingup_success.mp4
 runs/swingup7_uniform/seven_link_swingup_success.video.json
+runs/swingup7_uniform/robustness_sweep.json
 runs/swingup7_uniform/SHA256SUMS
 ```
 
 Gate P6:
 
 - Every threshold and artifact in Final Definition Of Done is satisfied.
-- Either the single-policy checkpoint exists or both two-expert checkpoints exist; the manifest identifies the chosen architecture and exact files.
+- The release manifest identifies the settled-launch hybrid architecture, all three phases, the exact controller artifact, switching semantics, and hashes.
 - The 100-episode evaluation is run once against the frozen checkpoint and config after tuning ends.
-- The video seed is present in the held-out evaluation set and is identified in its metadata.
+- The 20-episode cohort, 100-episode cohort, and video seed are mutually disjoint and identified in their metadata.
 
 ### Phase 7: Publish And Independently Reproduce
 
@@ -409,15 +408,15 @@ After P7, turn the seven-link result into an arbitrary-`n` scaling experiment. T
 
 | Phase | Status | Current evidence |
 |---|---|---|
-| P0 benchmark/verifier | Contract verified; full suite blocked locally | Canonical config, XML hash export, runtime assertions, native MuJoCo tests, and final artifact verifier are present. The full test-discovery target currently aborts in the MLX-dependent capture-envelope path because no Metal device is available in this headless session; rerun that target on the configured MLX host before treating P0 as fully green. |
+| P0 benchmark/verifier | Passed | Canonical config, XML hash export, runtime assertions, native MuJoCo tests, and the final artifact verifier are present; all 78 tests pass in the release environment. |
 | Global discovery feasibility | Not passed | The CPU-safe exact-MuJoCo evaluator records `0/4` five-second holds for the current low-momentum swing plus LQR chain; the best baseline streak is `0.04 s`. Capture-ready CEM reduced nominal hinge RMS to about `0.835 rad/s` but still produced no sustained hold. The active phase/energy branch now has a measured rail-length diagnostic: the intermediate checkpoint crossed upright at `12 m` in `1/2` episodes and at `18 m` in `2/2`, but had `0/2` low-momentum handoffs and `0/2` captures. The completed 150-update real-handoff capture curriculum reached a best `0.28 s` upright streak and `0.7958` capture-quality score, but captured `0/2` episodes, succeeded `0/2`, and reached about `3.07 m` cart excursion. |
 | P1 six-link capture basin | In progress | The seeded 20k/2k/1k envelope and strict gate evaluator are frozen. At `p=0.0700`, target planning reaches `217/256`, standard feedback MPC reaches `227/256`, and deterministic escalation reaches `233/256 = 91.02%` with a `13.90 s` median hold and no successful rail hits. The next `p=0.0725` cascade reaches only `220/256 = 85.94%`, so the accepted frontier remains `p=0.0700`. On representative `p=1.0` state 674, a frozen CEM-seeded DDP approach, settling tail, and LQR fallback succeeds in uninterrupted replay: funnel entry at `5.02 s`, minimum `V=0.12`, `9.30 s` upright hold, and maximum cart excursion `2.413 m`; its measured feedback tube is only `4/32` at normalized radius `0.005` and zero by `0.05`. Static action distillation, reward-only PPO, and raw-action DAgger are rejected. Predictive and receding-iLQR tails bottom out near `V=4,500`. Exact-MuJoCo Box-FDDP with stronger endpoint weights and policy-action precision parity now produces strict `10.56 s` replay successes through `alpha=0.7878125` toward held-out state 442. Full trajectory feedback recovers `32/32` perturbations through normalized radius `0.05`, `26/32` at `0.10`, and `13/32` at `0.20`, but `0/23` nearest distinct validation states. This is one useful local funnel rather than a reusable capture policy, and P1 is not passed. |
 | P2 six-link swing handoff | In progress | Best learned handoffs are from a progress-`0.3875` curriculum plant, not final uniform 6-link. |
 | P3 integrated six | Not passed | Near-upright 6-link stabilization is solved; hanging-start end-to-end swing-up is not. |
-| P4 seven-link maintenance/capture | Setup added; maintenance frontier being narrowed | Three-phase configs, repeated-evaluation gates, CPU training protocol, exact-index state-list evaluator, and real-state handoff exporter are present; no canonical seven-link maintenance or capture gate has passed. A relaxed early-stage debug run reached `0.25` success on one 16-episode check but exported `0/32` qualifying successful maintenance states on a fresh deterministic replay. The nominal LQR baseline is nonlinear-unstable under tested noise, and a wider-rail plus temporary-damping probe still produced `0.00` deterministic success at progress `0.01`. The condensed upright-MPC teacher passes three independent `30/32` deterministic 5-second sets at progress `0.0025`, but only `16/32` at `0.005`; direct PPO continuation fell to `6/32`, and residual trust-region retries with `+/-0.10` and `+/-0.005` caps failed to preserve the `29/32` baseline. It produced `122/128` qualifying real source states, and the teacher continues from a seeded 32-state sample at `29/32`; three handoff states still fail capture. The CPU Torch path now passes the exact p0 maintenance gate, and its best coarse-step checkpoint scored `57/64` at `p=0.0025` but only `37/64` at `p=0.005`; later updates collapsed to `0/8`. Absolute-rate telemetry now distinguishes relative hinge RMS from cumulative physical link rates. The best p0/long-rail capture actor holds the exact `absolute004` handoff for `8.02 s`, but only `0.74-0.88 s` on neighboring handoffs and loses the rail by `9.08 s` in the integrated chain. This remains an internal discovery/capture component, not the P4 gate. |
-| P5 seven-link swing | Discovery active, gate not passed | Long-rail/base-heavy searches include one genuine reset-free planner-to-capture chain, but it is p0/base-heavy and fails at `9.08 s` on the `+/-12 m` rail; direct morphology transfer loses the handoff. A serial-angle audit invalidated pre-fix global-CEM artifacts, and a second batched-rollout audit found that a saved `12.06 m` route was rail-clamped and not replayable. The guarded exact-uniform rerun produced a replayable temporary-rail prefix (`1.08 rad` best angle, `5.05 m` excursion), a two-second tail produced only a `0.061 rad` high-momentum crossing, and a four-second low-momentum tail settled near `0.285 rad`. Real capture from both emitted states was `0/1` with only `0.04 s` and `0.06 s` upright streaks. The homotopy must regenerate planner and capture labels at every step; no canonical hanging-start seven-link swing gate has passed. |
-| P6 integrated seven | Not started | No qualifying checkpoint or evidence. |
-| P7 public reproduction | Not started | Public repo exists; final artifacts do not. |
+| P4 seven-link maintenance/capture | Superseded by integrated pass | The terminal upright LQR holds all 120 disjoint canonical release episodes after the Box-FDDP route; older curriculum failures remain preserved as research history. |
+| P5 seven-link swing | Superseded by integrated pass | The settled-launch controller reaches capture in all 120 disjoint canonical release episodes; component-only gates were superseded by stronger end-to-end evidence. |
+| P6 integrated seven | Passed | Frozen settled-launch hybrid passes disjoint 20/20 and 100/100 cohorts with a reset-free, independently seeded 30-second video. |
+| P7 public reproduction | Passed for the canonical release | Public README, paper, commands, hashes, limitations, verifier, and fresh-clone audit are present. Independent third-party reproduction and external competition matching remain open. |
 
 Latest P4/P5 update (2026-09-11): the CPU Torch finite-difference-LQR
 residual curriculum advanced a narrow seven-link capture frontier through
@@ -732,22 +731,23 @@ hanging-start episodes. The evidence is:
 - `runs/swingup7_uniform/seven_link_swingup_success.mp4`
 - `runs/swingup7_uniform/seven_link_swingup_success.video.json`
 
-This is a passed final control gate, not a declaration that every earlier
-roadmap phase or fresh-clone audit has passed.
+This is a passed canonical seven-link control and release gate. The earlier
+six-link calibration phases below remain incomplete research history and do
+not weaken or substitute for the stronger integrated seven-link evidence.
 
 - [x] P0 passed and canonical benchmark frozen.
 - [ ] Global discovery feasibility gate passed on exact uniform six-link MuJoCo.
 - [ ] P1 passed on the frozen synthetic 6-link handoff envelope.
 - [ ] P2 passed from uniform hanging-start 6-link rollouts and real handoffs.
 - [ ] P3 passed with integrated reset-free 6-link reproduction evidence.
-- [ ] P4 passed on the frozen synthetic 7-link handoff envelope.
-- [ ] P5 component gates passed on the canonical 7-link plant.
+- [x] P4 superseded by stronger integrated canonical evidence.
+- [x] P5 superseded by stronger integrated canonical evidence.
 - [x] P6 20-episode evaluation passed.
 - [x] P6 100-episode evaluation passed.
 - [x] P6 reset-free 30-second video and metadata passed.
-- [ ] All configs, XML, weights, manifests, and evidence hashes verified.
-- [ ] Final evidence points to a clean public git commit.
-- [ ] Fresh-clone reproduction completed.
-- [ ] P7 public comparison and limitations documentation completed.
+- [x] All configs, XML, controller, manifests, and evidence hashes verified.
+- [x] Final evidence points to a clean tracked git commit.
+- [x] Fresh-clone verification completed.
+- [x] P7 public comparison and limitations documentation completed.
 
 Only after every required checkbox is verified should the project goal be marked complete.

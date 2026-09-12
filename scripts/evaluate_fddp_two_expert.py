@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-"""Evaluate a saved exact-MuJoCo swing trajectory followed by LQR capture.
+"""Evaluate the released settled-launch seven-link hybrid controller.
 
-This evaluator keeps the route and capture stages in one uninterrupted
-environment. It is intended for discovery and robustness checks; canonical
-claim gates still require the repository's full evidence workflow.
+The hanging LQR, Box-FDDP route, and upright LQR run in one uninterrupted
+MuJoCo episode. Public evaluation files contain complete per-episode summaries
+without bulky transition traces; pass ``--include-trajectories`` for a local
+diagnostic trace.
 """
 
 from __future__ import annotations
@@ -26,6 +27,7 @@ from gcartpole.evidence import (
     file_metadata,
     git_metadata,
     runtime_metadata,
+    text_sha256,
     utc_timestamp,
 )
 from gcartpole.ilqr import data_state
@@ -37,9 +39,9 @@ except ModuleNotFoundError:
     from make_lqr_checkpoint import absolute_angle_cost
 
 try:
-    from scripts.search_swingup_capture import lqr_action, lqr_gain
+    from scripts.search_swingup_capture import lqr_gain
 except ModuleNotFoundError:
-    from search_swingup_capture import lqr_action, lqr_gain
+    from search_swingup_capture import lqr_gain
 
 
 def load_controller(path: Path, n_links: int, spec: dict[str, Any]) -> dict[str, Any]:
@@ -132,15 +134,45 @@ def hanging_lqr_gain(
     return gain
 
 
-def hanging_lqr_action(env: NLinkCartPoleEnv, gain: np.ndarray, *, scale: float) -> float:
-    n = env.n
+def hanging_lqr_action_from_state(
+    qpos: np.ndarray,
+    qvel: np.ndarray,
+    gain: np.ndarray,
+    *,
+    scale: float,
+) -> float:
+    n = int(qpos.size - 1)
     d = n + 1
-    qpos = np.asarray(env.data.qpos, dtype=np.float64)
-    qvel = np.asarray(env.data.qvel, dtype=np.float64)
     state = np.zeros(2 * d, dtype=np.float64)
     state[0] = qpos[0]
     state[1] = wrap_angle(qpos[1] - np.pi)
     state[2 : 1 + n] = wrap_angle(qpos[2 : 1 + n])
+    state[d:] = qvel
+    return float(np.clip(-float(scale) * float(gain @ state), -1.0, 1.0))
+
+
+def hanging_lqr_action(env: NLinkCartPoleEnv, gain: np.ndarray, *, scale: float) -> float:
+    return hanging_lqr_action_from_state(
+        np.asarray(env.data.qpos, dtype=np.float64),
+        np.asarray(env.data.qvel, dtype=np.float64),
+        gain,
+        scale=scale,
+    )
+
+
+def upright_lqr_action_from_state(
+    qpos: np.ndarray,
+    qvel: np.ndarray,
+    gain: np.ndarray,
+    *,
+    scale: float,
+    cart_target: float,
+) -> float:
+    n = int(qpos.size - 1)
+    d = n + 1
+    state = np.zeros(2 * d, dtype=np.float64)
+    state[0] = qpos[0] - cart_target
+    state[1 : 1 + n] = wrap_angle(qpos[1 : 1 + n])
     state[d:] = qvel
     return float(np.clip(-float(scale) * float(gain @ state), -1.0, 1.0))
 
@@ -160,9 +192,14 @@ def run_episode(
     phase_adaptive: bool,
     phase_window: int,
     shift_cart_nominal: bool,
+    include_trajectory: bool = False,
+    measurement_noise_std: float = 0.0,
+    control_delay_steps: int = 0,
 ) -> dict[str, Any]:
     env = NLinkCartPoleEnv(cfg, progress=1.0, seed=seed)
     _, reset_info = env.reset(seed=seed)
+    initial_qpos = np.asarray(env.data.qpos, dtype=np.float64).copy()
+    initial_qvel = np.asarray(env.data.qvel, dtype=np.float64).copy()
     controls = controller["controls"]
     nominal_states = controller["nominal_states"]
     feedback_gains = controller["feedback_gains"]
@@ -176,16 +213,25 @@ def run_episode(
     phase_cursor = 0
     terminated = False
     truncated = False
+    episode_return = 0.0
+    measurement_rng = np.random.default_rng(int(seed) ^ 0x5E11507)
+    delayed_actions = [0.0] * int(control_delay_steps)
+    completed_steps = 0
     for step in range(env.max_steps):
-        coordinate_state = dimensionless_wrapped_state(
-            env.data.qpos, env.data.qvel, transform
-        )
+        measured_qpos = np.asarray(env.data.qpos, dtype=np.float64).copy()
+        measured_qvel = np.asarray(env.data.qvel, dtype=np.float64).copy()
+        if measurement_noise_std > 0.0:
+            measured_qpos += measurement_rng.normal(0.0, measurement_noise_std, size=measured_qpos.shape)
+            measured_qvel += measurement_rng.normal(0.0, measurement_noise_std, size=measured_qvel.shape)
+        coordinate_state = dimensionless_wrapped_state(measured_qpos, measured_qvel, transform)
         route_step = step - prelude_steps
         if step < prelude_steps:
             if settle_mode == "hanging_lqr":
                 if settle_gain is None:
                     raise ValueError("hanging_lqr settle mode requires a gain")
-                action = hanging_lqr_action(env, settle_gain, scale=settle_scale)
+                action = hanging_lqr_action_from_state(
+                    measured_qpos, measured_qvel, settle_gain, scale=settle_scale
+                )
                 mode = "hanging_lqr_settle"
             else:
                 action = 0.0
@@ -229,54 +275,70 @@ def run_episode(
             )
             mode = "swing_feedback"
         else:
-            action = lqr_action(
-                env,
+            action = upright_lqr_action_from_state(
+                measured_qpos,
+                measured_qvel,
                 gain,
                 scale=controller["lqr_scale"],
                 cart_target=0.0,
             )
             mode = "capture_lqr"
+        commanded_action = float(action)
+        if control_delay_steps:
+            delayed_actions.append(commanded_action)
+            action = float(delayed_actions.pop(0))
         _, reward, terminated, truncated, info = env.step([action])
+        completed_steps = step + 1
+        episode_return += float(reward)
         final_info = dict(info)
         if first_upright is None and bool(info.get("is_upright", False)):
             first_upright = float((step + 1) * env.dt)
         max_cart = max(max_cart, abs(float(info.get("x", env.data.qpos[0]))))
-        trajectory.append(
-            {
-                "step": int(step + 1),
-                "time_seconds": float((step + 1) * env.dt),
-                "mode": mode,
-                "action": float(action),
-                "x": float(info["x"]),
-                "max_abs_angle": float(info["max_abs_angle"]),
-                "hinge_velocity_rms": float(info["hinge_velocity_rms"]),
-                "is_upright": bool(info["is_upright"]),
-                "qpos": np.asarray(env.data.qpos, dtype=np.float64).astype(float).tolist(),
-                "qvel": np.asarray(env.data.qvel, dtype=np.float64).astype(float).tolist(),
-            }
-        )
+        if include_trajectory:
+            trajectory.append(
+                {
+                    "step": int(step + 1),
+                    "time_seconds": float((step + 1) * env.dt),
+                    "mode": mode,
+                    "commanded_action": commanded_action,
+                    "applied_action": float(action),
+                    "x": float(info["x"]),
+                    "max_abs_angle": float(info["max_abs_angle"]),
+                    "hinge_velocity_rms": float(info["hinge_velocity_rms"]),
+                    "is_upright": bool(info["is_upright"]),
+                    "qpos": np.asarray(env.data.qpos, dtype=np.float64).astype(float).tolist(),
+                    "qvel": np.asarray(env.data.qvel, dtype=np.float64).astype(float).tolist(),
+                }
+            )
         if terminated or truncated:
             break
     env.close()
-    return {
+    result = {
         "episode": int(episode),
         "seed": int(seed),
-        "initial_qpos": np.asarray(reset_info.get("qpos", []), dtype=np.float64).astype(float).tolist(),
-        "initial_qvel": np.asarray(reset_info.get("qvel", []), dtype=np.float64).astype(float).tolist(),
+        "initial_qpos": initial_qpos.astype(float).tolist(),
+        "initial_qvel": initial_qvel.astype(float).tolist(),
+        "return": float(episode_return),
         "success": bool(final_info.get("success", False)),
         "terminated": bool(terminated),
         "truncated": bool(truncated),
         "termination_reason": final_info.get("termination_reason"),
         "first_upright_time": first_upright,
+        "time_to_first_upright": first_upright,
+        "time_to_capture": final_info.get("time_to_capture"),
         "max_upright_streak_seconds": float(final_info.get("max_upright_streak_seconds", 0.0)),
+        "final_upright_streak_seconds": float(final_info.get("upright_streak_seconds", 0.0)),
         "max_low_momentum_upright_streak_seconds": float(
             final_info.get("max_low_momentum_upright_streak_seconds", 0.0)
         ),
         "max_cart_excursion": float(max_cart),
-        "length": int(len(trajectory)),
+        "length": int(completed_steps),
         "final_info": final_info,
-        "trajectory": trajectory,
     }
+    if include_trajectory:
+        result["trajectory"] = trajectory
+        result["length"] = len(trajectory)
+    return result
 
 
 def main() -> None:
@@ -284,8 +346,9 @@ def main() -> None:
     parser.add_argument("--config", default="configs/swingup7_uniform.yaml")
     parser.add_argument("--spec", default="benchmarks/p1_capture_envelope.yaml")
     parser.add_argument("--controller", required=True)
+    parser.add_argument("--manifest", default="runs/swingup7_uniform/seven_link_swingup_manifest.json")
     parser.add_argument("--episodes", type=int, default=20)
-    parser.add_argument("--seed", type=int, default=20732)
+    parser.add_argument("--seed", type=int, default=30732)
     parser.add_argument("--tracking-gain-scale", type=float, default=1.0)
     parser.add_argument("--prelude-seconds", type=float, default=0.0)
     parser.add_argument("--settle-mode", choices=("zero", "hanging_lqr"), default="zero")
@@ -299,23 +362,41 @@ def main() -> None:
         help="translate the nominal cart-position channel to the measured settled cart position",
     )
     parser.add_argument("--out", required=True)
+    parser.add_argument("--include-trajectories", action="store_true")
     args = parser.parse_args()
     if (
         args.episodes < 1
         or args.tracking_gain_scale < 0.0
-            or args.prelude_seconds < 0.0
-            or args.settle_scale < 0.0
-            or args.settle_control_cost <= 0.0
-            or args.phase_window < 0
+        or args.prelude_seconds < 0.0
+        or args.settle_scale < 0.0
+        or args.settle_control_cost <= 0.0
+        or args.phase_window < 0
     ):
         raise ValueError("episodes must be positive and scales/durations nonnegative")
 
-    cfg = copy.deepcopy(load_config(args.config))
+    repo_root = Path(__file__).resolve().parents[1]
+    source_git = {
+        key: value
+        for key, value in git_metadata(repo_root, include_untracked=False).items()
+        if key != "root"
+    }
+    source_cfg = load_config(args.config)
+    cfg = copy.deepcopy(source_cfg)
     cfg["env"]["init_mode"] = "hanging"
     cfg["env"]["action_lqr_residual"] = {"enabled": False}
     cfg["env"].setdefault("action_lqr_switch", {"enabled": False})["enabled"] = False
     spec = load_config(args.spec)
     controller = load_controller(Path(args.controller), int(cfg["env"]["n_links"]), spec)
+    manifest_path = Path(args.manifest)
+    if not manifest_path.is_file():
+        raise FileNotFoundError(f"release manifest not found: {manifest_path}")
+    manifest = file_metadata(manifest_path)
+    probe = NLinkCartPoleEnv(cfg, progress=1.0, seed=args.seed)
+    generated_xml_sha256 = text_sha256(probe.xml)
+    observation_dim = int(probe.observation_space.shape[0])
+    action_dim = int(probe.action_space.shape[0])
+    action_frequency_hz = float(1.0 / probe.dt)
+    probe.close()
     gain = lqr_gain(cfg, progress=1.0, fd_eps=1e-7, control_cost=1000.0)
     settle_gain = (
         hanging_lqr_gain(
@@ -327,7 +408,12 @@ def main() -> None:
         if args.settle_mode == "hanging_lqr"
         else None
     )
-    prelude_steps = int(round(args.prelude_seconds / float(cfg["env"]["timestep"] * cfg["env"]["frame_skip"])))
+    prelude_steps = int(
+        round(
+            args.prelude_seconds
+            / float(cfg["env"]["timestep"] * cfg["env"]["frame_skip"])
+        )
+    )
     episodes = [
         run_episode(
             cfg,
@@ -343,19 +429,21 @@ def main() -> None:
             phase_adaptive=args.phase_adaptive,
             phase_window=args.phase_window,
             shift_cart_nominal=args.shift_cart_nominal,
+            include_trajectory=args.include_trajectories,
         )
         for episode in range(args.episodes)
     ]
     success_rate = float(np.mean([episode["success"] for episode in episodes]))
     output = {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": utc_timestamp(),
-        "not_claim": True,
-        "summary": "Canonical noisy hanging-start robustness check for a saved two-expert controller.",
-        "config": {"path": str(Path(args.config)), "resolved_sha256": data_sha256(cfg)},
+        "claim_status": "canonical_noisy_gate_evidence",
+        "summary": "Released canonical noisy hanging-start evaluation of the settled-launch hybrid controller.",
+        "config": {"path": str(Path(args.config)), "resolved_sha256": data_sha256(source_cfg)},
         "spec": file_metadata(Path(args.spec)),
         "controller": controller["source"],
-        "controller_summary": controller["payload_summary"],
+        "controller_summary": "Settled-launch hybrid: hanging LQR, Box-FDDP trajectory feedback, then upright LQR.",
+        "policy_manifest": manifest,
         "episodes": int(args.episodes),
         "seed_start": int(args.seed),
         "tracking_gain_scale": float(args.tracking_gain_scale),
@@ -385,7 +473,34 @@ def main() -> None:
         "max_cart_excursion_max": float(np.max([episode["max_cart_excursion"] for episode in episodes])),
         "termination_counts": dict(Counter(str(episode["termination_reason"]) for episode in episodes)),
         "runtime": runtime_metadata(),
-        "git": git_metadata(Path(__file__).resolve().parents[1]),
+        "git": source_git,
+        "evidence": {
+            "deterministic_policy": True,
+            "progress": 1.0,
+            "plant_progress": 1.0,
+            "config": {
+                "path": str(Path(args.config)),
+                "resolved_sha256": data_sha256(source_cfg),
+                "overrides": [],
+            },
+            "controller": controller["source"],
+            "policy_manifest": manifest,
+            "generated_xml_sha256": generated_xml_sha256,
+            "environment": {
+                "n_links": int(cfg["env"]["n_links"]),
+                "init_mode": "hanging",
+                "force_limit": float(cfg["env"]["force_limit"]),
+                "rail_limit": float(cfg["env"]["rail_limit"]),
+                "observation_dim": observation_dim,
+                "action_dim": action_dim,
+                "action_frequency_hz": action_frequency_hz,
+                "episode_seconds": float(cfg["env"]["episode_seconds"]),
+                "init_angle_noise": float(cfg["env"]["init_angle_noise"]),
+                "init_velocity_noise": float(cfg["env"]["init_vel_noise"]),
+            },
+            "git": source_git,
+            "runtime": runtime_metadata(),
+        },
         "episode_results": episodes,
     }
     dump_json(output, Path(args.out))

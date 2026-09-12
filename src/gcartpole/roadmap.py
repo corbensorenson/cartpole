@@ -248,8 +248,12 @@ def validate_evaluation(
 ) -> list[str]:
     errors: list[str] = []
     label = f"{required_episodes}-episode evaluation"
-    if int(payload.get("episodes", -1)) < required_episodes:
-        errors.append(f"{label} has only {payload.get('episodes')} episodes")
+    if int(payload.get("episodes", -1)) != required_episodes:
+        errors.append(f"{label} declares {payload.get('episodes')} episodes; expected exactly {required_episodes}")
+    if payload.get("claim_status") != "canonical_noisy_gate_evidence":
+        errors.append(f"{label} has the wrong claim_status")
+    if payload.get("not_claim") is True:
+        errors.append(f"{label} is marked not_claim")
     if float(payload.get("success_rate", -1.0)) < minimum_success_rate:
         errors.append(f"{label} success_rate is below {minimum_success_rate:.2f}")
     episodes = payload.get("episode_results")
@@ -265,6 +269,13 @@ def validate_evaluation(
             seeds.append(episode["seed"])
     if len(set(seeds)) != len(seeds):
         errors.append(f"{label} episode seeds are not unique")
+    seed_start = payload.get("seed_start")
+    try:
+        expected_seeds = list(range(int(seed_start), int(seed_start) + required_episodes))
+    except (TypeError, ValueError):
+        expected_seeds = []
+    if seeds and seeds != expected_seeds:
+        errors.append(f"{label} seeds are not the declared contiguous cohort")
     evidence = payload.get("evidence", {})
     if evidence.get("deterministic_policy") is not True:
         errors.append(f"{label} is not marked deterministic")
@@ -297,40 +308,41 @@ def validate_evaluation(
 def validate_solution_artifacts(cfg: dict[str, Any], run_dir: Path, repo_root: Path) -> list[str]:
     errors: list[str] = []
     snapshot = benchmark_snapshot(cfg)
-    manifest_path = run_dir / "policy_manifest.json"
+    manifest_path = run_dir / "seven_link_swingup_manifest.json"
     manifest = _load_json(manifest_path, errors)
-    checkpoint_hashes: set[str] = set()
     if manifest is not None:
-        architecture = manifest.get("architecture")
-        if architecture not in {"single_policy", "two_expert"}:
-            errors.append("policy_manifest architecture must be single_policy or two_expert")
-        training = manifest.get("training", {})
-        if float(training.get("wall_clock_seconds", 0.0)) <= 0.0:
-            errors.append("policy_manifest lacks positive training.wall_clock_seconds")
-        if int(training.get("environment_steps", 0)) <= 0:
-            errors.append("policy_manifest lacks positive training.environment_steps")
-        checkpoints = manifest.get("checkpoints")
-        if not isinstance(checkpoints, list) or not checkpoints:
-            errors.append("policy_manifest.checkpoints must list published weights")
-        else:
-            for checkpoint in checkpoints:
-                if checkpoint.get("sha256"):
-                    checkpoint_hashes.add(str(checkpoint["sha256"]))
-                rel = Path(str(checkpoint.get("path", "")))
-                if not str(rel) or rel.is_absolute() or ".." in rel.parts:
-                    errors.append(f"checkpoint path must be repository-relative: {rel}")
-                    continue
-                path = repo_root / rel
-                if not path.is_file():
-                    errors.append(f"missing checkpoint: {rel}")
-                elif checkpoint.get("sha256") != file_sha256(path):
-                    errors.append(f"checkpoint hash mismatch: {rel}")
-        if architecture == "two_expert" and not isinstance(manifest.get("switch"), dict):
-            errors.append("two_expert manifest lacks deterministic switch definition")
-        if manifest.get("config_sha256") != snapshot["config_sha256"]:
-            errors.append("policy_manifest config hash does not match")
-        if manifest.get("generated_xml_sha256") != snapshot["generated_xml_sha256"]:
-            errors.append("policy_manifest generated XML hash does not match")
+        if int(manifest.get("schema_version", -1)) != 2:
+            errors.append("release manifest schema_version must be 2")
+        if manifest.get("claim_status") != "released_canonical_noisy_swingup_and_hold":
+            errors.append("release manifest has the wrong claim_status")
+        if manifest.get("architecture") != "settled_launch_hybrid":
+            errors.append("release manifest architecture must be settled_launch_hybrid")
+        benchmark = manifest.get("benchmark", {})
+        if benchmark.get("config_sha256") != snapshot["config_sha256"]:
+            errors.append("release manifest config hash does not match")
+        if benchmark.get("generated_xml_sha256") != snapshot["generated_xml_sha256"]:
+            errors.append("release manifest generated XML hash does not match")
+        controller = manifest.get("controller", {})
+        controller_rel = Path(str(controller.get("path", "")))
+        controller_path = repo_root / controller_rel
+        if controller_rel.is_absolute() or ".." in controller_rel.parts or not controller_path.is_file():
+            errors.append(f"release manifest controller path is invalid: {controller_rel}")
+        elif controller.get("sha256") != file_sha256(controller_path):
+            errors.append("release manifest controller hash does not match")
+        if int(controller.get("route_steps", -1)) != 228:
+            errors.append("release manifest route_steps must be 228")
+        experts = manifest.get("experts", {})
+        expected_experts = {
+            "conditioning": "hanging_equilibrium_lqr",
+            "swing": "box_fddp_time_varying_feedback",
+            "capture": "upright_lqr",
+        }
+        for name, expected_type in expected_experts.items():
+            if experts.get(name, {}).get("type") != expected_type:
+                errors.append(f"release manifest expert {name} has the wrong type")
+        switch = manifest.get("switch", {})
+        if switch.get("state_reset_at_phase_boundaries") is not False:
+            errors.append("release manifest must forbid state resets at phase boundaries")
 
     evaluations: list[dict[str, Any]] = []
     for count, rate in ((20, 0.80), (100, 0.90)):
@@ -348,10 +360,24 @@ def validate_solution_artifacts(cfg: dict[str, Any], run_dir: Path, repo_root: P
                 )
             )
             evidence = payload.get("evidence", {})
-            checkpoint_sha = evidence.get("checkpoint", {}).get("sha256")
             manifest_sha = evidence.get("policy_manifest", {}).get("sha256")
-            if manifest is not None and checkpoint_sha not in checkpoint_hashes and manifest_sha != file_sha256(manifest_path):
-                errors.append(f"{count}-episode evaluation policy hash is not in policy_manifest")
+            controller_sha = evidence.get("controller", {}).get("sha256")
+            if manifest is not None and manifest_sha != file_sha256(manifest_path):
+                errors.append(f"{count}-episode evaluation manifest hash does not match")
+            if manifest is not None and controller_sha != manifest.get("controller", {}).get("sha256"):
+                errors.append(f"{count}-episode evaluation controller hash does not match")
+
+    if len(evaluations) == 2:
+        first_seeds = {episode.get("seed") for episode in evaluations[0].get("episode_results", [])}
+        second_seeds = {episode.get("seed") for episode in evaluations[1].get("episode_results", [])}
+        if first_seeds.intersection(second_seeds):
+            errors.append("20- and 100-episode evaluation cohorts overlap")
+        if manifest is not None:
+            declared = manifest.get("evaluation", {})
+            if evaluations[0].get("seed_start") != declared.get("twenty_seed_start"):
+                errors.append("20-episode seed does not match release manifest")
+            if evaluations[1].get("seed_start") != declared.get("hundred_seed_start"):
+                errors.append("100-episode seed does not match release manifest")
 
     video_path = run_dir / "seven_link_swingup_success.mp4"
     if not video_path.is_file() or video_path.stat().st_size == 0:
@@ -376,8 +402,10 @@ def validate_solution_artifacts(cfg: dict[str, Any], run_dir: Path, repo_root: P
             for payload in evaluations
             for episode in payload.get("episode_results", [])
         }
-        if render.get("seed") not in eval_seeds:
-            errors.append("video seed is not present in held-out evaluation evidence")
+        if render.get("seed") in eval_seeds:
+            errors.append("video seed overlaps an evaluation cohort")
+        if manifest is not None and render.get("seed") != manifest.get("evaluation", {}).get("video_seed"):
+            errors.append("video seed does not match release manifest")
         if video_meta.get("generated_xml_sha256") != snapshot["generated_xml_sha256"]:
             errors.append("video generated XML hash does not match")
         if video_meta.get("config", {}).get("resolved_sha256") != snapshot["config_sha256"]:
@@ -389,6 +417,39 @@ def validate_solution_artifacts(cfg: dict[str, Any], run_dir: Path, repo_root: P
             errors.append("video metadata does not point to a clean git commit")
         if video_path.is_file() and video_meta.get("video", {}).get("sha256") != file_sha256(video_path):
             errors.append("video SHA-256 does not match metadata")
+
+    robustness = _load_json(run_dir / "robustness_sweep.json", errors)
+    if robustness is not None:
+        if robustness.get("claim_status") != "noncanonical_robustness_characterization":
+            errors.append("robustness sweep must be labelled noncanonical")
+        if manifest is not None and robustness.get("controller", {}).get("sha256") != manifest.get("controller", {}).get("sha256"):
+            errors.append("robustness sweep controller hash does not match")
+        robustness_git = robustness.get("git", {})
+        if robustness_git.get("available") is not True or not robustness_git.get("commit") or robustness_git.get("dirty") is not False:
+            errors.append("robustness sweep does not point to a clean git commit")
+        required_scenarios = {
+            "initial_noise_sigma_0p10",
+            "initial_noise_sigma_0p20",
+            "force_limit_40N",
+            "force_limit_20N",
+            "total_mass_minus_5pct",
+            "total_mass_plus_5pct",
+            "total_length_minus_5pct",
+            "total_length_plus_5pct",
+            "joint_damping_half",
+            "joint_damping_double",
+            "sensor_noise_std_0p01",
+            "control_delay_20ms",
+            "control_delay_40ms",
+            "settling_8s",
+            "settling_6s",
+        }
+        scenarios = robustness.get("scenarios", [])
+        names = {scenario.get("name") for scenario in scenarios if isinstance(scenario, dict)}
+        if not required_scenarios.issubset(names):
+            errors.append("robustness sweep is missing required scenarios")
+        if any(int(scenario.get("episodes", 0)) < 20 for scenario in scenarios if isinstance(scenario, dict)):
+            errors.append("robustness sweep scenarios must contain at least 20 episodes")
 
     checksums_path = run_dir / "SHA256SUMS"
     if not checksums_path.is_file():
@@ -408,11 +469,13 @@ def validate_solution_artifacts(cfg: dict[str, Any], run_dir: Path, repo_root: P
             if not path.is_file() or file_sha256(path) != expected:
                 errors.append(f"SHA256SUMS mismatch or missing file: {name}")
         for name in {
-            "policy_manifest.json",
+            "seven_link_swingup_manifest.json",
+            "seven_link_release_controller.json",
             "eval_swingup7_20.json",
             "eval_swingup7_100.json",
             "seven_link_swingup_success.mp4",
             "seven_link_swingup_success.video.json",
+            "robustness_sweep.json",
         }:
             if name not in listed:
                 errors.append(f"SHA256SUMS does not list {name}")

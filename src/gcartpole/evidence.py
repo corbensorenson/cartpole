@@ -64,7 +64,7 @@ def runtime_metadata() -> dict[str, Any]:
     }
 
 
-def git_metadata(cwd: str | Path) -> dict[str, Any]:
+def git_metadata(cwd: str | Path, *, include_untracked: bool = True) -> dict[str, Any]:
     cwd = Path(cwd)
 
     def run_git(args: list[str]) -> subprocess.CompletedProcess[str]:
@@ -94,7 +94,10 @@ def git_metadata(cwd: str | Path) -> dict[str, Any]:
         )
 
     head = run_root_git(["rev-parse", "HEAD"])
-    status = run_root_git(["status", "--short"])
+    status_args = ["status", "--short"]
+    if not include_untracked:
+        status_args.append("--untracked-files=no")
+    status = run_root_git(status_args)
     commit = head.stdout.strip() if head.returncode == 0 else None
     short_status = status.stdout.splitlines() if status.returncode == 0 else []
     return {
@@ -103,4 +106,5 @@ def git_metadata(cwd: str | Path) -> dict[str, Any]:
         "commit": commit,
         "dirty": bool(short_status),
         "status_short": short_status,
+        "includes_untracked_files": bool(include_untracked),
     }

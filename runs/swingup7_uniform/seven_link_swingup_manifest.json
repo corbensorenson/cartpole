@@ -1,10 +1,15 @@
 {
-  "schema_version": 1,
-  "claim_status": "canonical_noisy_20_and_100_pass",
+  "schema_version": 2,
+  "claim_status": "released_canonical_noisy_swingup_and_hold",
+  "architecture": "settled_launch_hybrid",
   "benchmark": {
     "config": "configs/swingup7_uniform.yaml",
-    "config_resolved_sha256": "77238bc471b3f7a1d9f3fe961de1a49bb229fd04c9a141162e9bd385aa473a3d",
+    "config_sha256": "89350e6b305c8da5679de73576421843edc6cf61d7f3e22a01350fa6bd720918",
+    "generated_xml_sha256": "3d662d6887a3e17469eb03b99ebde378f3ca20c1fb67253f649d43211b16343c",
     "n_links": 7,
+    "total_link_length_m": 3.0,
+    "total_link_mass_kg": 1.0,
+    "cart_mass_kg": 1.0,
     "rail_limit_m": 3.0,
     "force_limit_n": 80.0,
     "policy_rate_hz": 50.0,
@@ -12,25 +17,24 @@
     "upright_threshold_rad": 0.15,
     "success_sustain_seconds": 5.0,
     "initial_mode": "hanging",
-    "initial_angle_noise": 0.05,
-    "initial_velocity_noise": 0.05
+    "initial_angle_noise_std": 0.05,
+    "initial_velocity_noise_std": 0.05
+  },
+  "controller": {
+    "path": "runs/swingup7_uniform/seven_link_release_controller.json",
+    "sha256": "0e70e1de5547c41569401ccf246b30b9650c369d81cc7846d02523ab72f7b01f",
+    "route_steps": 228,
+    "route_seconds": 4.56,
+    "state_coordinates": "dimensionless_absolute_cart_and_link_coordinates"
   },
   "experts": {
     "conditioning": {
       "type": "hanging_equilibrium_lqr",
       "duration_seconds": 10.0,
       "control_cost": 1000.0,
-      "finite_difference_epsilon": 1e-7,
+      "finite_difference_epsilon": 1e-07,
       "scale": 1.0,
       "reference_qpos": [0.0, 3.141592653589793, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-      "q_weights": {
-        "cart_position": 10.0,
-        "absolute_angle": 25.0,
-        "cart_velocity": 5.0,
-        "absolute_angular_velocity": 10.0,
-        "relative_angle": 1.0,
-        "relative_angular_velocity": 1.0
-      },
       "gain_sha256": "48b0b5d607587774891f5d8b806924a43701a9127b5fe5487c80405a957ff083",
       "gain": [
         0.06329273601790862,
@@ -53,13 +57,8 @@
     },
     "swing": {
       "type": "box_fddp_time_varying_feedback",
-      "route_artifact": "runs/swingup7_fddp_full_hanging_ilqr_terminal100k_deferred_lqr1.json",
-      "route_artifact_sha256": "7ed79320043618b767cc584359a624b1774067ab746e1d27f35da8e5683205d8",
-      "route_steps": 228,
-      "route_seconds": 4.56,
       "tracking_gain_scale": 2.0,
-      "shift_nominal_cart_position_to_settled_x": true,
-      "state_coordinates": "dimensionless_absolute_cart_and_link_coordinates"
+      "shift_nominal_cart_position_to_settled_x": true
     },
     "capture": {
       "type": "upright_lqr",
@@ -69,25 +68,35 @@
       "cart_target_m": 0.0
     }
   },
+  "switch": {
+    "state_reset_at_phase_boundaries": false,
+    "conditioning_to_swing": "after 10.0 seconds",
+    "swing_to_capture": "after 228 route steps",
+    "hysteresis": "not applicable; both transitions are deterministic time-indexed boundaries"
+  },
   "evaluation": {
+    "twenty_seed_start": 30732,
+    "twenty_seed_end": 30751,
+    "hundred_seed_start": 40732,
+    "hundred_seed_end": 40831,
+    "video_seed": 50732,
+    "cohorts_are_pairwise_disjoint": true,
     "twenty_episode": "runs/swingup7_uniform/eval_swingup7_20.json",
     "hundred_episode": "runs/swingup7_uniform/eval_swingup7_100.json",
-    "twenty_episode_success_rate": 1.0,
-    "hundred_episode_success_rate": 1.0,
-    "seed_start": 20732,
-    "episodes_per_gate": 20,
-    "episodes_long_gate": 100
+    "video": "runs/swingup7_uniform/seven_link_swingup_success.mp4",
+    "video_metadata": "runs/swingup7_uniform/seven_link_swingup_success.video.json"
   },
-  "video": {
-    "path": "runs/swingup7_uniform/seven_link_swingup_success.mp4",
-    "metadata": "runs/swingup7_uniform/seven_link_swingup_success.video.json",
-    "held_out_seed": 20832,
-    "seconds": 30.0,
-    "reset_count": 0
+  "release": {
+    "generator": "scripts/release_swingup7.py",
+    "controller_generator": "scripts/promote_swingup7_controller.py",
+    "verification_command": "make verify-swingup7",
+    "checksums": "runs/swingup7_uniform/SHA256SUMS",
+    "robustness_characterization": "runs/swingup7_uniform/robustness_sweep.json"
   },
   "limitations": [
-    "The route spends the first 10 seconds actively settling the noisy hanging state.",
-    "The public result is a hybrid controller, not a single distilled neural policy.",
-    "The roadmap still requires fresh-clone reproduction and any earlier calibration phases before the project goal is marked complete."
+    "The route spends the first 10 seconds actively conditioning the noisy hanging state.",
+    "The released result is a hybrid model-based controller, not a neural policy.",
+    "The result is certified against this repository's frozen benchmark, not an external competition's rules.",
+    "Gradient and harmonic morphology ideas did not produce the released uniform-plant result."
   ]
 }

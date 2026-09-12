@@ -71,9 +71,11 @@ in **[Seven-Link Cart-Pole Swing-Up: A Settled-Launch Two-Expert Controller](doc
 | [Video metadata](runs/swingup7_uniform/seven_link_swingup_success.video.json) | Seed, runtime, frame count, reset count, final metrics, and hashes |
 | [20-episode evaluation](runs/swingup7_uniform/eval_swingup7_20.json) | First canonical acceptance gate: 20/20 |
 | [100-episode evaluation](runs/swingup7_uniform/eval_swingup7_100.json) | Final canonical acceptance gate: 100/100 |
+| [Robustness sweep](runs/swingup7_uniform/robustness_sweep.json) | Paired-seed stress tests outside the canonical claim boundary |
 | [No-settle negative control](runs/eval_swingup7_fddp_two_expert_canonical20.json) | Same noisy-start gate without conditioning: 0/20 |
 | [Controller manifest](runs/swingup7_uniform/seven_link_swingup_manifest.json) | Conditioning, swing, capture, switching rules, preprocessing, and hashes |
-| [FDDP route](runs/swingup7_fddp_full_hanging_ilqr_terminal100k_deferred_lqr1.json) | Nominal states, controls, and feedback gains |
+| [SHA-256 manifest](runs/swingup7_uniform/SHA256SUMS) | Integrity hashes for the complete release bundle |
+| [Frozen release controller](runs/swingup7_uniform/seven_link_release_controller.json) | Nominal states, controls, and Box-FDDP feedback gains |
 | [Method paper](docs/seven_link_swingup_paper.md) | Benchmark, method, results, limitations, and reproduction |
 
 ## Current frontier: eight links
@@ -101,14 +103,15 @@ Crocoddyl/Box-FDDP. The recorded setup targets Apple Silicon; see
 git clone https://github.com/corbensorenson/cartpole.git
 cd cartpole
 
-make setup
-make roadmap-p0
-make eval-swingup7-20
-make eval-swingup7-100
+make setup-aligator
+make release-swingup7
 ```
 
-For the exact settled-launch replay command, seeds, and output contract, follow
-the [paper's reproduction section](docs/seven_link_swingup_paper.md#5-reproduction).
+`release-swingup7` regenerates two disjoint evaluation cohorts, the independent
+video, the non-canonical robustness sweep, checksums, and the final verifier
+report. It intentionally refuses to run when tracked source files are dirty.
+For individual replay commands and the evidence contract, follow the
+[paper's reproduction section](docs/seven_link_swingup_paper.md#6-reproduction).
 
 ## Repository map
 

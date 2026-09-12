@@ -946,7 +946,7 @@ excursion is `2.3709 m`. The final evidence is in
 `runs/swingup7_uniform/eval_swingup7_100.json`, and
 `runs/swingup7_uniform/seven_link_swingup_manifest.json`.
 
-The public held-out video uses seed `20832`, reports zero resets, and now fits
+The public held-out video uses seed `50732`, reports zero resets, and now fits
 all seven links inside the frame. Its metadata is
 `runs/swingup7_uniform/seven_link_swingup_success.video.json`; the video is
 `runs/swingup7_uniform/seven_link_swingup_success.mp4`. This supersedes the

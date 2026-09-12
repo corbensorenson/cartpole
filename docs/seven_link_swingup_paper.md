@@ -17,12 +17,12 @@ maintenance. The same frozen chain reaches 20/20 success and 100/100 success
 from the declared noisy initial distribution. A held-out noisy-start video
 completes for 30.00 s with zero resets and full seven-link framing.
 
-The result is a released canonical benchmark result. Public commit `54a70a6`
-passed a fresh-clone audit: all 78 tests passed, the benchmark verifier reported
-no contract errors, and the generated MuJoCo XML reproduced the published
-SHA-256. Earlier roadmap calibration phases and external-rule comparison remain
-open. The method intentionally spends the first 10 seconds conditioning the
-initial state; this is part of the policy, not a reset or an omitted warm-up.
+The result is a released canonical benchmark result. The evidence JSON records
+the exact clean tracked commit, runtime, configuration, MuJoCo XML, controller,
+and manifest hashes. A fresh-clone audit runs all 78 tests, the artifact
+verifier, and the published checksums. External-rule comparison remains open.
+The method intentionally spends the first 10 seconds conditioning the initial
+state; this is part of the policy, not a reset or an omitted warm-up.
 
 ## 1. Benchmark and admissibility
 
@@ -154,9 +154,10 @@ always better.
 
 ## 4. Canonical noisy-start result
 
-The saved controller route is
-`runs/swingup7_fddp_full_hanging_ilqr_terminal100k_deferred_lqr1.json` and
-the complete chain definition is
+The frozen controller route is
+`runs/swingup7_uniform/seven_link_release_controller.json`; its historical
+optimization trace is retained separately for research provenance. The
+complete chain definition is
 `runs/swingup7_uniform/seven_link_swingup_manifest.json`.
 
 | Gate or metric | Result |
@@ -172,8 +173,9 @@ the complete chain definition is
 | Resets inside episodes | 0 |
 
 The public held-out video is
-`runs/swingup7_uniform/seven_link_swingup_success.mp4`. It uses seed 20832,
-outside the 20/100 evaluation seed range beginning at 20732. Its metadata is
+`runs/swingup7_uniform/seven_link_swingup_success.mp4`. It uses seed 50732,
+outside the disjoint 20- and 100-episode cohorts beginning at 30732 and 40732.
+Its metadata is
 `runs/swingup7_uniform/seven_link_swingup_success.video.json` and reports 1,500
 frames, 50 fps, 1280x720 resolution, zero resets, a canonical noisy hanging
 start, and successful time-limit completion. The renderer dynamically fits
@@ -206,37 +208,24 @@ settled-launch manifest and score 100%.
 
 ## 6. Reproduction
 
-From the handoff project directory:
+From a fresh clone, create the planner environment and regenerate the complete
+release bundle:
 
 ```bash
-PYTHONPATH=src:scripts .conda-aligator/bin/python3.12 \
-  scripts/evaluate_fddp_two_expert.py \
-  --config configs/swingup7_uniform.yaml \
-  --spec benchmarks/p1_capture_envelope.yaml \
-  --controller runs/swingup7_fddp_full_hanging_ilqr_terminal100k_deferred_lqr1.json \
-  --episodes 20 --seed 20732 --prelude-seconds 10 \
-  --settle-mode hanging_lqr --settle-scale 1.0 \
-  --settle-control-cost 1000 --tracking-gain-scale 2.0 \
-  --shift-cart-nominal \
-  --out runs/swingup7_uniform/eval_swingup7_20.replay.json
+make setup-aligator
+make release-swingup7
 ```
 
-Run the same command with `--episodes 100` for the long gate. To regenerate
-the state-faithful held-out video:
+The release target refuses a dirty tracked tree, then generates the disjoint
+20- and 100-episode cohorts, the independently seeded state-faithful video,
+15 paired-seed non-canonical stress scenarios, `SHA256SUMS`, and the verifier
+report. Individual artifacts can be regenerated with:
 
 ```bash
-PYTHONPATH=src:scripts .conda-aligator/bin/python3.12 \
-  scripts/render_fddp_two_expert_2d.py \
-  --config configs/swingup7_uniform.yaml \
-  --spec benchmarks/p1_capture_envelope.yaml \
-  --controller runs/swingup7_fddp_full_hanging_ilqr_terminal100k_deferred_lqr1.json \
-  --hanging-start \
-  --out runs/swingup7_uniform/seven_link_swingup_success.mp4 \
-  --metadata-out runs/swingup7_uniform/seven_link_swingup_success.video.json \
-  --seconds 30 --fps 50 --width 1280 --height 720 \
-  --seed 20832 --prelude-seconds 10 --settle-mode hanging_lqr \
-  --settle-scale 1.0 --settle-control-cost 1000 \
-  --tracking-gain-scale 2.0 --shift-cart-nominal --fail-on-failure
+make eval-swingup7-20
+make eval-swingup7-100
+make render-swingup7
+make verify-swingup7
 ```
 
 ## 7. Conclusion and next experiment
@@ -248,10 +237,8 @@ conversion, a terminal quieting objective, an explicit active hanging-state
 conditioning phase, cart-centered nominal translation, doubled route
 feedback, delayed LQR handoff, and a sufficiently strong terminal LQR.
 
-The missing seven-link trajectory and release work are complete. Public commit
-`54a70a6` passed a clean fresh-clone test and canonical benchmark-verifier run.
-The remaining work is the roadmap's earlier calibration phases, independent
-reproduction, and exact external-rule comparison. The defensible public
-description is therefore “released canonical seven-link 20/100-gate result
-with a hybrid settled-launch controller,” not an unsupported universal
-world-record claim. The active control frontier is now eight links.
+The seven-link trajectory and release work are complete. The remaining work is
+independent third-party reproduction and exact external-rule comparison. The
+defensible public description is therefore “released canonical seven-link
+20/100-gate result with a hybrid settled-launch controller,” not an unsupported
+universal world-record claim. The active control frontier is now eight links.

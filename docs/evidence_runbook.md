@@ -1,6 +1,8 @@
 # Evidence Runbook
 
-This runbook covers the six-link baseline and calibration evidence. It does not define final project completion. The authoritative seven-link benchmark, phase gates, and final audit are in `ROADMAP.md`.
+This runbook covers the released seven-link evidence pipeline and the earlier
+six-link calibration work. The authoritative benchmark contract and frontier
+rules remain in `ROADMAP.md`.
 
 ## Seven-link benchmark and final audit
 
@@ -10,7 +12,7 @@ Freeze and test the benchmark before accepting training results:
 make roadmap-p0
 ```
 
-The final single-policy path uses:
+The released settled-launch hybrid path uses:
 
 ```bash
 make eval-swingup7-20
@@ -19,24 +21,43 @@ make render-swingup7
 make verify-swingup7
 ```
 
-`runs/swingup7_uniform/policy_manifest.json` is required for either architecture. Its top-level fields are:
+To regenerate the complete bundle from one clean tracked commit, use:
+
+```bash
+make release-swingup7
+```
+
+This writes disjoint 20- and 100-episode cohorts, an independently seeded
+video, a non-canonical robustness sweep, `SHA256SUMS`, and a verifier report.
+`runs/swingup7_uniform/seven_link_swingup_manifest.json` is the authoritative
+policy manifest. Its top-level contract is:
 
 ```json
 {
-  "architecture": "single_policy",
-  "config_sha256": "...",
-  "generated_xml_sha256": "...",
-  "training": {
-    "wall_clock_seconds": 0,
-    "environment_steps": 0
+  "schema_version": 2,
+  "claim_status": "released_canonical_noisy_swingup_and_hold",
+  "architecture": "settled_launch_hybrid",
+  "benchmark": {
+    "config_sha256": "...",
+    "generated_xml_sha256": "..."
   },
-  "checkpoints": [
-    {"role": "policy", "path": "runs/swingup7_uniform/checkpoints/best.safetensors", "sha256": "..."}
-  ]
+  "controller": {"path": "...", "sha256": "...", "route_steps": 228},
+  "experts": {"conditioning": {}, "swing": {}, "capture": {}},
+  "switch": {"state_reset_at_phase_boundaries": false},
+  "evaluation": {
+    "twenty_seed_start": 30732,
+    "hundred_seed_start": 40732,
+    "video_seed": 50732
+  }
 }
 ```
 
-For `architecture: two_expert`, list both checkpoint roles and add a versioned `switch` object containing the deterministic handoff rule and hysteresis. Paths must be repository-relative. The verifier also requires `SHA256SUMS`, complete 20/100 episode JSON, a clean-commit evidence record, and a reset-free held-out video ending in a successful time-limit event.
+Paths are repository-relative. The verifier requires complete per-episode
+metrics, non-overlapping cohorts, an independent video seed, clean tracked
+source provenance, the controller and manifest hashes, runtime metadata, all
+15 robustness scenarios, and a reset-free video ending at a successful time
+limit. Historical diagnostics marked `not_claim` cannot satisfy this release
+contract.
 
 Use this after `make smoke` and the debug run pass.
 

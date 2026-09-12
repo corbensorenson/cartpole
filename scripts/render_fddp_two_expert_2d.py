@@ -130,7 +130,7 @@ def main() -> None:
     parser.add_argument("--fps", type=int, default=50)
     parser.add_argument("--width", type=int, default=1280)
     parser.add_argument("--height", type=int, default=720)
-    parser.add_argument("--seed", type=int, default=20732)
+    parser.add_argument("--seed", type=int, default=50732)
     parser.add_argument("--hanging-start", action="store_true")
     parser.add_argument("--prelude-seconds", type=float, default=0.0)
     parser.add_argument("--settle-mode", choices=("zero", "hanging_lqr"), default="zero")
@@ -150,6 +150,12 @@ def main() -> None:
     ):
         raise ValueError("seconds, fps, prelude, scales, and control cost must be valid")
 
+    repo_root = Path(__file__).resolve().parents[1]
+    source_git = {
+        key: value
+        for key, value in git_metadata(repo_root, include_untracked=False).items()
+        if key != "root"
+    }
     base_cfg = load_config(args.config)
     spec = load_config(args.spec)
     controller_path = Path(args.controller)
@@ -305,7 +311,11 @@ def main() -> None:
         "controller": controller["source"],
         "state_source": state_metadata,
         "generated_xml_sha256": xml_sha256,
-        "config": {"path": str(Path(args.config)), "resolved_sha256": data_sha256(cfg)},
+        "config": {
+            "path": str(Path(args.config)),
+            "resolved_sha256": data_sha256(base_cfg),
+            "overrides": [],
+        },
         "render": {
             "requested_seconds": float(args.seconds),
             "simulated_seconds": float(completed_steps * env.dt),
@@ -341,7 +351,7 @@ def main() -> None:
             "settle_gain_sha256": data_sha256(settle_gain.astype(float).tolist()) if settle_gain is not None else None,
         },
         "runtime": runtime_metadata(),
-        "git": git_metadata(Path(__file__).resolve().parents[1]),
+        "git": source_git,
     }
     dump_json(metadata, metadata_out)
     print(f"Wrote {frames} frames to {out}; done_events={len(done_events)}")

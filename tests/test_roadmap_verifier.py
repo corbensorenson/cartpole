@@ -132,20 +132,39 @@ class CanonicalBenchmarkTests(unittest.TestCase):
         self.assertTrue(any("below" in error for error in errors))
         self.assertTrue(any("not unique" in error for error in errors))
 
-    def test_rejects_missing_weights_and_reset_video(self) -> None:
+    def test_rejects_missing_controller_and_reset_video(self) -> None:
         snapshot = benchmark_snapshot(self.cfg)
         with tempfile.TemporaryDirectory() as tmp:
             repo_root = Path(tmp)
             run_dir = repo_root / "runs/swingup7_uniform"
             run_dir.mkdir(parents=True)
             manifest = {
-                "architecture": "single_policy",
-                "training": {"wall_clock_seconds": 1.0, "environment_steps": 1},
-                "checkpoints": [
-                    {"role": "policy", "path": "runs/swingup7_uniform/missing.safetensors", "sha256": "0" * 64}
-                ],
+                "schema_version": 2,
+                "claim_status": "released_canonical_noisy_swingup_and_hold",
+                "architecture": "settled_launch_hybrid",
+                "benchmark": {
+                    "config_sha256": snapshot["config_sha256"],
+                    "generated_xml_sha256": snapshot["generated_xml_sha256"],
+                },
+                "controller": {
+                    "path": "runs/swingup7_uniform/missing.json",
+                    "sha256": "0" * 64,
+                    "route_steps": 228,
+                },
+                "experts": {
+                    "conditioning": {"type": "hanging_equilibrium_lqr"},
+                    "swing": {"type": "box_fddp_time_varying_feedback"},
+                    "capture": {"type": "upright_lqr"},
+                },
+                "switch": {"state_reset_at_phase_boundaries": False},
+                "evaluation": {
+                    "twenty_seed_start": 1000,
+                    "hundred_seed_start": 2000,
+                    "video_seed": 3000,
+                },
             }
-            (run_dir / "policy_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            manifest_path = run_dir / "seven_link_swingup_manifest.json"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
 
             def evaluation(count: int) -> dict:
                 episodes = []
@@ -164,13 +183,19 @@ class CanonicalBenchmarkTests(unittest.TestCase):
                         }
                     )
                 return {
+                    "claim_status": "canonical_noisy_gate_evidence",
                     "episodes": count,
                     "success_rate": 1.0,
+                    "seed_start": 1000 if count == 20 else 2000,
                     "episode_results": episodes,
                     "evidence": {
                         "deterministic_policy": True,
+                        "progress": 1.0,
+                        "plant_progress": 1.0,
                         "config": {"resolved_sha256": snapshot["config_sha256"]},
                         "generated_xml_sha256": snapshot["generated_xml_sha256"],
+                        "controller": {"sha256": "0" * 64},
+                        "policy_manifest": {"sha256": file_sha256(manifest_path)},
                         "environment": {
                             "n_links": 7,
                             "init_mode": "hanging",
@@ -180,6 +205,7 @@ class CanonicalBenchmarkTests(unittest.TestCase):
                             "action_dim": 1,
                             "action_frequency_hz": 50.0,
                         },
+                        "git": {"available": True, "commit": "abc", "dirty": False},
                     },
                 }
 
@@ -196,15 +222,20 @@ class CanonicalBenchmarkTests(unittest.TestCase):
                     "reset_count": 1,
                     "completed_requested_steps": True,
                     "simulated_seconds": 30.0,
-                    "seed": 1000,
-                    "done_events": [{"terminated": False, "success": True}],
+                    "seed": 3000,
+                    "done_events": [
+                        {"terminated": False, "success": True, "termination_reason": "time_limit"}
+                    ],
+                    "final_info": {"success": True, "upright_streak_seconds": 10.0},
                 },
+                "config": {"resolved_sha256": snapshot["config_sha256"], "overrides": []},
+                "git": {"available": True, "commit": "abc", "dirty": False},
             }
             (run_dir / "seven_link_swingup_success.video.json").write_text(
                 json.dumps(video_meta), encoding="utf-8"
             )
             errors = validate_solution_artifacts(self.cfg, run_dir, repo_root)
-            self.assertTrue(any("missing checkpoint" in error for error in errors))
+            self.assertTrue(any("controller path is invalid" in error for error in errors))
             self.assertTrue(any("reset_count" in error for error in errors))
 
 

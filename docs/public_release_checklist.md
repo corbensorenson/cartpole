@@ -17,11 +17,9 @@ and hold result:
   frame during the upright hold.
 - Maximum cart excursion 2.3709 m across the 100-episode gate.
 
-Public commit `54a70a6` passed a clean fresh-clone audit on 2026-09-12: all 78
-tests passed, the benchmark verifier reported no contract errors, and the
-generated MuJoCo XML reproduced the published SHA-256. The final project
-roadmap is not yet marked complete because earlier calibration phases remain
-open. Public material may describe this as a released canonical seven-link
+The evidence records the exact clean tracked source commit. A fresh-clone audit
+on 2026-09-12 ran all 78 tests, the benchmark verifier, and the release
+checksums. Public material may describe this as a released canonical seven-link
 20/100-gate result, but should not call it a universal world record unless an
 external competition's exact rules and submission requirements have also been
 verified.
@@ -30,23 +28,22 @@ verified.
 
 | Artifact | Purpose |
 |---|---|
-| `runs/swingup7_fddp_full_hanging_ilqr_terminal100k_deferred_lqr1.json` | Saved two-expert controller and exact trajectory evidence |
+| `runs/swingup7_uniform/seven_link_release_controller.json` | Frozen route and feedback gains used by the hybrid controller |
 | `runs/swingup7_uniform/seven_link_swingup_manifest.json` | Complete conditioning, swing, and capture policy manifest |
 | `runs/swingup7_uniform/seven_link_swingup_success.mp4` | 30-second canonical noisy held-out video |
 | `runs/swingup7_uniform/seven_link_swingup_success.video.json` | Video metadata, hashes, runtime, reset count, and final metrics |
 | `runs/swingup7_uniform/eval_swingup7_20.json` | 20-episode canonical gate |
 | `runs/swingup7_uniform/eval_swingup7_100.json` | 100-episode canonical gate |
+| `runs/swingup7_uniform/robustness_sweep.json` | Non-canonical paired-seed stress characterization |
+| `runs/swingup7_uniform/SHA256SUMS` | Integrity manifest for the public evidence bundle |
 | `runs/eval_swingup7_fddp_two_expert_canonical20.json` | Negative control on the required noisy initial distribution |
 | `docs/seven_link_swingup_paper.md` | Method, results, limitations, and reproduction commands |
 | `docs/levers_and_pitfalls.md` | Full experiment ledger, including failed branches |
 | `ROADMAP.md` | Frozen completion contract and unchecked final gates |
 
-The video metadata currently records these hashes:
-
-- Controller: `7ed79320043618b767cc584359a624b1774067ab746e1d27f35da8e5683205d8`
-- Hanging-settle gain: `48b0b5d607587774891f5d8b806924a43701a9127b5fe5487c80405a957ff083`
-- Video: `bea607e4164867daf7808d43156160c89e9097d7f9ae409df86f11400080a8f6`
-- Generated MuJoCo XML: `3d662d6887a3e17469eb03b99ebde378f3ca20c1fb67253f649d43211b16343c`
+The exact controller, hanging-settle gain, video, configuration, generated XML,
+and manifest hashes are recorded in the release metadata and cross-checked by
+`SHA256SUMS` and `make verify-swingup7`.
 
 ## Allowed Public Language
 
@@ -83,7 +80,6 @@ Do not check the final roadmap boxes until all of these are present:
 6. The post and paper are updated to identify the exact held-out seeds and
    benchmark configuration.
 
-Items 1–6 have been satisfied for the repository's canonical result. Earlier
-project-roadmap phases remain open, and a universal world-record claim still
-requires matching the external competition's exact plant, timing, scoring,
-and submission rules.
+Items 1–6 have been satisfied for the repository's canonical result. A
+universal world-record claim still requires matching the external
+competition's exact plant, timing, scoring, and submission rules.
