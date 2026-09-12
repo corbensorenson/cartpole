@@ -84,7 +84,12 @@ def main() -> None:
     n_links = int(env.n)
     step_count = max(2, int(round(seconds / policy_dt)))
     knots = None if "knots" not in record else np.asarray(record["knots"], dtype=np.float64)
-    source_controls = None if "controls" not in record else np.asarray(record["controls"], dtype=np.float64)
+    if "stitched_controls" in record:
+        source_controls = np.asarray(record["stitched_controls"], dtype=np.float64)
+    elif "controls" in record:
+        source_controls = np.asarray(record["controls"], dtype=np.float64)
+    else:
+        source_controls = None
     if knots is None and (source_controls is None or source_controls.ndim != 1):
         raise ValueError("proposal record must contain one-dimensional knots or controls")
     controls: list[float] = []
@@ -134,6 +139,10 @@ def main() -> None:
             "qpos": initial_physical_state[:nq].astype(float).tolist(),
             "qvel": initial_physical_state[nq:].astype(float).tolist(),
             "state_index": 0,
+        },
+        "terminal_state": {
+            "qpos": np.asarray(physical_states[-1][:nq], dtype=np.float64).astype(float).tolist(),
+            "qvel": np.asarray(physical_states[-1][nq:], dtype=np.float64).astype(float).tolist(),
         },
         "controller": {
             "type": "exact_mujoco_force_proposal_warm_start",

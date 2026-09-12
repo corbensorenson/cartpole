@@ -176,6 +176,17 @@ def main() -> None:
     parser.add_argument("--source-json", required=True)
     parser.add_argument("--tail-start-seconds", type=float, default=3.0)
     parser.add_argument("--tail-seconds", type=float, default=1.56)
+    parser.add_argument(
+        "--tail-center",
+        choices=("source", "zero"),
+        default="source",
+        help="initialize the optimized tail from the source continuation or zero force",
+    )
+    parser.add_argument(
+        "--initial-tail-json",
+        default=None,
+        help="optional prior target-tail artifact whose best knots seed CEM",
+    )
     parser.add_argument("--target-state", required=True)
     parser.add_argument("--target-scale", type=float, default=0.01)
     parser.add_argument("--knot-count", type=int, default=24)
@@ -225,11 +236,28 @@ def main() -> None:
     start_qpos, start_qvel = replay_prefix(env, source_controls, prefix_steps)
     target, target_metadata = load_target(args.target_state, scale=args.target_scale, n_links=env.n)
     interpolation = interpolation_matrix(args.knot_count, tail_steps)
-    center = np.interp(
-        np.linspace(0.0, 1.0, args.knot_count),
-        np.linspace(0.0, 1.0, tail_steps),
-        source_controls[prefix_steps : prefix_steps + tail_steps],
-    )
+    if args.tail_center == "zero":
+        center = np.zeros(args.knot_count, dtype=np.float64)
+    else:
+        center = np.interp(
+            np.linspace(0.0, 1.0, args.knot_count),
+            np.linspace(0.0, 1.0, tail_steps),
+            source_controls[prefix_steps : prefix_steps + tail_steps],
+        )
+    if args.initial_tail_json is not None:
+        prior = json.loads(Path(args.initial_tail_json).read_text(encoding="utf-8"))
+        prior_best = prior.get("best") if isinstance(prior, dict) else None
+        prior_knots = None if not isinstance(prior_best, dict) else prior_best.get("knots")
+        if prior_knots is None:
+            raise ValueError("initial-tail-json must contain best.knots")
+        prior_knots = np.asarray(prior_knots, dtype=np.float64)
+        if prior_knots.ndim != 1 or prior_knots.size < 2:
+            raise ValueError("initial best knots must be a one-dimensional sequence")
+        center = np.interp(
+            np.linspace(0.0, 1.0, args.knot_count),
+            np.linspace(0.0, 1.0, prior_knots.size),
+            prior_knots,
+        )
     rng = np.random.default_rng(args.seed)
     spread = np.full(args.knot_count, float(args.action_sigma), dtype=np.float64)
     best_record: dict[str, Any] | None = None
@@ -300,6 +328,8 @@ def main() -> None:
         "tail": {
             "start_seconds": float(args.tail_start_seconds),
             "seconds": float(args.tail_seconds),
+            "center": args.tail_center,
+            "initial_tail_json": args.initial_tail_json,
             "prefix_steps": int(prefix_steps),
             "steps": int(tail_steps),
             "knot_count": int(args.knot_count),

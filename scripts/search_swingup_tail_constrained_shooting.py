@@ -42,6 +42,19 @@ def load_tail_controls(
 
 def source_action(env: NLinkCartPoleEnv, source: dict[str, Any], step: int) -> float:
     """Replay either a cart-position source or a normalized-force source."""
+    if source.get("controls") is not None:
+        controls = np.asarray(source["controls"], dtype=np.float64)
+        if controls.ndim != 1 or controls.size < 2:
+            raise ValueError("FDDP source controls must be a one-dimensional sequence")
+        source_seconds = float(source.get("horizon_seconds", controls.size * env.dt))
+        source_times = np.linspace(0.0, max(source_seconds, env.dt), controls.size)
+        return float(
+            np.clip(
+                np.interp(step * env.dt, source_times, controls, left=controls[0], right=controls[-1]),
+                -1.0,
+                1.0,
+            )
+        )
     if source.get("type") == "normalized_force_knots":
         knots = np.asarray(source["knots"], dtype=np.float64)
         source_seconds = float(source["trajectory_seconds"])

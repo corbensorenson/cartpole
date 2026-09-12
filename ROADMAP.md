@@ -766,6 +766,18 @@ inherited-method diagnostic boundary, not an eight-link result; the next
 experiment must improve the same swing-to-low-momentum route before any
 canonical 8-link evidence bundle is created.
 
+Focused capture-tail continuation update (2026-09-12): the same inherited
+seven-link route was replayed through a fixed 3.50-second eight-link prefix and
+given a separate exact-MuJoCo arrest tail. The best canonical-rail-biased CEM
+tail reached `0.534 rad` terminal angle at `1.396 m` cart position, with
+`3.54 rad/s` hinge RMS and `2.16 m` maximum cart excursion; it is a warm start,
+not a capture handoff. Rate-weight homotopy, a 10-second tail, constrained
+shooting, iLQR refinement, full stitched Box-FDDP, and separate capture FDDP
+all failed to produce a hold. The next inherited-method experiment must score
+the tail by the actual post-tail capture/LQR replay while preserving the
+canonical rail and the fixed swing prefix. It must not restart broad global or
+morphology search merely because this tail objective is incomplete.
+
 ### Current Canonical Seven-Link Result
 
 The final canonical control evaluation now passes independently of the earlier

@@ -1067,3 +1067,34 @@ not an eight-link solution. The next inherited-method experiment should
 continue from this route family with a longer swing-and-brake trajectory or a
 capture teacher trained on these measured internal modes; broad policy or
 global-CEM exploration remains out of scope.
+
+## Inherited Eight-Link Capture-Tail Continuation (2026-09-12)
+
+The next campaign kept the seven-link decomposition intact: replay the
+measured eight-link swing prefix, optimize only a downstream arrest tail, then
+hand the saved state to a separate capture expert. The prefix was fixed at
+`3.50 s`; the tail used exact serial MuJoCo and a canonical `3.0 m` rail as a
+soft objective while a `12.0 m` rail prevented premature discovery
+termination. None of these runs is canonical eight-link evidence.
+
+| Attempt | Exact setup | Result | Decision |
+|---|---|---|---|
+| Late crossing tail | Prefix `4.44 s`, zero-force CEM tail, `2.0 s`, widened rail | All candidates hit the temporary rail; no finite population was available to rank | A late upright crossing has too little braking authority |
+| Target-directed tail | Prefix `3.50 s`, 32 knots, 64 candidates, 45 iterations, canonical-rail soft penalty | Best terminal angle `0.534 rad`, cart position `1.396 m`, terminal hinge RMS `3.54 rad/s`, maximum cart excursion `2.16 m` | Best inherited 8-link warm start, but not a capture handoff |
+| Target-tail rate homotopy | Same warm start, rate weight increased to `1,000,000` | Rate RMS reached `1.37 rad/s` only while terminal angle degraded to `2.55 rad` | Lower momentum alone does not recover the upright neighborhood |
+| Long tail | Same prefix, `10.0 s` tail, same rail penalty | Best terminal angle `1.26 rad`, rate RMS `1.97 rad/s` | More time without a capture-aware objective does not solve the mode |
+| Constrained tail shooting | Seeded by the target-directed tail, explicit angle/rate/cart constraints | SLSQP stopped at the initial feasible warm start with `evaluations=1`; no refinement was made | Retain as a solver/Jacobian negative control |
+| iLQR tail refinement | Seeded by the canonical-rail tail, exact MuJoCo, `3.0 m` rail | Numerical instability; terminal angle `2.76 rad`, no hold | Local iLQR refinement is not robust for this 8-link tail |
+| Full stitched Box-FDDP | Dynamically consistent 8-link replay of the rail-biased tail, then FDDP | Diverged to terminal value `2.8e10` and a `12.03 m` discovery-rail exit | Do not optimize the entire route from this seed again without a new capture-aware terminal metric |
+| Separate capture expert | FDDP from the measured best tail state, canonical rail | Diverged to a `3.013 m` rail exit with `0 s` hold | The current handoff is still outside the capture basin |
+| Padded predecessor feedback | Seven-link released feedback gains padded to eight links and replayed | `0/1` success, `3.045 m` maximum cart excursion | Extra-mode feedback cannot be copied unchanged |
+
+The best artifact is
+`runs/swingup8_inherited_early_tail_cem_canonicalrail.json`; its dynamically
+consistent FDDP warm-start replay is
+`runs/swingup8_inherited_early_tail_fddp_warmstart_v2.json`. The proposal
+adapter now accepts stitched controls and records the terminal physical state,
+and the tail CEM can seed a new run from a prior best knot vector. The next
+permitted inherited-method test is to score candidate tails by an actual
+post-tail capture/LQR replay, using this rail-safe warm start; no new global
+policy or morphology search is justified by the current evidence.

@@ -85,6 +85,25 @@ def source_action(
     t: float,
     step: int | None = None,
 ) -> float:
+    if controller.get("controls") is not None:
+        controls = np.asarray(controller["controls"], dtype=np.float64)
+        if controls.ndim != 1 or controls.size < 2:
+            raise ValueError("FDDP source controls must be a one-dimensional sequence")
+        seconds = float(controller.get("horizon_seconds", controls.size * env.dt))
+        source_times = np.linspace(0.0, max(seconds, env.dt), controls.size)
+        return float(
+            np.clip(
+                np.interp(
+                    step * env.dt if step is not None else t,
+                    source_times,
+                    controls,
+                    left=controls[0],
+                    right=controls[-1],
+                ),
+                -1.0,
+                1.0,
+            )
+        )
     knots = np.asarray(controller["knots"], dtype=np.float64)
     seconds = float(controller["trajectory_seconds"])
     if str(controller.get("type", "")).lower() == "normalized_force_knots":
