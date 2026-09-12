@@ -35,6 +35,11 @@ def main() -> None:
         errors.extend(runtime_errors)
     if not errors and not args.benchmark_only:
         errors.extend(validate_solution_artifacts(cfg, Path(args.run_dir), repo_root))
+    source_git = {
+        key: value
+        for key, value in git_metadata(repo_root, include_untracked=False).items()
+        if key != "root"
+    }
 
     report = {
         "generated_at": utc_timestamp(),
@@ -44,7 +49,7 @@ def main() -> None:
         "snapshot": snapshot,
         "errors": errors,
         "runtime": runtime_metadata(),
-        "git": git_metadata(repo_root),
+        "git": source_git,
     }
     if args.report:
         report_path = Path(args.report)
