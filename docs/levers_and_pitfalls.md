@@ -1147,6 +1147,7 @@ reset scales to one; `tests/test_fddp.py` locks this contract down.
 | Corrected FDDP teacher | Uniform 8 links, exact `0.005 rad` link-3 or link-7 state, canonical rail, 5 s Box-FDDP | `0.10-0.12 s` transient upright streak, then rail violation | Not a capture teacher |
 | Corrected capture CEM | Same exact states, LQR-seeded 51-knot action sequence, 12 CEM iterations | Best `0.06 s` upright streak; no five-second hold | Action-sequence search is insufficient |
 | Corrected feedback MPC | Same exact link-3 state, 100-step horizon, nine replans, exact MuJoCo | `0.04 s` upright streak and rail violation | Short-horizon MPC does not recover the tail mode |
+| Rich capture feedback CEM | Exact link-3 state, 66-feature angle/rate/cart interaction actor, seeded from the bounded actor, 15 iterations | `0/1` success, best `0.20 s` upright streak, `3.079 m` rail exit | Feature interactions do not yet supply the missing capture basin |
 | Release-seeded ghost continuation | Frozen seven-link release route padded to eight, exact replay-built states, ghost profile at p0, `+/-9 m` discovery rail | `min_v=229.73`, no handoff, rail at `9.026 m` | Morphology continuation needs a nonlinear capture-compatible seed |
 | Full-authority residual probe | Eight-link protected PPO, LQR residual authority `1.0`, action std `0.05`, p0 maintenance stage | p0 briefly passed at updates 25/50, then fell to `0/8` by update 75; stopped at update 125 | More residual authority destabilizes the teacher |
 

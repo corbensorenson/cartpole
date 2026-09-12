@@ -43,13 +43,16 @@ def rich_action(env: NLinkCartPoleEnv, vector: np.ndarray) -> float:
     return float(np.tanh(features @ vector[:-1] + vector[-1]))
 
 
-def load_seed(path: str, feature_dim: int) -> np.ndarray:
+def load_seed(path: str, base_feature_dim: int, feature_dim: int) -> np.ndarray:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
     base = np.asarray(payload["best_vector"], dtype=np.float64)
-    if base.shape != (24,):
-        raise ValueError(f"expected the existing 23-feature actor in {path}, got {base.shape}")
+    expected = int(base_feature_dim) + 1
+    if base.shape != (expected,):
+        raise ValueError(
+            f"expected the seeded actor in {path} to have shape {(expected,)}, got {base.shape}"
+        )
     result = np.zeros(feature_dim + 1, dtype=np.float64)
-    result[:24] = base
+    result[:expected] = base
     return result
 
 
@@ -138,9 +141,10 @@ def main() -> None:
         },
     }
     probe = NLinkCartPoleEnv(probe_cfg, progress=args.progress, seed=0)
+    base_feature_dim = int(capture_features(probe).size)
     feature_dim = int(rich_capture_features(probe).size)
     probe.close()
-    center = load_seed(args.seed_actor, feature_dim)
+    center = load_seed(args.seed_actor, base_feature_dim, feature_dim)
     rng = np.random.default_rng(args.seed)
     sigma = np.full(feature_dim + 1, float(args.sigma), dtype=np.float64)
     sigma[:24] = 0.05

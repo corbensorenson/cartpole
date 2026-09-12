@@ -814,6 +814,12 @@ step remains the same architecture: produce a nonlinear capture teacher that
 can recover the first measured internal-mode envelope, then optimize the
 existing eight-link swing tail against that teacher.
 
+The richer capture continuation was also run after fixing its hard-coded
+seven-link seed dimension. A 66-feature angle/rate/cart-interaction actor seeded
+from the bounded eight-link actor reached `0/1` success, a best `0.20 s` upright
+streak, and a `3.079 m` rail exit. Feature interactions alone do not provide the
+missing capture basin.
+
 ## Inherited Eight-Link Method Focus Boundary (2026-09-12)
 
 The active eight-link campaign is now explicitly constrained to the method that
