@@ -1155,3 +1155,26 @@ evidence. The next run must first demonstrate held-out recovery from a measured
 internal-mode envelope, then reuse the existing capture-valued tail search. No
 canonical eight-link claim, video, weights, or record statement is justified by
 these probes.
+
+## Inherited Eight-Link Method Focus Boundary (2026-09-12)
+
+The current eight-link work is deliberately staying on the released seven-link
+recipe: hanging LQR conditioning, target-chain Box-FDDP swing-up, a real-state
+capture expert, and terminal hold. These continuation checks changed only the
+route or capture component inside that chain; they did not reopen the complete
+controller search space.
+
+| Attempt | How it was tried | Result | What it means |
+|---|---|---|---|
+| Shared internal-mode feedback CEM | One bounded nonlinear actor optimized over four exact single-link `0.005 rad` states, 8 s, 20 CEM iterations | `0/4` success; minimum upright streak `0.22-0.24 s`; maximum cart positions `9.02-9.11 m` | A single static local actor is not yet a reusable eight-link capture expert |
+| Padded released route | Seven-link release controller padded to eight, exact uniform-eight replay, 10 s hanging LQR prelude | `0/1` success, no upright event, `3.031 m` rail exit at `13.42 s` | The seven-link waveform itself does not produce an eight-link handoff |
+| Route timing/amplitude continuation | Same seven-link controls, retimed `0.60-1.80x` and scaled `0.60-1.40x`, `+/-12 m` diagnostic rail | No upright candidate; best late composite retained about `3.04 rad` maximum angle | Simple waveform retiming is not enough |
+| Inherited terminal iLQR | Padded route refined on exact uniform 8 links toward upright terminal state, 6.56 s, canonical rail penalty | Terminal angle `2.902 rad`, hinge RMS `22.70 rad/s`, cart `3.059 m`; no handoff | The local trajectory optimizer needs a better capture-aware route seed |
+
+Artifacts are local diagnostics: `runs/swingup8_capture_state_set_feedback_cem_exact.json`,
+`runs/swingup8_release_padded100_direct_eval.json`, and
+`runs/swingup8_inherited_ilqr_terminal_exact.json`. They are not eight-link
+evidence. The next permitted experiment is a held-out nonlinear capture teacher
+from measured target-chain handoffs, followed by the existing tail search scored
+by that teacher. Broad PPO, global CEM, and unrelated controller families remain
+out of scope until this inherited chain has been falsified.

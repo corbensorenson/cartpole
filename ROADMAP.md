@@ -814,6 +814,28 @@ step remains the same architecture: produce a nonlinear capture teacher that
 can recover the first measured internal-mode envelope, then optimize the
 existing eight-link swing tail against that teacher.
 
+## Inherited Eight-Link Method Focus Boundary (2026-09-12)
+
+The active eight-link campaign is now explicitly constrained to the method that
+passed seven links: hanging-equilibrium conditioning, an exact target-chain
+Box-FDDP swing expert, a measured-state capture expert, and terminal hold. The
+recent experiments were continuation checks within that architecture, not a
+new controller-family search.
+
+| Attempt | Exact setup | Result | Decision |
+|---|---|---|---|
+| Shared internal-mode capture actor | One bounded nonlinear feedback actor, optimized over four exact `0.005 rad` single-link perturbations for 8 s | `0/4` holds; minimum upright streak `0.22-0.24 s`; every run exited the `+/-9 m` discovery rail | One static actor does not recover the eight-link internal-mode envelope |
+| Padded seven-link release replay | Released seven-link route padded to eight and evaluated on exact uniform 8 links after the 10 s hanging LQR prelude | `0/1`; no upright event; rail at `3.031 m` after `13.42 s` | The predecessor force waveform does not reach a valid eight-link handoff |
+| Inherited-route timing/amplitude screen | Seven-link force waveform only, retimed `0.60-1.80x` and amplitude-scaled `0.60-1.40x` on a `+/-12 m` diagnostic rail | No candidate reached the upright gate; best late composite still had about `3.04 rad` maximum angle | Simple retiming/amplitude changes are exhausted |
+| Exact inherited-route terminal iLQR | Padded route, uniform 8 links, 6.56 s, upright terminal target, canonical rail penalty | Terminal angle `2.902 rad`, hinge RMS `22.70 rad/s`, cart `3.059 m`; no handoff | Direct local terminal refinement cannot repair the inherited route |
+
+These results do not change the completion contract and do not justify an
+eight-link claim. The next run remains narrow: first build a held-out
+nonlinear capture teacher from real eight-link handoff states, then rerank or
+refine the existing inherited swing tail against that teacher. Do not restart
+the entire global policy or morphology search unless this inherited chain is
+formally falsified by that capture-valued continuation.
+
 ### Current Canonical Seven-Link Result
 
 The final canonical control evaluation now passes independently of the earlier
