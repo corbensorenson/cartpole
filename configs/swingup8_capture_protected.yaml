@@ -1,0 +1,160 @@
+experiment:
+  name: swingup8_capture_protected
+  seed: 20802
+  out_dir: runs/swingup8_capture_protected
+
+env:
+  n_links: 8
+  total_length: 3.0
+  total_mass: 1.0
+  cart_mass: 1.0
+  rail_limit: 3.0
+  rail_limit_start: 9.0
+  rail_limit_end: 3.0
+  force_limit: 80.0
+  timestep: 0.005
+  frame_skip: 4
+  episode_seconds: 10.0
+  init_mode: upright
+  init_cart_noise_start: 0.0
+  init_cart_noise_end: 0.75
+  init_cart_vel_noise_start: 0.0
+  init_cart_vel_noise_end: 1.50
+  init_angle_noise_start: 0.0
+  init_angle_noise_end: 0.75
+  init_vel_noise_start: 0.0
+  init_vel_noise_end: 2.00
+  init_qvel_scale_start: 0.0
+  init_qvel_scale_end: 1.0
+  terminate_abs_angle: null
+  success_upright_threshold: 0.15
+  success_sustain_seconds: 5.0
+  cart_damping: 0.02
+  cart_frictionloss: 0.0
+  joint_armature: 0.0005
+  link_radius: 0.025
+  obs_include_morphology: true
+  obs_include_frictionloss: false
+  obs_include_time: false
+  obs_include_capture_features: true
+  capture_feature_cart_position_bound: 1.25
+  capture_feature_angle_bound: 0.15
+  capture_feature_cart_velocity_bound: 0.50
+  capture_feature_hinge_velocity_bound: 0.75
+  # Keep the exact upright LQR active while PPO learns only a bounded residual.
+  # The residual limit is gated with the disturbance curriculum below.
+  action_lqr_residual:
+    enabled: true
+    action_squash: tanh
+    state_gain:
+      - 0.001242190616675016
+      - -0.02345643246517692
+      - 122.790352333731
+      - -745.1990363536212
+      - 2458.170222773815
+      - -5008.35655502701
+      - 6054.385975423525
+      - -3839.391457248943
+      - 1008.806603772982
+      - 0.007348216991129466
+      - 0.3448455300769516
+      - 3.296571251640152
+      - -21.14679869083228
+      - 83.75294431081586
+      - -208.9506551007731
+      - 318.1142048652265
+      - -254.2493116572984
+      - 81.11493959491929
+    scale: 1.0
+    residual_scale_start: 1.0
+    residual_scale_end: 1.0
+    residual_action_limit_start: 0.002
+    residual_action_limit_end: 0.50
+    cart_target: 0.0
+  curriculum_rebuild_every: 999999
+  reward:
+    alive: 0.0
+    terminal_penalty: -300.0
+    angle_cos: 3.0
+    upright_bonus: 22.0
+    sustained_upright_bonus: 20.0
+    capture_quality: 10.0
+    capture_angle_scale: 0.20
+    capture_hinge_vel_scale: 0.75
+    capture_cart_pos_abs_scale: 1.25
+    capture_cart_vel_scale: 0.50
+    upright_low_velocity_bonus: 32.0
+    upright_hinge_vel_threshold: 0.75
+    upright_cart_vel_threshold: 0.50
+    centered_upright_max_cart_abs: 1.25
+    low_momentum_max_cart_abs: 1.25
+    upright_streak: 18.0
+    upright_streak_cap_seconds: 5.0
+    centered_upright_streak: 24.0
+    centered_upright_streak_cap_seconds: 5.0
+    low_momentum_upright_streak: 32.0
+    low_momentum_upright_streak_cap_seconds: 5.0
+    angle_abs: 1.2
+    angle_rel: 0.05
+    tip: 0.25
+    cart_pos: 4.0
+    cart_vel: 0.06
+    hinge_vel: 0.008
+    rail_margin: 160.0
+    rail_margin_start: 0.55
+    control: 0.0010
+    upright_threshold: 0.15
+
+morphology:
+  schedule_mode: all_linear
+  start:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    total_damping: 0.015
+    alpha_frictionloss: 0.0
+    total_frictionloss: 0.0
+  end:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    total_damping: 0.015
+    alpha_frictionloss: 0.0
+    total_frictionloss: 0.0
+
+ppo:
+  backend: torch
+  vec_backend: serial
+  device: cpu
+  torch_num_threads: 1
+  num_envs: 16
+  rollout_steps: 128
+  total_updates: 1000
+  minibatches: 4
+  epochs: 4
+  gamma: 0.995
+  gae_lambda: 0.95
+  learning_rate: 0.000002
+  clip_coef: 0.20
+  entropy_coef: 0.0
+  value_coef: 0.50
+  max_grad_norm: 0.50
+  hidden_sizes: [128, 128]
+  action_std_init: 0.0005
+  zero_init_actor_output: true
+  normalize_advantages: true
+  checkpoint_every: 25
+  eval_every: 25
+  eval_episodes: 8
+  curriculum_mode: gated
+  curriculum_start_progress: 0.0
+  curriculum_step: 0.025
+  curriculum_min_updates_per_stage: 75
+  curriculum_gate_consecutive_evals: 3
+  curriculum_gate_success_rate: 0.70
+  curriculum_gate_ever_upright_rate: 0.90
+  curriculum_gate_low_momentum_upright_rate: 0.60
+  curriculum_gate_mean_upright_streak: 3.0
+  curriculum_gate_max_upright_streak: 4.0
+  curriculum_gate_max_capture_quality: 0.45
+  eval_progress: current

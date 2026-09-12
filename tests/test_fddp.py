@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import unittest
+from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
@@ -11,9 +12,12 @@ from gcartpole.capture_constraints import (
     normalized_constraint_score,
     terminal_bounds,
 )
+from gcartpole.config import load_config
+from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.ilqr import QuadraticTrajectoryCost
 from gcartpole.modal import StateScales
 from scripts.continue_fddp_homotopy import artifact_passes, candidate_alpha
+from scripts.search_capture_sequence import fixed_state_cfg
 
 
 class _LinearTransition:
@@ -71,6 +75,23 @@ class FDDPTests(unittest.TestCase):
 
 
 class FDDPContinuationTests(unittest.TestCase):
+    @unittest.skipUnless(importlib.util.find_spec("mujoco"), "MuJoCo is optional")
+    def test_fixed_state_cfg_clears_curriculum_noise_and_scales(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        cfg = load_config(root / "configs/swingup8_capture_protected.yaml")
+        state = {
+            "qpos": [0.0, 0.0, 0.0, 0.005, 0.0, 0.0, 0.0, 0.0, 0.0],
+            "qvel": [0.0] * 9,
+        }
+        fixed = fixed_state_cfg(cfg, state, 5.0)
+        env = NLinkCartPoleEnv(fixed, progress=1.0, seed=991)
+        try:
+            env.reset(seed=991)
+            np.testing.assert_allclose(env.data.qpos, state["qpos"], atol=1e-12)
+            np.testing.assert_allclose(env.data.qvel, state["qvel"], atol=1e-12)
+        finally:
+            env.close()
+
     def test_candidate_alpha_stops_at_target(self) -> None:
         self.assertEqual(candidate_alpha(0.5, 1.0, 0.1), 0.6)
         self.assertEqual(candidate_alpha(0.95, 1.0, 0.1), 1.0)

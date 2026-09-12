@@ -1131,3 +1131,27 @@ teacher retained until each envelope gate passes. Reuse the existing
 capture-value tail search only after that expert demonstrates recovery from
 held-out states; do not create an 8-link paper, video, or record claim from
 these endpoint or upright-origin diagnostics.
+
+## Corrected Eight-Link Exact-State Boundary (2026-09-12)
+
+The eight-link continuation stayed on the seven-link decomposition: inherited
+swing route, capture expert, then upright hold. A validity audit found that
+`scripts/search_capture_sequence.py::fixed_state_cfg()` cleared only the base
+reset-noise fields. When a curriculum config supplied `*_start`/`*_end` fields,
+the supposedly fixed state was replaced with random cart, angle, and velocity
+noise. The helper now clears every reset-noise schedule and forces qpos/qvel
+reset scales to one; `tests/test_fddp.py` locks this contract down.
+
+| Attempt | Exact setup | Result | Decision |
+| --- | --- | --- | --- |
+| Corrected FDDP teacher | Uniform 8 links, exact `0.005 rad` link-3 or link-7 state, canonical rail, 5 s Box-FDDP | `0.10-0.12 s` transient upright streak, then rail violation | Not a capture teacher |
+| Corrected capture CEM | Same exact states, LQR-seeded 51-knot action sequence, 12 CEM iterations | Best `0.06 s` upright streak; no five-second hold | Action-sequence search is insufficient |
+| Corrected feedback MPC | Same exact link-3 state, 100-step horizon, nine replans, exact MuJoCo | `0.04 s` upright streak and rail violation | Short-horizon MPC does not recover the tail mode |
+| Release-seeded ghost continuation | Frozen seven-link release route padded to eight, exact replay-built states, ghost profile at p0, `+/-9 m` discovery rail | `min_v=229.73`, no handoff, rail at `9.026 m` | Morphology continuation needs a nonlinear capture-compatible seed |
+| Full-authority residual probe | Eight-link protected PPO, LQR residual authority `1.0`, action std `0.05`, p0 maintenance stage | p0 briefly passed at updates 25/50, then fell to `0/8` by update 75; stopped at update 125 | More residual authority destabilizes the teacher |
+
+The older protected-capture artifacts are therefore not used as eight-link
+evidence. The next run must first demonstrate held-out recovery from a measured
+internal-mode envelope, then reuse the existing capture-valued tail search. No
+canonical eight-link claim, video, weights, or record statement is justified by
+these probes.

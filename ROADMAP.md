@@ -795,6 +795,25 @@ modes, and only then rerank the same swing tail by that expert. Unconstrained
 PPO is not an acceptable capture learner; the first eight-link maintenance
 probe collapsed to `0/8` at progress `0` and was stopped at update `199`.
 
+Exact-state and protected-teacher correction (2026-09-12): the shared
+`fixed_state_cfg()` helper was found to clear only the base reset-noise fields,
+not curriculum `*_start`/`*_end` fields or reset scales. Eight-link protected
+capture probes that used a curriculum config were therefore not exact-state
+probes. The helper now forces all reset noise to zero and both qpos/qvel reset
+scales to one, with a regression test in `tests/test_fddp.py`. After the fix,
+the same local two-expert method was rerun from exact `0.005 rad` internal-mode
+states. Box-FDDP produced only `0.10-0.12 s` upright transients before the
+canonical rail, short capture-sequence CEM produced `0.06 s`, and exact-model
+feedback MPC produced `0.04 s`; none held. A release-seeded ghost-profile
+continuation using the frozen seven-link route, exact replay-built states, and a
+`+/-9 m` discovery rail reached `min_v=229.73` but still exited the rail with no
+handoff. A full-authority residual PPO probe also failed to preserve even the
+exact p0 maintenance gate after update 75 and was stopped at update 125. These
+are corrected negative controls, not eight-link evidence. The next permitted
+step remains the same architecture: produce a nonlinear capture teacher that
+can recover the first measured internal-mode envelope, then optimize the
+existing eight-link swing tail against that teacher.
+
 ### Current Canonical Seven-Link Result
 
 The final canonical control evaluation now passes independently of the earlier
