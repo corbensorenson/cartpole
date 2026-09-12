@@ -1,0 +1,129 @@
+experiment:
+  name: swingup7_capture_handoff
+  seed: 20260931
+  out_dir: runs/swingup7_capture_handoff
+
+env:
+  n_links: 7
+  total_length: 3.0
+  total_mass: 1.0
+  cart_mass: 1.0
+  rail_limit: 12.0
+  rail_limit_start: 12.0
+  rail_limit_end: 12.0
+  force_limit: 80.0
+  timestep: 0.005
+  frame_skip: 4
+  episode_seconds: 8.0
+  init_mode: state_list
+  init_states_path: runs/swingup7_cart_feasible_handoff_state.json
+  init_state_curriculum: all
+  init_qvel_scale_start: 1.0
+  init_qvel_scale_end: 1.0
+  init_cart_noise_start: 0.0
+  init_cart_noise_end: 0.0
+  init_cart_vel_noise_start: 0.0
+  init_cart_vel_noise_end: 0.0
+  init_angle_noise_start: 0.0
+  init_angle_noise_end: 0.0
+  init_vel_noise_start: 0.0
+  init_vel_noise_end: 0.0
+  terminate_abs_angle: null
+  success_upright_threshold: 0.15
+  success_sustain_seconds: 5.0
+  cart_damping: 0.02
+  cart_frictionloss: 0.0
+  joint_armature: 0.0005
+  link_radius: 0.025
+  plant_progress: 0.0
+  obs_include_morphology: true
+  obs_include_frictionloss: false
+  obs_include_time: false
+  obs_include_capture_features: true
+  capture_feature_cart_position_bound: 1.25
+  capture_feature_angle_bound: 0.15
+  capture_feature_cart_velocity_bound: 0.50
+  capture_feature_hinge_velocity_bound: 0.75
+  action_lqr_residual:
+    enabled: false
+  reward:
+    alive: 0.0
+    terminal_penalty: -300.0
+    angle_cos: 3.0
+    upright_bonus: 40.0
+    sustained_upright_bonus: 40.0
+    capture_quality: 20.0
+    capture_angle_scale: 0.20
+    capture_hinge_vel_scale: 0.75
+    capture_cart_pos_abs_scale: 1.25
+    capture_cart_vel_scale: 0.50
+    upright_low_velocity_bonus: 60.0
+    upright_hinge_vel_threshold: 0.75
+    upright_cart_vel_threshold: 0.50
+    centered_upright_max_cart_abs: 1.25
+    low_momentum_max_cart_abs: 1.25
+    upright_streak: 28.0
+    upright_streak_cap_seconds: 5.0
+    centered_upright_streak: 36.0
+    centered_upright_streak_cap_seconds: 5.0
+    low_momentum_upright_streak: 48.0
+    low_momentum_upright_streak_cap_seconds: 5.0
+    angle_abs: 2.0
+    angle_rel: 0.08
+    tip: 0.50
+    cart_pos: 2.0
+    cart_vel: 0.10
+    hinge_vel: 0.025
+    rail_margin: 0.0
+    control: 0.0010
+    policy_control: 0.0010
+    upright_threshold: 0.15
+
+morphology:
+  schedule_mode: mass_last
+  start:
+    alpha_length: 0.65
+    alpha_mass: 5.0
+    alpha_damping: 2.5
+    total_damping: 0.120
+    alpha_frictionloss: 3.0
+    total_frictionloss: 0.060
+  end:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    alpha_frictionloss: 0.0
+    total_damping: 0.015
+    total_frictionloss: 0.0
+
+ppo:
+  backend: torch
+  vec_backend: serial
+  device: cpu
+  torch_num_threads: 1
+  num_envs: 32
+  rollout_steps: 128
+  total_updates: 500
+  minibatches: 4
+  epochs: 4
+  gamma: 0.995
+  gae_lambda: 0.95
+  learning_rate: 0.0001
+  clip_coef: 0.20
+  entropy_coef: 0.005
+  value_coef: 0.50
+  max_grad_norm: 0.50
+  hidden_sizes: [128, 128]
+  action_std_init: 0.20
+  zero_init_actor_output: true
+  normalize_advantages: true
+  checkpoint_every: 25
+  eval_every: 25
+  eval_episodes: 1
+  curriculum_mode: linear
+  curriculum_start_progress: 0.0
+  curriculum_step: 0.02
+  curriculum_min_updates_per_stage: 1
+  curriculum_eval_states_path: runs/swingup7_cart_feasible_handoff_state.json
+  curriculum_eval_seed: 20261001
+  eval_progress: current

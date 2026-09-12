@@ -1,3 +1,21 @@
 .DS_Store
 __pycache__/
 *.py[cod]
+.venv/
+.conda-aligator/
+MUJOCO_LOG.TXT
+*.egg-info/
+*.safetensors
+*.npz
+
+# Experiment outputs are ignored by default. A small, reviewed evidence bundle
+# is force-added under runs/ for the public seven-link result.
+runs/
+
+# Local research packets and the pre-flattening workspace are retained on disk
+# but are not part of the public project.
+/cartpole_research_master_handoff/
+/frontier_swingup_study/
+/gradient_cartpole_handoff/
+/harmonic_codesign_study/
+/hybrid_training_study/

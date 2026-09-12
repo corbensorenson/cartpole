@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this project or its seven-link result, please cite this repository."
+title: "Seven-Link Cart-Pole Swing-Up and Hold"
+type: software
+authors:
+  - family-names: Sorenson
+    given-names: Corben
+repository-code: "https://github.com/corbensorenson/cartpole"
+url: "https://github.com/corbensorenson/cartpole"
+version: 1.0.0
+date-released: 2026-09-12
+abstract: >-
+  A reset-free uniform seven-link MuJoCo cart-pole swing-up and hold using a
+  settled-launch hybrid controller, with 20/20 and 100/100 success on the
+  repository's canonical noisy hanging-start benchmark.

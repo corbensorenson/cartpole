@@ -1,0 +1,167 @@
+experiment:
+  name: swingup7_swing_curriculum
+  seed: 20703
+  out_dir: runs/swingup7_swing_curriculum
+
+env:
+  n_links: 7
+  total_length: 3.0
+  total_mass: 1.0
+  cart_mass: 1.0
+  rail_limit: 3.0
+  rail_limit_start: 12.0
+  rail_limit_end: 3.0
+  force_limit: 80.0
+  timestep: 0.005
+  frame_skip: 4
+  episode_seconds: 20.0
+  # Phase 3: begin at the mastered upright problem and move the first link's
+  # relative angle continuously toward the true hanging start. Final evidence
+  # must use configs/swingup7_uniform.yaml with init_mode=hanging.
+  init_mode: hanging_curriculum
+  hanging_curriculum_power: 2.0
+  init_cart_noise_start: 0.0
+  init_cart_noise_end: 0.0
+  init_cart_vel_noise_start: 0.0
+  init_cart_vel_noise_end: 0.05
+  init_angle_noise_start: 0.0
+  init_angle_noise_end: 0.05
+  init_vel_noise_start: 0.0
+  init_vel_noise_end: 0.05
+  terminate_abs_angle: null
+  success_upright_threshold: 0.15
+  success_sustain_seconds: 5.0
+  cart_damping: 0.02
+  cart_frictionloss: 0.0
+  joint_armature: 0.0005
+  link_radius: 0.025
+  obs_include_morphology: true
+  obs_include_frictionloss: false
+  obs_include_time: false
+  obs_include_capture_features: true
+  capture_feature_cart_position_bound: 1.25
+  capture_feature_angle_bound: 0.15
+  capture_feature_cart_velocity_bound: 0.50
+  capture_feature_hinge_velocity_bound: 0.75
+  # Discovery branch: keep a local maintenance teacher near upright, then
+  # fade it as the hanging-start curriculum takes over. The final canonical
+  # benchmark must disable this branch and use the published expert chain.
+  action_lqr_residual:
+    enabled: true
+    action_squash: tanh
+    state_gain:
+      - 0.0000006530158154
+      - -0.0009183908968
+      - -0.0008755774278
+      - -0.0007434501099
+      - -0.0005687198247
+      - -0.0003940997029
+      - -0.0002419202966
+      - -0.0001128282778
+      - 0.0000009710958753
+      - -0.0000998916548
+      - -0.0000769814255
+      - -0.0000511600830
+      - -0.0000297056498
+      - -0.0000150052543
+      - -0.0000063839393
+      - -0.0000019786618
+    scale: 1.0
+    residual_scale_start: 1.0
+    residual_scale_end: 0.0
+    residual_action_limit_start: 0.005
+    residual_action_limit_end: 1.0
+    cart_target: 0.0
+  curriculum_rebuild_every: 999999
+  reward:
+    alive: 0.0
+    terminal_penalty: -300.0
+    angle_cos: 3.0
+    upright_bonus: 28.0
+    sustained_upright_bonus: 24.0
+    capture_quality: 14.0
+    capture_angle_scale: 0.20
+    capture_hinge_vel_scale: 0.75
+    capture_cart_pos_abs_scale: 1.25
+    capture_cart_vel_scale: 0.50
+    upright_low_velocity_bonus: 36.0
+    upright_hinge_vel_threshold: 0.75
+    upright_cart_vel_threshold: 0.50
+    centered_upright_max_cart_abs: 1.25
+    low_momentum_max_cart_abs: 1.25
+    upright_streak: 20.0
+    upright_streak_cap_seconds: 5.0
+    centered_upright_streak: 28.0
+    centered_upright_streak_cap_seconds: 5.0
+    low_momentum_upright_streak: 38.0
+    low_momentum_upright_streak_cap_seconds: 5.0
+    angle_abs: 1.0
+    angle_rel: 0.04
+    tip: 0.35
+    cart_pos: 5.0
+    cart_vel: 0.06
+    hinge_vel: 0.008
+    rail_margin: 180.0
+    rail_margin_start: 0.55
+    control: 0.0010
+    energy_progress_start: 40.0
+    energy_progress_end: 0.0
+    energy_level_start: 4.0
+    energy_level_end: 0.0
+    upright_threshold: 0.15
+
+morphology:
+  # Keep the longer rail and graded morphology while the swing expert learns
+  # the new unstable modes; progress 1.0 restores the canonical plant.
+  schedule_mode: swingup_slow
+  start:
+    alpha_length: 0.65
+    alpha_mass: 5.0
+    alpha_damping: 2.5
+    total_damping: 0.120
+    alpha_frictionloss: 3.0
+    total_frictionloss: 0.060
+  end:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    alpha_frictionloss: 0.0
+    total_damping: 0.015
+    total_frictionloss: 0.0
+
+ppo:
+  backend: torch
+  vec_backend: serial
+  device: cpu
+  torch_num_threads: 1
+  num_envs: 32
+  rollout_steps: 256
+  total_updates: 2500
+  minibatches: 8
+  epochs: 4
+  gamma: 0.995
+  gae_lambda: 0.95
+  learning_rate: 0.00005
+  clip_coef: 0.20
+  entropy_coef: 0.0050
+  value_coef: 0.50
+  max_grad_norm: 0.50
+  hidden_sizes: [256, 256]
+  action_std_init: 0.02
+  zero_init_actor_output: true
+  normalize_advantages: true
+  checkpoint_every: 50
+  eval_every: 50
+  eval_episodes: 16
+  curriculum_mode: gated
+  curriculum_start_progress: 0.0
+  curriculum_step: 0.0125
+  curriculum_min_updates_per_stage: 100
+  curriculum_gate_consecutive_evals: 3
+  curriculum_gate_success_rate: 0.25
+  curriculum_gate_ever_upright_rate: 0.80
+  curriculum_gate_low_momentum_upright_rate: 0.50
+  curriculum_gate_mean_upright_streak: 2.0
+  curriculum_gate_max_upright_streak: 3.0
+  curriculum_gate_max_capture_quality: 0.40
+  eval_progress: current

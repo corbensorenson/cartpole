@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "claim_status": "canonical_noisy_20_and_100_pass",
+  "benchmark": {
+    "config": "configs/swingup7_uniform.yaml",
+    "config_resolved_sha256": "77238bc471b3f7a1d9f3fe961de1a49bb229fd04c9a141162e9bd385aa473a3d",
+    "n_links": 7,
+    "rail_limit_m": 3.0,
+    "force_limit_n": 80.0,
+    "policy_rate_hz": 50.0,
+    "episode_seconds": 30.0,
+    "upright_threshold_rad": 0.15,
+    "success_sustain_seconds": 5.0,
+    "initial_mode": "hanging",
+    "initial_angle_noise": 0.05,
+    "initial_velocity_noise": 0.05
+  },
+  "experts": {
+    "conditioning": {
+      "type": "hanging_equilibrium_lqr",
+      "duration_seconds": 10.0,
+      "control_cost": 1000.0,
+      "finite_difference_epsilon": 1e-7,
+      "scale": 1.0,
+      "reference_qpos": [0.0, 3.141592653589793, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      "q_weights": {
+        "cart_position": 10.0,
+        "absolute_angle": 25.0,
+        "cart_velocity": 5.0,
+        "absolute_angular_velocity": 10.0,
+        "relative_angle": 1.0,
+        "relative_angular_velocity": 1.0
+      },
+      "gain_sha256": "48b0b5d607587774891f5d8b806924a43701a9127b5fe5487c80405a957ff083",
+      "gain": [
+        0.06329273601790862,
+        0.6464648999701309,
+        -1.7529346539249389,
+        -0.8363924945455309,
+        -0.38652778185600734,
+        -0.06530986607899934,
+        0.06851255163906604,
+        0.036444895258172016,
+        0.11598470202212673,
+        0.2732628738414504,
+        0.13013771242577835,
+        0.023946025288803956,
+        -0.025191222371187358,
+        -0.034898793246506486,
+        -0.019543666146757763,
+        -0.002484000232284059
+      ]
+    },
+    "swing": {
+      "type": "box_fddp_time_varying_feedback",
+      "route_artifact": "runs/swingup7_fddp_full_hanging_ilqr_terminal100k_deferred_lqr1.json",
+      "route_artifact_sha256": "7ed79320043618b767cc584359a624b1774067ab746e1d27f35da8e5683205d8",
+      "route_steps": 228,
+      "route_seconds": 4.56,
+      "tracking_gain_scale": 2.0,
+      "shift_nominal_cart_position_to_settled_x": true,
+      "state_coordinates": "dimensionless_absolute_cart_and_link_coordinates"
+    },
+    "capture": {
+      "type": "upright_lqr",
+      "activation": "after_swing_route_horizon",
+      "scale": 1.0,
+      "control_cost": 1000.0,
+      "cart_target_m": 0.0
+    }
+  },
+  "evaluation": {
+    "twenty_episode": "runs/swingup7_uniform/eval_swingup7_20.json",
+    "hundred_episode": "runs/swingup7_uniform/eval_swingup7_100.json",
+    "twenty_episode_success_rate": 1.0,
+    "hundred_episode_success_rate": 1.0,
+    "seed_start": 20732,
+    "episodes_per_gate": 20,
+    "episodes_long_gate": 100
+  },
+  "video": {
+    "path": "runs/swingup7_uniform/seven_link_swingup_success.mp4",
+    "metadata": "runs/swingup7_uniform/seven_link_swingup_success.video.json",
+    "held_out_seed": 20832,
+    "seconds": 30.0,
+    "reset_count": 0
+  },
+  "limitations": [
+    "The route spends the first 10 seconds actively settling the noisy hanging state.",
+    "The public result is a hybrid controller, not a single distilled neural policy.",
+    "The roadmap still requires fresh-clone reproduction and any earlier calibration phases before the project goal is marked complete."
+  ]
+}

@@ -1,0 +1,173 @@
+experiment:
+  name: swingup7_maintenance
+  seed: 20701
+  out_dir: runs/swingup7_maintenance
+
+env:
+  n_links: 7
+  total_length: 3.0
+  total_mass: 1.0
+  cart_mass: 1.0
+  rail_limit: 3.0
+  # Training wheel: give the maintenance learner room to recover, then remove
+  # the extra rail as the reset disturbance curriculum advances.
+  rail_limit_start: 9.0
+  rail_limit_end: 3.0
+  force_limit: 80.0
+  timestep: 0.005
+  frame_skip: 4
+  episode_seconds: 8.0
+  # Phase 1: learn to maintain the upright equilibrium before introducing
+  # meaningful recovery disturbances.
+  init_mode: upright
+  init_cart_noise_start: 0.0
+  init_cart_noise_end: 0.40
+  init_cart_vel_noise_start: 0.0
+  init_cart_vel_noise_end: 0.80
+  init_angle_noise_start: 0.0
+  init_angle_noise_end: 0.20
+  init_vel_noise_start: 0.0
+  init_vel_noise_end: 0.50
+  terminate_abs_angle: null
+  success_upright_threshold: 0.15
+  success_sustain_seconds: 5.0
+  cart_damping: 0.02
+  cart_frictionloss: 0.0
+  joint_armature: 0.0005
+  link_radius: 0.025
+  obs_include_morphology: true
+  obs_include_frictionloss: false
+  obs_include_time: false
+  obs_include_capture_features: true
+  capture_feature_cart_position_bound: 1.25
+  capture_feature_angle_bound: 0.15
+  capture_feature_cart_velocity_bound: 0.50
+  capture_feature_hinge_velocity_bound: 0.75
+  # Early maintenance is warm-started by the first-action law from the
+  # condensed upright MPC diagnostic. The policy learns a bounded residual;
+  # this is a training teacher, not part of the canonical final benchmark.
+  action_lqr_residual:
+    enabled: true
+    state_gain:
+      - 0.0000006530158154
+      - -0.0009183908968
+      - -0.0008755774278
+      - -0.0007434501099
+      - -0.0005687198247
+      - -0.0003940997029
+      - -0.0002419202966
+      - -0.0001128282778
+      - 0.0000009710958753
+      - -0.0000998916548
+      - -0.0000769814255
+      - -0.0000511600830
+      - -0.0000297056498
+      - -0.0000150052543
+      - -0.0000063839393
+      - -0.0000019786618
+    scale: 1.0
+    residual_scale_start: 0.05
+    residual_scale_end: 1.0
+    cart_target: 0.0
+  curriculum_rebuild_every: 999999
+  reward:
+    alive: 0.0
+    terminal_penalty: -300.0
+    angle_cos: 4.0
+    upright_bonus: 24.0
+    sustained_upright_bonus: 18.0
+    capture_quality: 4.0
+    capture_angle_scale: 0.20
+    capture_hinge_vel_scale: 0.75
+    capture_cart_pos_abs_scale: 1.25
+    capture_cart_vel_scale: 0.50
+    upright_low_velocity_bonus: 28.0
+    upright_hinge_vel_threshold: 0.75
+    upright_cart_vel_threshold: 0.50
+    centered_upright_max_cart_abs: 1.25
+    low_momentum_max_cart_abs: 1.25
+    upright_streak: 12.0
+    upright_streak_cap_seconds: 5.0
+    centered_upright_streak: 18.0
+    centered_upright_streak_cap_seconds: 5.0
+    low_momentum_upright_streak: 24.0
+    low_momentum_upright_streak_cap_seconds: 5.0
+    angle_abs: 1.0
+    angle_rel: 0.05
+    tip: 0.20
+    cart_pos: 2.0
+    cart_vel: 0.05
+    hinge_vel: 0.005
+    rail_margin: 100.0
+    rail_margin_start: 0.55
+    control: 0.0010
+    policy_control: 0.10
+    upright_threshold: 0.15
+
+morphology:
+  # Start with the packet's easier base-heavy, damped, low-friction plant and
+  # anneal every training wheel back to the exact uniform target.
+  schedule_mode: mass_last
+  start:
+    alpha_length: 0.65
+    alpha_mass: 5.0
+    alpha_damping: 2.5
+    total_damping: 0.120
+    alpha_frictionloss: 3.0
+    total_frictionloss: 0.060
+  end:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    alpha_frictionloss: 0.0
+    total_damping: 0.015
+    total_frictionloss: 0.0
+
+ppo:
+  backend: torch
+  vec_backend: serial
+  device: cpu
+  torch_num_threads: 1
+  num_envs: 32
+  rollout_steps: 128
+  total_updates: 1000
+  minibatches: 4
+  epochs: 4
+  gamma: 0.995
+  gae_lambda: 0.95
+  learning_rate: 0.00005
+  clip_coef: 0.20
+  entropy_coef: 0.0
+  value_coef: 0.50
+  max_grad_norm: 0.50
+  hidden_sizes: [256, 256]
+  action_std_init: 0.02
+  zero_init_actor_output: true
+  normalize_advantages: true
+  checkpoint_every: 25
+  eval_every: 25
+  eval_episodes: 16
+  curriculum_mode: gated
+  # Make exact upright a real first stage. The controller must learn the
+  # maintenance basin before the reset-angle and reset-velocity envelope grows.
+  curriculum_start_progress: 0.0
+  # The first measured recoverable teacher stage is p=0.0025; the earlier
+  # p=0.01 jump was outside the observed maintenance basin.
+  curriculum_step: 0.0025
+  curriculum_min_updates_per_stage: 50
+  # Require repeated independent checks before handing a maintenance policy
+  # to capture training. One lucky short evaluation is not mastery.
+  curriculum_gate_consecutive_evals: 3
+  curriculum_gate_success_rate: 0.80
+  curriculum_gate_ever_upright_rate: 0.95
+  curriculum_gate_low_momentum_upright_rate: 0.80
+  curriculum_gate_mean_upright_streak: 4.0
+  curriculum_gate_max_upright_streak: 4.5
+  curriculum_gate_max_capture_quality: 0.50
+  eval_progress: current
+  # Conservative development options. Keep disabled for the ordinary PPO
+  # baseline; rollback and frozen features are enabled explicitly in the
+  # maintenance frontier experiments.
+  rollback_on_eval_regression: false
+  freeze_actor_layers: false
+  freeze_log_std: false
