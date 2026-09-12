@@ -168,7 +168,7 @@ complete chain definition is
 | Conditioning prelude | 10.00 s |
 | Swing route | 4.56 s / 228 policy steps |
 | Upright hold remaining after first upright | 15.48 s |
-| Maximum cart excursion across 100 episodes | 2.3709 m |
+| Maximum cart excursion across 100 episodes | 2.3708 m |
 | Episode terminations | 100 time limits, 0 rail failures |
 | Resets inside episodes | 0 |
 
@@ -180,6 +180,19 @@ Its metadata is
 frames, 50 fps, 1280x720 resolution, zero resets, a canonical noisy hanging
 start, and successful time-limit completion. The renderer dynamically fits
 the chain to the frame so all seven links remain visible during the hold.
+
+### 4.1 Stress characterization outside the claim
+
+`runs/swingup7_uniform/robustness_sweep.json` applies the same 20 paired seeds
+to 15 non-canonical perturbations without retuning the route or LQR gains. The
+controller retained `20/20` success when the initial angle/velocity noise
+standard deviation was increased from `0.05` to `0.10` and `0.20`, and with an
+8-second conditioning phase; it scored `19/20` with 6 seconds. It scored
+`0/20` under each tested 40 N or 20 N force limit, +/-5% total mass or length,
+halved or doubled joint damping, 0.01-standard-deviation measurement noise, and
+20 ms or 40 ms control delay. These failures do not change the frozen
+canonical gate, but they sharply limit the appropriate interpretation: the
+released controller is not robust to plant mismatch or latency.
 
 ## 5. What did not work
 

@@ -15,7 +15,7 @@ and hold result:
 - 20/20 and 100/100 success on the canonical noisy hanging-start distribution.
 - A 30.00 s held-out noisy-start video, zero resets, and all seven links in
   frame during the upright hold.
-- Maximum cart excursion 2.3709 m across the 100-episode gate.
+- Maximum cart excursion 2.3708 m across the 100-episode gate.
 
 The evidence records the exact clean tracked source commit. A fresh-clone audit
 on 2026-09-12 ran all 78 tests, the benchmark verifier, and the release

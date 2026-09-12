@@ -941,7 +941,7 @@ With the canonical uniform 7-link config and noisy hanging starts, the final
 frozen chain passes `20/20` and `100/100` episodes. Every episode reaches
 upright at `14.54 s`, holds for `15.48 s`, terminates at the 30-second time
 limit, and stays inside the `+/-3 m` rail; the worst 100-episode cart
-excursion is `2.3709 m`. The final evidence is in
+excursion is `2.3708 m`. The final evidence is in
 `runs/swingup7_uniform/eval_swingup7_20.json`,
 `runs/swingup7_uniform/eval_swingup7_100.json`, and
 `runs/swingup7_uniform/seven_link_swingup_manifest.json`.

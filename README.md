@@ -31,7 +31,7 @@ and reproduction commands are public.
 | Rail failures in the 100-episode gate | **0** |
 | First upright | **14.54 s** |
 | Upright hold after first upright | **15.48 s** |
-| Maximum cart excursion across 100 episodes | **2.3709 m** |
+| Maximum cart excursion across 100 episodes | **2.3708 m** |
 
 The frozen contract uses a uniform seven-link plant, continuous `±80 N`
 force, a `±3 m` rail, 50 Hz control, a noisy hanging start, and a five-second
@@ -77,6 +77,14 @@ in **[Seven-Link Cart-Pole Swing-Up: A Settled-Launch Two-Expert Controller](doc
 | [SHA-256 manifest](runs/swingup7_uniform/SHA256SUMS) | Integrity hashes for the complete release bundle |
 | [Frozen release controller](runs/swingup7_uniform/seven_link_release_controller.json) | Nominal states, controls, and Box-FDDP feedback gains |
 | [Method paper](docs/seven_link_swingup_paper.md) | Benchmark, method, results, limitations, and reproduction |
+
+The stress sweep is deliberately separate from the canonical result. With 20
+paired seeds per condition, the frozen controller retained `20/20` success at
+initial-noise standard deviations `0.10` and `0.20`, and at an 8-second
+conditioning phase; it scored `19/20` with 6 seconds. It failed the tested
+force, morphology, damping, sensor-noise, and control-delay perturbations. This
+is a strong benchmark result with a narrow plant-and-timing contract, not a
+claim of broad robustness.
 
 ## Current frontier: eight links
 
