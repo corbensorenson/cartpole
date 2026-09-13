@@ -27,7 +27,6 @@ from gcartpole.generalized_solver import (
     setup_from_config,
 )
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -57,9 +56,9 @@ def explicit_config(
     cfg["morphology"]["lengths_end"] = lengths.astype(float).tolist()
     cfg["morphology"]["masses_start"] = masses.astype(float).tolist()
     cfg["morphology"]["masses_end"] = masses.astype(float).tolist()
-    for name in ("joint_stiffness", "joint_lock"):
-        cfg["morphology"].pop(f"{name}_start", None)
-        cfg["morphology"].pop(f"{name}_end", None)
+    for profile_name in ("joint_stiffness", "joint_lock"):
+        cfg["morphology"].pop(f"{profile_name}_start", None)
+        cfg["morphology"].pop(f"{profile_name}_end", None)
     return cfg
 
 
@@ -235,7 +234,11 @@ def main() -> None:
             proposed,
         )
         label = f"trial_{trial_index:04d}_p{proposed:.9f}"
-        trial_cfg = explicit_config(source_cfg, lengths, masses, label)
+        # Continue only the chain distribution here. Every other physical
+        # quantity (rail, cart mass, force authority, timing, damping, body
+        # geometry) comes from the measured target plant throughout, so the
+        # accepted p=1 controller is already on the exact target contract.
+        trial_cfg = explicit_config(target_cfg, lengths, masses, label)
         cfg_path = configs_dir / f"{label}.yaml"
         save_config(trial_cfg, cfg_path)
         first_path = trials_dir / f"{label}_pass1.json"
@@ -292,7 +295,23 @@ def main() -> None:
                 )
                 return
         else:
-            schedule.reject()
+            try:
+                schedule.reject()
+            except RuntimeError as error:
+                write_manifest(
+                    manifest_path,
+                    args,
+                    schedule,
+                    current_controller,
+                    trials,
+                    "minimum_step_frontier_reached",
+                )
+                print(
+                    f"REJECT p={proposed:.9f}; minimum step frontier recorded in "
+                    f"{manifest_path}",
+                    flush=True,
+                )
+                raise SystemExit(4) from error
             write_manifest(manifest_path, args, schedule, current_controller, trials, "running")
             print(f"REJECT p={proposed:.9f}; bisected step={schedule.step:.9f}", flush=True)
     write_manifest(manifest_path, args, schedule, current_controller, trials, "trial_budget_exhausted")

@@ -219,6 +219,39 @@ nonuniform plant. It does not establish an arbitrary-morphology success rate or
 the minimum rail for this plant; systematic morphology and rail continuation
 remain required.
 
+### Parameterized morphology pipeline and next boundary
+
+`solve_generalized_morphology.py` makes that division of labor executable as
+one command. It infers the source count from the controller state dimension,
+reads every target physical parameter from the target config, performs
+arc-length/natural-time transfer, checks the raw transfer, refines on the exact
+target plant, creates the analytic mirror, runs the noisy selector gate, and
+writes a hash-bound manifest. It stops immediately if exact refinement or the
+gate fails; failed routes cannot fall through to packaging or promotion.
+
+```bash
+PYTHONPATH=src:scripts python scripts/solve_generalized_morphology.py \
+  --source-config configs/swingup7_uniform.yaml \
+  --source-controller runs/generalized_solver/n2_route.json \
+  --target-config configs/generalized_n2_unequal.yaml \
+  --output-dir runs/generalized_solver/reproduction/n2_unequal \
+  --name n2_unequal --require-transfer-failure
+```
+
+The same command was then applied without architecture changes to a stronger
+three-link target with lengths `[0.75, 1.0, 1.25] m` and masses
+`[0.2, 0.3, 0.5] kg`. Its deterministic transferred route failed `0/5`; the
+first exact-target Box-FDDP pass also failed the uninterrupted hold, so the new
+pipeline correctly stopped before packaging. The
+[n=3 pipeline manifest](../runs/generalized_solver/n3_unequal_pipeline.json)
+records this as `exact_refinement_failed`, and the
+[negative gate record](../runs/generalized_solver/n3_unequal_frontier.json)
+remains explicitly `passed=false`. This does not invalidate the uniform n=3
+result. It identifies the next algorithmic requirement: bounded morphology
+continuation or a more robust multiple-shooting/receding-horizon seed, followed
+by the same exact gate. The actuator adapter is intentionally not widened to
+hide this structural error.
+
 ## Rail-length relationship
 
 There is no morphology-only constant guaranteeing swing-up: rail demand also
@@ -276,6 +309,13 @@ records the new full-rank endpoint correction and accepted gate.
 make generalized-gates
 make generalized-adaptation-gates
 make generalized-unequal-n2
+
+PYTHONPATH=src:scripts python scripts/solve_generalized_morphology.py \
+  --source-config configs/swingup7_uniform.yaml \
+  --source-controller runs/generalized_solver/n2_route.json \
+  --target-config configs/generalized_n2_unequal.yaml \
+  --output-dir runs/generalized_solver/reproduction/n2_unequal \
+  --name n2_unequal --require-transfer-failure
 
 PYTHONPATH=src python scripts/generalized_swingup_solver.py analyze \
   --config configs/swingup7_uniform.yaml --min-links 1 --max-links 20 \

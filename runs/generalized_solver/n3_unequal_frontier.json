@@ -1,0 +1,142 @@
+{
+  "boundary": "This proves the architecture on the declared [1.2, 1.8] m / [0.35, 0.65] kg plant only. Broader unequal-morphology coverage and automatic rail minimization remain active work.",
+  "claim_status": "verified_development_unequal_morphology_gate",
+  "errors": [
+    "exact optimized replay did not sustain upright",
+    "noisy gate did not pass every episode",
+    "an uninterrupted gate result or prediction failed",
+    "body-aware required rail exceeds configured rail ratio"
+  ],
+  "evidence": {
+    "config": {
+      "bytes": 1516,
+      "path": "configs/generalized_n3_unequal.yaml",
+      "sha256": "fc1faadd9da8f7f4ef14a2b56b4f0ef973ad9aee7a8a58df696855652e774443"
+    },
+    "gate": {
+      "bytes": 19223,
+      "path": "runs/generalized_solver/n3_unequal_gate.json",
+      "sha256": "3fd0981a496c72e9cb3a096ecd6350d57402e0a2e7f87b0518d6636b6d166ac8"
+    },
+    "mirror": {
+      "bytes": 280039,
+      "path": "runs/generalized_solver/n3_unequal_route_mirror.json",
+      "sha256": "e0441062ee7212a289b046c99cd694b1d6baac7d9dbd316c00a199ae2f080774"
+    },
+    "negative": {
+      "bytes": 6499,
+      "path": "runs/generalized_solver/n3_unequal_transfer_check.json",
+      "sha256": "b0c37f542f2e41c89cf078f3ffdb095bd0a516051fa515f5d8a27eaacdcb325b"
+    },
+    "optimizer": {
+      "bytes": 904239,
+      "path": "runs/generalized_solver/n3_unequal_fddp.json",
+      "sha256": "6c85621c087a111f5463db989884804f48d604dbc8efa61569e4f4316e1d239d"
+    },
+    "route": {
+      "bytes": 280270,
+      "path": "runs/generalized_solver/n3_unequal_route.json",
+      "sha256": "ed33d10127eab9afb7828c11a92dc283165b1c2ff92f09640ce8b4fdf4870d9c"
+    },
+    "warm": {
+      "bytes": 286386,
+      "path": "runs/generalized_solver/n3_unequal_transfer_warm.json",
+      "sha256": "4d0a1abfc88c54541f0997fb57ec11151efa54e234414a5b5bb4236746f82aa3"
+    }
+  },
+  "generated_at": "2026-09-13T15:06:21+00:00",
+  "git": {
+    "available": true,
+    "commit": "b2b7f40adaede82174ef4213d8e1fa0da7ad63f5",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      " M Makefile",
+      " M scripts/refine_swingup_endpoint_gauss_newton.py",
+      " M scripts/run_generalized_homotopy.py",
+      " M scripts/search_swingup_tail_action_cem.py",
+      " M scripts/verify_generalized_morphology_gate.py",
+      " M src/gcartpole/env.py",
+      " M src/gcartpole/roadmap.py",
+      " M tests/test_capture_envelope.py",
+      "?? configs/generalized_n3_unequal.yaml",
+      "?? scripts/solve_generalized_morphology.py",
+      "?? tests/test_generalized_pipeline.py"
+    ]
+  },
+  "morphology": {
+    "dimensionless": {
+      "cart_damping_ratio": 0.00553001263609331,
+      "cart_half_length_ratio": 0.06,
+      "cart_to_link_mass": 1.0,
+      "chain_length": 3.0,
+      "force_authority": 4.077471967380224,
+      "joint_armature_ratio": 2.777777777777778e-05,
+      "joint_damping_ratios": [
+        0.00015361146211370305,
+        0.00015361146211370305,
+        0.00015361146211370305
+      ],
+      "length_fractions": [
+        0.25,
+        0.3333333333333333,
+        0.4166666666666667
+      ],
+      "link_radius_ratio": 0.008333333333333333,
+      "mass_fractions": [
+        0.2,
+        0.3,
+        0.5
+      ],
+      "n_links": 3,
+      "natural_time": 0.553001263609331,
+      "policy_dt_ratio": 0.03616628264005025,
+      "rail_ratio": 1.6666666666666667,
+      "system_mass": 2.0,
+      "usable_rail_ratio": 1.6066666666666667
+    },
+    "lengths": [
+      0.75,
+      1.0,
+      1.25
+    ],
+    "masses": [
+      0.2,
+      0.3,
+      0.5
+    ],
+    "n_links": 3
+  },
+  "passed": false,
+  "rail_relationship": {
+    "configured_half_length": 5.0,
+    "configured_ratio": 1.6666666666666667,
+    "maximum_body_aware_required_ratio": 1.7413942671417022,
+    "ratio_margin": -0.07472760047503546,
+    "total_chain_length": 3.0
+  },
+  "results": {
+    "noisy_gate_episodes": 20,
+    "noisy_gate_success_rate": 0.0,
+    "optimizer_exact_replay_success": false,
+    "optimizer_feasible": true,
+    "optimizer_hold_seconds": 0.0,
+    "prediction_execution_agreements": 20,
+    "unrefined_transfer_success_rate": 0.0
+  },
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "summary": "The declared unequal morphology did not pass the complete exact-refinement and noisy-gate contract. It remains a measured development frontier and must not be promoted as a solved setup."
+}

@@ -423,7 +423,7 @@ generalized-unequal-n2:
 	$(MAKE) verify-generalized-unequal-n2 PYTHON=$(PYTHON)
 
 verify-generalized-unequal-n2:
-	PYTHONPATH=src:scripts $(PYTHON) scripts/verify_generalized_morphology_gate.py --config configs/generalized_n2_unequal.yaml --warm runs/generalized_solver/n2_unequal_transfer_warm.json --negative runs/generalized_solver/n2_unequal_transfer_negative5.json --optimizer runs/generalized_solver/n2_unequal_fddp.json --route runs/generalized_solver/n2_unequal_route.json --mirror runs/generalized_solver/n2_unequal_route_mirror.json --gate runs/generalized_solver/n2_unequal_gate20.json --out runs/generalized_solver/n2_unequal_frontier.json
+	PYTHONPATH=src:scripts $(PYTHON) scripts/verify_generalized_morphology_gate.py --config configs/generalized_n2_unequal.yaml --warm runs/generalized_solver/n2_unequal_transfer_warm.json --negative runs/generalized_solver/n2_unequal_transfer_negative5.json --optimizer runs/generalized_solver/n2_unequal_fddp.json --route runs/generalized_solver/n2_unequal_route.json --mirror runs/generalized_solver/n2_unequal_route_mirror.json --gate runs/generalized_solver/n2_unequal_gate20.json --require-warm-failure --out runs/generalized_solver/n2_unequal_frontier.json
 
 generalized-modal-seed6:
 	PYTHONPATH=src:scripts $(PYTHON) scripts/materialize_modal_phase_seed.py --config configs/swingup7_uniform.yaml --n-links 6 --seconds 3.9 --override env.rail_limit=12.0 --out runs/generalized_solver/n6_analytic_modal_seed_h3p9.json

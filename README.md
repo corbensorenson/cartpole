@@ -141,7 +141,18 @@ then passed **20/20** noisy uninterrupted episodes, with prediction matching
 execution on all 20. Its maximum body-aware required rail ratio was `1.193` on
 the declared `1.5` configured ratio. The [verified unequal-morphology artifact](runs/generalized_solver/n2_unequal_frontier.json)
 keeps this result separate from the uniform ladder and explicitly limits the
-claim to this one plant.
+claim to this one plant. A new parameterized pipeline command now performs the
+whole transfer -> exact-target refinement -> mirror -> noisy-gate -> verifier
+sequence from source controller and target morphology files; it contains no
+link-count branch or per-count controller constants.
+
+The next deliberately stronger three-link target is published as a negative
+frontier, not a success. Its lengths `[0.75, 1.0, 1.25] m` and masses
+`[0.2, 0.3, 0.5] kg` caused direct transfer and direct exact refinement to
+fail, so the pipeline stops before promotion. See the
+[one-command n=3 frontier](runs/generalized_solver/n3_unequal_pipeline.json).
+This is the current boundary for arbitrary within-count morphology transfer;
+the uniform n=3 gate above remains valid.
 
 ## Current frontier: eight links
 

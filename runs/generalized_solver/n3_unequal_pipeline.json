@@ -1,0 +1,169 @@
+{
+  "claim_status": "development_generalized_morphology_pipeline_failure",
+  "generated_at": "2026-09-13T15:08:59+00:00",
+  "git": {
+    "available": true,
+    "commit": "b2b7f40adaede82174ef4213d8e1fa0da7ad63f5",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      " M Makefile",
+      " M README.md",
+      " M docs/generalized_solver.md",
+      " M scripts/refine_swingup_endpoint_gauss_newton.py",
+      " M scripts/run_generalized_homotopy.py",
+      " M scripts/search_swingup_tail_action_cem.py",
+      " M scripts/verify_generalized_morphology_gate.py",
+      " M src/gcartpole/env.py",
+      " M src/gcartpole/roadmap.py",
+      " M tests/test_capture_envelope.py",
+      "?? configs/generalized_n3_unequal.yaml",
+      "?? scripts/solve_generalized_morphology.py",
+      "?? tests/test_generalized_pipeline.py"
+    ]
+  },
+  "next_action": "Use bounded morphology continuation or revise the deterministic seed; do not promote.",
+  "passed": false,
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "source": {
+    "config": {
+      "bytes": 1790,
+      "path": "configs/swingup7_uniform.yaml",
+      "sha256": "1e92bc4621428f2fe343b7483b2c32d7804a82762159483db280e71a526b6c04"
+    },
+    "controller": {
+      "bytes": 414541,
+      "path": "runs/generalized_solver/n3_route.json",
+      "sha256": "bb01b1832f5e032f7971456d18e332ba741a9f93d0ddb987b564393a46ce9aa7"
+    },
+    "dimensionless": {
+      "cart_damping_ratio": 0.00553001263609331,
+      "cart_half_length_ratio": 0.06,
+      "cart_to_link_mass": 1.0,
+      "chain_length": 3.0,
+      "force_authority": 4.077471967380224,
+      "joint_armature_ratio": 2.777777777777778e-05,
+      "joint_damping_ratios": [
+        0.00015361146211370305,
+        0.00015361146211370305,
+        0.00015361146211370305
+      ],
+      "length_fractions": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "link_radius_ratio": 0.008333333333333333,
+      "mass_fractions": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "n_links": 3,
+      "natural_time": 0.553001263609331,
+      "policy_dt_ratio": 0.03616628264005025,
+      "rail_ratio": 1.0,
+      "system_mass": 2.0,
+      "usable_rail_ratio": 0.94
+    }
+  },
+  "stages": [
+    {
+      "artifact": {
+        "bytes": 286386,
+        "path": "runs/generalized_solver/n3_unequal_transfer_warm.json",
+        "sha256": "4d0a1abfc88c54541f0997fb57ec11151efa54e234414a5b5bb4236746f82aa3"
+      },
+      "stage": "transfer",
+      "status": "reused"
+    },
+    {
+      "artifact": {
+        "bytes": 286292,
+        "path": "runs/generalized_solver/n3_unequal_transfer_warm_mirror.json",
+        "sha256": "de3a0b504c010ce79b085bb01a5592764eaa6f164f70159c6dfb35b8586fadf0"
+      },
+      "stage": "mirror_transfer",
+      "status": "reused"
+    },
+    {
+      "artifact": {
+        "bytes": 6499,
+        "path": "runs/generalized_solver/n3_unequal_transfer_check.json",
+        "sha256": "b0c37f542f2e41c89cf078f3ffdb095bd0a516051fa515f5d8a27eaacdcb325b"
+      },
+      "stage": "transfer_check",
+      "status": "reused"
+    },
+    {
+      "artifact": {
+        "bytes": 222149,
+        "path": "runs/generalized_solver/n3_unequal_fddp_warm.json",
+        "sha256": "f37ee974dd9c01fe3658e00c359744b712650db4c594ca30906dca497b6014c5"
+      },
+      "stage": "make_fddp_warm",
+      "status": "reused"
+    },
+    {
+      "artifact": {
+        "bytes": 904239,
+        "path": "runs/generalized_solver/n3_unequal_fddp.json",
+        "sha256": "6c85621c087a111f5463db989884804f48d604dbc8efa61569e4f4316e1d239d"
+      },
+      "stage": "optimize",
+      "status": "reused"
+    }
+  ],
+  "status": "exact_refinement_failed",
+  "summary": "One parameterized command stopped at the first failed promotion stage; no failed controller was promoted.",
+  "target": {
+    "config": {
+      "bytes": 1516,
+      "path": "configs/generalized_n3_unequal.yaml",
+      "sha256": "fc1faadd9da8f7f4ef14a2b56b4f0ef973ad9aee7a8a58df696855652e774443"
+    },
+    "dimensionless": {
+      "cart_damping_ratio": 0.00553001263609331,
+      "cart_half_length_ratio": 0.06,
+      "cart_to_link_mass": 1.0,
+      "chain_length": 3.0,
+      "force_authority": 4.077471967380224,
+      "joint_armature_ratio": 2.777777777777778e-05,
+      "joint_damping_ratios": [
+        0.00015361146211370305,
+        0.00015361146211370305,
+        0.00015361146211370305
+      ],
+      "length_fractions": [
+        0.25,
+        0.3333333333333333,
+        0.4166666666666667
+      ],
+      "link_radius_ratio": 0.008333333333333333,
+      "mass_fractions": [
+        0.2,
+        0.3,
+        0.5
+      ],
+      "n_links": 3,
+      "natural_time": 0.553001263609331,
+      "policy_dt_ratio": 0.03616628264005025,
+      "rail_ratio": 1.6666666666666667,
+      "system_mass": 2.0,
+      "usable_rail_ratio": 1.6066666666666667
+    }
+  }
+}
