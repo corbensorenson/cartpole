@@ -230,13 +230,18 @@ rung; maximum required rail ratio was `1.369`. The selector uses zero learned
 parameters and no link-count constants. A 50-trial continuation ledger contains
 27 accepted and 23 rejected proposals; every rejected final replay hit the
 rail, exposing rail length as an active continuation coordinate rather than a
-link-count constant. The new joint driver advanced exact replay to
-`p=0.0360548` on the original rail. That route passed a fresh **20/20** cohort
-but scored **96/100** on the disjoint larger gate; all four failures were
-predicted by the exact selector and ended at the rail. It is therefore retained
-as a negative robustness boundary, while `p=0.0360234` remains the robust
-**100/100** checkpoint. This is a verified partial-morphology frontier, not a
-solution of the `p=1` target. See the
+link-count constant. The joint driver has now advanced exact replay to
+`p=0.0362145` on the original rail, with an `18.78 s` hold and a measured
+body-aware rail ratio of `1.593`. This newest point is exact-only development
+evidence. The earlier `p=0.0360548` route passed a fresh **20/20** cohort but
+scored **96/100** on the disjoint larger gate; all four failures were predicted
+by the exact selector and ended at the rail. It is therefore retained as a
+negative robustness boundary, while `p=0.0360234` remains the robust
+**100/100** checkpoint. A new normalized-clearance guard also stops rail
+expansion when a failed optimizer merely follows the wider boundary outward;
+that case now shrinks the morphology step instead of being misclassified as a
+physical rail requirement. This is a verified partial-morphology frontier, not
+a solution of the `p=1` target. See the
 [adaptive checkpoint](runs/generalized_solver/n3_unequal_adaptive_checkpoint.json),
 [packaged route](runs/generalized_solver/n3_unequal_p036023_route.json), and
 [100-episode adaptive gate](runs/generalized_solver/n3_unequal_p036023_adaptive100.json).
@@ -250,7 +255,10 @@ development evidence until the final target-rail replay succeeds.
 The newer [exact route](runs/generalized_solver/n3_unequal_p036055_route.json),
 [20-episode pass](runs/generalized_solver/n3_unequal_p036055_adaptive20.json),
 and [96/100 negative gate](runs/generalized_solver/n3_unequal_p036055_adaptive100.json)
-make that promotion boundary inspectable.
+make that promotion boundary inspectable. The newer
+[`p=0.0362145` exact-only route](runs/generalized_solver/n3_unequal_p036214_route.json)
+and [exact replay](runs/generalized_solver/n3_unequal_p036214_exact1.json) keep
+the continuing deterministic frontier separate from the robust claim.
 
 ## Next frontier: nine links
 

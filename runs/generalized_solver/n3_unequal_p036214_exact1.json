@@ -1,0 +1,165 @@
+{
+  "adaptation": {
+    "conditioning_schedule": [
+      {
+        "ratio": 0.0,
+        "seconds": 0.0,
+        "steps": 0
+      },
+      {
+        "ratio": 0.25,
+        "seconds": 0.14,
+        "steps": 7
+      },
+      {
+        "ratio": 0.5,
+        "seconds": 0.28,
+        "steps": 14
+      },
+      {
+        "ratio": 1.0,
+        "seconds": 0.56,
+        "steps": 28
+      },
+      {
+        "ratio": 2.0,
+        "seconds": 1.1,
+        "steps": 55
+      },
+      {
+        "ratio": 4.0,
+        "seconds": 2.22,
+        "steps": 111
+      }
+    ],
+    "early_exit_after_first_successful_duration": true,
+    "execution_resets_after_measurement": 0,
+    "learned_parameters": 0,
+    "natural_time_seconds": 0.553001263609331,
+    "phase_window": 0,
+    "tracking_gain_scale": 1.0,
+    "type": "bounded_exact_model_natural_time_conditioning_and_route_selection",
+    "uses_measured_initial_state": true
+  },
+  "claim_status": "development_bounded_deterministic_adaptation_gate",
+  "conditioning_ratio_counts": {
+    "0.0": 1
+  },
+  "config": {
+    "bytes": 1718,
+    "path": "configs/generalized_n3_unequal_p036214.yaml",
+    "sha256": "a7956feb7923d8169654809b5d08372184106af5c33e64bcebca4540c55d29f3"
+  },
+  "controllers": [
+    {
+      "bytes": 277834,
+      "path": "runs/generalized_solver/n3_unequal_p036214_route.json",
+      "sha256": "fa108aa81b72ac0e9ff8cb5c89fc4f6ba4acad77b54a1916f1f32cf31fa38d15"
+    },
+    {
+      "bytes": 277693,
+      "path": "runs/generalized_solver/n3_unequal_p036214_route_mirror.json",
+      "sha256": "9d16ec6df339627a097a92b12ad433e1031734e560c751a08a60550964c8ee10"
+    }
+  ],
+  "episode_results": [
+    {
+      "episode": 0,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.141592653589793,
+        0.0,
+        0.0
+      ],
+      "initial_qvel": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "max_cart_excursion": 4.598123979823782,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.221876020176218,
+        "max_cart_center_excursion": 4.598123979823782,
+        "required_rail_half_length": 4.778123979823782,
+        "required_rail_ratio": 1.592707993274594
+      },
+      "resets_inside_episode": 0,
+      "seed": 86401,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    }
+  ],
+  "episodes": 1,
+  "generated_at": "2026-09-13T19:37:39+00:00",
+  "git": {
+    "available": true,
+    "commit": "3fb125b7b9f22ccdefb8488ebc687b9db17d2e77",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      "M  README.md",
+      " M ROADMAP.md",
+      "A  configs/generalized_n3_unequal_p036214.yaml",
+      "M  docs/generalized_solver.md",
+      " M docs/levers_and_pitfalls.md",
+      "M  runs/generalized_solver/n3_unequal_joint_homotopy/continuation.json",
+      "A  runs/generalized_solver/n3_unequal_p036214_exact1.json",
+      "AM runs/generalized_solver/n3_unequal_p036214_route.json",
+      "AM runs/generalized_solver/n3_unequal_p036214_route_mirror.json",
+      " M scripts/evaluate_fddp_two_expert.py",
+      " M scripts/evaluate_generalized_route_library.py",
+      " M scripts/render_fddp_parked_route_video.py",
+      "M  scripts/run_joint_morphology_rail_homotopy.py",
+      " M scripts/search_capture_online_mpc.py",
+      " M scripts/search_fddp_capture.py",
+      " M scripts/search_swingup_tail_action_cem.py",
+      "M  tests/test_joint_morphology_rail_homotopy.py",
+      "?? configs/swingup8_split_compatible.yaml",
+      "?? configs/swingup9_mid_split_locked_continuation.yaml",
+      "?? configs/swingup9_split_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_302_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_fixed.yaml",
+      "?? configs/swingup9_uniform.yaml",
+      "?? scripts/convert_gn_endpoint_route.py",
+      "?? scripts/embed_locked_split_route.py",
+      "?? scripts/stitch_route_tail_warm_start.py",
+      "?? scripts/translate_generalized_route.py",
+      "?? tests/test_embed_locked_split_route.py"
+    ]
+  },
+  "max_required_rail_ratio": 1.592707993274594,
+  "prediction_execution_agreements": 1,
+  "route_counts": {
+    "0": 1
+  },
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "seed_start": 86401,
+  "success_rate": 1.0,
+  "summary": "Measured-start exact-model selection over analytic mirror routes and a bounded natural-time hanging-LQR conditioning grid.",
+  "termination_counts": {
+    "time_limit": 1
+  }
+}

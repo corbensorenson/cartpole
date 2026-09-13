@@ -345,6 +345,12 @@ separately and are not interpreted as sufficient rail estimates.
 explicit and resumable. It advances morphology at the current rail; only an
 exact replay whose termination is `rail_violation` may trigger a deterministic
 rail expansion based on the measured excursion plus dimensionless clearance.
+After the first expansion, the dimensionless deficit
+`rho_required-rho_configured` must decrease before another expansion is
+allowed. This detects a failed trajectory that simply rides the soft boundary
+outward as the rail grows. Such a result is an optimizer-basin failure, not a
+measurement of necessary rail, so the driver instead rejects the proposal and
+shrinks its morphology step.
 After morphology reaches `p=1`, it reverses direction on the rail coordinate
 and contracts toward the requested target, re-optimizing and replaying every
 proposal. Expanded-rail passes remain development evidence; only `p=1` at the
@@ -369,6 +375,23 @@ from `4 tau` through `8 tau` and `16 tau` did not change those failures. The
 [20-run](../runs/generalized_solver/n3_unequal_p036055_adaptive20.json) and
 [100-run negative control](../runs/generalized_solver/n3_unequal_p036055_adaptive100.json)
 therefore remain public, and this point is not promoted as the robust checkpoint.
+
+Continuing the same ledger without changing controller architecture accepted
+three more exact proposals on the original rail: `p=0.036085754`,
+`p=0.036135271`, and `p=0.036214500`. The latest
+[full optimizer artifact](../runs/generalized_solver/n3_unequal_p036214_optimizer.json),
+[packaged route](../runs/generalized_solver/n3_unequal_p036214_route.json) and
+[independent exact replay](../runs/generalized_solver/n3_unequal_p036214_exact1.json)
+hold upright for `18.78 s`, use `4.598134 m` of cart-center excursion, and
+measure `rho_required=1.592711`. This is exact-only development evidence; it
+has not passed a fresh noisy 20/100 promotion gate.
+
+The next proposal at `p=0.036277882` failed at `rho=1.666667` with normalized
+rail deficit `0.06131`. Expanding to `rho=1.8` worsened that deficit to
+`0.07525`, because the failed route followed the boundary outward. The new
+clearance-improvement guard stopped there, halved the morphology step, and
+preserved `p=0.036214500` as the accepted frontier. This negative result is why
+failed-route excursion is never treated as a minimum-rail estimate.
 
 ## Verified bottom-up checkpoint
 
@@ -451,6 +474,7 @@ PYTHONPATH=src:scripts python scripts/run_joint_morphology_rail_homotopy.py \
   --source-controller runs/generalized_solver/n3_unequal_p036055_route.json \
   --output-dir runs/generalized_solver/n3_unequal_joint_homotopy \
   --maximum-rail-ratio 2.0 --max-rail-rescues 3 \
+  --minimum-rail-deficit-improvement 0 \
   --waypoint-segment-multipliers 1 2 4 --resume
 
 PYTHONPATH=src:scripts python scripts/evaluate_generalized_adaptive_library.py \

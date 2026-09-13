@@ -78,6 +78,59 @@ def test_rail_rescue_is_capped_by_declared_diagnostic_limit() -> None:
     ) == 2.0
 
 
+def test_rail_rescue_stops_when_failed_route_follows_boundary_outward() -> None:
+    previous = {
+        "termination_reason": "rail_violation",
+        "rail_requirement": {
+            "configured_rail_ratio": 1.6667,
+            "required_rail_ratio": 1.7335,
+        },
+    }
+    current = {
+        "termination_reason": "rail_violation",
+        "rail_requirement": {
+            "configured_rail_ratio": 1.8,
+            "required_rail_ratio": 1.8839,
+        },
+    }
+    assert rail_rescue_ratio(
+        current,
+        current_ratio=1.8,
+        maximum_ratio=2.5,
+        growth=1.08,
+        clearance_ratio=0.05,
+        previous_outcome=previous,
+    ) is None
+
+
+def test_rail_rescue_continues_when_normalized_deficit_shrinks() -> None:
+    previous = {
+        "termination_reason": "rail_violation",
+        "rail_requirement": {
+            "configured_rail_ratio": 1.6,
+            "required_rail_ratio": 1.75,
+        },
+    }
+    current = {
+        "termination_reason": "rail_violation",
+        "rail_requirement": {
+            "configured_rail_ratio": 1.8,
+            "required_rail_ratio": 1.86,
+        },
+    }
+    assert np.isclose(
+        rail_rescue_ratio(
+            current,
+            current_ratio=1.8,
+            maximum_ratio=2.5,
+            growth=1.08,
+            clearance_ratio=0.05,
+            previous_outcome=previous,
+        ),
+        1.944,
+    )
+
+
 def test_rail_contraction_is_monotone_and_clamped() -> None:
     assert rail_contraction_proposal(2.0, 1.5, 0.1) == 1.9
     assert rail_contraction_proposal(1.52, 1.5, 0.1) == 1.5

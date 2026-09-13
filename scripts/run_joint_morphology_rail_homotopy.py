@@ -100,8 +100,17 @@ def rail_rescue_ratio(
     maximum_ratio: float,
     growth: float,
     clearance_ratio: float,
+    previous_outcome: dict[str, Any] | None = None,
+    minimum_deficit_improvement: float = 0.0,
 ) -> float | None:
-    """Return a deterministic larger rail after a measured rail collision."""
+    """Return a larger rail only while measured normalized clearance improves.
+
+    A failed optimizer can ride the soft rail boundary: increasing the rail then
+    increases the failed excursion almost one-for-one.  That is an optimizer
+    basin failure, not evidence that the plant needs more rail.  After the first
+    rescue, require the dimensionless deficit ``rho_required-rho_configured``
+    to decrease before spending another rescue.
+    """
 
     if outcome.get("termination_reason") != "rail_violation":
         return None
@@ -109,6 +118,20 @@ def rail_rescue_ratio(
     observed = float(requirement.get("required_rail_ratio", float("nan")))
     if not np.isfinite(observed):
         return None
+    deficit = observed - current_ratio
+    if previous_outcome is not None:
+        previous_requirement = previous_outcome.get("rail_requirement") or {}
+        previous_required = float(
+            previous_requirement.get("required_rail_ratio", float("nan"))
+        )
+        previous_configured = float(
+            previous_requirement.get("configured_rail_ratio", float("nan"))
+        )
+        previous_deficit = previous_required - previous_configured
+        if not np.isfinite(previous_deficit):
+            return None
+        if previous_deficit - deficit <= minimum_deficit_improvement:
+            return None
     proposed = max(current_ratio * growth, observed + clearance_ratio)
     proposed = min(maximum_ratio, proposed)
     if proposed <= current_ratio + 1.0e-12:
@@ -285,6 +308,7 @@ def main() -> None:
     parser.add_argument("--maximum-rail-ratio", type=float, default=2.5)
     parser.add_argument("--rail-rescue-growth", type=float, default=1.08)
     parser.add_argument("--rail-clearance-ratio", type=float, default=0.05)
+    parser.add_argument("--minimum-rail-deficit-improvement", type=float, default=0.0)
     parser.add_argument("--initial-rail-step", type=float, default=0.05)
     parser.add_argument("--minimum-rail-step", type=float, default=0.0025)
     parser.add_argument("--rail-growth", type=float, default=1.4)
@@ -308,6 +332,8 @@ def main() -> None:
         raise ValueError("--max-rail-rescues must be nonnegative")
     if not 1.0 < args.rail_rescue_growth:
         raise ValueError("--rail-rescue-growth must exceed one")
+    if args.minimum_rail_deficit_improvement < 0.0:
+        raise ValueError("--minimum-rail-deficit-improvement must be nonnegative")
 
     source_path = Path(args.source_config)
     target_path = Path(args.target_config)
@@ -416,6 +442,12 @@ def main() -> None:
                 maximum_ratio=args.maximum_rail_ratio,
                 growth=args.rail_rescue_growth,
                 clearance_ratio=args.rail_clearance_ratio,
+                previous_outcome=(
+                    proposal_records[-2]["outcome"]
+                    if len(proposal_records) > 1
+                    else None
+                ),
+                minimum_deficit_improvement=args.minimum_rail_deficit_improvement,
             )
             if rescued is None:
                 break

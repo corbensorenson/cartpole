@@ -1,12 +1,12 @@
 {
   "claim_status": "development_joint_continuation_not_record_evidence",
   "current_controller": {
-    "bytes": 275754,
-    "path": "runs/generalized_solver/n3_unequal_p036055_route.json",
-    "sha256": "98ff65bbd1bdfe218d071b9b952b600663a710de719503c06d1e3acf3a483e87"
+    "bytes": 277834,
+    "path": "runs/generalized_solver/n3_unequal_p036214_route.json",
+    "sha256": "fa108aa81b72ac0e9ff8cb5c89fc4f6ba4acad77b54a1916f1f32cf31fa38d15"
   },
-  "morphology_progress": 0.036054805242284965,
-  "next_morphology_step": 3.094850098213456e-05,
+  "morphology_progress": 0.03621449950735278,
+  "next_morphology_step": 0.000031691265005705794,
   "next_rail_step": 0.05,
   "rail_ratio": 1.6666666666666667,
   "schema_version": 1,
@@ -15,7 +15,7 @@
     "path": "runs/generalized_solver/n3_uniform_exact.yaml",
     "sha256": "dcf1c0ba28da9cd295eaed4cf04eec014ad86310d1122a1c158e58fbd4bebbc0"
   },
-  "status": "trial_budget_exhausted",
+  "status": "running",
   "target_config": {
     "bytes": 1516,
     "path": "configs/generalized_n3_unequal.yaml",
@@ -58,7 +58,7 @@
             "cart_to_link_mass": 1.0,
             "chain_length": 3.0,
             "force_authority": 4.077471967380224,
-            "joint_armature_ratio": 2.777777777777778e-05,
+            "joint_armature_ratio": 0.00002777777777777778,
             "joint_damping_ratios": [
               0.00015361146211370305,
               0.00015361146211370305,
@@ -109,7 +109,912 @@
       "proposed_rail_ratio": 1.6666666666666667,
       "stage": "morphology",
       "trial": 1
+    },
+    {
+      "accepted": true,
+      "from_morphology_progress": 0.036054805242284965,
+      "from_rail_ratio": 1.6666666666666667,
+      "proposals": [
+        {
+          "attempts": [
+            {
+              "artifact": {
+                "bytes": 365879,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0002_morphology_p0.036085754_rho1.666667_r0_waypoint.json",
+                "sha256": "ef5fe2417e928baced9e37429341e7dc1436507870f8905f6283d0f4e0f353fe"
+              },
+              "refinement": {
+                "bytes": 2273085,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0002_morphology_p0.036085754_rho1.666667_r0_waypoint_fddp.json",
+                "sha256": "272de5713a9ebf21b1b52a9221fded0371e6daca0f8534c4aab08a3af87a9e85"
+              },
+              "refinement_passed": true,
+              "search_passed": false,
+              "segment_steps": 24,
+              "used_for_refinement": true
+            }
+          ],
+          "config": {
+            "bytes": 1716,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/configs/trial_0002_morphology_p0.036085754_rho1.666667_r0.yaml",
+            "sha256": "2d836de44fb637a2b7f492c939d05b6104ceeed92a9aaba7430586527dae3d3a"
+          },
+          "dimensionless": {
+            "cart_damping_ratio": 0.00553001263609331,
+            "cart_half_length_ratio": 0.06,
+            "cart_to_link_mass": 1.0,
+            "chain_length": 3.0,
+            "force_authority": 4.077471967380224,
+            "joint_armature_ratio": 0.00002777777777777778,
+            "joint_damping_ratios": [
+              0.00015361146211370305,
+              0.00015361146211370305,
+              0.00015361146211370305
+            ],
+            "length_fractions": [
+              0.3303261871880611,
+              0.3333333333333333,
+              0.33634047947860557
+            ],
+            "link_radius_ratio": 0.008333333333333333,
+            "mass_fractions": [
+              0.3285218995008977,
+              0.3321304748752244,
+              0.3393476256238778
+            ],
+            "n_links": 3,
+            "natural_time": 0.553001263609331,
+            "policy_dt_ratio": 0.03616628264005025,
+            "rail_ratio": 1.6666666666666667,
+            "system_mass": 2.0,
+            "usable_rail_ratio": 1.6066666666666667
+          },
+          "outcome": {
+            "latched": true,
+            "max_cart_excursion": 3.9814844088530883,
+            "max_upright_streak_seconds": 18.78,
+            "rail_requirement": {
+              "configured_rail_ratio": 1.6666666666666667,
+              "margin": 0.838515591146912,
+              "max_cart_center_excursion": 3.9814844088530883,
+              "required_rail_half_length": 4.161484408853088,
+              "required_rail_ratio": 1.387161469617696
+            },
+            "success": true,
+            "termination_reason": "time_limit"
+          },
+          "rail_ratio": 1.6666666666666667,
+          "rescue_index": 0,
+          "result": {
+            "bytes": 2273085,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0002_morphology_p0.036085754_rho1.666667_r0_waypoint_fddp.json",
+            "sha256": "272de5713a9ebf21b1b52a9221fded0371e6daca0f8534c4aab08a3af87a9e85"
+          }
+        }
+      ],
+      "proposed_morphology_progress": 0.0360857537432671,
+      "proposed_rail_ratio": 1.6666666666666667,
+      "stage": "morphology",
+      "trial": 2
+    },
+    {
+      "accepted": true,
+      "from_morphology_progress": 0.0360857537432671,
+      "from_rail_ratio": 1.6666666666666667,
+      "proposals": [
+        {
+          "attempts": [
+            {
+              "artifact": {
+                "bytes": 365064,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0003_morphology_p0.036135271_rho1.666667_r0_waypoint.json",
+                "sha256": "b9e1284ec97036c9c99ba4b5030e82e769f2b3c6cfe02d0301da0fc451f96f7a"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 24,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 361467,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0003_morphology_p0.036135271_rho1.666667_r0_waypoint_x2.json",
+                "sha256": "abeec0de30c8e9c97757bf1a6d4db49844efbaac908554a1c8921e3e6753677f"
+              },
+              "refinement": {
+                "bytes": 2279585,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0003_morphology_p0.036135271_rho1.666667_r0_waypoint_x2_fddp.json",
+                "sha256": "f97d3da3b671e3b2929e19c3615f4892529c81ca66364adfc374dc26b814bde1"
+              },
+              "refinement_passed": true,
+              "search_passed": true,
+              "segment_steps": 48,
+              "used_for_refinement": true
+            }
+          ],
+          "config": {
+            "bytes": 1718,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/configs/trial_0003_morphology_p0.036135271_rho1.666667_r0.yaml",
+            "sha256": "4432cbedf615d8a54fce1903370c65878f3750bb5980cf9f191a4add7a243476"
+          },
+          "dimensionless": {
+            "cart_damping_ratio": 0.00553001263609331,
+            "cart_half_length_ratio": 0.06,
+            "cart_to_link_mass": 1.0,
+            "chain_length": 3.0,
+            "force_authority": 4.077471967380224,
+            "joint_armature_ratio": 0.00002777777777777778,
+            "joint_damping_ratios": [
+              0.00015361146211370305,
+              0.00015361146211370305,
+              0.00015361146211370305
+            ],
+            "length_fractions": [
+              0.33032206072126347,
+              0.3333333333333333,
+              0.3363446059454032
+            ],
+            "link_radius_ratio": 0.008333333333333333,
+            "mass_fractions": [
+              0.3285152971540215,
+              0.3321288242885054,
+              0.33935587855747307
+            ],
+            "n_links": 3,
+            "natural_time": 0.553001263609331,
+            "policy_dt_ratio": 0.03616628264005025,
+            "rail_ratio": 1.6666666666666667,
+            "system_mass": 2.0,
+            "usable_rail_ratio": 1.6066666666666667
+          },
+          "outcome": {
+            "latched": true,
+            "max_cart_excursion": 3.9812006078143005,
+            "max_upright_streak_seconds": 18.78,
+            "rail_requirement": {
+              "configured_rail_ratio": 1.6666666666666667,
+              "margin": 0.8387993921856998,
+              "max_cart_center_excursion": 3.9812006078143005,
+              "required_rail_half_length": 4.1612006078143,
+              "required_rail_ratio": 1.3870668692714334
+            },
+            "success": true,
+            "termination_reason": "time_limit"
+          },
+          "rail_ratio": 1.6666666666666667,
+          "rescue_index": 0,
+          "result": {
+            "bytes": 2279585,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0003_morphology_p0.036135271_rho1.666667_r0_waypoint_x2_fddp.json",
+            "sha256": "f97d3da3b671e3b2929e19c3615f4892529c81ca66364adfc374dc26b814bde1"
+          }
+        }
+      ],
+      "proposed_morphology_progress": 0.036135271344838515,
+      "proposed_rail_ratio": 1.6666666666666667,
+      "stage": "morphology",
+      "trial": 3
+    },
+    {
+      "accepted": true,
+      "from_morphology_progress": 0.036135271344838515,
+      "from_rail_ratio": 1.6666666666666667,
+      "proposals": [
+        {
+          "attempts": [
+            {
+              "artifact": {
+                "bytes": 365297,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0004_morphology_p0.036214500_rho1.666667_r0_waypoint.json",
+                "sha256": "aa1d8e7509b3bb011765ee8051cb05b6f46604a5e974b82dbe0a1f0c84175fae"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 24,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 360949,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0004_morphology_p0.036214500_rho1.666667_r0_waypoint_x2.json",
+                "sha256": "460cd983c5d91b2c3d7e05a36ac9dcc19b7280876a8d36947badb6c2b98a39a7"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 48,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 359036,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0004_morphology_p0.036214500_rho1.666667_r0_waypoint_x4.json",
+                "sha256": "f0829082946f26f7d0e0fe283b83d56f04d3adc58b22179f659285d60b59ed2f"
+              },
+              "refinement": {
+                "bytes": 1180636,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0004_morphology_p0.036214500_rho1.666667_r0_waypoint_x4_fddp.json",
+                "sha256": "0a3f78ef254a8cced63a66d467764d04d95a68187f1e75a177682ed234cae707"
+              },
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 96,
+              "used_for_refinement": true
+            }
+          ],
+          "config": {
+            "bytes": 1718,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/configs/trial_0004_morphology_p0.036214500_rho1.666667_r0.yaml",
+            "sha256": "a7956feb7923d8169654809b5d08372184106af5c33e64bcebca4540c55d29f3"
+          },
+          "dimensionless": {
+            "cart_damping_ratio": 0.00553001263609331,
+            "cart_half_length_ratio": 0.06,
+            "cart_to_link_mass": 1.0,
+            "chain_length": 3.0,
+            "force_authority": 4.077471967380224,
+            "joint_armature_ratio": 0.00002777777777777778,
+            "joint_damping_ratios": [
+              0.00015361146211370305,
+              0.00015361146211370305,
+              0.00015361146211370305
+            ],
+            "length_fractions": [
+              0.33031545837438725,
+              0.3333333333333333,
+              0.33635120829227944
+            ],
+            "link_radius_ratio": 0.008333333333333333,
+            "mass_fractions": [
+              0.3285047333990196,
+              0.3321261833497549,
+              0.33936908325122545
+            ],
+            "n_links": 3,
+            "natural_time": 0.553001263609331,
+            "policy_dt_ratio": 0.03616628264005025,
+            "rail_ratio": 1.6666666666666667,
+            "system_mass": 2.0,
+            "usable_rail_ratio": 1.6066666666666667
+          },
+          "outcome": {
+            "latched": true,
+            "max_cart_excursion": 4.598133951987531,
+            "max_upright_streak_seconds": 18.78,
+            "rail_requirement": {
+              "configured_rail_ratio": 1.6666666666666667,
+              "margin": 0.221866048012469,
+              "max_cart_center_excursion": 4.598133951987531,
+              "required_rail_half_length": 4.778133951987531,
+              "required_rail_ratio": 1.592711317329177
+            },
+            "success": true,
+            "termination_reason": "time_limit"
+          },
+          "rail_ratio": 1.6666666666666667,
+          "rescue_index": 0,
+          "result": {
+            "bytes": 2278164,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0004_morphology_p0.036214500_rho1.666667_r0_pass1.json",
+            "sha256": "388aee6043513ca9676922bcd35cdb0960180ad57d3fe752c6ff4d947c471459"
+          }
+        }
+      ],
+      "proposed_morphology_progress": 0.03621449950735278,
+      "proposed_rail_ratio": 1.6666666666666667,
+      "stage": "morphology",
+      "trial": 4
+    },
+    {
+      "accepted": false,
+      "from_morphology_progress": 0.03621449950735278,
+      "from_rail_ratio": 1.6666666666666667,
+      "proposals": [
+        {
+          "attempts": [
+            {
+              "artifact": {
+                "bytes": 365943,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho1.666667_r0_waypoint.json",
+                "sha256": "d6c20f00978b603df16f5e7d70dafb01857c24ec372a186439097b1bd8dfe00d"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 24,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 360737,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho1.666667_r0_waypoint_x2.json",
+                "sha256": "324a195ac58f72aa42e6b011389039c477fac7f879197d8cd8c4be84d2ae2c0e"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 48,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 359024,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho1.666667_r0_waypoint_x4.json",
+                "sha256": "318f713d25fe87abb447a551d1c215b67919e8633fc28988b35cb1f6b76a8b19"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 96,
+              "used_for_refinement": false
+            }
+          ],
+          "config": {
+            "bytes": 1720,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/configs/trial_0005_morphology_p0.036341265_rho1.666667_r0.yaml",
+            "sha256": "cd678d0569fd0b49c840f3a0766e5d0072f52657e1469b4402f4254eac7628ac"
+          },
+          "dimensionless": {
+            "cart_damping_ratio": 0.00553001263609331,
+            "cart_half_length_ratio": 0.06,
+            "cart_to_link_mass": 1.0,
+            "chain_length": 3.0,
+            "force_authority": 4.077471967380224,
+            "joint_armature_ratio": 0.00002777777777777778,
+            "joint_damping_ratios": [
+              0.00015361146211370305,
+              0.00015361146211370305,
+              0.00015361146211370305
+            ],
+            "length_fractions": [
+              0.33030489461938534,
+              0.3333333333333333,
+              0.3363617720472813
+            ],
+            "link_radius_ratio": 0.008333333333333333,
+            "mass_fractions": [
+              0.32848783139101656,
+              0.3321219578477541,
+              0.33939021076122927
+            ],
+            "n_links": 3,
+            "natural_time": 0.553001263609331,
+            "policy_dt_ratio": 0.03616628264005025,
+            "rail_ratio": 1.6666666666666667,
+            "system_mass": 2.0,
+            "usable_rail_ratio": 1.6066666666666667
+          },
+          "outcome": {
+            "latched": false,
+            "max_cart_excursion": 5.020591832543439,
+            "max_upright_streak_seconds": 0.0,
+            "rail_requirement": {
+              "configured_rail_ratio": 1.6666666666666667,
+              "margin": -0.20059183254343882,
+              "max_cart_center_excursion": 5.020591832543439,
+              "required_rail_half_length": 5.200591832543439,
+              "required_rail_ratio": 1.733530610847813
+            },
+            "success": false,
+            "termination_reason": "rail_violation"
+          },
+          "rail_ratio": 1.6666666666666667,
+          "rescue_index": 0,
+          "result": {
+            "bytes": 903398,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho1.666667_r0_pass2.json",
+            "sha256": "446c268b7e113b34296336beefaa965f3c50241a696ff40212c0af48051645bc"
+          }
+        },
+        {
+          "attempts": [
+            {
+              "artifact": {
+                "bytes": 365825,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho1.800000_r1_waypoint.json",
+                "sha256": "c77a51ad61df638527dd29ef22321ab6a5baf5cbec099b1cba0046c2dbf894f2"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 24,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 360731,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho1.800000_r1_waypoint_x2.json",
+                "sha256": "2d3b43e492ac8ab5fc804d511695d489a085462d812d13182cb67399150f5a1f"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 48,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 358666,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho1.800000_r1_waypoint_x4.json",
+                "sha256": "30ad8503cdcf422d5de1e43a5cefd78a29c84021ee3fb6c032bb116d3a1565d7"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 96,
+              "used_for_refinement": false
+            }
+          ],
+          "config": {
+            "bytes": 1720,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/configs/trial_0005_morphology_p0.036341265_rho1.800000_r1.yaml",
+            "sha256": "0657ab7c7876127a51eb1dc3f2cf026201e762fc55d1a9dee6d52afda0e1193d"
+          },
+          "dimensionless": {
+            "cart_damping_ratio": 0.00553001263609331,
+            "cart_half_length_ratio": 0.06,
+            "cart_to_link_mass": 1.0,
+            "chain_length": 3.0,
+            "force_authority": 4.077471967380224,
+            "joint_armature_ratio": 0.00002777777777777778,
+            "joint_damping_ratios": [
+              0.00015361146211370305,
+              0.00015361146211370305,
+              0.00015361146211370305
+            ],
+            "length_fractions": [
+              0.33030489461938534,
+              0.3333333333333333,
+              0.3363617720472813
+            ],
+            "link_radius_ratio": 0.008333333333333333,
+            "mass_fractions": [
+              0.32848783139101656,
+              0.3321219578477541,
+              0.33939021076122927
+            ],
+            "n_links": 3,
+            "natural_time": 0.553001263609331,
+            "policy_dt_ratio": 0.03616628264005025,
+            "rail_ratio": 1.8,
+            "system_mass": 2.0,
+            "usable_rail_ratio": 1.7400000000000002
+          },
+          "outcome": {
+            "latched": false,
+            "max_cart_excursion": 5.471681538526,
+            "max_upright_streak_seconds": 0.0,
+            "rail_requirement": {
+              "configured_rail_ratio": 1.8,
+              "margin": -0.2516815385259994,
+              "max_cart_center_excursion": 5.471681538526,
+              "required_rail_half_length": 5.651681538526,
+              "required_rail_ratio": 1.8838938461753332
+            },
+            "success": false,
+            "termination_reason": "rail_violation"
+          },
+          "rail_ratio": 1.8000000000000003,
+          "rescue_index": 1,
+          "result": {
+            "bytes": 943192,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho1.800000_r1_pass2.json",
+            "sha256": "9e997d02d1432891dec7554574bb41c159167704fef3dc2fe0cab58e74e035e9"
+          }
+        },
+        {
+          "attempts": [
+            {
+              "artifact": {
+                "bytes": 365932,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho1.944000_r2_waypoint.json",
+                "sha256": "d4fa5bcf6fc196f561b1bd0f173061d17a51987fe3d6db98a33ca376e6c49167"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 24,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 360655,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho1.944000_r2_waypoint_x2.json",
+                "sha256": "0b33b331b7adf3b0cee99472d50341cf3f479fd371f214ec21ca39cbb2622e95"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 48,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 359175,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho1.944000_r2_waypoint_x4.json",
+                "sha256": "12028294f56452b19b5d224bfce2ef402e3fe03202a360616b9f9c9a1394acdb"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 96,
+              "used_for_refinement": false
+            }
+          ],
+          "config": {
+            "bytes": 1734,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/configs/trial_0005_morphology_p0.036341265_rho1.944000_r2.yaml",
+            "sha256": "a25c5a6068230704a7b215e1d9867a554270fc58f40c5d6b4e72e531587f940d"
+          },
+          "dimensionless": {
+            "cart_damping_ratio": 0.00553001263609331,
+            "cart_half_length_ratio": 0.06,
+            "cart_to_link_mass": 1.0,
+            "chain_length": 3.0,
+            "force_authority": 4.077471967380224,
+            "joint_armature_ratio": 0.00002777777777777778,
+            "joint_damping_ratios": [
+              0.00015361146211370305,
+              0.00015361146211370305,
+              0.00015361146211370305
+            ],
+            "length_fractions": [
+              0.33030489461938534,
+              0.3333333333333333,
+              0.3363617720472813
+            ],
+            "link_radius_ratio": 0.008333333333333333,
+            "mass_fractions": [
+              0.32848783139101656,
+              0.3321219578477541,
+              0.33939021076122927
+            ],
+            "n_links": 3,
+            "natural_time": 0.553001263609331,
+            "policy_dt_ratio": 0.03616628264005025,
+            "rail_ratio": 1.9440000000000002,
+            "system_mass": 2.0,
+            "usable_rail_ratio": 1.8840000000000003
+          },
+          "outcome": {
+            "latched": false,
+            "max_cart_excursion": 5.893247966180761,
+            "max_upright_streak_seconds": 0.0,
+            "rail_requirement": {
+              "configured_rail_ratio": 1.9440000000000002,
+              "margin": -0.24124796618075983,
+              "max_cart_center_excursion": 5.893247966180761,
+              "required_rail_half_length": 6.073247966180761,
+              "required_rail_ratio": 2.02441598872692
+            },
+            "success": false,
+            "termination_reason": "rail_violation"
+          },
+          "rail_ratio": 1.9440000000000004,
+          "rescue_index": 2,
+          "result": {
+            "bytes": 423555,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho1.944000_r2_pass2.json",
+            "sha256": "88a2f7c1fc7bd8656bb6445e62d198c24c85a25d63d5bb4ad88fee235972ca2b"
+          }
+        },
+        {
+          "attempts": [
+            {
+              "artifact": {
+                "bytes": 365905,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho2.000000_r3_waypoint.json",
+                "sha256": "f6597ff0a7b5463137584d80ed0f3a4ac43b020f095b579f1c280e07c55d5e51"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 24,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 360792,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho2.000000_r3_waypoint_x2.json",
+                "sha256": "11c37b82ae154aa5d36c9627255fe1925ee7f8220b7dbe59809e538d802097e5"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 48,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 359212,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho2.000000_r3_waypoint_x4.json",
+                "sha256": "22ce4c96e9a1b1104abd56274f165917226507534e3b625c5719f3df4c55db85"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 96,
+              "used_for_refinement": false
+            }
+          ],
+          "config": {
+            "bytes": 1720,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/configs/trial_0005_morphology_p0.036341265_rho2.000000_r3.yaml",
+            "sha256": "f389249dd5b064ca0c697fbe666263081b3d6ab054b96e8fa1f0a45c3bc4277a"
+          },
+          "dimensionless": {
+            "cart_damping_ratio": 0.00553001263609331,
+            "cart_half_length_ratio": 0.06,
+            "cart_to_link_mass": 1.0,
+            "chain_length": 3.0,
+            "force_authority": 4.077471967380224,
+            "joint_armature_ratio": 0.00002777777777777778,
+            "joint_damping_ratios": [
+              0.00015361146211370305,
+              0.00015361146211370305,
+              0.00015361146211370305
+            ],
+            "length_fractions": [
+              0.33030489461938534,
+              0.3333333333333333,
+              0.3363617720472813
+            ],
+            "link_radius_ratio": 0.008333333333333333,
+            "mass_fractions": [
+              0.32848783139101656,
+              0.3321219578477541,
+              0.33939021076122927
+            ],
+            "n_links": 3,
+            "natural_time": 0.553001263609331,
+            "policy_dt_ratio": 0.03616628264005025,
+            "rail_ratio": 2.0,
+            "system_mass": 2.0,
+            "usable_rail_ratio": 1.9400000000000002
+          },
+          "outcome": {
+            "latched": false,
+            "max_cart_excursion": 6.016359809605525,
+            "max_upright_streak_seconds": 0.0,
+            "rail_requirement": {
+              "configured_rail_ratio": 2.0,
+              "margin": -0.19635980960552502,
+              "max_cart_center_excursion": 6.016359809605525,
+              "required_rail_half_length": 6.196359809605525,
+              "required_rail_ratio": 2.065453269868508
+            },
+            "success": false,
+            "termination_reason": "rail_violation"
+          },
+          "rail_ratio": 2.0,
+          "rescue_index": 3,
+          "result": {
+            "bytes": 579912,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0005_morphology_p0.036341265_rho2.000000_r3_pass2.json",
+            "sha256": "97680914f6167daf9481c4b95dacdcb9a3d084aaf626cbe5b6ffd6be1164e10f"
+          }
+        }
+      ],
+      "proposed_morphology_progress": 0.0363412645673756,
+      "proposed_rail_ratio": 2.0,
+      "stage": "morphology",
+      "trial": 5
+    },
+    {
+      "accepted": false,
+      "from_morphology_progress": 0.03621449950735278,
+      "from_rail_ratio": 1.6666666666666667,
+      "proposals": [
+        {
+          "attempts": [
+            {
+              "artifact": {
+                "bytes": 365866,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0006_morphology_p0.036277882_rho1.666667_r0_waypoint.json",
+                "sha256": "c2ba26cfcba2c02057f96acbe92a05f9b40f79369b3f17ceee06b7065e551f49"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 24,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 361173,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0006_morphology_p0.036277882_rho1.666667_r0_waypoint_x2.json",
+                "sha256": "4dbd14d5c1594da73678c2ce3618d87f0aa68c0dbe4e89acf411905d164171f4"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 48,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 359329,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0006_morphology_p0.036277882_rho1.666667_r0_waypoint_x4.json",
+                "sha256": "ea06a454a09e115b36a92336afb763198430967b885bff03f4e0877dadb19c11"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 96,
+              "used_for_refinement": false
+            }
+          ],
+          "config": {
+            "bytes": 1716,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/configs/trial_0006_morphology_p0.036277882_rho1.666667_r0.yaml",
+            "sha256": "41a839831b150899548294adf36fe9477a889a937765517a84f7eecd0770e04b"
+          },
+          "dimensionless": {
+            "cart_damping_ratio": 0.00553001263609331,
+            "cart_half_length_ratio": 0.06,
+            "cart_to_link_mass": 1.0,
+            "chain_length": 3.0,
+            "force_authority": 4.077471967380224,
+            "joint_armature_ratio": 0.00002777777777777778,
+            "joint_damping_ratios": [
+              0.00015361146211370305,
+              0.00015361146211370305,
+              0.00015361146211370305
+            ],
+            "length_fractions": [
+              0.3303101764968863,
+              0.3333333333333333,
+              0.33635649016978036
+            ],
+            "link_radius_ratio": 0.008333333333333333,
+            "mass_fractions": [
+              0.3284962823950181,
+              0.33212407059875454,
+              0.33937964700622736
+            ],
+            "n_links": 3,
+            "natural_time": 0.553001263609331,
+            "policy_dt_ratio": 0.03616628264005025,
+            "rail_ratio": 1.6666666666666667,
+            "system_mass": 2.0,
+            "usable_rail_ratio": 1.6066666666666667
+          },
+          "outcome": {
+            "latched": false,
+            "max_cart_excursion": 5.003929615663224,
+            "max_upright_streak_seconds": 0.0,
+            "rail_requirement": {
+              "configured_rail_ratio": 1.6666666666666667,
+              "margin": -0.18392961566322352,
+              "max_cart_center_excursion": 5.003929615663224,
+              "required_rail_half_length": 5.1839296156632235,
+              "required_rail_ratio": 1.727976538554408
+            },
+            "success": false,
+            "termination_reason": "rail_violation"
+          },
+          "rail_ratio": 1.6666666666666667,
+          "rescue_index": 0,
+          "result": {
+            "bytes": 1213738,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0006_morphology_p0.036277882_rho1.666667_r0_pass2.json",
+            "sha256": "c99ecfc5db4b737646eede37c7b820f0316b049252a984c379311e03b1149198"
+          }
+        },
+        {
+          "attempts": [
+            {
+              "artifact": {
+                "bytes": 365600,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0006_morphology_p0.036277882_rho1.800000_r1_waypoint.json",
+                "sha256": "ebcb2ec302ab270d960f9b8b71fb1c636334d22056f06c9bff8d6a64c595f35c"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 24,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 361544,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0006_morphology_p0.036277882_rho1.800000_r1_waypoint_x2.json",
+                "sha256": "44b50fe98ba4ff02ec895572d24a4949f9940cf790378e48d14595dfca676019"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 48,
+              "used_for_refinement": false
+            },
+            {
+              "artifact": {
+                "bytes": 359517,
+                "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0006_morphology_p0.036277882_rho1.800000_r1_waypoint_x4.json",
+                "sha256": "d45ca3c1030e0cb88e12ee2b14aa4e6891af43a7540d1b56441857bb59a6bd26"
+              },
+              "refinement": null,
+              "refinement_passed": false,
+              "search_passed": false,
+              "segment_steps": 96,
+              "used_for_refinement": false
+            }
+          ],
+          "config": {
+            "bytes": 1716,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/configs/trial_0006_morphology_p0.036277882_rho1.800000_r1.yaml",
+            "sha256": "f27ce2f4ec22970b5a6c10fbc47d2bdc9e7f8f23ede21143fcede8f82e4ff340"
+          },
+          "dimensionless": {
+            "cart_damping_ratio": 0.00553001263609331,
+            "cart_half_length_ratio": 0.06,
+            "cart_to_link_mass": 1.0,
+            "chain_length": 3.0,
+            "force_authority": 4.077471967380224,
+            "joint_armature_ratio": 0.00002777777777777778,
+            "joint_damping_ratios": [
+              0.00015361146211370305,
+              0.00015361146211370305,
+              0.00015361146211370305
+            ],
+            "length_fractions": [
+              0.3303101764968863,
+              0.3333333333333333,
+              0.33635649016978036
+            ],
+            "link_radius_ratio": 0.008333333333333333,
+            "mass_fractions": [
+              0.3284962823950181,
+              0.33212407059875454,
+              0.33937964700622736
+            ],
+            "n_links": 3,
+            "natural_time": 0.553001263609331,
+            "policy_dt_ratio": 0.03616628264005025,
+            "rail_ratio": 1.8,
+            "system_mass": 2.0,
+            "usable_rail_ratio": 1.7400000000000002
+          },
+          "outcome": {
+            "latched": false,
+            "max_cart_excursion": 5.445763253144277,
+            "max_upright_streak_seconds": 0.0,
+            "rail_requirement": {
+              "configured_rail_ratio": 1.8,
+              "margin": -0.22576325314427592,
+              "max_cart_center_excursion": 5.445763253144277,
+              "required_rail_half_length": 5.625763253144276,
+              "required_rail_ratio": 1.8752544177147588
+            },
+            "success": false,
+            "termination_reason": "rail_violation"
+          },
+          "rail_ratio": 1.8000000000000003,
+          "rescue_index": 1,
+          "result": {
+            "bytes": 440458,
+            "path": "runs/generalized_solver/n3_unequal_joint_homotopy/trials/trial_0006_morphology_p0.036277882_rho1.800000_r1_pass2.json",
+            "sha256": "6adf1a79ff04b0f179ac5a885553ffc550c569d7102f2f3b7fd3972f74d13bfb"
+          }
+        }
+      ],
+      "proposed_morphology_progress": 0.03627788203736419,
+      "proposed_rail_ratio": 1.8000000000000003,
+      "stage": "morphology",
+      "trial": 6
     }
   ],
-  "updated_at": "2026-09-13T18:26:39+00:00"
+  "updated_at": "2026-09-13T19:18:50+00:00",
+  "published_checkpoint_exact_replay": {
+    "bytes": 5082,
+    "path": "runs/generalized_solver/n3_unequal_p036214_exact1.json",
+    "sha256": "51023dc43cf95a1f8115a61e4fcd10593c94b160381fec2e8b0bdb11eeb914e1"
+  },
+  "published_checkpoint_optimizer": {
+    "bytes": 2278164,
+    "path": "runs/generalized_solver/n3_unequal_p036214_optimizer.json",
+    "sha256": "388aee6043513ca9676922bcd35cdb0960180ad57d3fe752c6ff4d947c471459"
+  }
 }
