@@ -24,6 +24,18 @@ checksums. Public material may describe this as a released canonical seven-link
 external competition's exact rules and submission requirements have also been
 verified.
 
+The same repository now has a separate internal canonical eight-link
+promotion:
+
+- 8 uniform links on the same +/-3 m rail and +/-80 N force contract.
+- `20/20` and `100/100` noisy hanging-start success, plus exact `20/20`.
+- A reset-free 30.00 s held-out video with all eight links visible.
+- Maximum cart excursion `2.9300 m` across the 100-episode gate.
+
+Use the eight-link paper and manifest for that result. Keep its wording
+separate from the seven-link release and do not call either result an external
+world record without a matched competition audit.
+
 ## Evidence Inventory
 
 | Artifact | Purpose |
@@ -38,6 +50,12 @@ verified.
 | `runs/swingup7_uniform/SHA256SUMS` | Integrity manifest for the public evidence bundle |
 | `runs/eval_swingup7_fddp_two_expert_canonical20.json` | Negative control on the required noisy initial distribution |
 | `docs/seven_link_swingup_paper.md` | Method, results, limitations, and reproduction commands |
+| `runs/generalized_solver/n8_capture_fddp_feedback120.json` | Frozen eight-link feedback route and nominal states |
+| `runs/generalized_solver/n8_fddp_parked_target015_14s_noisy20.json` | Eight-link disjoint 20-episode noisy gate |
+| `runs/generalized_solver/n8_fddp_parked_target015_14s_noisy100.json` | Eight-link 100-episode noisy gate |
+| `runs/generalized_solver/eight_link_swingup_success.mp4` | Eight-link zoomed-out held-out video |
+| `runs/generalized_solver/eight_link_swingup_manifest.json` | Eight-link phase contract, hashes, and evidence links |
+| `docs/eight_link_swingup_paper.md` | Eight-link method, results, limitations, and reproduction commands |
 | `docs/levers_and_pitfalls.md` | Full experiment ledger, including failed branches |
 | `ROADMAP.md` | Frozen completion contract and unchecked final gates |
 

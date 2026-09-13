@@ -148,8 +148,9 @@ The primary evidence files are:
 - `runs/generalized_solver/eight_link_swingup_success.video.json`
 - `runs/generalized_solver/eight_link_swingup_manifest.json`
 
-The noisy 20- and 100-episode cohorts use seeds beginning at `80801`. The
-video uses held-out seed `90901`, outside those cohorts. The video is a
+The noisy 20-episode cohort uses seeds `81801--81820`; the noisy 100-episode
+cohort uses `80801--80900`. The cohorts are disjoint. The video uses held-out
+seed `90901`, outside both cohorts. The video is a
 state-faithful 2D rendering of the exact MuJoCo trajectory because the
 headless execution environment does not provide the separate CoreGraphics
 OpenGL renderer.

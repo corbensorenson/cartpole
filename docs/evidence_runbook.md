@@ -59,6 +59,38 @@ source provenance, the controller and manifest hashes, runtime metadata, all
 limit. Historical diagnostics marked `not_claim` cannot satisfy this release
 contract.
 
+## Eight-link parked-route promotion
+
+The eight-link result reuses the same evidence discipline with a saved
+feedback route and an explicit hanging-cart park:
+
+```bash
+export KMP_DUPLICATE_LIB_OK=TRUE
+export OMP_NUM_THREADS=1
+export PYTHONPATH=gradient_cartpole_handoff/.conda-aligator/lib/python3.12/site-packages:src:scripts
+PY=gradient_cartpole_handoff/.conda-aligator/bin/python
+
+$PY scripts/evaluate_fddp_parked_route.py \
+  --config configs/swingup8_uniform.yaml \
+  --controller runs/generalized_solver/n8_capture_fddp_feedback120.json \
+  --episodes 20 --seed 81801 --park-seconds 14 --cart-target -0.15 \
+  --tracking-gain-scale 0.75 \
+  --out runs/generalized_solver/n8_fddp_parked_target015_14s_noisy20.json
+
+$PY scripts/evaluate_fddp_parked_route.py \
+  --config configs/swingup8_uniform.yaml \
+  --controller runs/generalized_solver/n8_capture_fddp_feedback120.json \
+  --episodes 100 --seed 80801 --park-seconds 14 --cart-target -0.15 \
+  --tracking-gain-scale 0.75 \
+  --out runs/generalized_solver/n8_fddp_parked_target015_14s_noisy100.json
+```
+
+The 20-episode seeds `81801--81820`, the 100-episode seeds `80801--80900`,
+and the video seed `90901` are disjoint. The complete eight-link contract,
+including the zoomed-out video command and hashes, is in
+`docs/eight_link_swingup_paper.md` and
+`runs/generalized_solver/eight_link_swingup_manifest.json`.
+
 Use this after `make smoke` and the debug run pass.
 
 There are two tracks:
