@@ -100,6 +100,61 @@ class ChainNormalModes:
         }
 
 
+def modal_handoff_metrics(
+    modes: ChainNormalModes,
+    qpos: np.ndarray,
+    qvel: np.ndarray,
+    *,
+    chain_length: float,
+    natural_time: float,
+    velocity_scale: float,
+    energy_scale: float,
+) -> dict[str, object]:
+    """Score a measured state in dimensionless morphology-derived coordinates.
+
+    The fixed thresholds are the canonical capture scales. The number of
+    optimized weights does not grow with link count; added modes contribute
+    through their exact energy in the target plant's modal basis.
+    """
+
+    position = np.asarray(qpos, dtype=np.float64)
+    velocity = np.asarray(qvel, dtype=np.float64)
+    expected = modes.n_links + 1
+    if position.shape != (expected,) or velocity.shape != (expected,):
+        raise ValueError("qpos/qvel shapes do not match the modal basis")
+    if min(chain_length, natural_time, velocity_scale, energy_scale) <= 0.0:
+        raise ValueError("handoff scales must be positive")
+    absolute_angles = wrap_angle(np.cumsum(position[1:]))
+    absolute_rates = np.cumsum(velocity[1:])
+    modal = modes.phase_features(position[1:], velocity[1:], energy_scale=energy_scale)
+    modal_energy = np.asarray(modal["energy_fraction"], dtype=np.float64)
+    max_angle = float(np.max(np.abs(absolute_angles)))
+    rate_ratio = float(np.sqrt(np.mean(absolute_rates**2)) * natural_time)
+    cart_position_ratio = float(position[0] / chain_length)
+    cart_velocity_ratio = float(velocity[0] / velocity_scale)
+    collective_energy = float(modal_energy[0])
+    internal_energy = float(np.sum(modal_energy[1:]))
+    score = float(
+        (max_angle / 0.15) ** 2
+        + (rate_ratio / 0.50) ** 2
+        + (cart_position_ratio / 0.42) ** 2
+        + (cart_velocity_ratio / 0.15) ** 2
+        + 4.0 * collective_energy
+        + 8.0 * internal_energy
+    )
+    return {
+        "score": score,
+        "max_abs_angle": max_angle,
+        "absolute_rate_rms_ratio": rate_ratio,
+        "cart_position_ratio": cart_position_ratio,
+        "cart_velocity_ratio": cart_velocity_ratio,
+        "collective_modal_energy_fraction": collective_energy,
+        "internal_modal_energy_fraction": internal_energy,
+        "modal_energy_fraction": modal_energy.astype(float).tolist(),
+        "modal_phase": np.asarray(modal["phase"]).astype(float).tolist(),
+    }
+
+
 def _generalized_bias(env: NLinkCartPoleEnv) -> np.ndarray:
     """Return the passive/bias term in ``M qdd + b = actuator``."""
 

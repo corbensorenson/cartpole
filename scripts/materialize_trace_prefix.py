@@ -57,6 +57,12 @@ def main() -> None:
     parser.add_argument("--input", required=True)
     parser.add_argument("--config", default="configs/swingup7_uniform.yaml")
     parser.add_argument("--n-links", type=int, required=True)
+    parser.add_argument(
+        "--start-time",
+        type=float,
+        default=0.0,
+        help="start from the last measured trace state at or before this time",
+    )
     parser.add_argument("--through-time", type=float, required=True)
     parser.add_argument("--spec", default="benchmarks/p1_capture_envelope.yaml")
     parser.add_argument(
@@ -67,19 +73,33 @@ def main() -> None:
     parser.add_argument("--feedback-epsilon", type=float, default=1.0e-5)
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
-    if args.n_links < 1 or args.through_time <= 0.0 or args.feedback_epsilon <= 0.0:
-        raise ValueError("link count and through-time must be positive")
+    if (
+        args.n_links < 1
+        or args.start_time < 0.0
+        or args.through_time <= args.start_time
+        or args.feedback_epsilon <= 0.0
+    ):
+        raise ValueError("link count, time interval, and epsilon must be positive")
 
     source_path = Path(args.input)
     source = json.loads(source_path.read_text(encoding="utf-8"))
     trace_path, trace = find_trace(source)
+    start_rows = [
+        row
+        for row in trace
+        if float(row.get("time_seconds", np.inf)) <= args.start_time + 1e-12
+    ]
     rows = [
         row
         for row in trace
-        if float(row.get("time_seconds", np.inf)) <= args.through_time + 1e-12
+        if args.start_time + 1e-12
+        < float(row.get("time_seconds", np.inf))
+        <= args.through_time + 1e-12
     ]
     if not rows:
         raise ValueError("no trace rows occur at or before through-time")
+    if args.start_time > 0.0 and not start_rows:
+        raise ValueError("no trace state occurs at or before start-time")
     if not all("action" in row and "qpos" in row and "qvel" in row for row in rows):
         raise ValueError("every selected trace row must contain action, qpos, and qvel")
 
@@ -103,7 +123,7 @@ def main() -> None:
 
     env = NLinkCartPoleEnv(cfg, progress=1.0, seed=0)
     env.reset(seed=0)
-    initial = data_state(env.data)
+    hanging_initial = data_state(env.data)
     nq = args.n_links + 1
     policy_dt = float(env.dt)
     spec = load_config(args.spec)
@@ -118,6 +138,12 @@ def main() -> None:
         ),
     )
     transition = MujocoTransition(env, coordinate_transform=transform)
+    if start_rows:
+        initial = np.r_[start_rows[-1]["qpos"], start_rows[-1]["qvel"]].astype(
+            np.float64
+        )
+    else:
+        initial = hanging_initial
     controls = np.asarray([row["action"] for row in rows], dtype=np.float64)
     serialized_physical = np.asarray(
         [np.r_[row["qpos"], row["qvel"]] for row in rows], dtype=np.float64
@@ -181,7 +207,7 @@ def main() -> None:
 
         action_errors: list[float] = []
         for step, nominal in enumerate(nominal_states[:-1]):
-            time_seconds = step * env.dt
+            time_seconds = float(rows[step]["time_seconds"]) - env.dt
             action_errors.append(
                 abs(policy_action(nominal, time_seconds) - controls[step])
             )
@@ -228,6 +254,8 @@ def main() -> None:
             "feedback_epsilon": float(args.feedback_epsilon),
             "horizon_steps": int(controls.size),
             "horizon_seconds": float(controls.size * policy_dt),
+            "source_start_time_seconds": float(args.start_time),
+            "source_end_time_seconds": float(args.through_time),
             "policy_dt": policy_dt,
             "coordinate_transform": transform.astype(float).tolist(),
             "source": file_metadata(source_path),
@@ -250,7 +278,7 @@ def main() -> None:
     }
     dump_json(output, args.out)
     print(
-        f"wrote {args.out}: steps={controls.size} through={controls.size * policy_dt:.3f}s "
+        f"wrote {args.out}: steps={controls.size} duration={controls.size * policy_dt:.3f}s "
         f"one_step_error={maximum_one_step_error:.3e}"
     )
 

@@ -18,7 +18,7 @@ from typing import Any
 import numpy as np
 
 from gcartpole.config import dump_json, load_config
-from gcartpole.env import NLinkCartPoleEnv, serial_absolute_angles, wrap_angle
+from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.evidence import (
     data_sha256,
     file_metadata,
@@ -26,7 +26,7 @@ from gcartpole.evidence import (
     runtime_metadata,
     utc_timestamp,
 )
-from gcartpole.generalized_modes import chain_normal_modes
+from gcartpole.generalized_modes import chain_normal_modes, modal_handoff_metrics
 from gcartpole.generalized_solver import setup_from_config
 
 
@@ -59,40 +59,18 @@ def rank_row(
         raise ValueError(
             "trace row qpos/qvel shape does not match requested morphology"
         )
-    absolute_angles = wrap_angle(serial_absolute_angles(qpos[1:]))
-    absolute_rates = np.cumsum(qvel[1:])
-    modal = modes.phase_features(qpos[1:], qvel[1:], energy_scale=energy_scale)
-    modal_energy = np.asarray(modal["energy_fraction"], dtype=np.float64)
-    max_angle = float(np.max(np.abs(absolute_angles)))
-    rate_ratio = float(np.sqrt(np.mean(absolute_rates**2)) * natural_time)
-    cart_position_ratio = float(qpos[0] / chain_length)
-    cart_velocity_ratio = float(qvel[0] / velocity_scale)
-    collective_energy = float(modal_energy[0])
-    internal_energy = float(np.sum(modal_energy[1:]))
-    # All terms are dimensionless.  The threshold scales match the canonical
-    # capture contract, but this is a ranking score rather than an acceptance
-    # gate or a claim that the linear modal energy is globally exact.
-    score = float(
-        (max_angle / 0.15) ** 2
-        + (rate_ratio / 0.50) ** 2
-        + (cart_position_ratio / 0.42) ** 2
-        + (cart_velocity_ratio / 0.15) ** 2
-        + 4.0 * collective_energy
-        + 8.0 * internal_energy
+    metrics = modal_handoff_metrics(
+        modes,
+        qpos,
+        qvel,
+        chain_length=chain_length,
+        natural_time=natural_time,
+        velocity_scale=velocity_scale,
+        energy_scale=energy_scale,
     )
     return {
         **row,
-        "modal_handoff": {
-            "score": score,
-            "max_abs_angle": max_angle,
-            "absolute_rate_rms_ratio": rate_ratio,
-            "cart_position_ratio": cart_position_ratio,
-            "cart_velocity_ratio": cart_velocity_ratio,
-            "collective_modal_energy_fraction": collective_energy,
-            "internal_modal_energy_fraction": internal_energy,
-            "modal_energy_fraction": modal_energy.astype(float).tolist(),
-            "modal_phase": np.asarray(modal["phase"]).astype(float).tolist(),
-        },
+        "modal_handoff": metrics,
     }
 
 

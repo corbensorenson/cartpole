@@ -9,8 +9,9 @@ from typing import Any
 
 import numpy as np
 
-from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.capture_constraints import exact_constraint_margins, terminal_bounds
+from gcartpole.config import apply_overrides, dump_json, load_config
+from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.evidence import (
     data_sha256,
     file_metadata,
@@ -18,7 +19,6 @@ from gcartpole.evidence import (
     runtime_metadata,
     utc_timestamp,
 )
-from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.fddp import MujocoActionModel, rollout_controls
 from gcartpole.ilqr import (
     MujocoTransition,
@@ -137,7 +137,7 @@ def main() -> None:
         raise ValueError("weights, constraints, and iteration settings are invalid")
 
     base_cfg = apply_overrides(load_config(args.config), args.override)
-    base_cfg["env"]["action_lqr_residual"]["enabled"] = False
+    base_cfg["env"].setdefault("action_lqr_residual", {})["enabled"] = False
     selected_state, state_index = load_state(args.state_json, args.state_index)
     cfg = fixed_state_cfg(
         base_cfg, selected_state, float(base_cfg["env"]["episode_seconds"])

@@ -1,0 +1,45 @@
+{
+  "schema_version": 2,
+  "claim_status": "development_bottom_up_gate_accepted_not_record_evidence",
+  "not_solution": true,
+  "summary": "The generalized bottom-up ladder promotes n=5 after rail continuation, deterministic tail/full-horizon Box-FDDP, and a 20/20 uninterrupted noisy gate. This is development evidence for the reusable solver, not a new public record claim.",
+  "n_links": 5,
+  "earlier_failure_boundary": {
+    "configured_rail_half_length": 3.0,
+    "method": "13_parameter_deterministic_PFL_then_local_capture_search",
+    "failure": "the three-metre rail did not admit a sufficiently quiet robust handoff for the tested route and local capture refinements"
+  },
+  "deterministic_repair": {
+    "proposal_parameter_count": 13,
+    "rail_continuation_half_length": 4.5,
+    "handoff_time_seconds": 3.42,
+    "tail_search": "bounded_exact_MuJoCo_force_CEM",
+    "trajectory_optimizer": "exact_MuJoCo_tail_then_full_horizon_Box_FDDP",
+    "full_horizon_steps": 421,
+    "full_horizon_seconds": 8.42,
+    "terminal_lyapunov": 5.353324075133834,
+    "feedback": "optimizer_time_varying_gains_at_full_scale",
+    "phase_adaptive_skips": false,
+    "route_library": "optimized_route_plus_exact_planar_mirror",
+    "selection": "exact_forward_model_argmin"
+  },
+  "gate": {
+    "path": "runs/generalized_solver/n5_gate_20.json",
+    "episodes": 20,
+    "success_count": 20,
+    "success_rate": 1.0,
+    "seed_start": 78001,
+    "minimum_upright_hold_seconds": 21.7,
+    "maximum_cart_center_excursion": 3.3317489918878884,
+    "maximum_body_aware_required_rail_ratio": 1.170582997295963,
+    "prediction_execution_disagreements": 0
+  },
+  "rail_interpretation": {
+    "chain_length": 3.0,
+    "cart_half_length": 0.18,
+    "configured_center_limit_ratio": 1.5,
+    "measured_body_aware_requirement_ratio": 1.170582997295963,
+    "status": "passing upper bound, not a minimum-rail certificate"
+  },
+  "next_stage": "n=6: initialize from accepted lower-count structure, continue rail jointly with the route, and back-check n=1..5 before promotion"
+}

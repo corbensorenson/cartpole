@@ -1355,3 +1355,75 @@ handoff was materialized in
 MPC and Box-FDDP capture probes. This is the first direct test of a capture
 expert trained from a real failed swing handoff at the current frontier; it
 did not produce a reusable basin.
+
+## Modal Capture And Micro-Step Morphology Continuation (2026-09-13)
+
+### What worked
+
+- Persisting the full LQR state-cost weights in each controller artifact made
+  capture tuning reproducible. Moderate internal-mode penalties
+  (`relative_angle=100`, `relative_angular_velocity=100`,
+  `absolute_angular_velocity=10`, `control_cost=5000`) outperformed the
+  earlier `relative_angle=1000` choice at a locked-morphology handoff.
+- Reusing the successful seven-link pattern continued to work: saved
+  time-varying swing feedback, phase-adaptive forward route matching, a real
+  target-plant Box-FDDP refinement when replay failed, and a separate capture
+  expert. This reached split/unlock progress `0.9000` with `25.50 s` hold and
+  `2.413 m` peak cart excursion.
+- The length/mass homotopy can move only in very small steps near its locked
+  endpoint. Exact replay checkpoints through `0.0036` were successful after
+  target-specific refinement; the `0.00365` checkpoint required changing the
+  capture weights rather than increasing them.
+
+### What failed or remains unsafe
+
+- Removing the final split-joint lock at split/unlock progress `1.0` remains a
+  failure even after a 300-iteration exact Box-FDDP attempt.
+- Directly jumping the locked length/mass homotopy to `0.02` or `0.005`
+  failed; the `0.02` 300-iteration refinement also failed and emitted MuJoCo
+  instability warnings. These are not reasons to widen the rail or relax the
+  canonical endpoint.
+- A high relative-angle capture penalty was counterproductive at the
+  `0.00365` handoff: the LQR saturated and exited the rail. A medium modal
+  penalty held the same measured handoff for `27.66 s` in an isolated exact
+  capture test and produced `23.10 s` in the full reset-free replay.
+- The next micro-step, `0.00366`, is currently a measured boundary. Medium
+  modal replay held only `0.72 s`; reusing the predecessor LQR linearization
+  at several nearby `lqr_progress` values also railed, and a 200-iteration
+  target-plant Box-FDDP refinement diverged before capture. This is evidence
+  that the route and capture basin must be co-refined at the boundary.
+- The corrected replay-only implementation now applies the requested
+  inherited-feedback scale. Earlier artifacts whose metadata says scale zero
+  but whose route used inherited gains are historical and must not be used as
+  fresh reproducibility evidence.
+
+### Current boundary
+
+The strongest eight-link work remains curriculum evidence only. The current
+uniform target has not passed a canonical hanging-start evaluation, and no
+eight-link claim, video, or record comparison should be published until the
+final morphology is uniform, the joint is free, and independent 20/100
+episodes plus a no-reset video pass.
+
+## Bottom-Up Five-Link Promotion (2026-09-13)
+
+The generalized track reached a five-link `20/20` noisy hanging-start gate.
+The successful chain was deliberately mostly deterministic: a fixed-size
+13-parameter PFL proposal, exact MuJoCo tail search, tail Box-FDDP, one final
+full-horizon Box-FDDP refinement, Riccati capture, and the exact planar mirror.
+The only per-launch selection was an exact-model comparison between those two
+symmetry-related routes.
+
+The decisive continuation variable was rail length. Searches constrained to a
+3 m half-rail found near-upright states but no accepted robust capture. At a
+4.5 m half-rail, the refined route passed all 20 uninterrupted episodes and
+used at most 3.33175 m of cart-center travel. Including the 0.18 m cart
+half-length gives a measured required ratio of 1.17058 for the 3 m chain. This
+is a passing upper bound, not yet a minimum-rail certificate.
+
+Phase-adaptive route skipping was actively harmful at five links. With a
+six-step forward window, one of five initial probes failed; strict time-order
+tracking passed all five over feedback scales from 0.5 through 1.25, then
+passed the independent 20-seed gate at scale 1.0. Higher-link work should keep
+the optimized route clock deterministic unless a phase change is proven safe
+by a separate gate.

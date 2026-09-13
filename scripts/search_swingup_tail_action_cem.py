@@ -17,11 +17,16 @@ from typing import Any
 import mujoco
 import numpy as np
 from mujoco import rollout as mujoco_rollout
+from probe_swingup_trajectory import trajectory_action
 
 from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.env import NLinkCartPoleEnv, serial_absolute_angles
-from gcartpole.evidence import data_sha256, git_metadata, runtime_metadata, utc_timestamp
-from probe_swingup_trajectory import trajectory_action
+from gcartpole.evidence import (
+    data_sha256,
+    git_metadata,
+    runtime_metadata,
+    utc_timestamp,
+)
 
 
 def interpolation_matrix(knot_count: int, step_count: int) -> np.ndarray:
@@ -48,7 +53,9 @@ def load_controller(path: str, record_key: str | None = None) -> dict[str, Any]:
             return {
                 "type": "normalized_force_knots",
                 "knots": list(payload["best"]["knots"]),
-                "trajectory_seconds": float(payload.get("search", {}).get("seconds", 0.0)),
+                "trajectory_seconds": float(
+                    payload.get("search", {}).get("seconds", 0.0)
+                ),
             }
         return dict(payload["best"]["controller"])
     if isinstance(payload.get("controller"), dict):
@@ -74,6 +81,10 @@ def load_tail_center(
     trace_rows = payload.get("trace")
     if not isinstance(trace_rows, list) or not trace_rows:
         trace_rows = payload.get("trajectory")
+    if not isinstance(trace_rows, list) or not trace_rows:
+        final_eval = payload.get("final_eval")
+        if isinstance(final_eval, dict):
+            trace_rows = final_eval.get("trace")
     if isinstance(trace_rows, list):
         rows = [
             row
@@ -81,15 +92,23 @@ def load_tail_center(
             if isinstance(row, dict)
             and "action" in row
             and "time_seconds" in row
-            and (tail_start_seconds is None or float(row["time_seconds"]) > float(tail_start_seconds))
+            and (
+                tail_start_seconds is None
+                or float(row["time_seconds"]) > float(tail_start_seconds)
+            )
         ]
         if not rows:
             return np.zeros(knot_count, dtype=np.float64)
         source_times = np.asarray(
-            [float(row["time_seconds"]) - float(tail_start_seconds or 0.0) for row in rows],
+            [
+                float(row["time_seconds"]) - float(tail_start_seconds or 0.0)
+                for row in rows
+            ],
             dtype=np.float64,
         )
-        source_actions = np.asarray([float(row["action"]) for row in rows], dtype=np.float64)
+        source_actions = np.asarray(
+            [float(row["action"]) for row in rows], dtype=np.float64
+        )
         target_times = np.linspace(
             0.0,
             float(tail_seconds if tail_seconds is not None else source_times[-1]),
@@ -118,7 +137,9 @@ def load_tail_center(
         target_start = float(tail_start_seconds) - source_start
         target_end = target_start + float(tail_seconds)
         if source_duration > 0.0 and 0.0 <= target_start < source_duration:
-            source_times = np.linspace(0.0, source_duration, len(source), dtype=np.float64)
+            source_times = np.linspace(
+                0.0, source_duration, len(source), dtype=np.float64
+            )
             target_times = np.linspace(
                 max(0.0, target_start),
                 min(source_duration, target_end),
@@ -137,16 +158,18 @@ def replay_to_tail(
     tail_start_seconds: float,
 ) -> np.ndarray:
     env.reset(seed=0)
-    horizon = int(round(tail_start_seconds / env.dt))
+    horizon = round(tail_start_seconds / env.dt)
     if controller.get("type") == "normalized_force_knots":
         knots = np.asarray(controller["knots"], dtype=np.float64)
         trajectory_seconds = float(controller["trajectory_seconds"])
         if trajectory_seconds <= 0.0:
-            raise ValueError("normalized-force source has no positive trajectory_seconds")
+            raise ValueError(
+                "normalized-force source has no positive trajectory_seconds"
+            )
         # Match the global CEM's endpoint-inclusive action grid.  Using
         # step*dt/trajectory_seconds here is endpoint-exclusive and creates a
         # one-sample phase drift that can diverge chaotically before handoff.
-        action_count = max(2, int(round(trajectory_seconds / env.dt)))
+        action_count = max(2, round(trajectory_seconds / env.dt))
         knot_phase = np.linspace(0.0, 1.0, len(knots), dtype=np.float64)
         for step in range(horizon):
             phase = float(np.clip(step, 0, action_count - 1)) / float(action_count - 1)
@@ -160,7 +183,9 @@ def replay_to_tail(
     elif "controls" in controller:
         source_controls = np.asarray(controller["controls"], dtype=np.float64)
         if source_controls.ndim != 1 or source_controls.size < 2:
-            raise ValueError("FDDP source controller must contain at least two controls")
+            raise ValueError(
+                "FDDP source controller must contain at least two controls"
+            )
         source_seconds = float(
             controller.get("horizon_seconds", source_controls.size * env.dt)
         )
@@ -221,10 +246,16 @@ def load_trace_state(
     if not isinstance(rows, list) or not rows:
         rows = payload.get("trajectory")
     if not isinstance(rows, list) or not rows:
+        final_eval = payload.get("final_eval")
+        if isinstance(final_eval, dict):
+            rows = final_eval.get("trace")
+    if not isinstance(rows, list) or not rows:
         raise ValueError(f"{path} does not contain a non-empty trace")
     row = min(
         (candidate for candidate in rows if isinstance(candidate, dict)),
-        key=lambda candidate: abs(float(candidate["time_seconds"]) - float(target_time)),
+        key=lambda candidate: abs(
+            float(candidate["time_seconds"]) - float(target_time)
+        ),
     )
     qpos = np.asarray(row["qpos"], dtype=np.float64)
     qvel = np.asarray(row["qvel"], dtype=np.float64)
@@ -268,9 +299,7 @@ def physical_metrics(
     absolute_angular_velocity_rms = np.sqrt(
         np.mean(absolute_angular_velocity**2, axis=-1)
     )
-    max_absolute_angular_velocity = np.max(
-        np.abs(absolute_angular_velocity), axis=-1
-    )
+    max_absolute_angular_velocity = np.max(np.abs(absolute_angular_velocity), axis=-1)
     return {
         "qpos": qpos,
         "qvel": qvel,
@@ -319,7 +348,9 @@ def score_batch(
         persistent_pool=True,
     )
     finite = np.all(np.isfinite(rollout_states), axis=(1, 2))
-    bounded = np.max(np.abs(np.nan_to_num(rollout_states, nan=np.inf)), axis=(1, 2)) < 1.0e6
+    bounded = (
+        np.max(np.abs(np.nan_to_num(rollout_states, nan=np.inf)), axis=(1, 2)) < 1.0e6
+    )
     # An unstable batched rollout may reset its returned state/time buffer
     # instead of returning NaNs. Do not let that reset state become a false
     # low-cost handoff.
@@ -345,9 +376,7 @@ def score_batch(
     best_score = np.min(late, axis=1)
     terminal_score = state_score[:, -1]
     tail_average = np.mean(state_score[:, -min(20, state_score.shape[1]) :], axis=1)
-    robust_window = min(
-        state_score.shape[1], max(1, int(robust_window_steps))
-    )
+    robust_window = min(state_score.shape[1], max(1, int(robust_window_steps)))
     robust_slice = slice(-robust_window, None)
     robust_score = np.max(state_score[:, robust_slice], axis=1)
     robust_mean_score = np.mean(state_score[:, robust_slice], axis=1)
@@ -365,9 +394,10 @@ def score_batch(
         metrics["cart_velocity_abs"][:, robust_slice], axis=1
     )
     rail = np.max(metrics["cart_abs"], axis=1)
-    rail_penalty = float(rail_penalty_weight) * np.maximum(
-        0.0, rail / float(rail_penalty_limit) - 1.0
-    ) ** 2
+    rail_penalty = (
+        float(rail_penalty_weight)
+        * np.maximum(0.0, rail / float(rail_penalty_limit) - 1.0) ** 2
+    )
     action_penalty = 0.02 * np.mean(actions * actions, axis=1)
     if robust_window_steps > 0:
         cost = (
@@ -395,9 +425,7 @@ def score_batch(
             "best_score": best_score,
             "terminal_score": terminal_score,
             "tail_average": tail_average,
-            "robust_window_steps": np.full(
-                len(knots), robust_window, dtype=np.int64
-            ),
+            "robust_window_steps": np.full(len(knots), robust_window, dtype=np.int64),
             "robust_score": robust_score,
             "robust_mean_score": robust_mean_score,
             "robust_max_angle": robust_max_angle,
@@ -485,7 +513,11 @@ def main() -> None:
     parser.add_argument("--override", action="append", default=[])
     args = parser.parse_args()
 
-    if args.knot_count < 2 or args.population < 2 or not (1 <= args.elites <= args.population):
+    if (
+        args.knot_count < 2
+        or args.population < 2
+        or not (1 <= args.elites <= args.population)
+    ):
         raise ValueError("invalid CEM dimensions")
     if not 0.0 <= args.progress <= 1.0:
         raise ValueError("--progress must be in [0, 1]")
@@ -524,13 +556,17 @@ def main() -> None:
         controller = None
     else:
         if not args.swing_controller_json:
-            raise ValueError("--swing-controller-json is required unless --initial-trace-json is supplied")
+            raise ValueError(
+                "--swing-controller-json is required unless --initial-trace-json is supplied"
+            )
         controller = load_controller(args.swing_controller_json, args.controller_key)
         trace_row = None
         initial_state = replay_to_tail(env, controller, args.tail_start_seconds)
-    horizon_steps = max(2, int(round(args.tail_seconds / env.dt)))
+    horizon_steps = max(2, round(args.tail_seconds / env.dt))
     interpolation = interpolation_matrix(args.knot_count, horizon_steps)
-    pool = [mujoco.MjData(env.model) for _ in range(min(32, max(1, args.population // 16)))]
+    pool = [
+        mujoco.MjData(env.model) for _ in range(min(32, max(1, args.population // 16)))
+    ]
     rng = np.random.default_rng(args.seed)
     center = load_tail_center(
         args.init_tail_json or args.initial_trace_json,
@@ -547,18 +583,21 @@ def main() -> None:
 
     for iteration in range(args.iterations):
         knots = np.clip(
-            center[None, :] + rng.normal(0.0, sigma, size=(args.population, args.knot_count)),
+            center[None, :]
+            + rng.normal(0.0, sigma, size=(args.population, args.knot_count)),
             -1.0,
             1.0,
         )
         knots[0] = center
+        if best_record is not None and args.population > 1:
+            knots[1] = np.asarray(best_record["knots"], dtype=np.float64)
         cost, metrics = score_batch(
             env,
             initial_state,
             knots,
             interpolation,
             pool,
-            min_tail_steps=max(1, int(round(0.20 / env.dt))),
+            min_tail_steps=max(1, round(0.20 / env.dt)),
             angle_weight=args.angle_weight,
             hinge_weight=args.hinge_weight,
             max_hinge_weight=args.max_hinge_weight,
@@ -576,7 +615,9 @@ def main() -> None:
         top = int(order[0])
         elite_knots = knots[order[: args.elites]]
         center = np.mean(elite_knots, axis=0)
-        sigma = np.maximum(np.std(elite_knots, axis=0) * args.sigma_decay, args.sigma_floor)
+        sigma = np.maximum(
+            np.std(elite_knots, axis=0) * args.sigma_decay, args.sigma_floor
+        )
         best_index = int(metrics["best_index"][top])
         handoff_index = int(metrics["handoff_index"][top])
         record_index = handoff_index if args.robust_window_steps > 0 else best_index
@@ -608,9 +649,7 @@ def main() -> None:
                 metrics["robust_max_absolute_velocity_peak"][top]
             ),
             "robust_max_cart": float(metrics["robust_max_cart"][top]),
-            "robust_max_cart_velocity": float(
-                metrics["robust_max_cart_velocity"][top]
-            ),
+            "robust_max_cart_velocity": float(metrics["robust_max_cart_velocity"][top]),
             "rail": float(metrics["rail"][top]),
         }
         history.append(record)
@@ -621,7 +660,9 @@ def main() -> None:
                 "best_state": {
                     "qpos": metrics["qpos"][top, record_index].astype(float).tolist(),
                     "qvel": metrics["qvel"][top, record_index].astype(float).tolist(),
-                    "absolute_angles": metrics["absolute_angles"][top, record_index].astype(float).tolist(),
+                    "absolute_angles": metrics["absolute_angles"][top, record_index]
+                    .astype(float)
+                    .tolist(),
                 },
             }
         if args.robust_window_steps > 0:
@@ -659,7 +700,9 @@ def main() -> None:
                 "best_state": {
                     "qpos": metrics["qpos"][top, record_index].astype(float).tolist(),
                     "qvel": metrics["qvel"][top, record_index].astype(float).tolist(),
-                    "absolute_angles": metrics["absolute_angles"][top, record_index].astype(float).tolist(),
+                    "absolute_angles": metrics["absolute_angles"][top, record_index]
+                    .astype(float)
+                    .tolist(),
                 },
             }
         print(
@@ -679,7 +722,9 @@ def main() -> None:
         "summary": "Exact-MuJoCo CEM tail search for a low-momentum handoff; final evidence still requires reset-free feedback replay.",
         "source_controller": controller,
         "source_controller_json": (
-            None if args.swing_controller_json is None else str(args.swing_controller_json)
+            None
+            if args.swing_controller_json is None
+            else str(args.swing_controller_json)
         ),
         "initial_trace_json": args.initial_trace_json,
         "initial_trace_time": (
@@ -729,7 +774,9 @@ def main() -> None:
         "history": history,
         "initial_state": {
             "qpos": initial_state[1 : 1 + env.model.nq].astype(float).tolist(),
-            "qvel": initial_state[1 + env.model.nq : 1 + env.model.nq + env.model.nv].astype(float).tolist(),
+            "qvel": initial_state[1 + env.model.nq : 1 + env.model.nq + env.model.nv]
+            .astype(float)
+            .tolist(),
             "time_seconds": float(initial_state[0]),
         },
         "config_sha256": data_sha256(cfg),

@@ -1,0 +1,639 @@
+{
+  "claim_status": "development_deterministic_model_predictive_library",
+  "config": {
+    "bytes": 1790,
+    "path": "configs/swingup7_uniform.yaml",
+    "sha256": "1e92bc4621428f2fe343b7483b2c32d7804a82762159483db280e71a526b6c04"
+  },
+  "controllers": [
+    {
+      "bytes": 314765,
+      "path": "runs/generalized_solver/n5_route_solver.json",
+      "sha256": "0fb607ded5efee7e41b596bcf4ef5a3f33ac1fefc1a05eb64330593d4691b7db"
+    },
+    {
+      "bytes": 314921,
+      "path": "runs/generalized_solver/n5_route_solver_mirror.json",
+      "sha256": "f8f509fab1e1af8f082686a419a1175a03728f713fc7d4ecc8be5f9602d7c5f6"
+    }
+  ],
+  "episode_results": [
+    {
+      "episode": 0,
+      "max_cart_excursion": 3.3293478797707685,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.5418880766978145,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.3293478797707685,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9906521202292313,
+        "max_cart_center_excursion": 3.3293478797707685,
+        "required_rail_half_length": 3.5093478797707687,
+        "required_rail_ratio": 1.1697826265902562
+      },
+      "seed": 78001,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 1,
+      "max_cart_excursion": 3.329347750050555,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.5418880596670075,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.329347750050555,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.990652249949445,
+        "max_cart_center_excursion": 3.329347750050555,
+        "required_rail_half_length": 3.509347750050555,
+        "required_rail_ratio": 1.169782583350185
+      },
+      "seed": 78002,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 2,
+      "max_cart_excursion": 3.3293483399939636,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.541888681842749,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.3293483399939636,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9906516600060362,
+        "max_cart_center_excursion": 3.3293483399939636,
+        "required_rail_half_length": 3.509348339993964,
+        "required_rail_ratio": 1.1697827799979879
+      },
+      "seed": 78003,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 3,
+      "max_cart_excursion": 3.3317473590142885,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.541889150118508,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.3317473590142885,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882526409857113,
+        "max_cart_center_excursion": 3.3317473590142885,
+        "required_rail_half_length": 3.5117473590142887,
+        "required_rail_ratio": 1.1705824530047628
+      },
+      "seed": 78004,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 4,
+      "max_cart_excursion": 3.3317480526350036,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.541888801807712,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.3317480526350036,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882519473649962,
+        "max_cart_center_excursion": 3.3317480526350036,
+        "required_rail_half_length": 3.511748052635004,
+        "required_rail_ratio": 1.170582684211668
+      },
+      "seed": 78005,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 5,
+      "max_cart_excursion": 3.331747989336942,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 3.331747989336942,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        },
+        {
+          "max_cart_excursion": 4.541889080086841,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882520106630577,
+        "max_cart_center_excursion": 3.331747989336942,
+        "required_rail_half_length": 3.5117479893369423,
+        "required_rail_ratio": 1.1705826631123142
+      },
+      "seed": 78006,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 6,
+      "max_cart_excursion": 3.3317478428577183,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 3.3317478428577183,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        },
+        {
+          "max_cart_excursion": 4.54188901524681,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882521571422815,
+        "max_cart_center_excursion": 3.3317478428577183,
+        "required_rail_half_length": 3.5117478428577185,
+        "required_rail_ratio": 1.1705826142859062
+      },
+      "seed": 78007,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 7,
+      "max_cart_excursion": 3.331748495027434,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.541889513250004,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.331748495027434,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.988251504972566,
+        "max_cart_center_excursion": 3.331748495027434,
+        "required_rail_half_length": 3.511748495027434,
+        "required_rail_ratio": 1.1705828316758113
+      },
+      "seed": 78008,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 8,
+      "max_cart_excursion": 3.33174740287179,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.541888106047347,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.33174740287179,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882525971282097,
+        "max_cart_center_excursion": 3.33174740287179,
+        "required_rail_half_length": 3.5117474028717903,
+        "required_rail_ratio": 1.17058246762393
+      },
+      "seed": 78009,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 9,
+      "max_cart_excursion": 3.331748582431274,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.54188697553264,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.331748582431274,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882514175687258,
+        "max_cart_center_excursion": 3.331748582431274,
+        "required_rail_half_length": 3.511748582431274,
+        "required_rail_ratio": 1.1705828608104247
+      },
+      "seed": 78010,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 10,
+      "max_cart_excursion": 3.3317478463711128,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.541888921518885,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.3317478463711128,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882521536288871,
+        "max_cart_center_excursion": 3.3317478463711128,
+        "required_rail_half_length": 3.511747846371113,
+        "required_rail_ratio": 1.1705826154570376
+      },
+      "seed": 78011,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 11,
+      "max_cart_excursion": 3.3317481946125223,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 3.3317481946125223,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        },
+        {
+          "max_cart_excursion": 4.541888319497967,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882518053874776,
+        "max_cart_center_excursion": 3.3317481946125223,
+        "required_rail_half_length": 3.5117481946125224,
+        "required_rail_ratio": 1.1705827315375075
+      },
+      "seed": 78012,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 12,
+      "max_cart_excursion": 3.3317473820162053,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.541888282772255,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.3317473820162053,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882526179837945,
+        "max_cart_center_excursion": 3.3317473820162053,
+        "required_rail_half_length": 3.5117473820162055,
+        "required_rail_ratio": 1.1705824606720685
+      },
+      "seed": 78013,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 13,
+      "max_cart_excursion": 3.3317489918878884,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.541887569277423,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.3317489918878884,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882510081121114,
+        "max_cart_center_excursion": 3.3317489918878884,
+        "required_rail_half_length": 3.5117489918878886,
+        "required_rail_ratio": 1.170582997295963
+      },
+      "seed": 78014,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 14,
+      "max_cart_excursion": 3.3317474676376273,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 3.3317474676376273,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        },
+        {
+          "max_cart_excursion": 4.541888174548893,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882525323623725,
+        "max_cart_center_excursion": 3.3317474676376273,
+        "required_rail_half_length": 3.5117474676376275,
+        "required_rail_ratio": 1.1705824892125425
+      },
+      "seed": 78015,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 15,
+      "max_cart_excursion": 3.3317487545600546,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.541888982646931,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.3317487545600546,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882512454399452,
+        "max_cart_center_excursion": 3.3317487545600546,
+        "required_rail_half_length": 3.5117487545600548,
+        "required_rail_ratio": 1.170582918186685
+      },
+      "seed": 78016,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 16,
+      "max_cart_excursion": 3.3317480420668186,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.541888845726159,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.3317480420668186,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882519579331812,
+        "max_cart_center_excursion": 3.3317480420668186,
+        "required_rail_half_length": 3.511748042066819,
+        "required_rail_ratio": 1.1705826806889397
+      },
+      "seed": 78017,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 17,
+      "max_cart_excursion": 3.3317477298934803,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 3.3317477298934803,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        },
+        {
+          "max_cart_excursion": 4.541889472791288,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882522701065195,
+        "max_cart_center_excursion": 3.3317477298934803,
+        "required_rail_half_length": 3.5117477298934805,
+        "required_rail_ratio": 1.1705825766311602
+      },
+      "seed": 78018,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 18,
+      "max_cart_excursion": 3.3317479301643695,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.541887722538605,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.3317479301643695,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9882520698356303,
+        "max_cart_center_excursion": 3.3317479301643695,
+        "required_rail_half_length": 3.5117479301643697,
+        "required_rail_ratio": 1.1705826433881232
+      },
+      "seed": 78019,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 19,
+      "max_cart_excursion": 3.329348253877856,
+      "max_upright_streak_seconds": 21.7,
+      "predictions": [
+        {
+          "max_cart_excursion": 4.54188832644767,
+          "max_upright_streak_seconds": 0.0,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 3.329348253877856,
+          "max_upright_streak_seconds": 21.7,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.5,
+        "margin": 0.9906517461221438,
+        "max_cart_center_excursion": 3.329348253877856,
+        "required_rail_half_length": 3.509348253877856,
+        "required_rail_ratio": 1.1697827512926187
+      },
+      "seed": 78020,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    }
+  ],
+  "episodes": 20,
+  "generated_at": "2026-09-13T10:43:46+00:00",
+  "git": {
+    "available": true,
+    "commit": "48519d585f8aa9d27fec29ac303e3ab1030099bc",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      " M ROADMAP.md",
+      " M docs/levers_and_pitfalls.md",
+      " M scripts/evaluate_generalized_route_library.py",
+      " M scripts/force_proposal_to_fddp.py",
+      " M scripts/materialize_trace_prefix.py",
+      " M scripts/rank_generalized_modal_handoffs.py",
+      " M scripts/search_capture_feedback_cem.py",
+      " M scripts/search_pfl_capture_controller.py",
+      " M scripts/search_proxddp_capture.py",
+      " M scripts/search_swingup_tail_action_cem.py",
+      " M src/gcartpole/generalized_modes.py",
+      " M tests/test_generalized_modes.py"
+    ]
+  },
+  "max_required_rail_ratio": 1.170582997295963,
+  "route_counts": {
+    "0": 5,
+    "1": 15
+  },
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "seed_start": 78001,
+  "selection": {
+    "conditioning_seconds": 15.0,
+    "phase_window": 0,
+    "route_lqr_control_costs": [
+      1000.0,
+      1000.0
+    ],
+    "tracking_gain_scale": 1.0,
+    "type": "exact_forward_model_argmin"
+  },
+  "success_rate": 1.0,
+  "summary": "Uninterrupted noisy evaluation with exact forward selection over mirror-symmetric deterministic routes.",
+  "termination_counts": {
+    "time_limit": 20
+  }
+}

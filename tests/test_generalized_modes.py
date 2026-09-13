@@ -10,6 +10,7 @@ from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.generalized_modes import (
     chain_normal_modes,
     modal_energy_acceleration_ratio,
+    modal_handoff_metrics,
 )
 
 
@@ -63,6 +64,9 @@ def test_modal_projection_reconstructs_small_relative_state():
         modes.relative_shapes @ positions, displacement, atol=1e-12
     )
     np.testing.assert_allclose(modes.relative_shapes @ velocities, rates, atol=1e-12)
+    serialized = modes.to_dict()
+    assert serialized["equilibrium"] == "hanging"
+    assert len(serialized["dimensionless_frequencies"]) == 3
     env.close()
 
 
@@ -112,4 +116,24 @@ def test_mode_analysis_restores_mujoco_time_and_state():
         np.testing.assert_allclose(first, second)
     # Restoring through mj_forward must leave a valid exact state.
     mujoco.mj_forward(env.model, env.data)
+    env.close()
+
+
+def test_modal_handoff_score_is_zero_at_centered_upright_rest():
+    env = uniform_env(4)
+    env.reset(seed=0)
+    modes = chain_normal_modes(env, equilibrium="upright")
+    qpos = np.zeros(5)
+    qvel = np.zeros(5)
+    metrics = modal_handoff_metrics(
+        modes,
+        qpos,
+        qvel,
+        chain_length=3.0,
+        natural_time=np.sqrt(3.0 / 9.81),
+        velocity_scale=np.sqrt(9.81 * 3.0),
+        energy_scale=float(env._energy_gap),
+    )
+    assert np.isclose(metrics["score"], 0.0)
+    assert len(metrics["modal_energy_fraction"]) == 4
     env.close()

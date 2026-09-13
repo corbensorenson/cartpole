@@ -12,14 +12,20 @@ from __future__ import annotations
 import argparse
 import json
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 
 from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.env import NLinkCartPoleEnv, serial_absolute_angles
-from gcartpole.evidence import data_sha256, git_metadata, runtime_metadata, utc_timestamp
+from gcartpole.evidence import (
+    data_sha256,
+    git_metadata,
+    runtime_metadata,
+    utc_timestamp,
+)
 
 
 def load_state(path: str, index: int) -> dict[str, Any]:
@@ -77,7 +83,12 @@ def rollout(
         "action_lqr_residual": {"enabled": False},
         "action_lqr_switch": {"enabled": False},
     }
-    for key in ("init_angle_noise", "init_vel_noise", "init_cart_noise", "init_cart_vel_noise"):
+    for key in (
+        "init_angle_noise",
+        "init_vel_noise",
+        "init_cart_noise",
+        "init_cart_vel_noise",
+    ):
         env_cfg[f"{key}_start"] = 0.0
         env_cfg[f"{key}_end"] = 0.0
     env = NLinkCartPoleEnv({**cfg, "env": env_cfg}, progress=progress, seed=0)
@@ -85,7 +96,9 @@ def rollout(
     feature_dim = int(capture_features(env).size)
     if action_fn is None and (vector is None or vector.shape != (feature_dim + 1,)):
         actual_shape = None if vector is None else vector.shape
-        raise ValueError(f"expected actor vector {(feature_dim + 1,)}, got {actual_shape}")
+        raise ValueError(
+            f"expected actor vector {(feature_dim + 1,)}, got {actual_shape}"
+        )
     weight = None if vector is None else vector[:feature_dim]
     bias = None if vector is None else float(vector[-1])
     best_cost = float("inf")
@@ -117,7 +130,9 @@ def rollout(
         absolute_angular_velocity = np.cumsum(
             np.asarray(env.data.qvel[1 : 1 + env.n], dtype=np.float64)
         )
-        absolute_angular_velocity_rms = float(np.sqrt(np.mean(absolute_angular_velocity**2)))
+        absolute_angular_velocity_rms = float(
+            np.sqrt(np.mean(absolute_angular_velocity**2))
+        )
         cart = abs(float(info["x"]))
         absolute_low_momentum = bool(
             bool(info["is_upright"])
@@ -125,7 +140,9 @@ def rollout(
             and absolute_angular_velocity_rms <= 0.75
             and abs(cart_velocity) <= 0.50
         )
-        centered_upright = bool(bool(info["is_upright"]) and cart <= float(max_cart_target))
+        centered_upright = bool(
+            bool(info["is_upright"]) and cart <= float(max_cart_target)
+        )
         centered_upright_time_steps += int(centered_upright)
         absolute_low_momentum_time_steps += int(absolute_low_momentum)
         if absolute_low_momentum:
@@ -147,13 +164,17 @@ def rollout(
             "max_abs_angle": angle,
             "hinge_velocity_rms": hinge,
             "absolute_angular_velocity_rms": absolute_angular_velocity_rms,
-            "max_absolute_angular_velocity": float(np.max(np.abs(absolute_angular_velocity))),
+            "max_absolute_angular_velocity": float(
+                np.max(np.abs(absolute_angular_velocity))
+            ),
             "x": float(info["x"]),
             "cart_velocity": cart_velocity,
             "is_upright": bool(info["is_upright"]),
             "upright_streak_seconds": float(info["upright_streak_seconds"]),
             "max_upright_streak_seconds": float(info["max_upright_streak_seconds"]),
-            "max_low_momentum_upright_streak_seconds": float(info["max_low_momentum_upright_streak_seconds"]),
+            "max_low_momentum_upright_streak_seconds": float(
+                info["max_low_momentum_upright_streak_seconds"]
+            ),
             "absolute_low_momentum_upright_streak_seconds": float(
                 absolute_low_momentum_streak_steps * env.dt
             ),
@@ -181,7 +202,9 @@ def rollout(
 
     max_streak = float(final_info.get("max_upright_streak_seconds", 0.0))
     max_centered = float(final_info.get("max_centered_upright_streak_seconds", 0.0))
-    max_low_momentum = float(final_info.get("max_low_momentum_upright_streak_seconds", 0.0))
+    max_low_momentum = float(
+        final_info.get("max_low_momentum_upright_streak_seconds", 0.0)
+    )
     terminal_absolute_angular_velocity = np.cumsum(
         np.asarray(env.data.qvel[1 : 1 + env.n], dtype=np.float64)
     )
@@ -225,7 +248,9 @@ def rollout(
             max_absolute_low_momentum_streak_steps * env.dt
         ),
         "centered_upright_time_seconds": float(centered_upright_time_steps * env.dt),
-        "absolute_low_momentum_time_seconds": float(absolute_low_momentum_time_steps * env.dt),
+        "absolute_low_momentum_time_seconds": float(
+            absolute_low_momentum_time_steps * env.dt
+        ),
         "time_to_first_upright": final_info.get("time_to_first_upright"),
         "termination_reason": final_info.get("termination_reason"),
         "final_info": final_info,
@@ -268,11 +293,22 @@ def evaluate(
     return {
         "score": float(np.mean([row["score"] for row in rows])),
         "success_rate": float(np.mean([float(row["success"]) for row in rows])),
-        "max_upright_streak_mean": float(np.mean([row["max_upright_streak_seconds"] for row in rows])),
-        "max_upright_streak_max": float(np.max([row["max_upright_streak_seconds"] for row in rows])),
-        "max_centered_upright_streak_mean": float(np.mean([row["max_centered_upright_streak_seconds"] for row in rows])),
+        "max_upright_streak_mean": float(
+            np.mean([row["max_upright_streak_seconds"] for row in rows])
+        ),
+        "max_upright_streak_max": float(
+            np.max([row["max_upright_streak_seconds"] for row in rows])
+        ),
+        "max_centered_upright_streak_mean": float(
+            np.mean([row["max_centered_upright_streak_seconds"] for row in rows])
+        ),
         "max_absolute_low_momentum_upright_streak_mean": float(
-            np.mean([row["max_absolute_low_momentum_upright_streak_seconds"] for row in rows])
+            np.mean(
+                [
+                    row["max_absolute_low_momentum_upright_streak_seconds"]
+                    for row in rows
+                ]
+            )
         ),
         "best_cost_min": float(np.min([row["best_cost"] for row in rows])),
         "episodes": rows,
@@ -280,9 +316,13 @@ def evaluate(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="CEM search for nonlinear capture feedback from a real seven-link handoff")
+    parser = argparse.ArgumentParser(
+        description="CEM search for nonlinear capture feedback from a real seven-link handoff"
+    )
     parser.add_argument("--config", default="configs/swingup7_capture_handoff.yaml")
-    parser.add_argument("--state-json", default="runs/swingup7_cart_feasible_handoff_state.json")
+    parser.add_argument(
+        "--state-json", default="runs/swingup7_cart_feasible_handoff_state.json"
+    )
     parser.add_argument("--state-index", type=int, default=0)
     parser.add_argument("--progress", type=float, default=1.0)
     parser.add_argument("--seconds", type=float, default=6.0)
@@ -307,7 +347,18 @@ def main() -> None:
         raise ValueError("invalid CEM dimensions")
     cfg = apply_overrides(load_config(args.config), args.override)
     state = load_state(args.state_json, args.state_index)
-    probe_cfg = {**cfg, "env": {**cfg["env"], "init_mode": "fixed_state", "init_qpos": state["qpos"], "init_qvel": state["qvel"], "obs_include_capture_features": False, "action_lqr_residual": {"enabled": False}, "action_lqr_switch": {"enabled": False}}}
+    probe_cfg = {
+        **cfg,
+        "env": {
+            **cfg["env"],
+            "init_mode": "fixed_state",
+            "init_qpos": state["qpos"],
+            "init_qvel": state["qvel"],
+            "obs_include_capture_features": False,
+            "action_lqr_residual": {"enabled": False},
+            "action_lqr_switch": {"enabled": False},
+        },
+    }
     probe = NLinkCartPoleEnv(probe_cfg, progress=args.progress, seed=0)
     feature_dim = int(capture_features(probe).size)
     probe.close()
@@ -317,7 +368,9 @@ def main() -> None:
         seed_payload = json.loads(Path(args.seed_actor).read_text(encoding="utf-8"))
         seed_vector = np.asarray(seed_payload["best_vector"], dtype=np.float64)
         if seed_vector.shape != center.shape:
-            raise ValueError(f"seed actor has vector shape {seed_vector.shape}, expected {center.shape}")
+            raise ValueError(
+                f"seed actor has vector shape {seed_vector.shape}, expected {center.shape}"
+            )
         center = seed_vector.copy()
     sigma = np.full(feature_dim + 1, float(args.sigma), dtype=np.float64)
     sigma[-1] = 0.15
@@ -329,7 +382,10 @@ def main() -> None:
     for iteration in range(args.iterations + 1):
         candidates = [best_vector.copy()]
         if iteration > 0:
-            candidates.extend(center + rng.normal(0.0, sigma, size=center.shape) for _ in range(args.population - 1))
+            candidates.extend(
+                center + rng.normal(0.0, sigma, size=center.shape)
+                for _ in range(args.population - 1)
+            )
         records = []
         for vector in candidates:
             metrics = rollout(
@@ -344,14 +400,30 @@ def main() -> None:
                 max_cart_weight=args.max_cart_weight,
                 stable_time_weight=args.stable_time_weight,
             )
-            records.append({"vector": np.asarray(vector, dtype=np.float64), "metrics": metrics})
+            records.append(
+                {"vector": np.asarray(vector, dtype=np.float64), "metrics": metrics}
+            )
         records.sort(key=lambda row: float(row["metrics"]["score"]))
         top = records[0]
         if best is None or float(top["metrics"]["score"]) < float(best["score"]):
-            best = {"score": float(top["metrics"]["score"]), "metrics": top["metrics"], "vector": top["vector"].astype(float).tolist()}
+            best = {
+                "score": float(top["metrics"]["score"]),
+                "metrics": top["metrics"],
+                "vector": top["vector"].astype(float).tolist(),
+            }
             best_vector = top["vector"].copy()
         tm = top["metrics"]
-        history.append({"iteration": iteration, "score": float(tm["score"]), "best_score": float(best["score"]), "streak": float(tm["max_upright_streak_seconds"]), "centered_streak": float(tm["max_centered_upright_streak_seconds"]), "best_cost": float(tm["best_cost"]), "terminal_cost": float(tm["terminal_cost"])})
+        history.append(
+            {
+                "iteration": iteration,
+                "score": float(tm["score"]),
+                "best_score": float(best["score"]),
+                "streak": float(tm["max_upright_streak_seconds"]),
+                "centered_streak": float(tm["max_centered_upright_streak_seconds"]),
+                "best_cost": float(tm["best_cost"]),
+                "terminal_cost": float(tm["terminal_cost"]),
+            }
+        )
         print(
             f"iter={iteration:03d} score={tm['score']:.2f} "
             f"streak={tm['max_upright_streak_seconds']:.3f}s "
@@ -410,7 +482,10 @@ def main() -> None:
             + [f"absolute_angular_velocity_{i}" for i in range(link_count)]
         ),
         "best_vector": best_vector.astype(float).tolist(),
-        "best_actor": {"weight": best_vector[:-1].astype(float).tolist(), "bias": float(best_vector[-1])},
+        "best_actor": {
+            "weight": best_vector[:-1].astype(float).tolist(),
+            "bias": float(best_vector[-1]),
+        },
         "best_search": best,
         "eval": final_eval,
         "trace_rollout": trace,

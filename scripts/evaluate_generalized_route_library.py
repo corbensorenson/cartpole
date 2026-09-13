@@ -11,11 +11,17 @@ from typing import Any
 
 import numpy as np
 
-from gcartpole.config import dump_json, load_config
+from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.env import NLinkCartPoleEnv
-from gcartpole.evidence import file_metadata, git_metadata, runtime_metadata, utc_timestamp
+from gcartpole.evidence import (
+    file_metadata,
+    git_metadata,
+    runtime_metadata,
+    utc_timestamp,
+)
 from gcartpole.generalized_solver import rail_requirement, setup_from_config
 from gcartpole.modal import dimensionless_wrapped_state
+
 try:
     from scripts.evaluate_fddp_two_expert import (
         hanging_lqr_action,
@@ -57,12 +63,23 @@ def uniform_config(cfg: dict[str, Any], n_links: int) -> dict[str, Any]:
     return result
 
 
-def fixed_state_config(cfg: dict[str, Any], qpos: np.ndarray, qvel: np.ndarray) -> dict[str, Any]:
+def fixed_state_config(
+    cfg: dict[str, Any], qpos: np.ndarray, qvel: np.ndarray
+) -> dict[str, Any]:
     result = copy.deepcopy(cfg)
     result["env"]["init_mode"] = "fixed_state"
-    result["env"]["init_qpos"] = np.asarray(qpos, dtype=np.float64).astype(float).tolist()
-    result["env"]["init_qvel"] = np.asarray(qvel, dtype=np.float64).astype(float).tolist()
-    for key in ("init_angle_noise", "init_vel_noise", "init_cart_noise", "init_cart_vel_noise"):
+    result["env"]["init_qpos"] = (
+        np.asarray(qpos, dtype=np.float64).astype(float).tolist()
+    )
+    result["env"]["init_qvel"] = (
+        np.asarray(qvel, dtype=np.float64).astype(float).tolist()
+    )
+    for key in (
+        "init_angle_noise",
+        "init_vel_noise",
+        "init_cart_noise",
+        "init_cart_vel_noise",
+    ):
         result["env"][key] = 0.0
         result["env"][f"{key}_start"] = 0.0
         result["env"][f"{key}_end"] = 0.0
@@ -139,15 +156,18 @@ def main() -> None:
     parser.add_argument("--tracking-gain-scale", type=float, default=1.5)
     parser.add_argument("--phase-window", type=int, default=6)
     parser.add_argument("--out", required=True)
+    parser.add_argument("--override", action="append", default=[])
     args = parser.parse_args()
-    cfg = load_config(args.config)
+    cfg = apply_overrides(load_config(args.config), args.override)
     if args.n_links is not None:
         if args.n_links < 1:
             raise ValueError("--n-links must be positive")
         cfg = uniform_config(cfg, args.n_links)
     spec = load_config("benchmarks/p1_capture_envelope.yaml")
     n_links = int(cfg["env"]["n_links"])
-    controllers = [load_controller(Path(path), n_links, spec) for path in args.controller]
+    controllers = [
+        load_controller(Path(path), n_links, spec) for path in args.controller
+    ]
     upright_gains = [
         lqr_gain(
             cfg,
@@ -160,19 +180,19 @@ def main() -> None:
     settle_gain = hanging_lqr_gain(cfg, progress=1.0, fd_eps=1e-7, control_cost=1000.0)
     setup = setup_from_config(cfg)
     live_cfg = copy.deepcopy(cfg)
-    live_cfg["env"]["episode_seconds"] = (
-        float(cfg["env"]["episode_seconds"]) + float(args.conditioning_seconds)
+    live_cfg["env"]["episode_seconds"] = float(cfg["env"]["episode_seconds"]) + float(
+        args.conditioning_seconds
     )
     results: list[dict[str, Any]] = []
     for episode_index in range(args.episodes):
         seed = args.seed + episode_index
         env = NLinkCartPoleEnv(live_cfg, progress=1.0, seed=seed)
         env.reset(seed=seed)
-        conditioning_steps = int(round(args.conditioning_seconds / env.dt))
+        conditioning_steps = round(args.conditioning_seconds / env.dt)
         live_cart = [float(env.data.qpos[0])]
         for _ in range(conditioning_steps):
             action = hanging_lqr_action(env, settle_gain, scale=1.0)
-            _, _, terminated, truncated, info = env.step([action])
+            _, _, terminated, truncated, _info = env.step([action])
             live_cart.append(float(env.data.qpos[0]))
             if terminated or truncated:
                 raise RuntimeError("conditioning terminated before route selection")
@@ -229,7 +249,9 @@ def main() -> None:
                 }
                 for row in predictions
             ],
-            "max_upright_streak_seconds": float(final_info.get("max_upright_streak_seconds", 0.0)),
+            "max_upright_streak_seconds": float(
+                final_info.get("max_upright_streak_seconds", 0.0)
+            ),
             "max_cart_excursion": float(max(abs(value) for value in live_cart)),
             "rail_requirement": rail_requirement(np.asarray(live_cart), setup),
         }
@@ -260,7 +282,9 @@ def main() -> None:
         "seed_start": args.seed,
         "success_rate": float(np.mean([row["success"] for row in results])),
         "route_counts": dict(Counter(str(row["selected_route"]) for row in results)),
-        "termination_counts": dict(Counter(str(row["termination_reason"]) for row in results)),
+        "termination_counts": dict(
+            Counter(str(row["termination_reason"]) for row in results)
+        ),
         "max_required_rail_ratio": float(
             max(row["rail_requirement"]["required_rail_ratio"] for row in results)
         ),

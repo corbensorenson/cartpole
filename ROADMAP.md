@@ -1016,6 +1016,35 @@ boundary at the newly released joint. These split-morphology artifacts are
 useful curriculum evidence, but none advances the canonical uniform-eight
 claim.
 
+### Modal Capture And Target-Plant Refinement Extension (2026-09-13)
+
+The capture expert was then made morphology-aware without changing the swing
+architecture. The post-handoff LQR now records its full state-cost weights in
+the controller artifact; the seven-link defaults remain unchanged. For the
+eight-link continuation, moderate relative-angle and relative-rate weights
+(`100` and `100`, with absolute angular-rate weight `10` and control cost
+`5000`) suppress the weak newly freed internal mode more reliably than the
+earlier high relative-angle weight. The replay-only path was also corrected to
+honor its requested inherited-feedback scale; older artifacts that predate this
+fix are retained as historical diagnostics.
+
+| Continuation | Result | Status |
+| --- | --- | --- |
+| Split/unlock `0.6390` | `24.06 s` hold, `2.360 m` peak cart | Corrected replay accepted |
+| Split/unlock `0.6425`, `0.6600` | `25.50 s` hold, `2.412 m` peak cart after target-plant Box-FDDP | Accepted curriculum checkpoints |
+| Split/unlock `0.7000`, `0.8000`, `0.9000` | `25.50 s` hold, about `2.413 m` peak cart | Accepted curriculum replays |
+| Split/unlock `1.0000` | Direct replay and 300-iteration refinement fail before capture | Rejected endpoint |
+| Locked split-to-uniform morphology `0.0001`, `0.0010`, `0.0020`, `0.0025`, `0.0030`, `0.0035`, `0.0036` | `23.10-25.50 s` holds, `2.325-2.397 m` peak cart | Accepted micro-step checkpoints |
+| Locked split-to-uniform morphology `0.00365` | `23.10 s` hold, `2.325 m` peak cart with medium modal capture weights | Accepted diagnostic checkpoint |
+| Locked split-to-uniform morphology `0.00366` | Replay, predecessor-linearization capture, and target-plant Box-FDDP refinement all exited the `3 m` rail; the best replay held only `0.72 s` | Rejected boundary probe |
+| Locked split-to-uniform morphology `0.00375`, `0.0040`, `0.0050` | Rail exit after `0.16-0.34 s` of transient upright behavior; local refinement did not recover it | Rejected probes |
+
+This advances the curriculum boundary but does not solve eight links. The
+final uniform plant still requires a route through the length/mass homotopy,
+then an exact `configs/swingup8_uniform.yaml` replay and canonical 20/100
+holdout gates. No split morphology, locked joint, altered rail, or diagnostic
+capture success may be reported as a uniform eight-link result.
+
 ### Current Canonical Seven-Link Result
 
 The final canonical control evaluation now passes independently of the earlier

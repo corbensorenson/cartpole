@@ -18,6 +18,7 @@ from typing import Any
 import numpy as np
 
 from gcartpole.config import apply_overrides, dump_json, load_config
+from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.evidence import (
     data_sha256,
     file_metadata,
@@ -27,7 +28,6 @@ from gcartpole.evidence import (
 )
 from gcartpole.ilqr import MujocoTransition, data_state
 from gcartpole.modal import StateScales, dimensionless_absolute_transform
-from gcartpole.env import NLinkCartPoleEnv
 
 
 def normalized_force(knots: np.ndarray, step: int, step_count: int) -> float:
@@ -36,7 +36,9 @@ def normalized_force(knots: np.ndarray, step: int, step_count: int) -> float:
     return float(np.clip(np.interp(phase, source, knots), -1.0, 1.0))
 
 
-def control_sample_index(step: int, policy_dt: float, source_seconds: float, count: int) -> int | None:
+def control_sample_index(
+    step: int, policy_dt: float, source_seconds: float, count: int
+) -> int | None:
     """Saved controls are interval actions, with no sample at the horizon."""
     if count < 1 or min(policy_dt, source_seconds) <= 0.0:
         raise ValueError("control count and time intervals must be positive")
@@ -51,6 +53,11 @@ def main() -> None:
     parser.add_argument("--spec", default="benchmarks/p1_capture_envelope.yaml")
     parser.add_argument("--proposal", required=True)
     parser.add_argument("--record-key", default="best")
+    parser.add_argument(
+        "--proposal-initial-state",
+        action="store_true",
+        help="start from proposal.initial_state instead of the hanging equilibrium",
+    )
     parser.add_argument("--seconds", type=float, default=None)
     parser.add_argument(
         "--tail-seconds",
@@ -84,11 +91,16 @@ def main() -> None:
     if not isinstance(record, dict):
         record = proposal.get("controller")
     if not isinstance(record, dict):
-        raise ValueError(f"{proposal_path} does not contain a force proposal or controller")
+        raise TypeError(
+            f"{proposal_path} does not contain a force proposal or controller"
+        )
     source_seconds = float(
         record.get(
             "horizon_seconds",
-            proposal.get("search", {}).get("seconds", args.seconds or 0.0),
+            proposal.get(
+                "tail_horizon_seconds",
+                proposal.get("search", {}).get("seconds", args.seconds or 0.0),
+            ),
         )
     )
     if source_seconds <= 0.0:
@@ -98,9 +110,7 @@ def main() -> None:
     if args.seconds is not None and args.tail_seconds > 0.0:
         raise ValueError("use either seconds or tail-seconds, not both")
     seconds = float(
-        args.seconds
-        if args.seconds is not None
-        else source_seconds + args.tail_seconds
+        args.seconds if args.seconds is not None else source_seconds + args.tail_seconds
     )
     if seconds <= 0.0:
         raise ValueError("seconds must be positive")
@@ -109,7 +119,12 @@ def main() -> None:
     cfg["env"] = {**cfg["env"], "init_mode": "hanging"}
     cfg["env"].setdefault("action_lqr_residual", {})["enabled"] = False
     cfg["env"].setdefault("action_lqr_switch", {})["enabled"] = False
-    for noise_key in ("init_angle_noise", "init_vel_noise", "init_cart_noise", "init_cart_vel_noise"):
+    for noise_key in (
+        "init_angle_noise",
+        "init_vel_noise",
+        "init_cart_noise",
+        "init_cart_vel_noise",
+    ):
         cfg["env"][noise_key] = 0.0
         cfg["env"][f"{noise_key}_start"] = 0.0
         cfg["env"][f"{noise_key}_end"] = 0.0
@@ -128,11 +143,22 @@ def main() -> None:
     )
     transition = MujocoTransition(env, coordinate_transform=transform)
     env.reset(seed=0)
+    if args.proposal_initial_state:
+        initial_record = proposal.get("initial_state")
+        if not isinstance(initial_record, dict):
+            raise ValueError("proposal does not contain initial_state")
+        qpos = np.asarray(initial_record.get("qpos"), dtype=np.float64)
+        qvel = np.asarray(initial_record.get("qvel"), dtype=np.float64)
+        if qpos.shape != (env.model.nq,) or qvel.shape != (env.model.nv,):
+            raise ValueError("proposal initial_state dimensions do not match plant")
+        env.reset(seed=0, options={"qpos": qpos, "qvel": qvel})
     policy_dt = float(env.dt)
     n_links = int(env.n)
-    step_count = max(2, int(round(seconds / policy_dt)))
-    source_step_count = max(2, int(round(source_seconds / policy_dt)))
-    knots = None if "knots" not in record else np.asarray(record["knots"], dtype=np.float64)
+    step_count = max(2, round(seconds / policy_dt))
+    source_step_count = max(2, round(source_seconds / policy_dt))
+    knots = (
+        None if "knots" not in record else np.asarray(record["knots"], dtype=np.float64)
+    )
     if "stitched_controls" in record:
         source_controls = np.asarray(record["stitched_controls"], dtype=np.float64)
     elif "controls" in record:
@@ -140,7 +166,9 @@ def main() -> None:
     else:
         source_controls = None
     if knots is None and (source_controls is None or source_controls.ndim != 1):
-        raise ValueError("proposal record must contain one-dimensional knots or controls")
+        raise ValueError(
+            "proposal record must contain one-dimensional knots or controls"
+        )
     source_nominal = None
     source_feedback = None
     if args.source_trajectory_feedback:
@@ -153,7 +181,9 @@ def main() -> None:
             dtype=np.float64,
         )
         feedback_proposal_path = (
-            proposal_path if args.feedback_proposal is None else Path(args.feedback_proposal)
+            proposal_path
+            if args.feedback_proposal is None
+            else Path(args.feedback_proposal)
         )
         feedback_proposal = (
             proposal
@@ -172,9 +202,13 @@ def main() -> None:
         )
         expected_state_dim = 2 * (n_links + 1)
         if source_nominal.shape != (source_controls.size + 1, expected_state_dim):
-            raise ValueError("saved nominal states do not match the target-chain state dimension")
+            raise ValueError(
+                "saved nominal states do not match the target-chain state dimension"
+            )
         if source_feedback.shape != (source_controls.size, expected_state_dim):
-            raise ValueError("saved feedback gains do not match the target-chain state dimension")
+            raise ValueError(
+                "saved feedback gains do not match the target-chain state dimension"
+            )
     controls: list[float] = []
     replay_feedback: list[np.ndarray] = []
     physical_states = [data_state(env.data)]
@@ -203,7 +237,11 @@ def main() -> None:
                 else:
                     action = 0.0
             else:
-                action = normalized_force(knots, step, source_step_count) if step < source_step_count else 0.0
+                action = (
+                    normalized_force(knots, step, source_step_count)
+                    if step < source_step_count
+                    else 0.0
+                )
             _, _, terminated, truncated, info = env.step([action])
             controls.append(float(info["applied_action_norm"]))
             replay_feedback.append(step_feedback.copy())
@@ -223,7 +261,9 @@ def main() -> None:
         env.close()
 
     if len(controls) != step_count:
-        raise RuntimeError("proposal replay terminated before the requested FDDP horizon")
+        raise RuntimeError(
+            "proposal replay terminated before the requested FDDP horizon"
+        )
     nominal_states = np.asarray(
         [transition.to_coordinates(state) for state in physical_states],
         dtype=np.float64,
@@ -242,8 +282,12 @@ def main() -> None:
             "state_index": 0,
         },
         "terminal_state": {
-            "qpos": np.asarray(physical_states[-1][:nq], dtype=np.float64).astype(float).tolist(),
-            "qvel": np.asarray(physical_states[-1][nq:], dtype=np.float64).astype(float).tolist(),
+            "qpos": np.asarray(physical_states[-1][:nq], dtype=np.float64)
+            .astype(float)
+            .tolist(),
+            "qvel": np.asarray(physical_states[-1][nq:], dtype=np.float64)
+            .astype(float)
+            .tolist(),
         },
         "controller": {
             "type": "exact_mujoco_force_proposal_warm_start",
@@ -272,11 +316,20 @@ def main() -> None:
             "iterations": 0,
             "cost": None,
             "nominal_coordinate_states": nominal_states.astype(float).tolist(),
-            "source_record_key": args.record_key if proposal.get(args.record_key) is not None else "controller",
+            "source_record_key": args.record_key
+            if proposal.get(args.record_key) is not None
+            else "controller",
             "source_record": {
                 key: record.get(key)
-                for key in ("cost", "best_time_seconds", "max_angle", "hinge_rms", "rail")
+                for key in (
+                    "cost",
+                    "best_time_seconds",
+                    "max_angle",
+                    "hinge_rms",
+                    "rail",
+                )
             },
+            "proposal_initial_state": bool(args.proposal_initial_state),
             "tail_seconds": float(args.tail_seconds),
             "source_trajectory_feedback": bool(args.source_trajectory_feedback),
         },
@@ -285,17 +338,24 @@ def main() -> None:
             "seed": 0,
             "steps": int(step_count),
             "done_events": done_events,
-            "max_cart_excursion": float(max(abs(float(state[0])) for state in physical_states)),
+            "max_cart_excursion": float(
+                max(abs(float(state[0])) for state in physical_states)
+            ),
             "nominal_sha256": data_sha256(nominal_states.tolist()),
         },
         "evidence": {
-            "config": {"path": str(Path(args.config)), "resolved_sha256": data_sha256(cfg)},
+            "config": {
+                "path": str(Path(args.config)),
+                "resolved_sha256": data_sha256(cfg),
+            },
             "runtime": runtime_metadata(),
             "git": git_metadata(Path(__file__).resolve().parents[1]),
         },
     }
     dump_json(out, Path(args.out))
-    print(f"Wrote {args.out} steps={step_count} max_cart={out['replay']['max_cart_excursion']:.3f}")
+    print(
+        f"Wrote {args.out} steps={step_count} max_cart={out['replay']['max_cart_excursion']:.3f}"
+    )
 
 
 if __name__ == "__main__":
