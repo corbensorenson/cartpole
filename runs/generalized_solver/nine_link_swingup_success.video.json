@@ -1,0 +1,192 @@
+{
+  "claim_status": "development_zoomed_out_video_candidate",
+  "config": {
+    "overrides": [
+      "env.episode_seconds",
+      "env.action_lqr_residual.enabled",
+      "env.action_lqr_switch.enabled"
+    ],
+    "path": "configs/swingup9_uniform.yaml",
+    "resolved_sha256": "654f6e034e0caf2628f114fe071cd06a0d71dcdded7ccdce90614a8fe86fa1b2",
+    "runtime_resolved_sha256": "339e0a2745725105d4602438e3ab7a90fd2eef0eea53461465f808776e3388a7"
+  },
+  "controller": {
+    "bytes": 3463983,
+    "path": "runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json",
+    "sha256": "a44d4058cd8f12ae62144a1142279f9cbb7ee08332e89a67f2a3ccb3e2dadf9d"
+  },
+  "environment": {
+    "force_limit": 80.0,
+    "init_mode": "hanging",
+    "initial_angle_noise": 0.05,
+    "initial_velocity_noise": 0.05,
+    "n_links": 9,
+    "rail_limit": 3.0,
+    "success_sustain_seconds": 5.0,
+    "success_upright_threshold": 0.15
+  },
+  "generated_at": "2026-09-13T19:39:06+00:00",
+  "generated_xml_sha256": "f8dcbc697dbbb038ec97f3bbe5c42c2fb5a9ca4e5e30770c43b47bae3e19e37c",
+  "git": {
+    "available": true,
+    "commit": "66c1a1dca686cac9462f3cb83b7eb09a1898a965",
+    "dirty": true,
+    "includes_untracked_files": false,
+    "status_short": [
+      " M ROADMAP.md",
+      " M docs/levers_and_pitfalls.md",
+      " M scripts/evaluate_fddp_two_expert.py",
+      " M scripts/evaluate_generalized_route_library.py",
+      " M scripts/render_fddp_parked_route_video.py",
+      " M scripts/search_capture_online_mpc.py",
+      " M scripts/search_fddp_capture.py",
+      " M scripts/search_swingup_tail_action_cem.py"
+    ]
+  },
+  "launch": {
+    "capture_cart_target_m": -0.05,
+    "capture_lqr_scale": 1.0,
+    "cart_target_m": -0.05,
+    "park_seconds": 14.0,
+    "phase_window": 6,
+    "route_seconds": 3.94,
+    "route_steps": 197,
+    "settle_control_cost": 1000.0,
+    "tracking_gain_scale": 1.0
+  },
+  "render": {
+    "completed_requested_steps": true,
+    "done_events": [
+      {
+        "step": 1500,
+        "success": true,
+        "terminated": false,
+        "termination_reason": "time_limit",
+        "time_seconds": 30.0,
+        "truncated": true
+      }
+    ],
+    "dt": 0.02,
+    "final_info": {
+      "absolute_angular_velocity_rms": 7.928503172038902e-06,
+      "action_bias_norm": 0.0,
+      "alpha_damping": 0.0,
+      "alpha_frictionloss": 0.0,
+      "alpha_length": 0.0,
+      "alpha_mass": 0.0,
+      "applied_action_norm": -1.9787505152635276e-05,
+      "capture_quality": 0.9987620452761292,
+      "capture_start_time": 17.84,
+      "centered_upright_streak_seconds": 12.18,
+      "controller_mode": "policy",
+      "damping": [
+        0.0016666666666666666,
+        0.0016666666666666666,
+        0.0016666666666666666,
+        0.0016666666666666666,
+        0.0016666666666666666,
+        0.0016666666666666666,
+        0.0016666666666666666,
+        0.0016666666666666666,
+        0.0016666666666666666
+      ],
+      "energy_fraction": 0.9999999982402674,
+      "frictionloss": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "hinge_velocity_rms": 2.5384754174792885e-06,
+      "init_qvel_scale": 1.0,
+      "init_state_index": null,
+      "is_upright": true,
+      "lengths": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "low_momentum_upright_streak_seconds": 12.08,
+      "lqr_cart_target": 0.0,
+      "lqr_switch_active": false,
+      "lqr_switch_entry_count": 0,
+      "lqr_switch_exit_count": 0,
+      "lqr_switch_first_entry_step": null,
+      "lqr_switch_first_entry_time": null,
+      "lqr_switch_lqr_steps": 0,
+      "lqr_switch_lyapunov_value": null,
+      "lqr_switch_policy_steps": 0,
+      "masses": [
+        0.1111111111111111,
+        0.1111111111111111,
+        0.1111111111111111,
+        0.1111111111111111,
+        0.1111111111111111,
+        0.1111111111111111,
+        0.1111111111111111,
+        0.1111111111111111,
+        0.1111111111111111
+      ],
+      "max_abs_angle": 8.441203316245094e-05,
+      "max_absolute_angular_velocity": 8.242725837442207e-06,
+      "max_cart_excursion": 2.930106744206266,
+      "max_centered_upright_streak_seconds": 12.18,
+      "max_low_momentum_upright_streak_seconds": 12.08,
+      "max_upright_streak_seconds": 12.18,
+      "mean_abs_angle": 8.359636231681912e-05,
+      "plant_progress": 1.0,
+      "policy_action_norm": -1.9787505152635276e-05,
+      "potential_energy": 15.401699918094371,
+      "progress": 1.0,
+      "rail_limit": 3.0,
+      "residual_scale": 1.0,
+      "success": true,
+      "termination_reason": "time_limit",
+      "time_to_capture": 22.82,
+      "time_to_first_upright": 17.84,
+      "upright_streak_seconds": 12.18,
+      "x": -0.06280738065467364
+    },
+    "first_upright_time": 17.84,
+    "fps": 50,
+    "frames": 1500,
+    "height": 720,
+    "max_cart_excursion": 2.930106744206266,
+    "requested_seconds": 30.0,
+    "reset_count": 0,
+    "seed": 91141,
+    "simulated_seconds": 30.0,
+    "width": 1280
+  },
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.5"
+  },
+  "schema_version": 1,
+  "summary": "Reset-free state-faithful noisy hanging-start parked-route replay for 9 uniform links.",
+  "video": {
+    "bytes": 799835,
+    "path": "runs/generalized_solver/nine_link_swingup_success.mp4",
+    "sha256": "d91642d9510883304ddd3868367817c72b256a23f446f1494b684158bea56a7c"
+  },
+  "visualization": "2d_state_faithful_zoomed_out"
+}

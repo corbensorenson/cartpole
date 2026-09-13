@@ -20,8 +20,11 @@ required horizon. The dependency order is:
    without resetting or overwriting simulator state.
 
 The public six-link result is a calibration target, not the project endpoint.
-The current final target is seven links first, followed by a measured scaling
-study for larger `n`.
+The current active frontier is ten links. The same evidence contract applies
+at every rung: hanging-start launch, saved real-state feedback route,
+reset-free capture, noisy 20/100 gates, exact replay, and inspectable video.
+The seven-link result remains the reference release; nine links is now the
+highest verified internal result and ten links is the next experiment.
 
 ## Literature Transfer
 
@@ -1822,6 +1825,99 @@ the full feedback controller is replayed on the canonical rail.
 
 It is not an external world-record claim. The result is model-specific,
 timing-specific, and not yet tested against link variation, actuator delay,
-sensor noise, or a competition's exact rules. The active frontier is nine
+sensor noise, or a competition's exact rules. The next active frontier is ten
 links. Start there by reusing this parked-launch and feedback/capture contract,
 and record any departure as a new ledger entry.
+
+## Nine-Link Continuation Diagnostics (2026-09-13)
+
+The nine-link campaign began with the same architecture that promoted eight
+links: quiet the hanging state, park the cart, execute one saved time-varying
+feedback route, and use a terminal capture controller. The early transfer and
+tail branches below were retained as negative controls before the successful
+terminal-angle refinement.
+
+| Lever | Result | Interpretation |
+| --- | --- | --- |
+| Direct eight-to-nine route transfer | `0/5`; route reached the rail near `3.00 m` | Adding one link without retiming does not preserve the handoff |
+| Longer transferred route with a settling tail | No hold; terminal mode remained high | Extra time after the inherited route does not remove injected internal energy |
+| Split-link continuation with a tiny locked tip | Negative; hard equality made FDDP ill-conditioned | A locked topology is not a dynamically identical lower-count plant in MuJoCo |
+| Equal half-link split with exact kinematic embedding | Stayed synchronized through most of the swing, then missed late capture | Capsule inertia changes matter at the terminal handoff |
+| Finite-spring tip-link curriculum | Tip stayed aligned, but the inherited first-eight route still missed capture | The missing ingredient is a low-modal-velocity nine-link handoff, not only tip angle |
+| Exact serial modal CEM, `3.94 s` | Best last-link angle about `0.65 rad`; hinge RMS about `1.61 rad/s` | Modal shaping is a useful warm start, not a solution |
+| Exact serial modal CEM, `6.0 s` | Best last-link angle about `0.61 rad`; hinge RMS about `2.24 rad/s`; diagnostic rail demand above `5.3 m` | A longer wind-up alone does not solve the nine-link terminal mode |
+
+The diagnostic artifacts are preserved under
+`runs/generalized_solver/n9_*` and the split adapter is
+`scripts/embed_locked_split_route.py`. They remain explicitly marked
+`not_solution`. During this continuation, the adapter was found to copy the
+source distal absolute rate into the inserted split joint incorrectly; the
+state, feedback, and physical-state embedding were corrected and covered by
+`tests/test_embed_locked_split_route.py`. The repaired locked-link branch is
+still negative and is not part of the promotion.
+
+## Nine-Link Parked-Route Promotion (2026-09-13)
+
+The successful nine-link controller keeps the eight-link runtime contract and
+changes only the target-plant route objective and parked target:
+
+| Lever | Result | Interpretation |
+| --- | --- | --- |
+| Park at `-0.15 m`, 14 s | `4/5` in an initial probe | Too close to the rail for the noisy nine-link route |
+| Park at `-0.05 m`, 14 s | `20/20` noisy probe | Accepted launch target |
+| Balanced Box-FDDP terminal objective | Endpoint angle about `0.314 rad`; LQR failed | Internal modes remain outside the capture basin |
+| Terminal angle factor `20`, hinge-rate factor `4` | Exact handoff `0.00004 rad`, `0.00068 rad/s` hinge RMS | Successful swing-route refinement |
+| Strict 3 m tail CEM | No valid replay | Tail-only repair was insufficient |
+| Wide-rail tail CEM | Lower angle but hinge RMS about `1.8 rad/s` | More rail does not remove internal momentum |
+| Parked route, feedback scale `1.0` | `20/20` and `100/100` noisy; exact `20/20` | Promoted nine-link controller |
+
+The frozen evidence is:
+
+- `runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_20.json`
+- `runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_100.json`
+- `runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_exact20.json`
+- `runs/generalized_solver/nine_link_swingup_success.video.json`
+- `runs/generalized_solver/nine_link_swingup_manifest.json`
+
+All noisy 100 episodes ended at the time limit, with maximum cart excursion
+`2.9800 m`; the held-out video uses seed `91141`, reaches upright at `17.84 s`,
+holds for `12.18 s`, and reports zero resets. This is an internal canonical
+benchmark result, not an external record claim. The next ledger entry is the
+ten-link extension using this exact parked-launch, feedback, and capture
+contract.
+
+## Six-Link Canonical Rail Homotopy Checkpoint (2026-09-13)
+
+The exact route that had previously succeeded only on a wide diagnostic rail
+was re-run under the proper `configs/swingup6_uniform.yaml` metadata and
+continued back to the canonical `+/-3 m` rail. This applies the promoted
+seven-link method directly: saved time-varying Box-FDDP feedback for the
+swing phase, a real uninterrupted terminal state, and LQR capture/hold. The
+rail was reduced in bounded steps rather than changing the route and rail at
+the same time.
+
+| Rail limit | Exact result | Peak cart excursion | Artifact |
+| ---: | --- | ---: | --- |
+| `12.00 m` | hold `26.06 s` | `3.099 m` | `runs/generalized_solver/n6_wide12_replay_provenance_fixed.json` |
+| `3.25 m` | hold `25.94 s` | `2.905 m` | `runs/generalized_solver/n6_rail325_homotopy.json` |
+| `3.10 m` | hold `24.76 s` | `2.855 m` | `runs/generalized_solver/n6_rail310_homotopy.json` |
+| `3.05 m` | hold `26.06 s` | `2.821 m` | `runs/generalized_solver/n6_rail305_homotopy.json` |
+| `3.00 m` | hold `26.08 s` | `2.755 m` | `runs/generalized_solver/n6_rail300_homotopy.json` |
+
+The canonical route was mirrored analytically and evaluated with exact
+forward selection after a 15-second hanging-equilibrium conditioning phase:
+`20/20` and `100/100` noisy episodes succeeded, both directions were used,
+all episodes ended at the time limit, and the maximum required rail ratio was
+`0.9724`. The evidence files are
+`runs/generalized_solver/n6_rail300_noisy20.json` and
+`runs/generalized_solver/n6_rail300_noisy100.json`; the mirrored route is
+`runs/generalized_solver/n6_rail300_mirror.json`.
+
+This is a strong six-link integrated-route checkpoint, not a claim that every
+earlier six-link capture-basin or global-discovery gate is complete. The P1/P2
+learner and real-handoff requirements remain separately tracked. The canonical
+presentation and route manifest are now recorded in
+`runs/generalized_solver/six_link_swingup_noisy_success.mp4`,
+`runs/generalized_solver/six_link_swingup_noisy_success.video.json`, and
+`runs/generalized_solver/six_link_route_manifest.json`; they do not close P1/P2
+by themselves.

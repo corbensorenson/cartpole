@@ -13,7 +13,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 from gcartpole.config import dump_json, load_config
-from gcartpole.env import NLinkCartPoleEnv, serial_absolute_angles, wrap_angle
+from gcartpole.env import NLinkCartPoleEnv, serial_absolute_angles
 from gcartpole.evidence import (
     data_sha256,
     file_metadata,
@@ -22,29 +22,35 @@ from gcartpole.evidence import (
     text_sha256,
     utc_timestamp,
 )
-from gcartpole.generalized_energy import hanging_lqr_gain
-from gcartpole.ilqr import data_state
 from gcartpole.modal import dimensionless_wrapped_state
 
 try:
-    from scripts.evaluate_fddp_two_expert import load_controller
+    from scripts.evaluate_fddp_two_expert import (
+        hanging_lqr_action_from_state,
+        hanging_lqr_gain,
+        load_controller,
+    )
     from scripts.search_swingup_capture import lqr_action, lqr_gain
 except ModuleNotFoundError:
-    from evaluate_fddp_two_expert import load_controller
+    from evaluate_fddp_two_expert import (
+        hanging_lqr_action_from_state,
+        hanging_lqr_gain,
+        load_controller,
+    )
     from search_swingup_capture import lqr_action, lqr_gain
 
 
 def hanging_target_action(
     env: NLinkCartPoleEnv, gain: np.ndarray, cart_target: float
 ) -> float:
-    state = data_state(env.data)
-    state[0] = float(env.data.qpos[0]) - float(cart_target)
-    state[1] = wrap_angle(float(env.data.qpos[1]) - np.pi)
-    if env.n > 1:
-        state[2 : env.n + 1] = wrap_angle(
-            np.asarray(env.data.qpos[2 : env.n + 1], dtype=np.float64)
-        )
-    return float(np.clip(-np.asarray(gain, dtype=np.float64) @ state, -1.0, 1.0))
+    qpos = np.asarray(env.data.qpos, dtype=np.float64).copy()
+    qpos[0] -= float(cart_target)
+    return hanging_lqr_action_from_state(
+        qpos,
+        np.asarray(env.data.qvel, dtype=np.float64),
+        gain,
+        scale=1.0,
+    )
 
 
 def draw_frame(
@@ -227,6 +233,7 @@ def main() -> None:
     parser.add_argument("--park-seconds", type=float, default=14.0)
     parser.add_argument("--cart-target", type=float, default=-0.15)
     parser.add_argument("--tracking-gain-scale", type=float, default=0.75)
+    parser.add_argument("--phase-window", type=int, default=6)
     parser.add_argument("--zero-noise", action="store_true")
     parser.add_argument("--fail-on-failure", action="store_true")
     args = parser.parse_args()
@@ -234,8 +241,10 @@ def main() -> None:
         raise ValueError("seconds, fps, width, and height must be positive")
     if args.park_seconds < 0.0 or args.tracking_gain_scale < 0.0:
         raise ValueError("park duration and tracking gain must be nonnegative")
-    if args.cart_target >= 0.0:
-        raise ValueError("cart target must be negative")
+    if args.phase_window < 0:
+        raise ValueError("phase window must be nonnegative")
+    if not np.isfinite(args.cart_target):
+        raise ValueError("cart target must be finite")
 
     source_cfg = load_config(args.config)
     cfg = copy.deepcopy(source_cfg)
@@ -273,13 +282,19 @@ def main() -> None:
     )
     env = NLinkCartPoleEnv(cfg, progress=1.0, seed=args.seed)
     _, reset_info = env.reset(seed=args.seed)
-    settle_gain = hanging_lqr_gain(env, control_cost=1000.0)
+    settle_gain = hanging_lqr_gain(
+        cfg,
+        progress=1.0,
+        fd_eps=1.0e-7,
+        control_cost=1000.0,
+    )
     controls = controller["controls"]
     nominal_states = controller["nominal_states"]
     feedback_gains = controller["feedback_gains"]
     transform = controller["transform"]
     translated_nominal_states = nominal_states.copy()
     cart_nominal_shift: float | None = None
+    phase_cursor = 0
     park_steps = round(args.park_seconds / env.dt)
     sim_steps = min(env.max_steps, round(args.seconds / env.dt))
     output_path = Path(args.out)
@@ -300,7 +315,6 @@ def main() -> None:
                 phase = "park_hanging"
                 action = hanging_target_action(env, settle_gain, args.cart_target)
             else:
-                route_step = step - park_steps
                 coordinate_state = dimensionless_wrapped_state(
                     np.asarray(env.data.qpos, dtype=np.float64),
                     np.asarray(env.data.qvel, dtype=np.float64),
@@ -311,8 +325,20 @@ def main() -> None:
                         coordinate_state[0] - nominal_states[0, 0]
                     )
                     translated_nominal_states[:, 0] += cart_nominal_shift
-                if route_step < controls.size:
+                if phase_cursor < controls.size:
                     phase = "swing_route_feedback"
+                    candidates = np.arange(
+                        phase_cursor,
+                        min(controls.size, phase_cursor + args.phase_window + 1),
+                        dtype=np.int64,
+                    )
+                    errors = translated_nominal_states[candidates] - coordinate_state
+                    route_step = int(
+                        candidates[
+                            int(np.argmin(np.einsum("ij,ij->i", errors, errors)))
+                        ]
+                    )
+                    phase_cursor = route_step + 1
                     action = float(
                         np.clip(
                             controls[route_step]
@@ -379,8 +405,8 @@ def main() -> None:
     metadata = {
         "schema_version": 1,
         "generated_at": utc_timestamp(),
-        "claim_status": "development_eight_link_video_candidate",
-        "summary": "Reset-free state-faithful eight-link noisy hanging-start parked-route replay.",
+        "claim_status": "development_zoomed_out_video_candidate",
+        "summary": f"Reset-free state-faithful noisy hanging-start parked-route replay for {int(cfg['env']['n_links'])} uniform links.",
         "visualization": "2d_state_faithful_zoomed_out",
         "video": file_metadata(output_path),
         "controller": controller["source"],
@@ -427,6 +453,7 @@ def main() -> None:
             "route_steps": int(controls.size),
             "route_seconds": float(controls.size * env.dt),
             "tracking_gain_scale": float(args.tracking_gain_scale),
+            "phase_window": int(args.phase_window),
             "capture_lqr_scale": float(controller["lqr_scale"]),
             "capture_cart_target_m": float(args.cart_target),
             "settle_control_cost": 1000.0,

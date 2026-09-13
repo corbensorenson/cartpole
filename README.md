@@ -1,6 +1,12 @@
-# Eight- and Seven-Link Cart-Pole Swing-Up & Hold
+# Nine-, Eight-, and Seven-Link Cart-Pole Swing-Up & Hold
 
-> **Highest verified internal benchmark: 8 links · noisy hanging start · 100/100 successful episodes · zero resets · ±3 m rail**
+> **Highest verified internal benchmark: 9 links · noisy hanging start · 100/100 successful episodes · zero resets · ±3 m rail**
+
+<p align="center">
+  <strong><a href="runs/generalized_solver/nine_link_swingup_success.mp4">Watch the full nine-link run</a></strong>
+  · <a href="docs/nine_link_swingup_paper.md">Read the nine-link paper</a>
+  · <a href="runs/generalized_solver/nine_link_swingup_manifest.json">Inspect the nine-link manifest</a>
+</p>
 
 <p align="center">
   <a href="runs/generalized_solver/eight_link_swingup_success.mp4">
@@ -29,7 +35,7 @@
 </p>
 
 This repository demonstrates reset-free swing-up and sustained hold of uniform
-seven- and eight-link cart-poles in MuJoCo. Each frozen hybrid controller passed
+seven-, eight-, and nine-link cart-poles in MuJoCo. Each frozen hybrid controller passed
 disjoint `20/20` and `100/100` noisy hanging-start gates on its declared plant.
 The videos above are held-out, uninterrupted 30-second replays; click either
 animated preview for the source MP4. Controllers, hashes, negative controls,
@@ -37,6 +43,7 @@ method papers, and reproduction commands are public.
 
 | Result | Noisy 20-episode gate | Disjoint noisy 100-episode gate | Held-out video | Method |
 |---|---:|---:|---|---|
+| **9 links — latest internal benchmark** | **20/20** | **100/100** | [MP4](runs/generalized_solver/nine_link_swingup_success.mp4) | [paper](docs/nine_link_swingup_paper.md) |
 | **8 links — latest internal benchmark** | **20/20** | **100/100** | [MP4](runs/generalized_solver/eight_link_swingup_success.mp4) | [paper](docs/eight_link_swingup_paper.md) |
 | **7 links — frozen release** | **20/20** | **100/100** | [MP4](runs/swingup7_uniform/seven_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |
 
@@ -111,11 +118,46 @@ force, morphology, damping, sensor-noise, and control-delay perturbations. This
 is a strong benchmark result with a narrow plant-and-timing contract, not a
 claim of broad robustness.
 
+## The nine-link record extension
+
+The same parked-launch, feedback-route, and delayed-capture architecture now
+reaches nine links on the repository's canonical uniform plant. This is the
+repository's highest verified internal benchmark, not a claim about an
+external competition record:
+
+| Benchmark property | Result |
+|---|---:|
+| Links | **9** |
+| 20-episode noisy gate | **20/20 (100%)** |
+| 100-episode noisy gate | **100/100 (100%)** |
+| Exact 20-episode check | **20/20 (100%)** |
+| Resets inside episodes | **0** |
+| Rail failures in the 100-episode gate | **0** |
+| First upright in held-out video | **17.84 s** |
+| Upright hold through video end | **12.18 s** |
+| Maximum cart excursion across 100 noisy episodes | **2.9800 m** |
+
+The nine-link launch parks the hanging cart at `-0.05 m` for `14.0 s`, runs a
+`3.94 s` Box-FDDP route with saved time-varying feedback, and hands off to an
+upright LQR around the parked cart target. The route's terminal objective
+weights absolute angle `20x` and hinge rate `4x`, producing a genuinely quiet
+handoff. See the [nine-link method paper](docs/nine_link_swingup_paper.md).
+
+| Artifact | What it establishes |
+|---|---|
+| [Zoomed-out 30-second video](runs/generalized_solver/nine_link_swingup_success.mp4) | Reset-free noisy hanging-start replay with all nine links visible |
+| [Video metadata](runs/generalized_solver/nine_link_swingup_success.video.json) | Held-out seed, zero resets, frame count, hashes, and final metrics |
+| [20-episode noisy gate](runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_20.json) | First nine-link acceptance gate: 20/20 |
+| [100-episode noisy gate](runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_100.json) | Nine-link final statistical gate: 100/100 |
+| [Exact 20-episode check](runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_exact20.json) | Deterministic no-noise replay: 20/20 |
+| [Nine-link manifest](runs/generalized_solver/nine_link_swingup_manifest.json) | Frozen phase timings, controller hash, config hash, and evidence links |
+| [Nine-link method paper](docs/nine_link_swingup_paper.md) | Method, terminal-angle refinement, negative controls, limitations, and reproduction commands |
+
 ## The eight-link record extension
 
-The same two-expert idea now reaches eight links on the repository's canonical
-uniform plant. This is the repository's highest verified internal benchmark,
-not a claim about an external competition record:
+The same two-expert idea reaches eight links on the repository's canonical
+uniform plant. This remains a verified internal benchmark, not a claim about
+an external competition record:
 
 | Benchmark property | Result |
 |---|---:|
@@ -167,6 +209,7 @@ the swing trajectory.
 | 6 links | **20/20** | 1.093 |
 | 7 links | **20/20** through shared evaluator; canonical release is **100/100** | 0.850 |
 | 8 links | Separate parked-launch release is **100/100** | 1.037 |
+| 9 links | Separate parked-launch release is **100/100** | 1.053 |
 
 These are development results, not additions to the public seven-link record
 claim. See the [generalized solver design and honest frontier](docs/generalized_solver.md),
@@ -180,9 +223,10 @@ capture, and exact planar mirror passed all 20 uninterrupted noisy episodes.
 The n=7 row reuses the frozen record controller through this shared evaluator;
 it does not claim that the new modal synthesis has independently regenerated
 the record route. The n=8 row is the separate parked-launch promotion and its
-`1.037` body-aware ratio is `(2.9300 m + 0.18 m) / 3 m`; it is not an independent
-modal-synthesis regeneration. Arbitrary unequal morphologies and n>=9 remain
-active work.
+`1.037` body-aware ratio is `(2.9300 m + 0.18 m) / 3 m`; the n=9 row is the
+same parked-launch promotion with a `1.053` body-aware ratio from the noisy
+100-episode maximum. Neither is an independent modal-synthesis regeneration.
+Arbitrary unequal morphologies and n>=10 remain active work.
 
 The same bounded actuator adapter has also passed a paired development check at
 every rung. A hidden map `delivered = 1.18 * commanded + 0.06` broke all 21
@@ -260,21 +304,22 @@ make that promotion boundary inspectable. The newer
 and [exact replay](runs/generalized_solver/n3_unequal_p036214_exact1.json) keep
 the continuing deterministic frontier separate from the robust claim.
 
-## Next frontier: nine links
+## Next frontier: ten links
 
-Eight links has passed the repository's internal evidence bundle. The next
-active frontier is **nine links**, and it must use the same discipline: start
+Nine links has passed the repository's internal evidence bundle. The next
+active frontier is **ten links**, and it must use the same discipline: start
 hanging, apply the settled-cart launch, swing with saved feedback, capture in
 the same episode, and pass fresh 20/100 noisy gates on the canonical rail.
-The earlier eight-link modal, open-loop, online-MPC, and wide-rail artifacts
-remain preserved as negative controls in the experiment ledger.
+The earlier nine-link transfer, tail-search, and locked-link artifacts remain
+preserved as negative controls in the experiment ledger.
 
-- [`configs/swingup8_uniform.yaml`](configs/swingup8_uniform.yaml)
-- [`runs/generalized_solver/n8_capture_fddp_feedback120.json`](runs/generalized_solver/n8_capture_fddp_feedback120.json)
+- [`configs/swingup9_uniform.yaml`](configs/swingup9_uniform.yaml)
+- [`runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json`](runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json)
+- [`runs/generalized_solver/nine_link_swingup_manifest.json`](runs/generalized_solver/nine_link_swingup_manifest.json)
 - [`ROADMAP.md`](ROADMAP.md)
 
 The project advances one link only after the same evidence bundle passes. No
-nine-link result is claimed yet.
+ten-link result is claimed yet.
 
 ## Reproduce the result
 
@@ -290,7 +335,7 @@ cd cartpole
 make setup-aligator
 make release-swingup7
 
-# Verify the published eight-link controller, gates, video, and manifest.
+# Verify the published internal nine-link controller, gates, video, and manifest.
 cd runs/generalized_solver
 shasum -a 256 -c SHA256SUMS
 ```
@@ -302,6 +347,8 @@ For individual replay commands and the evidence contract, follow the
 [seven-link paper's reproduction section](docs/seven_link_swingup_paper.md#6-reproduction).
 The [eight-link reproduction section](docs/eight_link_swingup_paper.md#6-reproduction)
 contains the exact parked-launch evaluation and rendering commands.
+The [nine-link reproduction section](docs/nine_link_swingup_paper.md#6-reproduction)
+contains the current frontier's exact commands and terminal-angle settings.
 
 ## Repository map
 
@@ -312,7 +359,7 @@ contains the exact parked-launch evaluation and rendering commands.
 | [`scripts`](scripts) | Training, search, evaluation, replay, and rendering entry points |
 | [`tests`](tests) | Dynamics, optimizer, morphology, and evidence-contract tests |
 | [`docs`](docs) | Paper, roadmap support, experiment ledger, and reproduction notes |
-| [`runs/generalized_solver`](runs/generalized_solver) | Curated n=1..8 gates, routes, videos, and honest frontier records |
+| [`runs/generalized_solver`](runs/generalized_solver) | Curated n=1..9 gates, routes, videos, and honest frontier records |
 | [`runs/swingup7_uniform`](runs/swingup7_uniform) | Curated public seven-link evidence bundle |
 
 Research history is intentionally preserved, including negative results. Start

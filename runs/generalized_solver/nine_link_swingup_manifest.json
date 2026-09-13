@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "claim_status": "released_internal_canonical_nine_link",
+  "architecture": "parked_launch_box_fddp_feedback_and_upright_lqr",
+  "benchmark": {
+    "config": "configs/swingup9_uniform.yaml",
+    "config_sha256": "7894384e893f1fd1e3b8946d1651a44c38e0288d81c0131fde62c2898eaf506c",
+    "resolved_noisy_config_sha256": "339e0a2745725105d4602438e3ab7a90fd2eef0eea53461465f808776e3388a7",
+    "resolved_exact_config_sha256": "ba3cb7ab8aa2fef997add9203dbad32de516ae631137881f07f046752d1c3296",
+    "generated_xml_sha256": "f8dcbc697dbbb038ec97f3bbe5c42c2fb5a9ca4e5e30770c43b47bae3e19e37c",
+    "n_links": 9,
+    "total_link_length_m": 3.0,
+    "total_link_mass_kg": 1.0,
+    "cart_mass_kg": 1.0,
+    "rail_limit_m": 3.0,
+    "force_limit_n": 80.0,
+    "policy_rate_hz": 50.0,
+    "episode_seconds": 30.0,
+    "upright_threshold_rad": 0.15,
+    "success_sustain_seconds": 5.0,
+    "initial_mode": "hanging",
+    "initial_angle_noise_std": 0.05,
+    "initial_velocity_noise_std": 0.05
+  },
+  "controller": {
+    "path": "runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json",
+    "bytes": 3463983,
+    "sha256": "a44d4058cd8f12ae62144a1142279f9cbb7ee08332e89a67f2a3ccb3e2dadf9d",
+    "route_steps": 197,
+    "route_seconds": 3.94,
+    "state_coordinates": "dimensionless_absolute_cart_and_link_coordinates",
+    "tracking_gain_scale": 1.0,
+    "lqr_scale": 1.0,
+    "lqr_control_cost": 1000.0,
+    "terminal_angle_factor": 20.0,
+    "terminal_hinge_velocity_factor": 4.0,
+    "optimizer_rail_soft_limit_m": 6.0,
+    "optimizer_rail_soft_limit_is_not_benchmark_rail": true
+  },
+  "experts": {
+    "conditioning": {
+      "type": "hanging_equilibrium_lqr_cart_park",
+      "duration_seconds": 14.0,
+      "cart_target_m": -0.05,
+      "control_cost": 1000.0,
+      "state_reset": false
+    },
+    "swing": {
+      "type": "box_fddp_time_varying_feedback",
+      "route_steps": 197,
+      "route_seconds": 3.94,
+      "tracking_gain_scale": 1.0,
+      "shift_nominal_cart_position_to_parked_x": true
+    },
+    "capture": {
+      "type": "upright_lqr",
+      "activation": "after_swing_route_horizon",
+      "scale": 1.0,
+      "control_cost": 1000.0,
+      "cart_target_m": -0.05
+    }
+  },
+  "switch": {
+    "state_reset_at_phase_boundaries": false,
+    "conditioning_to_swing": "after 14.0 seconds",
+    "swing_to_capture": "after 197 route steps",
+    "hysteresis": "not applicable; deterministic time-indexed boundaries"
+  },
+  "evaluation": {
+    "twenty_episode": {
+      "path": "runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_20.json",
+      "bytes": 119803,
+      "sha256": "14e2e0ab19985e13952491227fbead9c702f6e38d0e9a5c1a75f5923d8e91d76"
+    },
+    "twenty_seed_start": 91021,
+    "twenty_seed_end": 91040,
+    "hundred_episode": {
+      "path": "runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_100.json",
+      "bytes": 584780,
+      "sha256": "83fe044ebfc6a3b9aecd9214266cc33799f2aa70a6db92e420405134aff32cbe"
+    },
+    "hundred_seed_start": 91041,
+    "hundred_seed_end": 91140,
+    "exact_twenty_episode": {
+      "path": "runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_exact20.json",
+      "bytes": 120325,
+      "sha256": "b0f075db8f54aa130eaa0232746d47513c7accb85114e7bd449d25bffefad320"
+    },
+    "exact_twenty_seed_start": 91061,
+    "exact_twenty_seed_end": 91080,
+    "cohorts_are_pairwise_disjoint_for_noisy_gate": true,
+    "video": {
+      "path": "runs/generalized_solver/nine_link_swingup_success.mp4",
+      "bytes": 799835,
+      "sha256": "d91642d9510883304ddd3868367817c72b256a23f446f1494b684158bea56a7c"
+    },
+    "video_metadata": {
+      "path": "runs/generalized_solver/nine_link_swingup_success.video.json",
+      "bytes": 5853,
+      "sha256": "7bf5c6ebc970b8bbceb4470521a63eff39494a79a158ba05f7074f9193e2268b"
+    },
+    "video_seed": 91141,
+    "video_seed_is_outside_noisy_cohorts": true,
+    "video_reset_count": 0,
+    "video_first_upright_time": 17.84,
+    "video_max_upright_streak_seconds": 12.18
+  },
+  "results": {
+    "noisy20_successes": 20,
+    "noisy20_success_rate": 1.0,
+    "noisy100_successes": 100,
+    "noisy100_success_rate": 1.0,
+    "exact20_successes": 20,
+    "exact20_success_rate": 1.0,
+    "noisy100_max_cart_excursion_m": 2.979960210796602,
+    "noisy100_max_upright_streak_seconds": 12.18,
+    "episode_termination_counts": {
+      "time_limit": 100
+    },
+    "video_simulated_seconds": 30.0,
+    "video_max_cart_excursion_m": 2.930106744206266
+  },
+  "negative_controls": [
+    {
+      "artifact": "runs/generalized_solver/n9_generalized_transfer_warm.json",
+      "result": "0/5 parked noisy success; direct 8-to-9 transfer is not sufficient"
+    },
+    {
+      "artifact": "runs/generalized_solver/n9_parked_fddp_endpoint_probe5.json",
+      "result": "0/5; balanced terminal objective reached a high-momentum endpoint"
+    },
+    {
+      "artifact": "runs/generalized_solver/n9_capture_tail_cem_from_fddp_endpoint_strict.json",
+      "result": "strict rail tail search did not produce a valid independent replay"
+    },
+    {
+      "artifact": "runs/generalized_solver/n9_capture_tail_cem_from_fddp_endpoint_widerail6.json",
+      "result": "wide-rail tail search reduced angle but retained high internal momentum"
+    },
+    {
+      "artifact": "runs/generalized_solver/n9_tip_dummy_unlock_homotopy_repaired/continuation.json",
+      "result": "locked-link continuation remains unresolved; not used in the canonical result"
+    }
+  ],
+  "release": {
+    "source_commit": "3fb125b7b9f22ccdefb8488ebc687b9db17d2e77",
+    "source_commit_is_clean_at_generation": false,
+    "verification_commands": [
+      "scripts/evaluate_fddp_parked_route.py --config configs/swingup9_uniform.yaml --controller runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json --episodes 20 --seed 91021 --park-seconds 14 --cart-target -0.05 --tracking-gain-scale 1.0",
+      "scripts/evaluate_fddp_parked_route.py --config configs/swingup9_uniform.yaml --controller runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json --episodes 100 --seed 91041 --park-seconds 14 --cart-target -0.05 --tracking-gain-scale 1.0",
+      "scripts/render_fddp_parked_route_video.py --config configs/swingup9_uniform.yaml --controller runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json --seed 91141 --park-seconds 14 --cart-target -0.05 --tracking-gain-scale 1.0 --seconds 30 --fail-on-failure"
+    ],
+    "paper": "docs/nine_link_swingup_paper.md",
+    "ledger": "docs/levers_and_pitfalls.md"
+  },
+  "limitations": [
+    "Internal canonical benchmark result, not an external competition record claim.",
+    "Uniform nine-link plant and exact action timing only.",
+    "Model-based hybrid controller, not a single neural policy.",
+    "No claim of robustness to morphology variation, actuator delay, or sensor noise.",
+    "Route optimization used a diagnostic soft rail setting; promotion replay used the canonical +/-3 m rail.",
+    "The 14-second parked launch and -0.05 m cart target are part of the declared controller contract."
+  ]
+}

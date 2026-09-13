@@ -228,6 +228,7 @@ def run_episode(
     phase_adaptive: bool,
     phase_window: int,
     shift_cart_nominal: bool,
+    cart_target: float = 0.0,
     include_trajectory: bool = False,
     measurement_noise_std: float = 0.0,
     control_delay_steps: int = 0,
@@ -275,6 +276,7 @@ def run_episode(
         elif phase_adaptive and phase_cursor < controls.size:
             if shift_cart_nominal and cart_nominal_shift is None:
                 cart_nominal_shift = float(coordinate_state[0] - nominal_states[0, 0])
+                # The measured launch state already includes any parked cart target.
                 route_nominal_states[:, 0] += cart_nominal_shift
             candidates = np.arange(
                 phase_cursor,
@@ -298,6 +300,7 @@ def run_episode(
         elif not phase_adaptive and route_step < controls.size:
             if shift_cart_nominal and cart_nominal_shift is None:
                 cart_nominal_shift = float(coordinate_state[0] - nominal_states[0, 0])
+                # The measured launch state already includes any parked cart target.
                 route_nominal_states[:, 0] += cart_nominal_shift
             action = float(
                 np.clip(
@@ -316,7 +319,7 @@ def run_episode(
                 measured_qvel,
                 gain,
                 scale=controller["lqr_scale"],
-                cart_target=0.0,
+                cart_target=cart_target,
             )
             mode = "capture_lqr"
         commanded_action = float(action)
