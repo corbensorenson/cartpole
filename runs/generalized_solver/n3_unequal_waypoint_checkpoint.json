@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "claim_status": "development_partial_morphology_continuation",
+  "claim_status": "verified_development_partial_morphology_gate",
   "not_solution_of_full_target": true,
-  "summary": "Deterministic adaptive-lookahead continuation crossed the former local branch wall and produced an independently replayed exact n=3 route at p=0.033227909301859274.",
+  "summary": "Deterministic adaptive-lookahead continuation crossed the former local branch wall and produced an exact n=3 route at p=0.033227909301859274; exact planar mirroring plus deterministic forward selection then passed disjoint 20/20 and 100/100 noisy gates.",
   "full_target": {
     "lengths": [0.75, 1.0, 1.25],
     "masses": [0.2, 0.3, 0.5],
@@ -51,7 +51,28 @@
     "successes": 13,
     "success_rate": 0.65,
     "rail_violations": 7,
-    "interpretation": "This partial route is not promoted as a robust unequal-morphology solution; the bounded residual/capture layer still needs improvement before p=1 promotion."
+    "interpretation": "The one-sided route exposes a symmetry-basin boundary. It is retained as a negative control and is not the promoted paired controller."
+  },
+  "mirror_selection_gate": {
+    "mechanism": "Measure the noisy hanging state, simulate the exact route and its analytic planar mirror, and execute the route with the better predicted uninterrupted result.",
+    "learned_parameters": 0,
+    "twenty_episode_gate": {
+      "episodes": 20,
+      "successes": 20,
+      "prediction_execution_agreements": 20,
+      "route_counts": {"original": 13, "mirror": 7},
+      "maximum_cart_excursion": 3.3807634754939846,
+      "maximum_required_rail_ratio": 1.1869211584979948
+    },
+    "hundred_episode_gate": {
+      "episodes": 100,
+      "successes": 100,
+      "prediction_execution_agreements": 100,
+      "route_counts": {"original": 47, "mirror": 53},
+      "maximum_cart_excursion": 3.652893175894792,
+      "maximum_required_rail_ratio": 1.2776310586315973
+    },
+    "boundary": "This verifies the paired architecture only at the published p=0.033227909301859274 plant. The p=1 unequal target remains unsolved."
   },
   "artifacts": {
     "config": {
@@ -62,6 +83,10 @@
       "path": "runs/generalized_solver/n3_unequal_p033227_route.json",
       "sha256": "41be22c336857f36c53f3a219cbfc0d2bd4c80617100c7ef87540fb93a95e9ed"
     },
+    "mirror_controller": {
+      "path": "runs/generalized_solver/n3_unequal_p033227_route_mirror.json",
+      "sha256": "70c11c9a90f453da35a518f80c1cdd57cbaf3643a0c18351bfa8c82a7c6cb43e"
+    },
     "exact_gate": {
       "path": "runs/generalized_solver/n3_unequal_p033227_exact1.json",
       "sha256": "281f0b944efd1f3792c33191330491d0536945a2a81b19c779a6d605ee1e6a6a"
@@ -69,6 +94,14 @@
     "noisy_gate": {
       "path": "runs/generalized_solver/n3_unequal_p033227_noisy20.json",
       "sha256": "b0238ad1e2a6e1f39adb596f08007d8b8831de4326a5b2a2eeec2e4072fab841"
+    },
+    "mirror_noisy20_gate": {
+      "path": "runs/generalized_solver/n3_unequal_p033227_mirror_noisy20.json",
+      "sha256": "d91296b6484dd6963ce235e617773fbe16fe0e021bc41e77faea5e247c487999"
+    },
+    "mirror_noisy100_gate": {
+      "path": "runs/generalized_solver/n3_unequal_p033227_mirror_noisy100.json",
+      "sha256": "456564e4f7ae5aa606c517f435e17d3c365a09a02910fa559e343d8d902328dd"
     }
   }
 }

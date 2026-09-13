@@ -7,10 +7,14 @@ from scripts.verify_generalized_homotopy_checkpoint import verify_checkpoint
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKPOINT = ROOT / "runs/generalized_solver/n3_unequal_waypoint_checkpoint.json"
+ADAPTIVE_CHECKPOINT = (
+    ROOT / "runs/generalized_solver/n3_unequal_adaptive_checkpoint.json"
+)
 
 
 def test_published_checkpoint_is_internally_consistent() -> None:
     assert verify_checkpoint(CHECKPOINT) == []
+    assert verify_checkpoint(ADAPTIVE_CHECKPOINT) == []
 
 
 def test_checkpoint_detects_artifact_hash_tampering(tmp_path: Path) -> None:

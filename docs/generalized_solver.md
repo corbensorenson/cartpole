@@ -263,24 +263,41 @@ builds time-varying feedback, and only uninterrupted exact replay can advance
 the homotopy. This is a deterministic multiple-shooting-style bridge; it does
 not learn a route or relax the final gate.
 
-That adaptive horizon crossed the earlier local branch wall. The
-[compact verified n=3 checkpoint](../runs/generalized_solver/n3_unequal_waypoint_checkpoint.json)
+That adaptive horizon crossed the earlier local branch wall. The latest
+[verified n=3 adaptive checkpoint](../runs/generalized_solver/n3_unequal_adaptive_checkpoint.json)
 advances the strong-target homotopy from `p=0.02500` to
-`p=0.033227909301859274` over 35 accepted/rejected trials. At the last accepted
-step, the 24-control repair left the rail-safe branch, while the generic
-48-control repair reached its waypoints with `0.0125546` maximum dimensionless
-endpoint error. Its exact feedback replay held upright for `18.78 s`, used
-`3.28749 m` maximum cart-center excursion, and measured a `1.15583` body-aware
-required rail ratio. The [packaged route](../runs/generalized_solver/n3_unequal_p033227_route.json)
-and [exact gate](../runs/generalized_solver/n3_unequal_p033227_exact1.json) are
-published independently of the bulky local campaign traces.
+`p=0.034935339933321825` over 40 accepted/rejected trials. At the last accepted
+step, the generic 48-control repair produced a rail-safe exact trajectory and
+the full-horizon feedback replay held upright for `18.78 s`. The
+[packaged route](../runs/generalized_solver/n3_unequal_p034935_route.json), its
+analytic mirror, and the exact gate are published independently of the bulky
+local campaign traces.
 
-This is still a development checkpoint, not a robust solution. The
-[20-episode noisy diagnostic](../runs/generalized_solver/n3_unequal_p033227_noisy20.json)
-passed 13 episodes and hit the rail in 7. That failure is retained because it
-locates the next thin-layer requirement: stronger bounded capture/residual
-adaptation before further morphology promotion. Neither the checkpoint nor the
-exact replay is evidence that the full `p=1` morphology is solved.
+The route pair by itself passed 19 of 20 noisy starts; one state lay outside
+both immediate-launch basins. Feedback-gain and phase-window sweeps did not
+repair it, so the solver does not disguise the issue as retuning. Instead, the
+new bounded selector evaluates the analytic pair after a fixed grid of
+hanging-LQR durations normalized by morphology natural time:
+
+\[
+t_c/\tau \in \{0, 0.25, 0.5, 1, 2, 4\}, \qquad
+\tau=\sqrt{L/g}.
+\]
+
+It executes the shortest predicted success and stops evaluating longer rungs
+as soon as either symmetric route passes. This is deterministic measured-state
+model prediction, not policy learning: learned parameter count is zero, the
+grid is link-count independent, and all durations scale with the plant. The
+[adaptive 20-episode gate](../runs/generalized_solver/n3_unequal_p034935_adaptive20.json)
+passed **20/20**, and the disjoint
+[100-episode gate](../runs/generalized_solver/n3_unequal_p034935_adaptive100.json)
+passed **100/100**, with prediction matching execution in all 120 episodes.
+In the 100-episode gate, 94 starts launched immediately and six used only the
+first `0.25 tau` rung; no longer duration was needed. The original and mirror
+routes were selected 56 and 44 times, respectively, and the maximum body-aware
+required rail ratio was `1.19806`. The immediate-pair 19/20 artifact remains
+published as a negative control. This robust partial checkpoint is still not
+evidence that the full `p=1` morphology is solved.
 
 ## Rail-length relationship
 
@@ -372,7 +389,14 @@ PYTHONPATH=src:scripts python scripts/run_generalized_homotopy.py \
 
 PYTHONPATH=src:scripts python \
   scripts/verify_generalized_homotopy_checkpoint.py \
-  runs/generalized_solver/n3_unequal_waypoint_checkpoint.json
+  runs/generalized_solver/n3_unequal_adaptive_checkpoint.json
+
+PYTHONPATH=src:scripts python scripts/evaluate_generalized_adaptive_library.py \
+  --config configs/generalized_n3_unequal_p034935.yaml \
+  --controller runs/generalized_solver/n3_unequal_p034935_route.json \
+  --controller runs/generalized_solver/n3_unequal_p034935_route_mirror.json \
+  --episodes 100 --seed 85301 --tracking-gain-scale 1 --phase-window 0 \
+  --out runs/generalized_solver/reproduction/n3_p034935_adaptive100.json
 
 PYTHONPATH=src python scripts/evaluate_generalized_route_library.py \
   --config configs/swingup7_uniform.yaml --n-links 5 \

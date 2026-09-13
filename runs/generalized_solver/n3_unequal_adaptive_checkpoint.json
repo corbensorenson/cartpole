@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "claim_status": "verified_development_partial_morphology_adaptive_gate",
+  "not_solution_of_full_target": true,
+  "summary": "The generic deterministic continuation reached p=0.034935339933321825, then analytic route symmetry and bounded natural-time conditioning selection passed disjoint 20/20 and 100/100 noisy gates with zero learned parameters.",
+  "full_target": {
+    "lengths": [0.75, 1.0, 1.25],
+    "masses": [0.2, 0.3, 0.5],
+    "required_progress": 1.0
+  },
+  "checkpoint": {
+    "progress": 0.034935339933321825,
+    "lengths": [0.9912661650166695, 1.0, 1.0087338349833304],
+    "masses": [0.3286752880088904, 0.3321688220022226, 0.33915588998888696],
+    "next_step": 0.0006044629098073155,
+    "campaign_trials": 40,
+    "accepted_trials": 24,
+    "rejected_trials": 16,
+    "last_accepted_trial": 39,
+    "last_rejected_trial": 40
+  },
+  "deterministic_repair": {
+    "base_segment_steps": 24,
+    "lookahead_multipliers": [1, 2, 4],
+    "accepted_segment_steps": 48,
+    "accepted_waypoint_endpoint_error_norm": 0.1959712815249301,
+    "accepted_maximum_action_correction": 0.4292106058393912,
+    "rule": "Escalate bounded exact-model waypoint lookahead only after a cheaper repair fails; advance only after uninterrupted exact replay."
+  },
+  "dimensionless": {
+    "n_links": 3,
+    "chain_length": 3.0,
+    "rail_ratio": 1.6666666666666667,
+    "usable_rail_ratio": 1.6066666666666667,
+    "force_authority": 4.077471967380224,
+    "natural_time": 0.553001263609331,
+    "cart_to_link_mass": 1.0,
+    "length_fractions": [0.3304220550055565, 0.3333333333333333, 0.33624461166111014],
+    "mass_fractions": [0.3286752880088904, 0.3321688220022226, 0.33915588998888696]
+  },
+  "exact_gate": {
+    "episodes": 1,
+    "successes": 1,
+    "success_rate": 1.0,
+    "held_upright_seconds": 18.78,
+    "maximum_cart_excursion": 3.343476069973048,
+    "required_rail_ratio": 1.1744920233243494,
+    "termination_reason": "time_limit"
+  },
+  "immediate_pair_boundary": {
+    "episodes": 20,
+    "successes": 19,
+    "success_rate": 0.95,
+    "rail_violations": 1,
+    "interpretation": "Analytic left/right route selection alone leaves one measured start outside both immediate-launch basins."
+  },
+  "adaptive_selection_gate": {
+    "mechanism": "From the measured noisy hanging state, evaluate the analytic route pair over a bounded hanging-LQR duration grid expressed in morphology natural-time units; execute the shortest predicted success.",
+    "conditioning_time_ratios": [0.0, 0.25, 0.5, 1.0, 2.0, 4.0],
+    "conditioning_seconds": [0.0, 0.14, 0.28, 0.56, 1.1, 2.22],
+    "learned_parameters": 0,
+    "twenty_episode_gate": {
+      "episodes": 20,
+      "successes": 20,
+      "prediction_execution_agreements": 20,
+      "route_counts": {"original": 7, "mirror": 13},
+      "conditioning_ratio_counts": {"0.0": 19, "0.25": 1},
+      "maximum_cart_excursion": 3.397631550676682,
+      "maximum_required_rail_ratio": 1.1925438502255608
+    },
+    "hundred_episode_gate": {
+      "episodes": 100,
+      "successes": 100,
+      "prediction_execution_agreements": 100,
+      "route_counts": {"original": 56, "mirror": 44},
+      "conditioning_ratio_counts": {"0.0": 94, "0.25": 6},
+      "maximum_cart_excursion": 3.4141778659289397,
+      "maximum_required_rail_ratio": 1.19805928864298
+    },
+    "boundary": "This verifies the architecture only at the published p=0.034935339933321825 plant. The p=1 unequal target remains unsolved."
+  },
+  "artifacts": {
+    "config": {
+      "path": "configs/generalized_n3_unequal_p034935.yaml",
+      "sha256": "f956fed7ba87416de789cf5a1fd4287b1677da956070ab9a7949c3caeaca1d87"
+    },
+    "controller": {
+      "path": "runs/generalized_solver/n3_unequal_p034935_route.json",
+      "sha256": "28e599f0f51b2a82453d33b23bb46361856e99fd753d1c065b709f19021ad4bc"
+    },
+    "mirror_controller": {
+      "path": "runs/generalized_solver/n3_unequal_p034935_route_mirror.json",
+      "sha256": "1059bcaa40d6ac87744256d81fd55ce41addc1addfdd5496223365aedab3338b"
+    },
+    "exact_gate": {
+      "path": "runs/generalized_solver/n3_unequal_p034935_exact1.json",
+      "sha256": "fe0ce2421f9471b81bce44ed7dfd93ad3256cadf915825c7def8c7a454b6f21d"
+    },
+    "adaptive_immediate_negative_gate": {
+      "path": "runs/generalized_solver/n3_unequal_p034935_immediate_negative20.json",
+      "sha256": "22c9ae78aadd174cdec17cad6ebbc90004260640039a7dfa1d90bb8ee05e15dd"
+    },
+    "adaptive20_gate": {
+      "path": "runs/generalized_solver/n3_unequal_p034935_adaptive20.json",
+      "sha256": "25f6146862408b9f0769a3391325decfd1dbeb335e7194e3aa5d511baa024f5f"
+    },
+    "adaptive100_gate": {
+      "path": "runs/generalized_solver/n3_unequal_p034935_adaptive100.json",
+      "sha256": "71ca89d9e59bc1857568bd23fbe4b4b3b97738eb57ab3708a694f7fad36696c4"
+    }
+  }
+}
