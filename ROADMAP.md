@@ -1115,6 +1115,22 @@ controller. Next work should continue the analytic route nonlinearly while
 penalizing terminal modal velocity and cart travel, not add a larger fuzzy
 policy to patch this fly-through.
 
+That continuation is now implemented as a bounded residual around the exact
+full-resolution analytic controls. A weighted-sum probe cut its cost by 36.2%
+but exposed a tradeoff that could reward leaving upright. Replacing it with an
+explicit capture-envelope barrier reduced constraint violation from `8.7709`
+to `4.1654`. Its best serial state at `4.18 s` reached `0.1772 rad` maximum
+angle, `1.0144 rad/s` hinge RMS, `2.2515 rad/s` absolute-rate RMS, `0.3435 m`
+cart position, and `-0.4601 m/s` cart velocity. Body-aware rail demand fell to
+`1.5983` chain lengths.
+
+Upright modal decomposition shows `98.05%` of the remaining modal energy in
+the first collective mode and only `1.95%` in all internal modes. This narrows
+the next deterministic step to phase-paired collective-mode braking. The core
+now solves a minimum-energy transition from an arbitrary measured modal state,
+but direct linear capture tails and a Box-FDDP pass were not nonlinear-feasible
+from this energy and remain rejected diagnostics.
+
 ### Uniform Capture Endpoint Audit (2026-09-13)
 
 The existing six-link capture checkpoint was audited at the exact frozen

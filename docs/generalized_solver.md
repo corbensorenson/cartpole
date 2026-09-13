@@ -249,3 +249,35 @@ cart travel and terminal modal velocity before Box-FDDP, followed by the same
 noisy gate and lower-count regressions. See the
 [compact frontier record](../runs/generalized_solver/frontier_n6.json) and
 [analytic checkpoint](../runs/generalized_solver/frontier_n6_analytic_phase.json).
+
+### Whole-route nonlinear continuation
+
+The analytic schedule is now preserved at full policy resolution while a
+serial exact-MuJoCo CEM searches only bounded, low-dimensional additive
+residual knots. This is the intended thin optimization layer: it cannot replace
+the deterministic controller, and every candidate is evaluated through the
+same float32 `env.step` path used by replay.
+
+A conventional weighted sum reduced route cost from `5815.25` to `3709.99`
+and cart-center travel from `5.659 m` to `5.165 m`, but it exposed an important
+failure mode: the optimizer could buy lower terminal cost by moving away from
+upright. The search therefore supports a capture-envelope barrier that chooses
+the phase with the smallest explicit violation of angle, hinge-rate,
+absolute-rate, cart-position, and cart-velocity limits before considering the
+smooth quality score.
+
+On n=6, 100 barrier iterations reduced violation from `8.7709` to `4.1654`.
+The best serial state at 4.18 s had `0.1772 rad` maximum angle, `1.0144 rad/s`
+hinge RMS, `2.2515 rad/s` absolute-rate RMS, cart position `0.3435 m`, and cart
+velocity `-0.4601 m/s`. Maximum cart-center travel fell to `4.6148 m`, a
+body-aware rail ratio of `1.5983`. This is meaningful progress but still not a
+valid handoff.
+
+Exact upright modal decomposition localizes the remaining error: `98.05%` of
+the measured modal energy is in the first collective mode and only `1.95%` in
+all internal modes combined. The core solver now also exposes a finite-horizon
+minimum-energy modal transition from any measured state, not only the hanging
+equilibrium. Direct linear capture-tail probes were not nonlinear-feasible at
+this energy, and Box-FDDP became unstable, so neither is promoted. The next
+deterministic continuation should shape a phase-paired collective-mode braking
+segment inside the full route rather than adding a larger learned controller.

@@ -1471,6 +1471,16 @@ interpolation grid, frame skip, and termination semantics belong in the
 evidence contract; a batched optimizer result is only a proposal until the
 ordinary controller path reproduces it.
 
+The follow-on whole-route search exposed a second objective-design pitfall.
+A smooth weighted sum lowered total cost but could exchange upright coherence
+for lower cart or terminal velocity. The exact serial CEM now optionally uses
+a capture-envelope barrier: it first minimizes explicit violations of angle,
+hinge-rate, absolute-rate, cart-position, and cart-velocity limits at one
+candidate handoff phase, then uses the smooth score as a tie-breaker. On n=6
+this reduced violation from `8.7709` to `4.1654` and isolated `98.05%` of the
+remaining modal energy in the first collective mode. Hard acceptance geometry
+should be represented as constraints, not merely another weighted reward.
+
 ## Uniform Capture Endpoint Audit (2026-09-13)
 
 The protected six-link capture checkpoint was checked at the actual endpoint,

@@ -126,6 +126,138 @@ class ModalPhaseSeed:
         }
 
 
+@dataclass(frozen=True)
+class ModalTransitionSeed:
+    """Minimum-energy linear modal transition from an arbitrary plant state."""
+
+    policy_dt: float
+    horizon_seconds: float
+    initial_state: np.ndarray
+    target_state: np.ndarray
+    accelerations: np.ndarray
+    states: np.ndarray
+    terminal_residual: np.ndarray
+    unclipped_accelerations: np.ndarray
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "policy_dt": float(self.policy_dt),
+            "horizon_seconds": float(self.horizon_seconds),
+            "initial_state": self.initial_state.astype(float).tolist(),
+            "target_state": self.target_state.astype(float).tolist(),
+            "accelerations": self.accelerations.astype(float).tolist(),
+            "states": self.states.astype(float).tolist(),
+            "terminal_residual": self.terminal_residual.astype(float).tolist(),
+            "unclipped_accelerations": self.unclipped_accelerations.astype(
+                float
+            ).tolist(),
+        }
+
+
+def _modal_discrete_dynamics(
+    modes: ChainNormalModes,
+    policy_dt: float,
+) -> tuple[np.ndarray, np.ndarray]:
+    n = modes.n_links
+    d = n + 1
+    state_dim = 2 * d
+    continuous_a = np.zeros((state_dim, state_dim), dtype=np.float64)
+    continuous_b = np.zeros((state_dim, 1), dtype=np.float64)
+    continuous_a[:d, d:] = np.eye(d, dtype=np.float64)
+    continuous_a[d + 1 :, 1:d] = -np.diag(modes.squared_frequencies)
+    modal_damping = (
+        modes.relative_shapes.T @ modes.damping_matrix @ modes.relative_shapes
+    )
+    continuous_a[d + 1 :, d + 1 :] = -modal_damping
+    continuous_b[d, 0] = 1.0
+    continuous_b[d + 1 :, 0] = modes.cart_acceleration_coupling
+    augmented = np.zeros((state_dim + 1, state_dim + 1), dtype=np.float64)
+    augmented[:state_dim, :state_dim] = continuous_a
+    augmented[:state_dim, state_dim:] = continuous_b
+    discrete = expm(augmented * policy_dt)
+    return discrete[:state_dim, :state_dim], discrete[:state_dim, state_dim:]
+
+
+def minimum_energy_modal_transition(
+    modes: ChainNormalModes,
+    *,
+    relative_angles: np.ndarray,
+    hinge_rates: np.ndarray,
+    cart_position: float,
+    cart_velocity: float,
+    policy_dt: float,
+    horizon_seconds: float,
+    gravity: float,
+    target_relative_angles: np.ndarray | None = None,
+    target_cart_position: float = 0.0,
+    acceleration_limit_ratio: float = 4.0,
+    regularization: float = 1.0e-8,
+) -> ModalTransitionSeed:
+    """Compute a morphology-derived transition between measured modal states."""
+
+    if min(policy_dt, horizon_seconds, gravity, acceleration_limit_ratio) <= 0.0:
+        raise ValueError("time, gravity, and acceleration limit must be positive")
+    if regularization < 0.0 or not np.isfinite(regularization):
+        raise ValueError("regularization must be finite and nonnegative")
+    n = modes.n_links
+    target_angles = (
+        modes.relative_equilibrium
+        if target_relative_angles is None
+        else np.asarray(target_relative_angles, dtype=np.float64)
+    )
+    if target_angles.shape != (n,):
+        raise ValueError("target relative angles do not match the modal basis")
+    initial_modal_position, initial_modal_velocity = modes.coordinates(
+        relative_angles, hinge_rates
+    )
+    target_modal_position, _ = modes.coordinates(
+        target_angles, np.zeros(n, dtype=np.float64)
+    )
+    d = n + 1
+    state_dim = 2 * d
+    initial = np.zeros(state_dim, dtype=np.float64)
+    initial[0] = float(cart_position)
+    initial[1:d] = initial_modal_position
+    initial[d] = float(cart_velocity)
+    initial[d + 1 :] = initial_modal_velocity
+    target = np.zeros(state_dim, dtype=np.float64)
+    target[0] = float(target_cart_position)
+    target[1:d] = target_modal_position
+    steps = max(2, round(horizon_seconds / policy_dt))
+    state_matrix, input_matrix = _modal_discrete_dynamics(modes, policy_dt)
+    powers: list[np.ndarray] = [np.eye(state_dim, dtype=np.float64)]
+    for _ in range(steps):
+        powers.append(state_matrix @ powers[-1])
+    reachability = np.column_stack(
+        [powers[steps - 1 - step] @ input_matrix for step in range(steps)]
+    )
+    desired_change = target - powers[steps] @ initial
+    gramian = reachability @ reachability.T
+    rhs = np.linalg.solve(
+        gramian + regularization * np.eye(state_dim, dtype=np.float64),
+        desired_change,
+    )
+    unconstrained = reachability.T @ rhs
+    limit = acceleration_limit_ratio * gravity
+    accelerations = np.clip(unconstrained, -limit, limit)
+    states = [initial.copy()]
+    for acceleration in accelerations:
+        states.append(
+            state_matrix @ states[-1] + input_matrix[:, 0] * float(acceleration)
+        )
+    state_rows = np.asarray(states, dtype=np.float64)
+    return ModalTransitionSeed(
+        policy_dt=float(policy_dt),
+        horizon_seconds=float(steps * policy_dt),
+        initial_state=initial,
+        target_state=target,
+        accelerations=accelerations,
+        states=state_rows,
+        terminal_residual=state_rows[-1] - target,
+        unclipped_accelerations=unconstrained,
+    )
+
+
 def minimum_energy_modal_phase_seed(
     modes: ChainNormalModes,
     *,
@@ -150,61 +282,27 @@ def minimum_energy_modal_phase_seed(
         raise ValueError("time, gravity, and acceleration limit must be positive")
     if regularization < 0.0 or not np.isfinite(regularization):
         raise ValueError("regularization must be finite and nonnegative")
-    steps = max(2, round(horizon_seconds / policy_dt))
-    n = modes.n_links
-    d = n + 1
-    state_dim = 2 * d
-    continuous_a = np.zeros((state_dim, state_dim), dtype=np.float64)
-    continuous_b = np.zeros((state_dim, 1), dtype=np.float64)
-    continuous_a[:d, d:] = np.eye(d, dtype=np.float64)
-    continuous_a[d + 1 :, 1:d] = -np.diag(modes.squared_frequencies)
-    modal_damping = (
-        modes.relative_shapes.T @ modes.damping_matrix @ modes.relative_shapes
+    transition = minimum_energy_modal_transition(
+        modes,
+        relative_angles=modes.relative_equilibrium,
+        hinge_rates=np.zeros(modes.n_links, dtype=np.float64),
+        cart_position=0.0,
+        cart_velocity=0.0,
+        policy_dt=policy_dt,
+        horizon_seconds=horizon_seconds,
+        gravity=gravity,
+        target_relative_angles=np.zeros(modes.n_links, dtype=np.float64),
+        acceleration_limit_ratio=acceleration_limit_ratio,
+        regularization=regularization,
     )
-    continuous_a[d + 1 :, d + 1 :] = -modal_damping
-    continuous_b[d, 0] = 1.0
-    continuous_b[d + 1 :, 0] = modes.cart_acceleration_coupling
-
-    augmented = np.zeros((state_dim + 1, state_dim + 1), dtype=np.float64)
-    augmented[:state_dim, :state_dim] = continuous_a
-    augmented[:state_dim, state_dim:] = continuous_b
-    discrete = expm(augmented * policy_dt)
-    state_matrix = discrete[:state_dim, :state_dim]
-    input_matrix = discrete[:state_dim, state_dim:]
-
-    target_position, _ = modes.coordinates(
-        np.zeros(n, dtype=np.float64),
-        np.zeros(n, dtype=np.float64),
-    )
-    target = np.zeros(state_dim, dtype=np.float64)
-    target[1:d] = target_position
-    powers: list[np.ndarray] = [np.eye(state_dim, dtype=np.float64)]
-    for _ in range(steps - 1):
-        powers.append(state_matrix @ powers[-1])
-    reachability = np.column_stack(
-        [powers[steps - 1 - step] @ input_matrix for step in range(steps)]
-    )
-    gramian = reachability @ reachability.T
-    rhs = np.linalg.solve(
-        gramian + regularization * np.eye(state_dim, dtype=np.float64), target
-    )
-    unconstrained = reachability.T @ rhs
-    limit = acceleration_limit_ratio * gravity
-    accelerations = np.clip(unconstrained, -limit, limit)
-    states = [np.zeros(state_dim, dtype=np.float64)]
-    for acceleration in accelerations:
-        states.append(
-            state_matrix @ states[-1] + input_matrix[:, 0] * float(acceleration)
-        )
-    state_rows = np.asarray(states, dtype=np.float64)
     return ModalPhaseSeed(
-        policy_dt=float(policy_dt),
-        horizon_seconds=float(steps * policy_dt),
-        accelerations=accelerations,
-        states=state_rows,
-        target_state=target,
-        terminal_residual=state_rows[-1] - target,
-        unclipped_accelerations=unconstrained,
+        policy_dt=transition.policy_dt,
+        horizon_seconds=transition.horizon_seconds,
+        accelerations=transition.accelerations,
+        states=transition.states,
+        target_state=transition.target_state,
+        terminal_residual=transition.terminal_residual,
+        unclipped_accelerations=transition.unclipped_accelerations,
     )
 
 

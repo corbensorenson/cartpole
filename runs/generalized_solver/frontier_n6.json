@@ -51,8 +51,21 @@
     "exact_best_absolute_angular_velocity_rms": 3.9027832529608752,
     "exact_max_cart_center_excursion": 5.659227947000738,
     "exact_body_aware_required_rail_ratio": 1.9464093156669124,
-    "result": "best generalized six-link upright approach so far, but outside the low-momentum capture envelope",
+    "result": "deterministic center for the best generalized six-link upright approach so far, but outside the low-momentum capture envelope",
     "compact_evidence": "runs/generalized_solver/frontier_n6_analytic_phase.json"
+  },
+  "nonlinear_constraint_continuation": {
+    "architecture": "bounded low-dimensional residual CEM around the full-resolution deterministic modal schedule, evaluated only by serial env.step replay",
+    "capture_constraint_violation_before": 8.770921048788665,
+    "capture_constraint_violation_after": 4.16537577121867,
+    "best_max_abs_angle": 0.1772022925969896,
+    "best_hinge_velocity_rms": 1.0144137020968755,
+    "best_absolute_angular_velocity_rms": 2.251535929437128,
+    "best_cart_position": 0.3435265030300458,
+    "best_cart_velocity": -0.46007482198618566,
+    "body_aware_required_rail_ratio": 1.5982761944241435,
+    "collective_mode_energy_fraction": 0.9805065854563422,
+    "capture_constraints_satisfied": false
   },
   "numerical_integrity_boundary": {
     "finding": "float64 batched tail actions can diverge from the float32 public environment action path at n=6",
@@ -67,5 +80,5 @@
     }
   },
   "rail_conclusion": "No minimum rail is certified for n=6. Tested failures persisted with large diagnostic headroom, so route/modal phasing is the current blocker.",
-  "next_method": "deterministic nonlinear continuation of the analytic modal phase seed with explicit cart-travel and terminal-modal-velocity penalties, followed by the same Box-FDDP, serial replay, noisy-gate, and lower-count regression path"
+  "next_method": "phase-paired deterministic braking of the first collective mode inside the full nonlinear route optimization, followed by Box-FDDP only after a serially verified capture-feasible warm start, then the noisy gate and lower-count regression path"
 }

@@ -116,8 +116,11 @@ deterministic route whose measured body-aware requirement was 1.171 chain
 lengths. Full-horizon Box-FDDP supplies the trajectory and time-varying local
 feedback, while exact forward simulation selects only between the route and
 its analytic mirror. At six links, a new zero-learned-parameter modal
-controllability schedule reaches within 0.178 rad of upright, but carries too
-much angular velocity to hold; it is published only as an
+controllability schedule plus a bounded whole-route residual continuation
+reaches a centered state within 0.177 rad of upright and cuts its explicit
+capture-envelope violation by 52.5%. Nearly all remaining energy is isolated
+in the first collective mode, and it still carries too much angular velocity
+to hold; the result is published only as an
 [honest analytic frontier](runs/generalized_solver/frontier_n6_analytic_phase.json),
 not as a success.
 

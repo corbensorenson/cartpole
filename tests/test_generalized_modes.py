@@ -10,6 +10,7 @@ from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.generalized_modes import (
     chain_normal_modes,
     minimum_energy_modal_phase_seed,
+    minimum_energy_modal_transition,
     modal_energy_acceleration_ratio,
     modal_handoff_metrics,
 )
@@ -157,4 +158,26 @@ def test_minimum_energy_modal_seed_is_finite_and_places_linear_target():
     assert np.all(np.isfinite(seed.states))
     assert np.linalg.norm(seed.terminal_residual) < 1.0e-4
     assert len(seed.to_dict()["accelerations"]) == seed.accelerations.size
+    env.close()
+
+
+def test_minimum_energy_modal_transition_accepts_arbitrary_measured_state():
+    env = uniform_env(2)
+    env.reset(seed=0)
+    modes = chain_normal_modes(env, equilibrium="hanging")
+    transition = minimum_energy_modal_transition(
+        modes,
+        relative_angles=modes.relative_equilibrium + np.asarray([0.03, -0.02]),
+        hinge_rates=np.asarray([0.12, -0.08]),
+        cart_position=0.2,
+        cart_velocity=-0.1,
+        policy_dt=float(env.dt),
+        horizon_seconds=6.0,
+        gravity=9.81,
+        acceleration_limit_ratio=1.0e6,
+        regularization=1.0e-10,
+    )
+    assert transition.initial_state.shape == (6,)
+    assert np.linalg.norm(transition.terminal_residual) < 1.0e-4
+    assert transition.to_dict()["initial_state"][0] == 0.2
     env.close()

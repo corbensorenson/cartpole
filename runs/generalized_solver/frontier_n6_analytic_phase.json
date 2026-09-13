@@ -54,7 +54,40 @@
     "serial_termination_reason": "rail_violation",
     "serial_max_cart_center_excursion": 12.046439433957126
   },
+  "whole_route_nonlinear_continuation": {
+    "method": "serial exact-MuJoCo CEM over bounded low-dimensional residual knots around the full-resolution analytic controller",
+    "fuzzy_role": "bounded optimizer only; the morphology-derived controller remains the deterministic center",
+    "weighted_sum_probe": {
+      "iterations": 80,
+      "baseline_cost": 5815.251635690474,
+      "final_cost": 3709.9884576469303,
+      "final_max_cart_center_excursion": 5.164846174973183,
+      "lesson": "improved the route but could trade upright coherence against terminal velocity"
+    },
+    "capture_constraint_barrier_probe": {
+      "iterations": 100,
+      "baseline_constraint_violation": 8.770921048788665,
+      "final_constraint_violation": 4.16537577121867,
+      "best_time_seconds": 4.18,
+      "max_abs_angle": 0.1772022925969896,
+      "hinge_velocity_rms": 1.0144137020968755,
+      "absolute_angular_velocity_rms": 2.251535929437128,
+      "cart_position": 0.3435265030300458,
+      "cart_velocity": -0.46007482198618566,
+      "max_cart_center_excursion": 4.6148285832724305,
+      "body_aware_required_rail_ratio": 1.5982761944241435,
+      "capture_constraints_satisfied": false
+    },
+    "upright_modal_diagnosis": {
+      "collective_mode_energy_fraction": 0.9805065854563422,
+      "internal_mode_energy_fraction": 0.01949341454365775,
+      "collective_modal_velocity": 3.84534627,
+      "interpretation": "the residual blocker is almost entirely the first collective mode rather than distal-mode incoherence"
+    },
+    "box_fddp_result": "rejected; exact warm-start refinement became numerically unstable and exited the diagnostic rail"
+  },
   "reproduce": "PYTHONPATH=src python scripts/materialize_modal_phase_seed.py --config configs/swingup7_uniform.yaml --n-links 6 --seconds 3.9 --override env.rail_limit=12.0 --out runs/generalized_solver/n6_analytic_modal_seed_h3p9.json",
+  "reproduce_continuation": "make generalized-modal-continue6",
   "full_local_artifact_sha256": "c60097d4e62c00c04fd0fbd3cb4dfc3e07bca78bf1fb7cd9dac74fe2998d7e8c",
   "controls_sha256": "85a51e8d32a0b3b71a49f6f325469f6276f84e15ae28b406226ae9c36b845dc9"
 }
