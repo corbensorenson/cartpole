@@ -2,11 +2,30 @@ from __future__ import annotations
 
 from html import escape
 
+import numpy as np
+
 from .morphology import Morphology
 
 
 def _f(x: float) -> str:
     return f"{float(x):.9g}"
+
+
+def _rigid_split_groups(morph: Morphology) -> dict[int, tuple[int, float]]:
+    """Map group starts to inclusive ends and their common lock strength."""
+
+    groups: dict[int, tuple[int, float]] = {}
+    start = 0
+    while start < morph.n_links:
+        end = start
+        strengths: list[float] = []
+        while end + 1 < morph.n_links and float(morph.joint_lock[end + 1]) > 0.0:
+            end += 1
+            strengths.append(float(morph.joint_lock[end]))
+        if end > start:
+            groups[start] = (end, min(strengths))
+        start = end + 1
+    return groups
 
 
 def generate_nlink_cartpole_xml(
@@ -20,6 +39,7 @@ def generate_nlink_cartpole_xml(
     cart_frictionloss: float = 0.0,
     joint_armature: float = 0.0005,
     link_radius: float = 0.025,
+    rigid_split_inertia: bool = False,
 ) -> str:
     """Generate a planar serial n-link inverted pendulum on a sliding cart.
 
@@ -35,6 +55,11 @@ def generate_nlink_cartpole_xml(
     rail = float(rail_limit)
     cart_half_z = 0.07
     base_z = cart_half_z
+    split_groups = _rigid_split_groups(morph) if rigid_split_inertia else {}
+    group_for_link: dict[int, tuple[int, int, float]] = {}
+    for group_start, (group_end, strength) in split_groups.items():
+        for link in range(group_start, group_end + 1):
+            group_for_link[link] = (group_start, group_end, strength)
 
     lines: list[str] = []
     lines.append(f'<mujoco model="gradient_{n}_link_cartpole">')
@@ -60,7 +85,7 @@ def generate_nlink_cartpole_xml(
     for i in range(n):
         idx = i + 1
         length = morph.lengths[i]
-        mass = morph.masses[i]
+        mass = float(morph.masses[i])
         damping = morph.damping[i]
         frictionloss = morph.frictionloss[i]
         stiffness = morph.joint_stiffness[i]
@@ -68,8 +93,41 @@ def generate_nlink_cartpole_xml(
         lines.append(f'{indent}<body name="link_{idx}" pos="0 0 {_f(parent_pos if i == 0 else morph.lengths[i-1])}">')
         indent += '  '
         spring = "" if stiffness <= 0.0 else f' stiffness="{_f(stiffness)}" springref="0"'
-        lines.append(f'{indent}<joint name="hinge_{idx}" type="hinge" axis="0 1 0" damping="{_f(damping)}" frictionloss="{_f(frictionloss)}"{spring}/>')
-        lines.append(f'{indent}<geom name="link_{idx}_geom" type="capsule" fromto="0 0 0 0 0 {_f(length)}" size="{_f(link_radius)}" mass="{_f(mass)}" rgba="{escape(rgba)}"/>')
+        armature = (
+            float(joint_armature) * (1.0 - float(morph.joint_lock[i]))
+            if rigid_split_inertia
+            else float(joint_armature)
+        )
+        lines.append(
+            f'{indent}<joint name="hinge_{idx}" type="hinge" axis="0 1 0" '
+            f'damping="{_f(damping)}" frictionloss="{_f(frictionloss)}" '
+            f'armature="{_f(armature)}"{spring}/>'
+        )
+        standard_mass = mass
+        group = group_for_link.get(i)
+        if group is not None:
+            group_start, group_end, strength = group
+            group_mass = float(np.sum(morph.masses[group_start : group_end + 1]))
+            numerical_mass = 1.0e-8 * group_mass
+            standard_mass = (1.0 - strength) * mass + strength * numerical_mass * (
+                mass / group_mass
+            )
+        lines.append(
+            f'{indent}<geom name="link_{idx}_geom" type="capsule" '
+            f'fromto="0 0 0 0 0 {_f(length)}" size="{_f(link_radius)}" '
+            f'mass="{_f(standard_mass)}" rgba="{escape(rgba)}"/>'
+        )
+        if i in split_groups:
+            group_end, strength = split_groups[i]
+            group_mass = float(np.sum(morph.masses[i : group_end + 1]))
+            numerical_mass = 1.0e-8 * group_mass
+            combined_mass = strength * (group_mass - numerical_mass)
+            combined_length = float(np.sum(morph.lengths[i : group_end + 1]))
+            lines.append(
+                f'{indent}<geom name="link_{idx}_rigid_split_geom" type="capsule" '
+                f'fromto="0 0 0 0 0 {_f(combined_length)}" size="{_f(link_radius)}" '
+                f'mass="{_f(combined_mass)}" rgba="{escape(rgba)}"/>'
+            )
         lines.append(f'{indent}<site name="tip_{idx}" pos="0 0 {_f(length)}" size="0.012" rgba="0 0 0 1"/>')
 
     # close nested link bodies + cart + worldbody
@@ -82,13 +140,18 @@ def generate_nlink_cartpole_xml(
     if locked:
         lines.append('  <equality>')
         for i in locked:
-            # Legacy diagnostic schedule: weakening solref leaves a finite
-            # constraint at strength -> 0. Deletion at zero is discontinuous.
+            # Continue the constraint through its dimensionless impedance.
+            # MuJoCo clamps impedance to [1e-4, 0.9999], so the last positive
+            # value is already nearly disabled before the equality disappears
+            # at exactly zero.  A constant refsafe-compatible time constant
+            # avoids changing both constraint stiffness knobs simultaneously.
             strength = max(0.0, min(1.0, float(morph.joint_lock[i])))
-            timeconst = 0.001 + 0.249 * (1.0 - strength)
+            impedance = 0.0001 + (0.9999 - 0.0001) * strength
+            timeconst = max(2.0 * float(timestep), 1.0e-4)
             lines.append(
                 f'    <joint joint1="hinge_{int(i) + 1}" '
-                f'polycoef="0 0 0 0 0" solref="{_f(timeconst)} 1"/>'
+                f'polycoef="0 0 0 0 0" solref="{_f(timeconst)} 1" '
+                f'solimp="{_f(impedance)} {_f(impedance)} 0.001 0.5 2"/>'
             )
         lines.append('  </equality>')
     lines.append('  <actuator>')

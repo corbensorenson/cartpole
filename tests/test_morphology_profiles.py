@@ -8,7 +8,6 @@ import numpy as np
 from gcartpole.config import load_config
 from gcartpole.env import NLinkCartPoleEnv
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -81,6 +80,9 @@ class ExplicitMorphologyProfileTests(unittest.TestCase):
             self.assertEqual(int(middle.model.neq), 1)
             self.assertEqual(int(end.model.neq), 0)
             self.assertIn('joint1="hinge_8"', start.xml)
+            np.testing.assert_allclose(start.model.eq_solimp[0, :2], [0.9999, 0.9999])
+            np.testing.assert_allclose(middle.model.eq_solimp[0, :2], [0.5, 0.5])
+            np.testing.assert_allclose(start.model.eq_solref[0], [0.01, 1.0])
         finally:
             start.close()
             middle.close()

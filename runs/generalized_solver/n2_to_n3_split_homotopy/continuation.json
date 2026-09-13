@@ -1,0 +1,334 @@
+{
+  "claim_status": "locked_split_continuation_not_record_evidence",
+  "continuation_config": {
+    "bytes": 1999,
+    "path": "configs/generalized_n2_to_n3_split_continuation.yaml",
+    "sha256": "011cd2253035f3de1553236058521460ee72c4062ba49acb61f2ff40542f6193"
+  },
+  "current_controller": {
+    "bytes": 2239119,
+    "path": "runs/generalized_solver/n2_to_n3_split_homotopy/trials/trial_0002_p0.000260000_waypoint_x4_fddp.json",
+    "sha256": "7914ab3d6edd26930c635e01ccbb3145fa2afe9914935f03fa4acfdaaaee0a23"
+  },
+  "endpoint_dimensionless": {
+    "locked_start": {
+      "cart_damping_ratio": 0.00553001263609331,
+      "cart_half_length_ratio": 0.06,
+      "cart_to_link_mass": 1.0,
+      "chain_length": 3.0,
+      "force_authority": 4.077471967380224,
+      "joint_armature_ratio": 2.777777777777778e-05,
+      "joint_damping_ratios": [
+        0.00023041719317055457,
+        0.0,
+        0.00023041719317055457
+      ],
+      "length_fractions": [
+        0.2142857142857143,
+        0.28571428571428575,
+        0.5
+      ],
+      "link_radius_ratio": 0.008333333333333333,
+      "mass_fractions": [
+        0.2142857142857143,
+        0.28571428571428575,
+        0.5
+      ],
+      "n_links": 3,
+      "natural_time": 0.553001263609331,
+      "policy_dt_ratio": 0.03616628264005025,
+      "rail_ratio": 1.6666666666666667,
+      "system_mass": 2.0,
+      "usable_rail_ratio": 1.6066666666666667
+    },
+    "unlocked_target": {
+      "cart_damping_ratio": 0.00553001263609331,
+      "cart_half_length_ratio": 0.06,
+      "cart_to_link_mass": 1.0,
+      "chain_length": 3.0,
+      "force_authority": 4.077471967380224,
+      "joint_armature_ratio": 2.777777777777778e-05,
+      "joint_damping_ratios": [
+        0.00015361146211370305,
+        0.00015361146211370305,
+        0.00015361146211370305
+      ],
+      "length_fractions": [
+        0.25,
+        0.3333333333333333,
+        0.4166666666666667
+      ],
+      "link_radius_ratio": 0.008333333333333333,
+      "mass_fractions": [
+        0.2,
+        0.3,
+        0.5
+      ],
+      "n_links": 3,
+      "natural_time": 0.553001263609331,
+      "policy_dt_ratio": 0.03616628264005025,
+      "rail_ratio": 1.6666666666666667,
+      "system_mass": 2.0,
+      "usable_rail_ratio": 1.6066666666666667
+    }
+  },
+  "link_count": 3,
+  "locked_start_baseline": {
+    "accepted": true,
+    "config": {
+      "bytes": 2052,
+      "path": "runs/generalized_solver/n2_to_n3_split_homotopy/configs/locked_split_baseline.yaml",
+      "sha256": "684dbf81e62ef2a0b6be087dff5ac732d9f215399d0b66fe6a9759b3ecd694f8"
+    },
+    "outcome": {
+      "latched": true,
+      "max_cart_excursion": 2.796574673988507,
+      "max_upright_streak_seconds": 20.54,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 2.023425326011493,
+        "max_cart_center_excursion": 2.796574673988507,
+        "required_rail_half_length": 2.976574673988507,
+        "required_rail_ratio": 0.992191557996169
+      },
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    "result": {
+      "bytes": 2239612,
+      "path": "runs/generalized_solver/n2_to_n3_split_homotopy/trials/locked_split_baseline_waypoint_fddp.json",
+      "sha256": "22d0b409277003de8ca507c4e2f2eed3273f2d2d19fff4afe7adebdf97adfa70"
+    },
+    "waypoint_attempts": [
+      {
+        "artifact": {
+          "bytes": 314249,
+          "path": "runs/generalized_solver/n2_to_n3_split_homotopy/trials/locked_split_baseline_waypoint.json",
+          "sha256": "fb0f3479bcc822d5326386f6f790439635ef4cae2a0788d6f0dbfc01cd9b448d"
+        },
+        "refinement": {
+          "bytes": 2239612,
+          "path": "runs/generalized_solver/n2_to_n3_split_homotopy/trials/locked_split_baseline_waypoint_fddp.json",
+          "sha256": "22d0b409277003de8ca507c4e2f2eed3273f2d2d19fff4afe7adebdf97adfa70"
+        },
+        "refinement_passed": true,
+        "search_passed": true,
+        "segment_steps": 24,
+        "used_for_refinement": true
+      }
+    ]
+  },
+  "next_step": 0.00025600000000000004,
+  "not_solution": true,
+  "progress": 0.00026000000000000003,
+  "schema_version": 1,
+  "source_controller": {
+    "bytes": 225621,
+    "path": "runs/generalized_solver/n2_to_n3_split_warm.json",
+    "sha256": "dd581380a2de853d6134bc4c55a385ee34ab308d4aabca4a43920573f6681a0e"
+  },
+  "status": "trial_budget_exhausted",
+  "trials": [
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2166,
+        "path": "runs/generalized_solver/n2_to_n3_split_homotopy/configs/trial_0001_p0.000100000.yaml",
+        "sha256": "c0bbddfcbd0f9d61a631350a24c6d3ae13a7afc55085b10e83c98046c5716de4"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00023040951259744889,
+          1.5361146211370307e-08,
+          0.00023040951259744889
+        ],
+        "length_fractions": [
+          0.21428928571428574,
+          0.28571904761904765,
+          0.49999166666666667
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.21428428571428573,
+          0.28571571428571435,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.0,
+      "lock_strengths": [
+        0.0,
+        0.9999,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 2.735236252215205,
+        "max_upright_streak_seconds": 20.54,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 2.0847637477847947,
+          "max_cart_center_excursion": 2.735236252215205,
+          "required_rail_half_length": 2.9152362522152053,
+          "required_rail_ratio": 0.9717454174050685
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.0001,
+      "result": {
+        "bytes": 2237816,
+        "path": "runs/generalized_solver/n2_to_n3_split_homotopy/trials/trial_0001_p0.000100000_waypoint_fddp.json",
+        "sha256": "124e47c3e8a7bc495e742567853e8a12ac87fa29176bb279359aed62898ac055"
+      },
+      "step": 0.0001,
+      "trial": 1,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 314507,
+            "path": "runs/generalized_solver/n2_to_n3_split_homotopy/trials/trial_0001_p0.000100000_waypoint.json",
+            "sha256": "5e3b3b8dcd5c4b4d75276e4cac15cf72221c06f0bd0609f9ee9b7868f3b53769"
+          },
+          "refinement": {
+            "bytes": 2237816,
+            "path": "runs/generalized_solver/n2_to_n3_split_homotopy/trials/trial_0001_p0.000100000_waypoint_fddp.json",
+            "sha256": "124e47c3e8a7bc495e742567853e8a12ac87fa29176bb279359aed62898ac055"
+          },
+          "refinement_passed": true,
+          "search_passed": true,
+          "segment_steps": 24,
+          "used_for_refinement": true
+        }
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2064,
+        "path": "runs/generalized_solver/n2_to_n3_split_homotopy/configs/trial_0002_p0.000260000.yaml",
+        "sha256": "630dec08cd0573b8efa9ef40f293e1b5efa68ef0d948ecb1b6af49c9cbf52889"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00023039722368047982,
+          3.99389801495628e-08,
+          0.00023039722368047982
+        ],
+        "length_fractions": [
+          0.214295,
+          0.2857266666666667,
+          0.49997833333333336
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.21428200000000003,
+          0.285718,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.0001,
+      "lock_strengths": [
+        0.0,
+        0.99974,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 2.888514081007918,
+        "max_upright_streak_seconds": 20.54,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.9314859189920819,
+          "max_cart_center_excursion": 2.888514081007918,
+          "required_rail_half_length": 3.068514081007918,
+          "required_rail_ratio": 1.0228380270026394
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.00026000000000000003,
+      "result": {
+        "bytes": 2239119,
+        "path": "runs/generalized_solver/n2_to_n3_split_homotopy/trials/trial_0002_p0.000260000_waypoint_x4_fddp.json",
+        "sha256": "7914ab3d6edd26930c635e01ccbb3145fa2afe9914935f03fa4acfdaaaee0a23"
+      },
+      "step": 0.00016000000000000004,
+      "trial": 2,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 313946,
+            "path": "runs/generalized_solver/n2_to_n3_split_homotopy/trials/trial_0002_p0.000260000_waypoint.json",
+            "sha256": "1976066629fa9e54894cf4c9a290ecd975f4a57a5460d9e74af4cd9fd64f98d2"
+          },
+          "refinement": {
+            "bytes": 1000274,
+            "path": "runs/generalized_solver/n2_to_n3_split_homotopy/trials/trial_0002_p0.000260000_waypoint_fddp.json",
+            "sha256": "2e68f97aab5b979b105c29af8455021581dbead531f0a7ef859a7d3cda8fa77b"
+          },
+          "refinement_passed": false,
+          "search_passed": true,
+          "segment_steps": 24,
+          "used_for_refinement": true
+        },
+        {
+          "artifact": {
+            "bytes": 309851,
+            "path": "runs/generalized_solver/n2_to_n3_split_homotopy/trials/trial_0002_p0.000260000_waypoint_x2.json",
+            "sha256": "da99b6be88716f8f328e8782355d5a9edce4bddeb7c9f7e03bf983d7c131e443"
+          },
+          "refinement": {
+            "bytes": 859714,
+            "path": "runs/generalized_solver/n2_to_n3_split_homotopy/trials/trial_0002_p0.000260000_waypoint_x2_fddp.json",
+            "sha256": "eadd4345d2eeebbb3c29577e857d68def0345c3ee80e984a937bde83b6252919"
+          },
+          "refinement_passed": false,
+          "search_passed": true,
+          "segment_steps": 48,
+          "used_for_refinement": true
+        },
+        {
+          "artifact": {
+            "bytes": 308195,
+            "path": "runs/generalized_solver/n2_to_n3_split_homotopy/trials/trial_0002_p0.000260000_waypoint_x4.json",
+            "sha256": "1d5ca738f6af8ba9754e4b265e6e43eeef87d8cc3ec7f70084304b934230a809"
+          },
+          "refinement": {
+            "bytes": 2239119,
+            "path": "runs/generalized_solver/n2_to_n3_split_homotopy/trials/trial_0002_p0.000260000_waypoint_x4_fddp.json",
+            "sha256": "7914ab3d6edd26930c635e01ccbb3145fa2afe9914935f03fa4acfdaaaee0a23"
+          },
+          "refinement_passed": true,
+          "search_passed": true,
+          "segment_steps": 96,
+          "used_for_refinement": true
+        }
+      ]
+    }
+  ],
+  "updated_at": "2026-09-13T20:18:33+00:00"
+}

@@ -173,6 +173,7 @@ def split_continuation_config(
         f"split_continuation_n{source.n_links}_to_n{target.n_links}"
     )
     cfg["env"].pop("plant_progress", None)
+    cfg["env"]["rigid_split_inertia"] = True
     morph = cfg["morphology"]
     morph["schedule_mode"] = "all_linear"
     morph["lengths_start"] = embedding.source_lengths.tolist()

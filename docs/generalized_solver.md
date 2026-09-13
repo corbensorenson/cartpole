@@ -104,6 +104,17 @@ The result has the target link count and target total length and mass, but its
 locked endpoint represents the source chain without any near-zero masses or
 lengths. There are no constants indexed by link count.
 
+The generated continuation opts into a rigid-split inertia model. At full lock,
+each split group carries one combined source-equivalent capsule; only a
+`1e-8` fraction of the group mass remains on the inserted bodies to keep the
+compiled coordinates numerically valid, and inserted-joint armature is zero.
+As the lock releases, mass moves continuously from the combined capsule into
+the separate target segments and armature grows to the target value. Historical
+benchmark configurations do not enable this option. The equality itself now
+continues through MuJoCo constraint impedance from `0.9999` to its minimum
+`0.0001`, rather than changing the spring time constant and leaving a material
+constraint at the end of the schedule.
+
 If \(E\) lifts source route coordinates onto that locked manifold, the solver
 constructs a length-weighted left inverse \(P\), satisfying
 
@@ -127,6 +138,14 @@ PYTHONPATH=src:scripts python scripts/generalized_swingup_solver.py split \
   --source-config SOURCE.yaml --source-links N \
   --target-config TARGET_N_PLUS_K.yaml --controller SOURCE_ROUTE.json \
   --out-config CONTINUATION.yaml --out LOCKED_SPLIT_WARM_START.json
+
+PYTHONPATH=src:scripts python scripts/run_split_count_homotopy.py \
+  --continuation-config CONTINUATION.yaml \
+  --source-controller LOCKED_SPLIT_WARM_START.json \
+  --output-dir runs/generalized_solver/SPLIT_RELEASE
+
+PYTHONPATH=src:scripts python scripts/verify_split_count_homotopy.py \
+  --ledger runs/generalized_solver/SPLIT_RELEASE/continuation.json
 ```
 
 The artifact records the assignment, locks, lift and projection matrices,
@@ -135,6 +154,19 @@ It is always marked `not_solution`. Constraint tolerances and chaotic divergence
 mean even a mathematically exact locked embedding must be reoptimized through
 short continuation steps; every released target still has to pass exact replay,
 rail measurement, sustained hold, and the independent noisy gate.
+
+The first executable back-check uses the accepted uniform two-link route and a
+three-link target whose final lengths are `[0.75, 1.0, 1.25] m` and masses are
+`[0.2, 0.3, 0.5] kg`. On the exactly locked start, 20 deterministic waypoint
+segments required at most `0.023` normalized action correction; the subsequent
+Box-FDDP replay held upright for `20.54 s` with `2.797 m` peak cart travel. The
+same architecture then accepted two nonzero releases, through `p=0.00026`.
+Both held for `20.54 s`; the current frontier used `2.889 m` peak cart travel
+and had body-aware rail demand `rho=1.02284`. The
+[resumable ledger](../runs/generalized_solver/n2_to_n3_split_homotopy/continuation.json)
+and [generated continuation](../configs/generalized_n2_to_n3_split_continuation.yaml)
+are development evidence. The ledger is explicitly `not_solution`; `p=1` and
+the independent noisy gate remain unsolved for this count-plus-morphology path.
 
 ### Morphology-conditioned terminal set
 

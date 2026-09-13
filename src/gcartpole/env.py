@@ -139,6 +139,9 @@ class NLinkCartPoleEnv(gym.Env):
             cart_frictionloss=float(self.env_cfg.get("cart_frictionloss", 0.0)),
             joint_armature=float(self.env_cfg.get("joint_armature", 0.0)),
             link_radius=float(self.env_cfg.get("link_radius", 0.025)),
+            rigid_split_inertia=bool(
+                self.env_cfg.get("rigid_split_inertia", False)
+            ),
         )
         self.xml = xml
         self.model = mujoco.MjModel.from_xml_string(xml)
