@@ -266,10 +266,10 @@ not learn a route or relax the final gate.
 That adaptive horizon crossed the earlier local branch wall. The latest
 [verified n=3 adaptive checkpoint](../runs/generalized_solver/n3_unequal_adaptive_checkpoint.json)
 advances the strong-target homotopy from `p=0.02500` to
-`p=0.034935339933321825` over 40 accepted/rejected trials. At the last accepted
+`p=0.03602337317097499` over 45 accepted/rejected trials. At the last accepted
 step, the generic 48-control repair produced a rail-safe exact trajectory and
 the full-horizon feedback replay held upright for `18.78 s`. The
-[packaged route](../runs/generalized_solver/n3_unequal_p034935_route.json), its
+[packaged route](../runs/generalized_solver/n3_unequal_p036023_route.json), its
 analytic mirror, and the exact gate are published independently of the bulky
 local campaign traces.
 
@@ -288,14 +288,14 @@ It executes the shortest predicted success and stops evaluating longer rungs
 as soon as either symmetric route passes. This is deterministic measured-state
 model prediction, not policy learning: learned parameter count is zero, the
 grid is link-count independent, and all durations scale with the plant. The
-[adaptive 20-episode gate](../runs/generalized_solver/n3_unequal_p034935_adaptive20.json)
+[adaptive 20-episode gate](../runs/generalized_solver/n3_unequal_p036023_adaptive20.json)
 passed **20/20**, and the disjoint
-[100-episode gate](../runs/generalized_solver/n3_unequal_p034935_adaptive100.json)
+[100-episode gate](../runs/generalized_solver/n3_unequal_p036023_adaptive100.json)
 passed **100/100**, with prediction matching execution in all 120 episodes.
-In the 100-episode gate, 94 starts launched immediately and six used only the
+In the 100-episode gate, 99 starts launched immediately and one used only the
 first `0.25 tau` rung; no longer duration was needed. The original and mirror
-routes were selected 56 and 44 times, respectively, and the maximum body-aware
-required rail ratio was `1.19806`. The immediate-pair 19/20 artifact remains
+routes were selected 51 and 49 times, respectively, and the maximum body-aware
+required rail ratio was `1.36949`. The immediate-pair 19/20 artifact remains
 published as a negative control. This robust partial checkpoint is still not
 evidence that the full `p=1` morphology is solved.
 
@@ -320,6 +320,15 @@ reported here additionally includes the 0.18 m cart half-length, so a successful
 run can have center travel below the configured `3.0 m` limit while reporting
 `rho_required` slightly above `1.0` for a 3 m chain. This distinction is
 intentional and must accompany any physical-rail comparison.
+
+The unequal n=3 continuation supplies a useful local comparison under the same
+3 m chain, masses, force limit, controller rate, damping, and 5 m cart-center
+limit. At `p=0.0349353`, the 100-episode selector needed at most
+`rho_required=1.19806`; after deterministic continuation to `p=0.0360234`, the
+corresponding disjoint gate needed `1.36949`. That sharp increase over a small
+morphology step is evidence that rail demand is route-branch dependent. It is
+therefore carried as an optimization coordinate and acceptance metric, rather
+than inferred from link count or total chain length alone.
 
 ## Verified bottom-up checkpoint
 
@@ -392,11 +401,11 @@ PYTHONPATH=src:scripts python \
   runs/generalized_solver/n3_unequal_adaptive_checkpoint.json
 
 PYTHONPATH=src:scripts python scripts/evaluate_generalized_adaptive_library.py \
-  --config configs/generalized_n3_unequal_p034935.yaml \
-  --controller runs/generalized_solver/n3_unequal_p034935_route.json \
-  --controller runs/generalized_solver/n3_unequal_p034935_route_mirror.json \
-  --episodes 100 --seed 85301 --tracking-gain-scale 1 --phase-window 0 \
-  --out runs/generalized_solver/reproduction/n3_p034935_adaptive100.json
+  --config configs/generalized_n3_unequal_p036023.yaml \
+  --controller runs/generalized_solver/n3_unequal_p036023_route.json \
+  --controller runs/generalized_solver/n3_unequal_p036023_route_mirror.json \
+  --episodes 100 --seed 85901 --tracking-gain-scale 1 --phase-window 0 \
+  --out runs/generalized_solver/reproduction/n3_p036023_adaptive100.json
 
 PYTHONPATH=src python scripts/evaluate_generalized_route_library.py \
   --config configs/swingup7_uniform.yaml --n-links 5 \

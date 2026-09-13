@@ -2,29 +2,29 @@
   "schema_version": 1,
   "claim_status": "verified_development_partial_morphology_adaptive_gate",
   "not_solution_of_full_target": true,
-  "summary": "The generic deterministic continuation reached p=0.034935339933321825, then analytic route symmetry and bounded natural-time conditioning selection passed disjoint 20/20 and 100/100 noisy gates with zero learned parameters.",
+  "summary": "The generic deterministic continuation reached p=0.03602337317097499, then analytic route symmetry and bounded natural-time conditioning selection passed disjoint 20/20 and 100/100 noisy gates with zero learned parameters.",
   "full_target": {
     "lengths": [0.75, 1.0, 1.25],
     "masses": [0.2, 0.3, 0.5],
     "required_progress": 1.0
   },
   "checkpoint": {
-    "progress": 0.034935339933321825,
-    "lengths": [0.9912661650166695, 1.0, 1.0087338349833304],
-    "masses": [0.3286752880088904, 0.3321688220022226, 0.33915588998888696],
-    "next_step": 0.0006044629098073155,
-    "campaign_trials": 40,
-    "accepted_trials": 24,
-    "rejected_trials": 16,
-    "last_accepted_trial": 39,
-    "last_rejected_trial": 40
+    "progress": 0.03602337317097499,
+    "lengths": [0.9909941567072562, 1.0, 1.0090058432927438],
+    "masses": [0.32853021691053663, 0.33213255422763416, 0.33933722886182915],
+    "next_step": 0.00019342813113834098,
+    "campaign_trials": 45,
+    "accepted_trials": 26,
+    "rejected_trials": 19,
+    "last_accepted_trial": 43,
+    "last_rejected_trial": 45
   },
   "deterministic_repair": {
     "base_segment_steps": 24,
     "lookahead_multipliers": [1, 2, 4],
     "accepted_segment_steps": 48,
-    "accepted_waypoint_endpoint_error_norm": 0.1959712815249301,
-    "accepted_maximum_action_correction": 0.4292106058393912,
+    "accepted_waypoint_endpoint_error_norm": 1.4100315852460714,
+    "accepted_maximum_action_correction": 0.9207499643542393,
     "rule": "Escalate bounded exact-model waypoint lookahead only after a cheaper repair fails; advance only after uninterrupted exact replay."
   },
   "dimensionless": {
@@ -35,16 +35,16 @@
     "force_authority": 4.077471967380224,
     "natural_time": 0.553001263609331,
     "cart_to_link_mass": 1.0,
-    "length_fractions": [0.3304220550055565, 0.3333333333333333, 0.33624461166111014],
-    "mass_fractions": [0.3286752880088904, 0.3321688220022226, 0.33915588998888696]
+    "length_fractions": [0.3303313855690854, 0.3333333333333333, 0.33633528109758126],
+    "mass_fractions": [0.3285302169105367, 0.3321325542276342, 0.3393372288618292]
   },
   "exact_gate": {
     "episodes": 1,
     "successes": 1,
     "success_rate": 1.0,
     "held_upright_seconds": 18.78,
-    "maximum_cart_excursion": 3.343476069973048,
-    "required_rail_ratio": 1.1744920233243494,
+    "maximum_cart_excursion": 3.919233468459416,
+    "required_rail_ratio": 1.3664111561531387,
     "termination_reason": "time_limit"
   },
   "immediate_pair_boundary": {
@@ -63,50 +63,50 @@
       "episodes": 20,
       "successes": 20,
       "prediction_execution_agreements": 20,
-      "route_counts": {"original": 7, "mirror": 13},
-      "conditioning_ratio_counts": {"0.0": 19, "0.25": 1},
-      "maximum_cart_excursion": 3.397631550676682,
-      "maximum_required_rail_ratio": 1.1925438502255608
+      "route_counts": {"original": 11, "mirror": 9},
+      "conditioning_ratio_counts": {"0.0": 20},
+      "maximum_cart_excursion": 3.9185662656038684,
+      "maximum_required_rail_ratio": 1.3661887552012895
     },
     "hundred_episode_gate": {
       "episodes": 100,
       "successes": 100,
       "prediction_execution_agreements": 100,
-      "route_counts": {"original": 56, "mirror": 44},
-      "conditioning_ratio_counts": {"0.0": 94, "0.25": 6},
-      "maximum_cart_excursion": 3.4141778659289397,
-      "maximum_required_rail_ratio": 1.19805928864298
+      "route_counts": {"original": 51, "mirror": 49},
+      "conditioning_ratio_counts": {"0.0": 99, "0.25": 1},
+      "maximum_cart_excursion": 3.9284684296063155,
+      "maximum_required_rail_ratio": 1.3694894765354384
     },
-    "boundary": "This verifies the architecture only at the published p=0.034935339933321825 plant. The p=1 unequal target remains unsolved."
+    "boundary": "This verifies the architecture only at the published p=0.03602337317097499 plant. The p=1 unequal target remains unsolved."
   },
   "artifacts": {
     "config": {
-      "path": "configs/generalized_n3_unequal_p034935.yaml",
-      "sha256": "f956fed7ba87416de789cf5a1fd4287b1677da956070ab9a7949c3caeaca1d87"
+      "path": "configs/generalized_n3_unequal_p036023.yaml",
+      "sha256": "0172b7086d92d99921e424d65e0f3150da01761c897f3742202e0ad187d6b981"
     },
     "controller": {
-      "path": "runs/generalized_solver/n3_unequal_p034935_route.json",
-      "sha256": "28e599f0f51b2a82453d33b23bb46361856e99fd753d1c065b709f19021ad4bc"
+      "path": "runs/generalized_solver/n3_unequal_p036023_route.json",
+      "sha256": "16ba461368e443cd0859ab89d57c750a0279d9ae0824c9eff5005eef909118ce"
     },
     "mirror_controller": {
-      "path": "runs/generalized_solver/n3_unequal_p034935_route_mirror.json",
-      "sha256": "1059bcaa40d6ac87744256d81fd55ce41addc1addfdd5496223365aedab3338b"
+      "path": "runs/generalized_solver/n3_unequal_p036023_route_mirror.json",
+      "sha256": "87841fb8eea6c315e0a30141b1acd9799e9d699b5a5e0b462a170b938e0e112e"
     },
     "exact_gate": {
-      "path": "runs/generalized_solver/n3_unequal_p034935_exact1.json",
-      "sha256": "fe0ce2421f9471b81bce44ed7dfd93ad3256cadf915825c7def8c7a454b6f21d"
+      "path": "runs/generalized_solver/n3_unequal_p036023_exact1.json",
+      "sha256": "ba0099596f10a68bd4fcbef75fb0069036f1092545c6db00c888b4fbb2857f0a"
     },
     "adaptive_immediate_negative_gate": {
-      "path": "runs/generalized_solver/n3_unequal_p034935_immediate_negative20.json",
-      "sha256": "22c9ae78aadd174cdec17cad6ebbc90004260640039a7dfa1d90bb8ee05e15dd"
+      "path": "runs/generalized_solver/n3_unequal_p036023_immediate_negative20.json",
+      "sha256": "a78f7e373262c5660cfd560fd01fb746fe555fd4f074fc6fe8490c500281fccf"
     },
     "adaptive20_gate": {
-      "path": "runs/generalized_solver/n3_unequal_p034935_adaptive20.json",
-      "sha256": "25f6146862408b9f0769a3391325decfd1dbeb335e7194e3aa5d511baa024f5f"
+      "path": "runs/generalized_solver/n3_unequal_p036023_adaptive20.json",
+      "sha256": "9ac4169ce6e2e6c0cab6e556cd01bddccc6174aae9b45e63b71df9b67f750bda"
     },
     "adaptive100_gate": {
-      "path": "runs/generalized_solver/n3_unequal_p034935_adaptive100.json",
-      "sha256": "71ca89d9e59bc1857568bd23fbe4b4b3b97738eb57ab3708a694f7fad36696c4"
+      "path": "runs/generalized_solver/n3_unequal_p036023_adaptive100.json",
+      "sha256": "5182657995b6d39cd38f205c68628cd6518004cd1324d7064f25d862446a9275"
     }
   }
 }

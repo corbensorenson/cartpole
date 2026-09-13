@@ -1,0 +1,99 @@
+{
+  "claim_status": "development_deterministic_model_predictive_library",
+  "config": {
+    "bytes": 1671,
+    "path": "configs/generalized_n3_unequal_p036023.yaml",
+    "sha256": "0172b7086d92d99921e424d65e0f3150da01761c897f3742202e0ad187d6b981"
+  },
+  "controllers": [
+    {
+      "bytes": 277383,
+      "path": "runs/generalized_solver/n3_unequal_p036023_route.json",
+      "sha256": "16ba461368e443cd0859ab89d57c750a0279d9ae0824c9eff5005eef909118ce"
+    }
+  ],
+  "episode_results": [
+    {
+      "episode": 0,
+      "max_cart_excursion": 3.919233468459416,
+      "max_upright_streak_seconds": 18.78,
+      "predictions": [
+        {
+          "max_cart_excursion": 3.919233468459416,
+          "max_upright_streak_seconds": 18.78,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.900766531540584,
+        "max_cart_center_excursion": 3.919233468459416,
+        "required_rail_half_length": 4.099233468459416,
+        "required_rail_ratio": 1.3664111561531387
+      },
+      "seed": 84321,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    }
+  ],
+  "episodes": 1,
+  "generated_at": "2026-09-13T17:50:09+00:00",
+  "git": {
+    "available": true,
+    "commit": "25a21f57b2989c622e8479ec0da9996598fbe179",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      " M docs/levers_and_pitfalls.md",
+      " M runs/generalized_solver/n3_unequal_waypoint_homotopy/continuation.json",
+      " M scripts/evaluate_fddp_two_expert.py",
+      " M scripts/evaluate_generalized_route_library.py",
+      "?? configs/generalized_n3_unequal_p036023.yaml",
+      "?? configs/swingup9_mid_split_locked_continuation.yaml",
+      "?? configs/swingup9_split_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_302_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_continuation.yaml",
+      "?? configs/swingup9_uniform.yaml",
+      "?? scripts/embed_locked_split_route.py",
+      "?? scripts/translate_generalized_route.py"
+    ]
+  },
+  "max_required_rail_ratio": 1.3664111561531387,
+  "route_counts": {
+    "0": 1
+  },
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "seed_start": 84321,
+  "selection": {
+    "cart_target": 0.0,
+    "conditioning_seconds": 0.0,
+    "conditioning_target": 0.0,
+    "park_seconds": 0.0,
+    "phase_window": 0,
+    "route_lqr_control_costs": [
+      1000.0
+    ],
+    "route_target_mode": "fixed",
+    "tracking_gain_scale": 1.0,
+    "type": "exact_forward_model_argmin"
+  },
+  "success_rate": 1.0,
+  "summary": "Uninterrupted noisy evaluation with exact forward selection over mirror-symmetric deterministic routes.",
+  "termination_counts": {
+    "time_limit": 1
+  }
+}

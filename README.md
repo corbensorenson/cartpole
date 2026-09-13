@@ -193,19 +193,19 @@ full-horizon feedback pass. When the original `0.48 s` horizon hit a trajectory
 branch wall, the same generic driver automatically tried `0.96 s` and `1.92 s`
 lookahead rather than adding a per-morphology controller. The curated n=3
 checkpoint has now advanced the strong-morphology path from `p=0.02500` to
-`p=0.0349353`; its exact hanging replay held upright for `18.78 s`. The
+`p=0.0360234`; its exact hanging replay held upright for `18.78 s`. The
 analytic route pair alone passed **19/20**, leaving one start outside both
 immediate-launch basins. The new bounded selector tests the pair over a fixed
 grid of hanging-LQR durations expressed in morphology natural-time units and
 executes the shortest predicted success. It then passed **20/20** and a
 disjoint **100/100**, with prediction matching execution every time. Of the
-100 episodes, 94 launched immediately and six used only the first `0.25 tau`
-rung; maximum required rail ratio was `1.198`. The selector uses zero learned
+100 episodes, 99 launched immediately and one used only the first `0.25 tau`
+rung; maximum required rail ratio was `1.369`. The selector uses zero learned
 parameters and no link-count constants. This is a verified partial-morphology
 gate, not a solution of the `p=1` target. See the
 [adaptive checkpoint](runs/generalized_solver/n3_unequal_adaptive_checkpoint.json),
-[packaged route](runs/generalized_solver/n3_unequal_p034935_route.json), and
-[100-episode adaptive gate](runs/generalized_solver/n3_unequal_p034935_adaptive100.json).
+[packaged route](runs/generalized_solver/n3_unequal_p036023_route.json), and
+[100-episode adaptive gate](runs/generalized_solver/n3_unequal_p036023_adaptive100.json).
 
 ## Next frontier: nine links
 
