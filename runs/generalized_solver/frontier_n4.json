@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "claim_status": "development_failure_boundary_not_solution",
+  "not_solution": true,
+  "summary": "The bottom-up generalized solver has not promoted n=4. The best 13-parameter deterministic PFL calibration reached the upright neighborhood but retained too much internal-mode velocity for exact capture.",
+  "n_links": 4,
+  "parameter_names": [
+    "energy_gain",
+    "phase_gain",
+    "phase_velocity_gain",
+    "cart_kp",
+    "cart_kd",
+    "kick_amp",
+    "kick_frequency",
+    "kick_phase",
+    "lqr_scale",
+    "angle_limit",
+    "hinge_rate_limit",
+    "energy_error_limit",
+    "gate_width"
+  ],
+  "best": {
+    "vector": [12.0402976943109, 19.972894867973054, -0.016394507437936284, 7.949981100723652, 0.965769939470895, 0.46059609851120525, 0.32997961098815226, 0.04394476796768297, 0.9770135211204564, 0.32949621954506736, 1.5344529821221407, 0.40312293191731224, 0.1752492904302316],
+    "time_seconds": 17.44,
+    "max_abs_angle": 0.300808854890267,
+    "hinge_velocity_rms": 5.341396735248421,
+    "max_cart_center_excursion": 2.5186974418408106,
+    "qpos": [-0.71767258059192, 31.11511768100766, -12.137353132331405, 24.72469703667297, 37.99815485035558],
+    "qvel": [1.6129788560792313, 4.143990978679455, -8.034951902567196, 4.967985589548569, 2.776343315835202]
+  },
+  "capture_refinement": {
+    "algorithm": "exact_MuJoCo_Box_FDDP_then_LQR",
+    "success": false,
+    "latched": false,
+    "failure": "rail_violation_before_entering_the_terminal_funnel"
+  },
+  "next_deterministic_refinement": "Replace the single aggregate phase variable with one phase coordinate per morphology-derived linear mode."
+}

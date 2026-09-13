@@ -78,10 +78,42 @@ def load_controller(path: Path, n_links: int, spec: dict[str, Any]) -> dict[str,
         "nominal_states": nominal_states,
         "transform": transform,
         "lqr_scale": float(controller.get("lqr_scale", 1.0)),
+        "lqr_control_cost": float(controller.get("lqr_control_cost", 1000.0)),
         "horizon_steps": int(controls.size),
         "horizon_seconds": float(controls.size * 0.02),
         "payload_summary": payload.get("summary"),
     }
+
+
+def validate_release_identity(
+    manifest: dict[str, Any], cfg: dict[str, Any], controller: dict[str, Any], settings: dict[str, Any]
+) -> None:
+    """A release evidence label must describe the controller actually run."""
+    experts = manifest["experts"]
+    expected = {
+        "config_sha256": manifest["benchmark"]["config_sha256"],
+        "controller_sha256": manifest["controller"]["sha256"],
+        "tracking_gain_scale": experts["swing"]["tracking_gain_scale"],
+        "prelude_seconds": experts["conditioning"]["duration_seconds"],
+        "settle_mode": "hanging_lqr",
+        "settle_scale": experts["conditioning"]["scale"],
+        "settle_control_cost": experts["conditioning"]["control_cost"],
+        "shift_cart_nominal": experts["swing"]["shift_nominal_cart_position_to_settled_x"],
+        "phase_adaptive": False,
+        "lqr_scale": experts["capture"]["scale"],
+    }
+    actual = {
+        **settings,
+        "config_sha256": data_sha256(cfg),
+        "controller_sha256": controller["source"]["sha256"],
+        "lqr_scale": controller["lqr_scale"],
+    }
+    mismatches = [key for key, value in expected.items() if actual.get(key) != value]
+    if mismatches:
+        raise ValueError(
+            "run differs from release manifest: " + ", ".join(mismatches)
+            + "; use --diagnostic for transfer experiments"
+        )
 
 
 def hanging_lqr_gain(
@@ -363,6 +395,7 @@ def main() -> None:
     )
     parser.add_argument("--out", required=True)
     parser.add_argument("--include-trajectories", action="store_true")
+    parser.add_argument("--diagnostic", action="store_true", help="mark custom configurations and transfer runs as development diagnostics")
     args = parser.parse_args()
     if (
         args.episodes < 1
@@ -387,10 +420,14 @@ def main() -> None:
     cfg["env"].setdefault("action_lqr_switch", {"enabled": False})["enabled"] = False
     spec = load_config(args.spec)
     controller = load_controller(Path(args.controller), int(cfg["env"]["n_links"]), spec)
-    manifest_path = Path(args.manifest)
-    if not manifest_path.is_file():
-        raise FileNotFoundError(f"release manifest not found: {manifest_path}")
-    manifest = file_metadata(manifest_path)
+    manifest = None
+    if not args.diagnostic:
+        manifest_path = Path(args.manifest)
+        validate_release_identity(
+            json.loads(manifest_path.read_text(encoding="utf-8")), source_cfg,
+            controller, vars(args),
+        )
+        manifest = file_metadata(manifest_path)
     probe = NLinkCartPoleEnv(cfg, progress=1.0, seed=args.seed)
     generated_xml_sha256 = text_sha256(probe.xml)
     observation_dim = int(probe.observation_space.shape[0])
@@ -437,8 +474,8 @@ def main() -> None:
     output = {
         "schema_version": 2,
         "generated_at": utc_timestamp(),
-        "claim_status": "canonical_noisy_gate_evidence",
-        "summary": "Released canonical noisy hanging-start evaluation of the settled-launch hybrid controller.",
+        "claim_status": "development_diagnostic" if args.diagnostic else "canonical_noisy_gate_evidence",
+        "summary": "Development hybrid-controller replay." if args.diagnostic else "Released canonical noisy hanging-start evaluation of the settled-launch hybrid controller.",
         "config": {"path": str(Path(args.config)), "resolved_sha256": data_sha256(source_cfg)},
         "spec": file_metadata(Path(args.spec)),
         "controller": controller["source"],

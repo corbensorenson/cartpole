@@ -87,6 +87,29 @@ force, morphology, damping, sensor-noise, and control-delay perturbations. This
 is a strong benchmark result with a narrow plant-and-timing contract, not a
 claim of broad robustness.
 
+## Generalized solver ladder (development)
+
+Separate from the frozen seven-link record, the repository now includes a
+bottom-up, morphology-aware solver track. It starts at one link, promotes a
+controller only after an uninterrupted noisy gate, then uses that accepted
+route to initialize the next link count. The deterministic layer supplies
+dimensionless scaling, exact mass-matrix partial feedback linearization,
+arc-length state/feedback transfer, Box-FDDP refinement, Riccati capture, and
+exact left/right symmetry. A bounded exact-model route selector is the thin
+adaptation layer; it does not learn the swing trajectory.
+
+| Uniform chain | Current gate | Body-aware required rail ratio |
+|---:|---:|---:|
+| 1 link | **20/20** | 0.959 |
+| 2 links | **20/20** | 1.013 |
+| 3 links | **20/20** | 1.001 |
+| 4 links | not solved; best handoff is outside the capture funnel | not promoted |
+
+These are development results, not additions to the public seven-link record
+claim. See the [generalized solver design and honest frontier](docs/generalized_solver.md),
+including why total chain energy and one aggregate phase variable stop being
+sufficient as internal modes appear.
+
 ## Current frontier: eight links
 
 Seven links is the established result; **eight links is active research and is
@@ -131,6 +154,7 @@ For individual replay commands and the evidence contract, follow the
 | [`scripts`](scripts) | Training, search, evaluation, replay, and rendering entry points |
 | [`tests`](tests) | Dynamics, optimizer, morphology, and evidence-contract tests |
 | [`docs`](docs) | Paper, roadmap support, experiment ledger, and reproduction notes |
+| [`runs/generalized_solver`](runs/generalized_solver) | Curated n=1..3 development gates and route artifacts |
 | [`runs/swingup7_uniform`](runs/swingup7_uniform) | Curated public seven-link evidence bundle |
 
 Research history is intentionally preserved, including negative results. Start

@@ -29,6 +29,29 @@ def state_quality(state: dict[str, Any]) -> tuple[float, float, float, float]:
 def load_state(path: str, state_index: str) -> tuple[dict[str, Any], int]:
     with open(Path(path), "r", encoding="utf-8") as f:
         payload = json.load(f)
+    if (
+        isinstance(payload, dict)
+        and state_index in {"selected", "selected_state"}
+        and isinstance(payload.get("selected_state"), dict)
+    ):
+        return dict(payload["selected_state"]), -1
+    if (
+        isinstance(payload, dict)
+        and state_index in {"terminal", "terminal_state"}
+        and isinstance(payload.get("terminal_state"), dict)
+    ):
+        return dict(payload["terminal_state"]), -1
+    if (
+        isinstance(payload, dict)
+        and state_index in {"best", "best_state"}
+        and isinstance(payload.get("best"), dict)
+        and isinstance(payload["best"].get("best_state"), dict)
+    ):
+        # Global proposal searches store their best measured handoff under
+        # best.best_state rather than materializing a full state trajectory.
+        # Accepting that record lets the exact capture optimizer consume the
+        # proposal without reconstructing or interpolating its dynamics.
+        return dict(payload["best"]["best_state"]), -1
     states = payload.get("states", payload) if isinstance(payload, dict) else payload
     if not isinstance(states, list) or not states:
         raise ValueError(f"{path} does not contain a non-empty states list")

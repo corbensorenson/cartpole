@@ -36,6 +36,15 @@ def normalized_force(knots: np.ndarray, step: int, step_count: int) -> float:
     return float(np.clip(np.interp(phase, source, knots), -1.0, 1.0))
 
 
+def control_sample_index(step: int, policy_dt: float, source_seconds: float, count: int) -> int | None:
+    """Saved controls are interval actions, with no sample at the horizon."""
+    if count < 1 or min(policy_dt, source_seconds) <= 0.0:
+        raise ValueError("control count and time intervals must be positive")
+    phase = round(step * policy_dt * count / source_seconds, 12)
+    index = int(np.floor(phase))
+    return index if index < count else None
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", required=True)
@@ -43,6 +52,27 @@ def main() -> None:
     parser.add_argument("--proposal", required=True)
     parser.add_argument("--record-key", default="best")
     parser.add_argument("--seconds", type=float, default=None)
+    parser.add_argument(
+        "--tail-seconds",
+        type=float,
+        default=0.0,
+        help="append a zero-force settling tail after the source route",
+    )
+    parser.add_argument(
+        "--source-trajectory-feedback",
+        action="store_true",
+        help="replay the saved controller feedback while materializing the target-chain route",
+    )
+    parser.add_argument(
+        "--feedback-proposal",
+        default=None,
+        help="optional controller artifact supplying feedback gains for the route proposal",
+    )
+    parser.add_argument(
+        "--feedback-record-key",
+        default="controller",
+        help="record key to read from --feedback-proposal",
+    )
     parser.add_argument("--progress", type=float, default=1.0)
     parser.add_argument("--out", required=True)
     parser.add_argument("--override", action="append", default=[])
@@ -55,12 +85,30 @@ def main() -> None:
         record = proposal.get("controller")
     if not isinstance(record, dict):
         raise ValueError(f"{proposal_path} does not contain a force proposal or controller")
-    seconds = float(args.seconds if args.seconds is not None else proposal.get("search", {}).get("seconds", 0.0))
+    source_seconds = float(
+        record.get(
+            "horizon_seconds",
+            proposal.get("search", {}).get("seconds", args.seconds or 0.0),
+        )
+    )
+    if source_seconds <= 0.0:
+        raise ValueError("source proposal horizon must be positive")
+    if args.tail_seconds < 0.0:
+        raise ValueError("tail-seconds must be nonnegative")
+    if args.seconds is not None and args.tail_seconds > 0.0:
+        raise ValueError("use either seconds or tail-seconds, not both")
+    seconds = float(
+        args.seconds
+        if args.seconds is not None
+        else source_seconds + args.tail_seconds
+    )
     if seconds <= 0.0:
         raise ValueError("seconds must be positive")
 
     cfg = apply_overrides(load_config(args.config), args.override)
     cfg["env"] = {**cfg["env"], "init_mode": "hanging"}
+    cfg["env"].setdefault("action_lqr_residual", {})["enabled"] = False
+    cfg["env"].setdefault("action_lqr_switch", {})["enabled"] = False
     for noise_key in ("init_angle_noise", "init_vel_noise", "init_cart_noise", "init_cart_vel_noise"):
         cfg["env"][noise_key] = 0.0
         cfg["env"][f"{noise_key}_start"] = 0.0
@@ -83,6 +131,7 @@ def main() -> None:
     policy_dt = float(env.dt)
     n_links = int(env.n)
     step_count = max(2, int(round(seconds / policy_dt)))
+    source_step_count = max(2, int(round(source_seconds / policy_dt)))
     knots = None if "knots" not in record else np.asarray(record["knots"], dtype=np.float64)
     if "stitched_controls" in record:
         source_controls = np.asarray(record["stitched_controls"], dtype=np.float64)
@@ -92,20 +141,72 @@ def main() -> None:
         source_controls = None
     if knots is None and (source_controls is None or source_controls.ndim != 1):
         raise ValueError("proposal record must contain one-dimensional knots or controls")
+    source_nominal = None
+    source_feedback = None
+    if args.source_trajectory_feedback:
+        if source_controls is None:
+            raise ValueError("source-trajectory-feedback requires saved controls")
+        source_nominal = np.asarray(
+            proposal.get("search", {}).get(
+                "nominal_coordinate_states", record.get("nominal_coordinate_states")
+            ),
+            dtype=np.float64,
+        )
+        feedback_proposal_path = (
+            proposal_path if args.feedback_proposal is None else Path(args.feedback_proposal)
+        )
+        feedback_proposal = (
+            proposal
+            if args.feedback_proposal is None
+            else json.loads(feedback_proposal_path.read_text(encoding="utf-8"))
+        )
+        feedback_record = feedback_proposal.get(args.feedback_record_key)
+        if not isinstance(feedback_record, dict):
+            feedback_record = feedback_proposal.get("controller")
+        if not isinstance(feedback_record, dict):
+            raise ValueError(
+                f"{feedback_proposal_path} does not contain a feedback controller"
+            )
+        source_feedback = np.asarray(
+            feedback_record.get("feedback_gains"), dtype=np.float64
+        )
+        expected_state_dim = 2 * (n_links + 1)
+        if source_nominal.shape != (source_controls.size + 1, expected_state_dim):
+            raise ValueError("saved nominal states do not match the target-chain state dimension")
+        if source_feedback.shape != (source_controls.size, expected_state_dim):
+            raise ValueError("saved feedback gains do not match the target-chain state dimension")
     controls: list[float] = []
+    replay_feedback: list[np.ndarray] = []
     physical_states = [data_state(env.data)]
     done_events: list[dict[str, Any]] = []
     try:
         for step in range(step_count):
+            step_feedback = np.zeros(2 * (n_links + 1), dtype=np.float64)
             if source_controls is not None:
-                source_seconds = float(record.get("horizon_seconds", seconds))
-                source_t = np.linspace(0.0, max(source_seconds, 1e-9), len(source_controls), dtype=np.float64)
-                target_t = np.linspace(0.0, seconds, step_count, dtype=np.float64)
-                action = float(np.clip(np.interp(target_t[step], source_t, source_controls), -1.0, 1.0))
+                source_step = control_sample_index(
+                    step, policy_dt, source_seconds, source_controls.size
+                )
+                if args.source_trajectory_feedback and source_step is not None:
+                    step_feedback = source_feedback[source_step]
+                    coordinate_state = transition.to_coordinates(data_state(env.data))
+                    action = float(
+                        np.clip(
+                            source_controls[source_step]
+                            + source_feedback[source_step]
+                            @ (coordinate_state - source_nominal[source_step]),
+                            -1.0,
+                            1.0,
+                        )
+                    )
+                elif source_step is not None:
+                    action = float(np.clip(source_controls[source_step], -1.0, 1.0))
+                else:
+                    action = 0.0
             else:
-                action = normalized_force(knots, step, step_count)
+                action = normalized_force(knots, step, source_step_count) if step < source_step_count else 0.0
             _, _, terminated, truncated, info = env.step([action])
-            controls.append(action)
+            controls.append(float(info["applied_action_norm"]))
+            replay_feedback.append(step_feedback.copy())
             physical_states.append(data_state(env.data))
             if terminated or truncated:
                 done_events.append(
@@ -127,7 +228,7 @@ def main() -> None:
         [transition.to_coordinates(state) for state in physical_states],
         dtype=np.float64,
     )
-    feedback_gains = np.zeros((step_count, nominal_states.shape[1]), dtype=np.float64)
+    feedback_gains = np.asarray(replay_feedback, dtype=np.float64)
     initial_physical_state = np.asarray(physical_states[0], dtype=np.float64)
     nq = n_links + 1
     out = {
@@ -151,7 +252,19 @@ def main() -> None:
             "horizon_steps": int(step_count),
             "horizon_seconds": float(step_count * policy_dt),
             "lqr_scale": 0.5,
+            "sampling_rule": "zero_order_hold_source_intervals_v2",
+            "policy_dt": policy_dt,
+            "coordinate_transform": transform.tolist(),
             "source_proposal": file_metadata(proposal_path),
+            "source_feedback_proposal": (
+                None
+                if not args.source_trajectory_feedback
+                else file_metadata(
+                    proposal_path
+                    if args.feedback_proposal is None
+                    else Path(args.feedback_proposal)
+                )
+            ),
         },
         "search": {
             "converged": False,
@@ -164,6 +277,8 @@ def main() -> None:
                 key: record.get(key)
                 for key in ("cost", "best_time_seconds", "max_angle", "hinge_rms", "rail")
             },
+            "tail_seconds": float(args.tail_seconds),
+            "source_trajectory_feedback": bool(args.source_trajectory_feedback),
         },
         "replay": {
             "progress": float(args.progress),

@@ -68,6 +68,19 @@ def load_initial_center(
         target_t = np.linspace(0.0, seconds, knot_count, dtype=np.float64)
         return np.clip(np.interp(target_t, source_t, source), -1.0, 1.0)
 
+    final_eval = payload.get("final_eval") if isinstance(payload, dict) else None
+    trace = final_eval.get("trace") if isinstance(final_eval, dict) else None
+    if isinstance(trace, list) and len(trace) >= 2 and all("action" in row for row in trace):
+        source = np.asarray([row["action"] for row in trace], dtype=np.float64)
+        source_seconds = float(len(source) * env.dt)
+        source_t = np.arange(source.size, dtype=np.float64) * env.dt
+        target_t = np.linspace(0.0, seconds, knot_count, dtype=np.float64)
+        return np.clip(
+            np.interp(target_t, source_t, source, left=source[0], right=source[-1]),
+            -1.0,
+            1.0,
+        )
+
     # A trajectory-CEM artifact stores cart-position targets under
     # best.controller. Convert that controller to the exact normalized force
     # waveform on the same serial plant before using it as a CEM center.

@@ -13,6 +13,8 @@ class Morphology:
     masses: np.ndarray
     damping: np.ndarray
     frictionloss: np.ndarray
+    joint_stiffness: np.ndarray
+    joint_lock: np.ndarray
     total_length: float
     total_mass: float
     total_damping: float
@@ -142,12 +144,57 @@ def build_morphology(env_cfg: dict[str, Any], morph_cfg: dict[str, Any], progres
     masses = scheduled_profile("masses", total_mass, 1e-4)
     if masses is None:
         masses = exp_gradient(total_mass, n, params["alpha_mass"], min_value=1e-4)
-    damping = exp_gradient(total_damping, n, params["alpha_damping"], min_value=0.0) if total_damping > 0 else np.zeros(n)
-    frictionloss = (
-        exp_gradient(total_frictionloss, n, params["alpha_frictionloss"], min_value=0.0)
-        if total_frictionloss > 0
-        else np.zeros(n)
-    )
+    damping = scheduled_profile("damping", total_damping, 0.0)
+    if damping is None:
+        damping = (
+            exp_gradient(total_damping, n, params["alpha_damping"], min_value=0.0)
+            if total_damping > 0
+            else np.zeros(n)
+        )
+    frictionloss = scheduled_profile("frictionloss", total_frictionloss, 0.0)
+    if frictionloss is None:
+        frictionloss = (
+            exp_gradient(total_frictionloss, n, params["alpha_frictionloss"], min_value=0.0)
+            if total_frictionloss > 0
+            else np.zeros(n)
+        )
+
+    stiffness_start = morph_cfg.get("joint_stiffness_start")
+    stiffness_end = morph_cfg.get("joint_stiffness_end")
+    if stiffness_start is None and stiffness_end is None:
+        joint_stiffness = np.full(
+            n, float(morph_cfg.get("joint_stiffness", 0.0)), dtype=np.float64
+        )
+    else:
+        if not isinstance(stiffness_start, list) or not isinstance(stiffness_end, list):
+            raise ValueError(
+                "joint_stiffness_start and joint_stiffness_end must both be lists"
+            )
+        if len(stiffness_start) != n or len(stiffness_end) != n:
+            raise ValueError(
+                f"joint_stiffness_start and joint_stiffness_end must have {n} entries"
+            )
+        joint_stiffness = np.asarray(stiffness_start, dtype=np.float64) + (
+            np.asarray(stiffness_end, dtype=np.float64)
+            - np.asarray(stiffness_start, dtype=np.float64)
+        ) * float(np.clip(progress, 0.0, 1.0))
+        if np.any(joint_stiffness < 0.0) or not np.all(np.isfinite(joint_stiffness)):
+            raise ValueError("joint stiffness profile contains invalid values")
+
+    lock_start = morph_cfg.get("joint_lock_start")
+    lock_end = morph_cfg.get("joint_lock_end")
+    if lock_start is None and lock_end is None:
+        joint_lock = np.zeros(n, dtype=np.float64)
+    else:
+        if not isinstance(lock_start, list) or not isinstance(lock_end, list):
+            raise ValueError("joint_lock_start and joint_lock_end must both be lists")
+        if len(lock_start) != n or len(lock_end) != n:
+            raise ValueError(f"joint_lock_start and joint_lock_end must have {n} entries")
+        joint_lock = np.asarray(lock_start, dtype=np.float64) + (
+            np.asarray(lock_end, dtype=np.float64) - np.asarray(lock_start, dtype=np.float64)
+        ) * float(np.clip(progress, 0.0, 1.0))
+        if np.any(joint_lock < 0.0) or np.any(joint_lock > 1.0) or not np.all(np.isfinite(joint_lock)):
+            raise ValueError("joint lock profile must be finite and lie in [0, 1]")
 
     return Morphology(
         n_links=n,
@@ -155,6 +202,8 @@ def build_morphology(env_cfg: dict[str, Any], morph_cfg: dict[str, Any], progres
         masses=masses,
         damping=damping,
         frictionloss=frictionloss,
+        joint_stiffness=joint_stiffness,
+        joint_lock=joint_lock,
         total_length=total_length,
         total_mass=total_mass,
         total_damping=total_damping,

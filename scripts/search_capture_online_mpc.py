@@ -14,7 +14,10 @@ import time
 from pathlib import Path
 from typing import Any
 
-from torch_runtime import prepare_runtime
+try:
+    from scripts.torch_runtime import prepare_runtime
+except ModuleNotFoundError:
+    from torch_runtime import prepare_runtime
 
 prepare_runtime()
 
@@ -25,10 +28,21 @@ from mujoco import rollout as mujoco_rollout
 from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.env import NLinkCartPoleEnv, serial_absolute_angles
 from gcartpole.evidence import data_sha256, git_metadata, runtime_metadata, utc_timestamp
+from gcartpole.predictive_sampling import shift_action_knots
+try:
+    from scripts.search_capture_sequence import fixed_state_cfg as exact_fixed_state_cfg
+except ModuleNotFoundError:
+    from search_capture_sequence import fixed_state_cfg as exact_fixed_state_cfg
 
 
 def load_state(path: str, index: str) -> dict[str, Any]:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if (
+        isinstance(payload, dict)
+        and index in {"terminal", "terminal_state"}
+        and isinstance(payload.get("terminal_state"), dict)
+    ):
+        return dict(payload["terminal_state"])
     states = payload.get("states", payload) if isinstance(payload, dict) else payload
     if not isinstance(states, list) or not states:
         raise ValueError(f"{path} does not contain a non-empty states list")
@@ -48,6 +62,7 @@ def load_state(path: str, index: str) -> dict[str, Any]:
 def fixed_state_cfg(
     cfg: dict[str, Any], state: dict[str, Any], seconds: float
 ) -> dict[str, Any]:
+    cfg = exact_fixed_state_cfg(cfg, state, seconds)
     env_cfg = {
         **cfg["env"],
         "init_mode": "fixed_state",
@@ -86,6 +101,24 @@ def interpolation_matrix(knot_count: int, step_count: int) -> np.ndarray:
     matrix[rows, left] = 1.0 - fraction
     matrix[rows, right] += fraction
     return matrix
+
+
+def rollout_profiles(
+    env: NLinkCartPoleEnv,
+    pool: list[mujoco.MjData],
+    initial_state: np.ndarray,
+    profiles: np.ndarray,
+    interpolation: np.ndarray,
+) -> np.ndarray:
+    # Match Env.step's float32 policy action and return one state per policy
+    # interval, not one per physics substep.
+    actions = np.clip(profiles @ interpolation.T, -1.0, 1.0).astype(np.float32).astype(np.float64)
+    controls = np.repeat(actions, env.frame_skip, axis=1)[:, :, None] * env.force_limit
+    initial = np.repeat(initial_state[None, :], profiles.shape[0], axis=0)
+    states, _ = mujoco_rollout.rollout(
+        env.model, pool, initial, controls, persistent_pool=True,
+    )
+    return states[:, env.frame_skip - 1 :: env.frame_skip, :]
 
 
 def rollout_metrics(
@@ -215,17 +248,11 @@ def plan(
             1.0,
         )
         candidates[0] = current
-        actions = np.clip(candidates @ interpolation.T, -1.0, 1.0)
-        controls = np.repeat(actions, env.frame_skip, axis=1)[:, :, None]
-        controls = controls * env.force_limit
-        initial = np.repeat(initial_state[None, :], population, axis=0)
-        states, _ = mujoco_rollout.rollout(
-            env.model,
-            pool,
-            initial,
-            controls,
-            persistent_pool=True,
-        )
+        if population > 1:
+            candidates[1] = best_profile
+        if population > 2:
+            candidates[2] = 0.0
+        states = rollout_profiles(env, pool, initial_state, candidates, interpolation)
         scores, metrics = rollout_metrics(
             states,
             n_links=env.n,
@@ -385,10 +412,10 @@ def main() -> None:
             )
             plan_actions = np.clip(best_profile @ interpolation.T, -1.0, 1.0)
             buffer = plan_actions.copy()
-            center = np.r_[
-                best_profile[args.replan_steps :],
-                np.zeros(min(args.replan_steps, len(best_profile)), dtype=np.float64),
-            ]
+            center = shift_action_knots(
+                best_profile, elapsed_steps=args.replan_steps,
+                horizon_steps=args.horizon_steps,
+            )
             plan_metrics["time_seconds"] = float(step * env.dt)
             plan_metrics["executed_cart"] = float(env.data.qpos[0])
             plan_metrics["executed_cart_velocity"] = float(env.data.qvel[0])
@@ -407,7 +434,7 @@ def main() -> None:
 
     elapsed = time.time() - started
     payload = {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": utc_timestamp(),
         "not_solution": True,
         "summary": "Reset-free exact-MuJoCo nonlinear receding-horizon capture diagnostic; not canonical evidence.",
@@ -418,6 +445,8 @@ def main() -> None:
         "selected_state": state,
         "progress": float(args.progress),
         "search": {
+            "rollout_timebase": "policy_steps",
+            "action_precision": "float32",
             "seconds": float(args.seconds),
             "horizon_steps": int(args.horizon_steps),
             "horizon_seconds": float(args.horizon_steps * env.dt),

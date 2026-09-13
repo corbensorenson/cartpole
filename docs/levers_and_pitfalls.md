@@ -1179,3 +1179,148 @@ evidence. The next permitted experiment is a held-out nonlinear capture teacher
 from measured target-chain handoffs, followed by the existing tail search scored
 by that teacher. Broad PPO, global CEM, and unrelated controller families remain
 out of scope until this inherited chain has been falsified.
+
+## Split Eight-Link Continuation Boundary (2026-09-12)
+
+Audit qualification: the `p=0.80` custom-gain hold needs a saved executable
+controller/result bundle. Only hinge 8 is constrained, and deleting the finite
+constraint at `p=1` introduces a dynamics jump. Progress values do not measure
+physical unlocking or task completion. The statement below that every tail
+reached the rail is incorrect: the zero-action and online-MPC probes lost
+upright but reached time limits inside the rail. Current findings and repaired
+code are documented in [the transfer review](transfer_review_2026_09_12.md).
+
+The next experiments kept the seven-link decomposition intact: settle the
+cart, execute a target-chain swing expert, hand off from a measured state, and
+hold with a separate terminal expert. They used the split-link continuation
+branch as a diagnostic only; none of these results is a uniform-eight claim.
+
+| Attempt | Exact setup | Result | Decision |
+| --- | --- | --- | --- |
+| Locked split route | Eight-link split geometry, hinge 8 equality retained, exact MuJoCo Box-FDDP route plus terminal hold | `25.48 s` uninterrupted hold | Intermediate baseline with a constrained extra hinge |
+| Unlock homotopy | Same route, equality locks and split parameters gradually released | Standard replay passed through `p=0.60`; a composite route with inherited feedback and reweighted terminal Riccati feedback held about `24.1-24.3 s` through `p=0.80` | The method transfers deep into the continuation, but this is still split geometry and a diagnostic handoff schedule |
+| Terminal-state capture at `p=0.90` | Exact quiet endpoint; zero action, ordinary LQR, inherited FDDP feedback, custom Riccati feedback, and local iLQR tails | Tested tails lost upright; some hit the rail; local iLQR held `0.06 s` | Failure of these tested controllers; does not establish a universal capture boundary |
+| Nonlinear receding-horizon tail | Exact `p=0.90` endpoint, MuJoCo rollout MPC, 50-step horizon, 75 replans | `0.06 s` upright streak, `0.04 s` low-momentum streak, then rail pressure | Bounded MPC did not repair the missing capture mode |
+| Continuation FDDP | `p=0.80` warm start continued into `p=0.90`, 300 Box-FDDP iterations | `0.38 s` transient, cart `3.042 m`, rail violation | Warm-start continuation alone is insufficient |
+
+The saved continuation artifacts are `runs/swingup8_split_unlock_p060_from058_fddp.json`,
+`runs/swingup8_split_unlock_p090_composite_warmstart_v2.json`,
+`runs/swingup8_split_unlock_p090_terminal_online_mpc.json`, and
+`runs/swingup8_split_unlock_p090_from080_fddp.json`. The state loader now
+accepts `--state-index terminal` for artifacts that serialize a real terminal
+state, which makes the negative capture tests replayable without reconstructing
+the preceding route. The next narrow step is corrected Box-FDDP transfer and
+capture from measured handoffs under the reviewed method inheritance rule;
+the final uniform-eight benchmark, video, weights, and paper remain blocked.
+
+## Transfer Implementation Audit (2026-09-12)
+
+See [the detailed review](transfer_review_2026_09_12.md) for the repaired
+coordinate mapping, interval-action clock, inherited-success metadata, release
+identity check, and MPC policy-step contracts. These bugs make affected older
+negative experiments unsuitable for ruling out the inherited method.
+
+| Attempt | How it was tried | Result | Decision |
+| --- | --- | --- | --- |
+| Seven-link reference regression | Frozen controller, full ten-second conditioning and scale-2 feedback, original 20 seeds | 20/20; 15.48 s mean hold; 2.371 m maximum excursion | Reference still reproduces; repeated seeds are regression evidence |
+| Corrected direct transfer | Correctly padded gains and nominal states, uniform 8, identical phases, three development seeds | 0/3; 0 s hold; 3.039 m maximum excursion | Copying the route remains insufficient |
+| Corrected clock and target-state FDDP | Exact 228 predecessor actions replayed on uniform 8, rebuilt states, 100-iteration cap | Warm start within 2.124 m; solver stopped at iteration 18 without convergence; live hold 0 s and cart 3.081 m | Further route optimization is required within the same architecture |
+| Repaired nonlinear capture diagnostic | Same saved split `p=0.90` endpoint and seed, 50 policy-step horizon, 256 candidates, four iterations, three-second episode | 0.20 s upright streak, 0.16 s low-momentum streak, time-limit termination | Improves the old 0.06 s transient, still fails hold; does not rule out all MPC |
+
+New artifacts use `runs/swingup7_review_*`, `runs/swingup8_review_*`, and
+`runs/transfer_review_numerics.json`. No new canonical eight-link claim.
+
+## Adaptive Eight-Link Curriculum And Warm-Start Boundary (2026-09-13)
+
+The latest continuation stayed on the released seven-link architecture:
+exact MuJoCo rollout, Box-FDDP trajectory feedback, a deferred capture/LQR
+handoff, and sustained upright verification. The search implementation now
+supports `--rebuild-initial-feedback`, which uses the predecessor controller's
+saved feedback gains while rebuilding its warm-start states on the target
+plant. This matters because open-loop control replay made tiny morphology
+changes look like hard physical failures. The optional
+`--initial-feedback-scale` is recorded in each artifact and is only a
+warm-start diagnostic.
+
+| Attempt | Exact setup | Result | Decision |
+| --- | --- | --- | --- |
+| Open-loop geometry continuation | Split-mass, locked-joint branch, 1.00% to 1.01% length progress, rebuilt controls only | Rail exit at about `3.06 m`; no hold | Open-loop warm starts are not reliable enough for morphology continuation |
+| Feedback-preserving geometry continuation | Same branch, saved predecessor feedback used during rebuild | 1.01%, 1.02%, 1.025%, 1.035%, 1.04%, and 1.045% checkpoints held `25.54 s`; the ordinary objective reached a local boundary near 1.046% | Keep feedback-tracked rebuilds |
+| Rail-aware locked continuation | Canonical rail, soft limit `2.5 m`, rail weight `5e6`, cart terminal weights `1000` | True 1.047%, 1.048%, and 1.049% geometry checkpoints held `25.56 s` at about `2.509 m`; 1.0495% failed | Rail margin is a useful search objective, but this remains split-mass/locked evidence |
+| Rail-aware unlock continuation | Geometry fixed at 1.046%, split masses, final joint unlocked from 3.75% through 4.00% | 3.8%, 3.9%, and 4.0% held `25.54 s` at `2.509-2.513 m`; 4.2% failed; 4.1% held but emitted a transient optimizer QACC warning | Treat 4.0% as the clean current checkpoint until independent replay of 4.1% |
+| Mass-only continuation | Split lengths and locked joint, uniform-mass interpolation | Existing 0.5% checkpoint passes; 0.51%, 0.55%, 0.625%, and 0.75% attempts failed or railed, including feedback-warm and 2x-warm-start probes | Mass is a sharper continuation axis than length in this branch |
+| Geometry with joint already unlocked | Fixed 3.75% or 4.1% unlock while moving lengths further toward uniform | Failed near the first tested geometry step, including the stronger rail objective | Do not treat alternating one-axis curricula as sufficient; improve the capture-aware terminal objective |
+
+Representative positive artifacts:
+`runs/swingup8_locked_geometry_p01049_true_railtarget25.json`,
+`runs/swingup8_geom_p01046_unlock_u004_from00395_railtarget25.json`, and
+`runs/swingup8_geom_p01046_unlock_u0039_railtarget25.json`.
+Representative negative controls include
+`runs/swingup8_locked_geometry_p010495_true_railtarget25.json`,
+`runs/swingup8_geom_p01046_unlock_u0042_railtarget25.json`, and
+`runs/swingup8_uniform_locked_mass_only_p0051_feedbackwarm.json`.
+
+All of these are one-seed curriculum diagnostics. They use nonuniform masses
+and/or lengths and, for the unlock branch, a fractional constraint on the
+eighth joint. None is a canonical uniform eight-link result. The required
+20/100 held-out gates, reset-free video, public manifest, hashes, and paper
+remain unearned.
+
+## Adaptive Unlock Refinement (2026-09-13)
+
+The same exact-MuJoCo two-expert route was continued from the nearest accepted
+predecessor rather than replaying a coarse jump. The new warm-start rebuild
+applied the predecessor feedback gains while rolling the route through the
+target plant. A centered objective used a `2.4 m` soft rail limit, rail weight
+`1e7`, and terminal cart and cart-velocity weights of `5000`.
+
+| Attempt | Exact setup | Result | Decision |
+| --- | --- | --- | --- |
+| Unlock continuation `0.59` | Split lengths/masses, same route, feedback rebuild, rail-aware objective | `25.04 s` hold; max cart `2.363 m` | Accepted |
+| Unlock continuation `0.60` | Same setup from the accepted `0.59` controller | `23.90 s` hold; max cart `2.362 m` | Accepted |
+| Centered unlock continuation `0.603` | Same setup, tighter cart barrier and terminal centering | `25.02 s` hold; max cart `2.360 m` | Accepted |
+| Centered unlock continuation `0.604` | Same setup from the nearest accepted predecessor | `25.02 s` hold; max cart `2.360 m` | Accepted |
+| Soft-warm unlock continuation `0.6045` | Half-scale inherited feedback and final tracking, same centered objective | `25.02 s` hold; max cart `2.360 m` | Strongest accepted checkpoint |
+| Boundary probes `0.60475` and `0.605` | Same soft-warm setup, next unlock steps | `0.42 s` transient, then `3.063 m` and `3.008 m` rail exits | Rejected |
+
+The strongest artifact is
+`runs/swingup8_split_unlock_p06045_softwarm_centered_railtarget24.json`; the
+full-strength 60.45% probe
+`runs/swingup8_split_unlock_p06045_centered_railtarget24.json` remains a
+negative control, as do the rejected probes
+`runs/swingup8_split_unlock_p060475_softwarm_centered_railtarget24.json` and
+`runs/swingup8_split_unlock_p0605_softwarm_centered_railtarget24.json`. These are
+curriculum evidence only: the final morphology remains nonuniform and the
+eighth joint is not fully free. They do not support an eight-link record,
+paper, video, or public release claim.
+
+## Phase-Adaptive Unlock Replay (2026-09-13)
+
+Fixed-step route replay became brittle at the first release of the eighth
+joint. The evaluator now searches a bounded forward window of the inherited
+nominal route in dimensionless state space, advances that phase monotonically,
+and retains the saved time-varying feedback gains. The switch to the terminal
+hold controller remains deferred until the inherited route horizon, so this is
+still the same settled-launch two-expert interface used for seven links.
+
+| Attempt | Exact setup | Result | Decision |
+|---|---|---|---|
+| Phase-adaptive split unlock `0.60475`, `0.605`, `0.610` | Source `p=0.6045`, exact hanging start, 20-step forward phase window | `25.02 s` holds, peak cart `2.360 m` | Accepted curriculum continuation |
+| Phase-adaptive split unlock `0.615`, `0.6175` | Same route family, saved feedback replay | `25.48 s` holds, peak cart `2.360 m` | Strongest accepted replay |
+| Phase-adaptive split unlock `0.61875`, `0.619375` | Same route family, saved feedback replay | `24.38 s` and `24.36 s` holds, peak cart `2.360 m` | Current accepted frontier |
+| Phase-adaptive split unlock `0.620`, `0.630`, `0.650` | Nearest accepted route, exact target plant | `0.02 s` transient and rail exit near `3.1 m` | Rejected boundary probes |
+| Canonical uniform target from `p=0.619375` | `configs/swingup8_uniform.yaml`, progress `1.0`, same saved route/gains | `0.02 s` transient, `3.085 m` peak cart, no latch | Canonical transfer failed |
+
+The accepted artifacts are
+`runs/swingup8_split_unlock_p060475_phaseadaptive_replay.json`,
+`runs/swingup8_split_unlock_p0615_phaseadaptive_replay.json`,
+`runs/swingup8_split_unlock_p0619375_phaseadaptive_replay.json`, and their
+neighboring continuation probes. The `p=0.620` feedback-refinement probes
+also failed: the zero-feedback rebuild reached only `0.42 s` upright streak
+before a `3.031 m` rail exit, while the full-feedback rebuild failed earlier.
+The current evidence therefore supports a sharp newly-freed-joint swing-up
+boundary, not a capture/stabilization failure and not an eight-link claim.
+
+The phase tracker includes a defensive end-of-route fallback so a morphology
+jump cannot crash evaluation with an empty search window. This is an
+implementation repair, not performance evidence.

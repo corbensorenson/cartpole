@@ -63,10 +63,12 @@ def generate_nlink_cartpole_xml(
         mass = morph.masses[i]
         damping = morph.damping[i]
         frictionloss = morph.frictionloss[i]
+        stiffness = morph.joint_stiffness[i]
         rgba = "0.9 0.25 0.15 1" if i % 2 == 0 else "0.95 0.65 0.10 1"
         lines.append(f'{indent}<body name="link_{idx}" pos="0 0 {_f(parent_pos if i == 0 else morph.lengths[i-1])}">')
         indent += '  '
-        lines.append(f'{indent}<joint name="hinge_{idx}" type="hinge" axis="0 1 0" damping="{_f(damping)}" frictionloss="{_f(frictionloss)}"/>')
+        spring = "" if stiffness <= 0.0 else f' stiffness="{_f(stiffness)}" springref="0"'
+        lines.append(f'{indent}<joint name="hinge_{idx}" type="hinge" axis="0 1 0" damping="{_f(damping)}" frictionloss="{_f(frictionloss)}"{spring}/>')
         lines.append(f'{indent}<geom name="link_{idx}_geom" type="capsule" fromto="0 0 0 0 0 {_f(length)}" size="{_f(link_radius)}" mass="{_f(mass)}" rgba="{escape(rgba)}"/>')
         lines.append(f'{indent}<site name="tip_{idx}" pos="0 0 {_f(length)}" size="0.012" rgba="0 0 0 1"/>')
 
@@ -76,6 +78,19 @@ def generate_nlink_cartpole_xml(
         lines.append(f'{indent}</body>')
     lines.append('    </body>')
     lines.append('  </worldbody>')
+    locked = [i for i, value in enumerate(morph.joint_lock) if float(value) > 0.0]
+    if locked:
+        lines.append('  <equality>')
+        for i in locked:
+            # Legacy diagnostic schedule: weakening solref leaves a finite
+            # constraint at strength -> 0. Deletion at zero is discontinuous.
+            strength = max(0.0, min(1.0, float(morph.joint_lock[i])))
+            timeconst = 0.001 + 0.249 * (1.0 - strength)
+            lines.append(
+                f'    <joint joint1="hinge_{int(i) + 1}" '
+                f'polycoef="0 0 0 0 0" solref="{_f(timeconst)} 1"/>'
+            )
+        lines.append('  </equality>')
     lines.append('  <actuator>')
     lines.append(f'    <motor name="cart_motor" joint="slide" gear="1" ctrllimited="true" ctrlrange="-{_f(force_limit)} {_f(force_limit)}"/>')
     lines.append('  </actuator>')

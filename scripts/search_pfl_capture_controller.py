@@ -151,6 +151,8 @@ def rollout(
             "hinge_velocity_rms": hinge_rms,
             "x": float(env.data.qpos[0]),
             "cart_velocity": float(env.data.qvel[0]),
+            "qpos": np.asarray(env.data.qpos, dtype=np.float64).astype(float).tolist(),
+            "qvel": np.asarray(env.data.qvel, dtype=np.float64).astype(float).tolist(),
             "absolute_angles": absolute.astype(float).tolist(),
             "is_upright": bool(info.get("is_upright", False)),
             "upright_streak_seconds": float(info.get("upright_streak_seconds", 0.0)),
@@ -165,7 +167,7 @@ def rollout(
         if cost < best_cost:
             best_cost = cost
             best_row = dict(row)
-        if return_trace and (step % 4 == 0 or row["is_upright"] or blend > 0.5):
+        if return_trace:
             trace.append(row)
         max_cart = max(max_cart, abs(row["x"]))
         action_energy += action * action

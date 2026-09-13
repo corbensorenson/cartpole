@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import importlib.util
+import json
+import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -17,7 +19,7 @@ from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.ilqr import QuadraticTrajectoryCost
 from gcartpole.modal import StateScales
 from scripts.continue_fddp_homotopy import artifact_passes, candidate_alpha
-from scripts.search_capture_sequence import fixed_state_cfg
+from scripts.search_capture_sequence import fixed_state_cfg, load_state
 
 
 class _LinearTransition:
@@ -75,6 +77,33 @@ class FDDPTests(unittest.TestCase):
 
 
 class FDDPContinuationTests(unittest.TestCase):
+    @unittest.skipUnless(importlib.util.find_spec("crocoddyl"), "Crocoddyl is optional")
+    def test_feedback_warm_start_tracks_the_inherited_route(self) -> None:
+        from scripts.search_fddp_capture import rebuild_feedback_warm_start
+
+        transition = _LinearTransition()
+        controls = np.asarray([0.1, 0.2])
+        nominal_states = np.zeros((3, 4), dtype=np.float64)
+        feedback_gains = np.ones((2, 4), dtype=np.float64)
+        states = rebuild_feedback_warm_start(
+            transition,
+            np.zeros(4, dtype=np.float64),
+            controls,
+            nominal_states,
+            feedback_gains,
+            feedback_scale=0.5,
+        )
+        np.testing.assert_allclose(
+            states,
+            np.asarray(
+                [
+                    [0.0, 0.0, 0.0, 0.0],
+                    [0.1, 0.1, 0.1, 0.1],
+                    [0.5, 0.5, 0.5, 0.5],
+                ]
+            ),
+        )
+
     @unittest.skipUnless(importlib.util.find_spec("mujoco"), "MuJoCo is optional")
     def test_fixed_state_cfg_clears_curriculum_noise_and_scales(self) -> None:
         root = Path(__file__).resolve().parents[1]
@@ -95,6 +124,33 @@ class FDDPContinuationTests(unittest.TestCase):
     def test_candidate_alpha_stops_at_target(self) -> None:
         self.assertEqual(candidate_alpha(0.5, 1.0, 0.1), 0.6)
         self.assertEqual(candidate_alpha(0.95, 1.0, 0.1), 1.0)
+
+    def test_load_state_accepts_replay_selected_state(self) -> None:
+        state = {"qpos": [0.0, 3.141592653589793], "qvel": [0.0, 0.0]}
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "replay.json"
+            path.write_text(json.dumps({"selected_state": state}), encoding="utf-8")
+            loaded, index = load_state(str(path), "selected")
+        self.assertEqual(index, -1)
+        self.assertEqual(loaded, state)
+
+    def test_load_state_accepts_saved_terminal_state(self) -> None:
+        state = {"qpos": [0.0, 3.141592653589793], "qvel": [0.0, 0.0]}
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "controller.json"
+            path.write_text(json.dumps({"terminal_state": state}), encoding="utf-8")
+            loaded, index = load_state(str(path), "terminal")
+        self.assertEqual(index, -1)
+        self.assertEqual(loaded, state)
+
+    def test_load_state_accepts_global_proposal_best_state(self) -> None:
+        state = {"qpos": [0.0, 0.25], "qvel": [0.0, -0.4]}
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "proposal.json"
+            path.write_text(json.dumps({"best": {"best_state": state}}), encoding="utf-8")
+            loaded, index = load_state(str(path), "best")
+        self.assertEqual(index, -1)
+        self.assertEqual(loaded, state)
 
     def test_artifact_requires_feasibility_and_strict_replay_success(self) -> None:
         payload = {

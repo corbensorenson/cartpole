@@ -83,7 +83,7 @@ def main() -> None:
     args = parser.parse_args()
 
     base_cfg = apply_overrides(load_config(args.config), args.override)
-    base_cfg["env"]["action_lqr_residual"]["enabled"] = False
+    base_cfg["env"].setdefault("action_lqr_residual", {})["enabled"] = False
     selected_state, selected_index = load_state(args.state_json, args.state_index)
     cfg = fixed_state_cfg(
         base_cfg, selected_state, float(base_cfg["env"]["episode_seconds"])

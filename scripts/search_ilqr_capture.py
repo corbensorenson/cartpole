@@ -164,6 +164,7 @@ def handoff_bounds_satisfied(
 def execute_controller(
     cfg: dict[str, Any],
     *,
+    progress: float = 1.0,
     seed: int,
     controls: np.ndarray,
     nominal_states: np.ndarray,
@@ -179,8 +180,12 @@ def execute_controller(
     handoff_hinge_velocity_rms: float | None = None,
     tracking_mode: str = "ilqr_tracking",
     defer_handoff_until_horizon: bool = False,
+    phase_adaptive: bool = False,
+    phase_window: int = 12,
 ) -> dict[str, Any]:
-    env = NLinkCartPoleEnv(cfg, progress=1.0, seed=seed)
+    if not 0.0 <= float(progress) <= 1.0:
+        raise ValueError("progress must be in [0, 1]")
+    env = NLinkCartPoleEnv(cfg, progress=float(progress), seed=seed)
     env.reset(seed=seed)
     trajectory: list[dict[str, Any]] = []
     latched = False
@@ -190,6 +195,9 @@ def execute_controller(
     terminated = False
     truncated = False
     info: dict[str, Any] = {}
+    phase_cursor = 0
+    if phase_window < 0:
+        raise ValueError("phase window must be nonnegative")
     try:
         while not (terminated or truncated):
             state = data_state(env.data)
@@ -216,10 +224,31 @@ def execute_controller(
             if env.step_count < len(controls) and (
                 defer_handoff_until_horizon or not latched
             ):
-                step = int(env.step_count)
                 coordinate_state = dimensionless_wrapped_state(
                     env.data.qpos, env.data.qvel, transform
                 )
+                if phase_adaptive:
+                    if phase_cursor >= controls.size:
+                        # A morphology jump can make the nearest-route search
+                        # reach the end before the fixed horizon. Hold the
+                        # final route action until the normal handoff gate
+                        # opens instead of constructing an empty candidate set.
+                        step = controls.size - 1
+                    else:
+                        candidates = np.arange(
+                            phase_cursor,
+                            min(controls.size, phase_cursor + phase_window + 1),
+                            dtype=np.int64,
+                        )
+                        errors = nominal_states[candidates] - coordinate_state
+                        step = int(
+                            candidates[
+                                int(np.argmin(np.einsum("ij,ij->i", errors, errors)))
+                            ]
+                        )
+                        phase_cursor = step + 1
+                else:
+                    step = int(env.step_count)
                 error = coordinate_state - nominal_states[step]
                 action = float(
                     np.clip(controls[step] + feedback_gains[step] @ error, -1.0, 1.0)

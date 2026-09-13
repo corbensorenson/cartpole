@@ -35,10 +35,25 @@ def interpolation_matrix(knot_count: int, step_count: int) -> np.ndarray:
     return matrix
 
 
-def load_source_controls(path: str, *, steps: int, dt: float) -> np.ndarray:
+def load_source_controls(
+    path: str, *, steps: int, dt: float, use_trajectory_actions: bool = False
+) -> np.ndarray:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
     controller = payload.get("controller") if isinstance(payload, dict) else None
-    if isinstance(controller, dict) and controller.get("controls") is not None:
+    source_is_knots = False
+    if use_trajectory_actions:
+        result = payload.get("result") if isinstance(payload, dict) else None
+        rows = result.get("trajectory") if isinstance(result, dict) else None
+        if not isinstance(rows, list) or not rows:
+            final_eval = payload.get("final_eval") if isinstance(payload, dict) else None
+            rows = final_eval.get("trace") if isinstance(final_eval, dict) else None
+        if not isinstance(rows, list) or not rows:
+            rows = payload.get("trajectory") if isinstance(payload, dict) else None
+        if not isinstance(rows, list) or not rows:
+            raise ValueError(f"{path} does not contain trajectory actions")
+        source = np.asarray([row["action"] for row in rows], dtype=np.float64)
+        source_seconds = float(len(source) * dt)
+    elif isinstance(controller, dict) and controller.get("controls") is not None:
         source = np.asarray(controller["controls"], dtype=np.float64)
         source_seconds = float(controller.get("horizon_seconds", source.size * dt))
     else:
@@ -49,9 +64,22 @@ def load_source_controls(path: str, *, steps: int, dt: float) -> np.ndarray:
             raise ValueError(f"{path} must contain controller.controls or best.knots")
         source = np.asarray(record["knots"], dtype=np.float64)
         source_seconds = float(payload.get("search", {}).get("seconds", source.size * dt))
+        source_is_knots = True
     if source.ndim != 1 or source.size < 2:
         raise ValueError("source controls must be a one-dimensional sequence")
-    source_t = np.linspace(0.0, max(source_seconds, dt), source.size, dtype=np.float64)
+    if source_is_knots:
+        # search_swingup_global_exact_cem expands knots on linspace(0, 1, N),
+        # including the final knot at the final simulated step. Replaying by
+        # interval time (0, ..., (N-1)*dt) shifts every knot on a sensitive
+        # chain and invalidates the measured prefix.
+        source_phase = np.linspace(0.0, 1.0, source.size, dtype=np.float64)
+        target_phase = np.linspace(0.0, 1.0, steps, dtype=np.float64)
+        return np.clip(np.interp(target_phase, source_phase, source), -1.0, 1.0)
+    source_t = (
+        np.arange(source.size, dtype=np.float64) * dt
+        if use_trajectory_actions
+        else np.linspace(0.0, max(source_seconds, dt), source.size, dtype=np.float64)
+    )
     target_t = np.arange(steps, dtype=np.float64) * dt
     return np.clip(np.interp(target_t, source_t, source, left=source[0], right=source[-1]), -1.0, 1.0)
 
@@ -174,6 +202,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Exact serial CEM search for a target-directed swing-up arrest tail")
     parser.add_argument("--config", default="configs/swingup7_uniform.yaml")
     parser.add_argument("--source-json", required=True)
+    parser.add_argument(
+        "--source-trajectory-actions",
+        action="store_true",
+        help="seed the prefix from measured replay actions instead of open-loop controller.controls",
+    )
     parser.add_argument("--tail-start-seconds", type=float, default=3.0)
     parser.add_argument("--tail-seconds", type=float, default=1.56)
     parser.add_argument(
@@ -232,7 +265,12 @@ def main() -> None:
     total_steps = max(2, int(round((args.tail_start_seconds + args.tail_seconds) / dt)))
     tail_steps = max(2, int(round(args.tail_seconds / dt)))
     prefix_steps = max(0, int(round(args.tail_start_seconds / dt)))
-    source_controls = load_source_controls(args.source_json, steps=total_steps, dt=dt)
+    source_controls = load_source_controls(
+        args.source_json,
+        steps=total_steps,
+        dt=dt,
+        use_trajectory_actions=args.source_trajectory_actions,
+    )
     start_qpos, start_qvel = replay_prefix(env, source_controls, prefix_steps)
     target, target_metadata = load_target(args.target_state, scale=args.target_scale, n_links=env.n)
     interpolation = interpolation_matrix(args.knot_count, tail_steps)
@@ -324,6 +362,7 @@ def main() -> None:
         "config_path": str(Path(args.config)),
         "config_sha256": data_sha256(cfg),
         "source_controller": file_metadata(args.source_json),
+        "source_trajectory_actions": bool(args.source_trajectory_actions),
         "target": target_metadata,
         "tail": {
             "start_seconds": float(args.tail_start_seconds),

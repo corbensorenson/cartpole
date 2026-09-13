@@ -236,6 +236,12 @@ def main() -> None:
     )
     parser.add_argument("--config", default="configs/swingup6_capture_envelope.yaml")
     parser.add_argument("--spec", default="benchmarks/p1_capture_envelope.yaml")
+    parser.add_argument(
+        "--progress",
+        type=float,
+        default=1.0,
+        help="morphology schedule progress for the exact approach and settling plant",
+    )
     parser.add_argument("--source-controller", required=True)
     parser.add_argument("--seed", type=int, default=62601)
     parser.add_argument("--out", required=True)
@@ -287,6 +293,8 @@ def main() -> None:
         raise ValueError(
             "durations, weights, and thresholds must be positive; iterations nonnegative"
         )
+    if not 0.0 <= args.progress <= 1.0:
+        raise ValueError("progress must be in [0, 1]")
     initialization_count = sum(
         (
             args.initial_feedback_cem,
@@ -327,7 +335,7 @@ def main() -> None:
         )
 
     base_cfg = apply_overrides(load_config(args.config), args.override)
-    base_cfg["env"]["action_lqr_residual"]["enabled"] = False
+    base_cfg["env"].setdefault("action_lqr_residual", {})["enabled"] = False
     cfg = fixed_state_cfg(
         base_cfg,
         source_payload["selected_state"],
@@ -342,7 +350,7 @@ def main() -> None:
             "source controller resolved config hash differs from the requested refinement config"
         )
 
-    gain = lqr_gain(cfg, progress=1.0, fd_eps=1e-7, control_cost=1000.0)
+    gain = lqr_gain(cfg, progress=args.progress, fd_eps=1e-7, control_cost=1000.0)
     spec = load_config(args.spec)
     distribution = spec["distribution"]
     transform = dimensionless_absolute_transform(
@@ -358,7 +366,7 @@ def main() -> None:
         raise ValueError(
             "source controller state dimension differs from the requested plant"
         )
-    state_matrix, input_matrix = finite_difference_dynamics(cfg, 1.0, 1e-7)
+    state_matrix, input_matrix = finite_difference_dynamics(cfg, args.progress, 1e-7)
     lyapunov, spectral_radius = closed_loop_lyapunov_matrix(
         state_matrix,
         input_matrix,
@@ -367,7 +375,7 @@ def main() -> None:
         feedback_scale=args.lqr_scale,
     )
 
-    env = NLinkCartPoleEnv(cfg, progress=1.0, seed=args.seed)
+    env = NLinkCartPoleEnv(cfg, progress=args.progress, seed=args.seed)
     env.reset(seed=args.seed)
     transition = MujocoTransition(env, coordinate_transform=transform)
     policy_dt = float(env.dt)
@@ -705,6 +713,7 @@ def main() -> None:
             "handoff_angle_abs": args.handoff_angle_abs,
             "handoff_cart_velocity_abs": args.handoff_cart_velocity_abs,
             "handoff_hinge_velocity_rms": args.handoff_hinge_velocity_rms,
+            "progress": float(args.progress),
             "controls": controls.astype(float).tolist(),
             "feedback_gains": feedback_gains.astype(float).tolist(),
         },
