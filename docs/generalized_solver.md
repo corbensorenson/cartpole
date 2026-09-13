@@ -199,3 +199,21 @@ PYTHONPATH=src python scripts/evaluate_generalized_route_library.py \
 The morphology table and transfer output are analysis/warm starts, not success
 claims. Promotion requires exact optimization followed by independent noisy
 evaluation with rail checks and a five-second upright hold.
+
+## Current six-link boundary
+
+Six links has not been promoted. Arc-length transfer from both accepted n=5
+and the frozen n=7 release produced exact, rail-feasible target-plant warm
+starts, but neither direct replay nor full-horizon Box-FDDP reached capture.
+Increasing the diagnostic rail from 6 m to 12 m did not fix the n=7-to-n=6
+route, which rules out rail clipping as that branch's primary failure.
+
+The fixed-size 13-parameter PFL search reached 0.936 rad from upright at its
+best exact-modal handoff, but retained too much absolute-rate and internal-mode
+energy for the tested tail optimizer. A three-scalar extension adds exact
+collective-mode pumping, gated internal-mode damping, and a modal acceleration
+limit while keeping parameter count independent of links. It reduced unwanted
+motion but did not improve the complete handoff score. The next deterministic
+step is phase-scheduled modal forcing derived from each plant's frequency and
+cart-coupling spectrum; adding a larger capture learner is not justified by
+this boundary. See [the compact frontier record](../runs/generalized_solver/frontier_n6.json).

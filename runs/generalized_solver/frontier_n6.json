@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "claim_status": "development_bottom_up_boundary_not_solved",
+  "not_solution": true,
+  "summary": "Six links remains unpromoted after exact transfer, rail continuation, aggregate/modal PFL, Box-FDDP, and tail-search probes. The measured blocker is modal phase/energy, not demonstrated rail insufficiency.",
+  "n_links": 6,
+  "accepted_predecessor": "runs/generalized_solver/frontier_n5.json",
+  "transfer_probes": [
+    {
+      "source_links": 5,
+      "diagnostic_rail_half_length": 6.0,
+      "warm_start_max_cart_center_excursion": 2.7325697275934617,
+      "warm_start_body_aware_required_rail_ratio": 0.9708565758644873,
+      "result": "full_horizon_Box_FDDP_failed"
+    },
+    {
+      "source_links": 7,
+      "diagnostic_rail_half_length": 6.0,
+      "warm_start_max_cart_center_excursion": 2.0575573295745144,
+      "warm_start_body_aware_required_rail_ratio": 0.7458524431915049,
+      "result": "full_horizon_Box_FDDP_failed",
+      "minimum_lyapunov": 337456.0
+    },
+    {
+      "source_links": 7,
+      "diagnostic_rail_half_length": 12.0,
+      "result": "full_horizon_Box_FDDP_failed_with_numerical_instability",
+      "interpretation": "wider rail alone does not repair this transfer"
+    }
+  ],
+  "count_independent_policy_probes": {
+    "aggregate_parameter_count": 13,
+    "best_time_seconds": 11.72,
+    "best_max_abs_angle": 0.9363,
+    "best_exact_modal_score": 59.5166,
+    "best_absolute_rate_rms_ratio": 2.175,
+    "best_internal_modal_energy_fraction": 0.123,
+    "exact_tail_result": "failed_to_produce_robust_handoff",
+    "modal_extension_parameter_count": 16,
+    "modal_extension": "collective pumping plus energy-gated internal damping and bounded acceleration",
+    "modal_extension_result": "lowered some unwanted motion but did not improve the complete handoff score"
+  },
+  "rail_conclusion": "No minimum rail is certified for n=6. Tested failures persisted with large diagnostic headroom, so route/modal phasing is the current blocker.",
+  "next_method": "deterministic phase-scheduled modal forcing derived from exact dimensionless frequencies and cart-acceleration coupling, followed by the same Box-FDDP and noisy-gate promotion path"
+}

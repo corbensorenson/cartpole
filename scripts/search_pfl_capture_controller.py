@@ -28,6 +28,7 @@ from gcartpole.evidence import (
 from gcartpole.generalized_modes import (
     ChainNormalModes,
     chain_normal_modes,
+    modal_energy_acceleration_ratio,
     modal_handoff_metrics,
 )
 from gcartpole.generalized_solver import setup_from_config
@@ -61,6 +62,11 @@ PARAMETER_NAMES = [
     "energy_error_limit",
     "gate_width",
 ]
+MODAL_PARAMETER_NAMES = [
+    "collective_modal_gain",
+    "internal_modal_damping_gain",
+    "modal_acceleration_limit_ratio",
+]
 
 
 def sigmoid(value: float) -> float:
@@ -83,10 +89,59 @@ def swing_acceleration(
     )
 
 
+def modal_swing_correction(
+    env: NLinkCartPoleEnv,
+    params: np.ndarray,
+    features: dict[str, float],
+    modes: ChainNormalModes | None,
+    *,
+    gravity: float,
+) -> tuple[float, float, float]:
+    """Return physical acceleration, dimensionless ratio, and damping gate."""
+
+    if params.size == 13:
+        return 0.0, 0.0, 0.0
+    if params.size != 16:
+        raise ValueError("PFL parameters must contain 13 base or 16 modal values")
+    if modes is None:
+        raise ValueError("modal swing law requires hanging modes")
+    # Do not spend the single actuator suppressing internal modes while the
+    # chain still lacks collective swing energy. Once total energy approaches
+    # the upright target, smoothly redirect authority toward exact-mode
+    # damping. The gate is fixed and dimensionless, so it adds no morphology-
+    # or link-specific tuning parameter.
+    damping_gate = sigmoid((0.60 - abs(float(features["energy_error"]))) / 0.10)
+    ratio, _ = modal_energy_acceleration_ratio(
+        modes,
+        np.asarray(env.data.qpos[1:], dtype=np.float64),
+        np.asarray(env.data.qvel[1:], dtype=np.float64),
+        total_energy_error=float(features["energy_error"]),
+        energy_scale=float(env._energy_gap),
+        collective_gain=float(params[13]),
+        internal_damping_gain=float(params[14]) * damping_gate,
+    )
+    ratio = float(np.clip(ratio, -params[15], params[15]))
+    return float(gravity * ratio), ratio, damping_gate
+
+
 def capture_blend(
     params: np.ndarray, features: dict[str, float], env: NLinkCartPoleEnv
 ) -> float:
-    _, _, _, _, _, _, _, _, _, angle_limit, rate_limit, energy_limit, width = params
+    (
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        _,
+        angle_limit,
+        rate_limit,
+        energy_limit,
+        width,
+    ) = params[:13]
     _, absolute = env._angles()
     max_angle = float(np.max(np.abs(absolute)))
     hinge_rate = float(np.sqrt(np.mean(np.asarray(env.data.qvel[1 : 1 + env.n]) ** 2)))
@@ -120,6 +175,7 @@ def rollout(
     return_trace: bool = False,
     handoff_objective: str = "legacy",
     upright_modes: ChainNormalModes | None = None,
+    hanging_modes: ChainNormalModes | None = None,
 ) -> dict[str, Any]:
     env_cfg = {
         **cfg["env"],
@@ -163,6 +219,16 @@ def rollout(
         t = step * env.dt
         features = state_features(env, t)
         acceleration = swing_acceleration(params, features, t)
+        correction, modal_acceleration_ratio, modal_damping_gate = (
+            modal_swing_correction(
+                env,
+                params,
+                features,
+                hanging_modes,
+                gravity=setup.gravity,
+            )
+        )
+        acceleration += correction
         force = force_for_cart_acceleration(env, acceleration)
         swing_action = float(np.clip(force / env.force_limit, -1.0, 1.0))
         blend = capture_blend(params, features, env)
@@ -183,6 +249,8 @@ def rollout(
             "capture_action": float(capture_action),
             "capture_blend": blend,
             "desired_cart_acceleration": float(acceleration),
+            "modal_acceleration_ratio": modal_acceleration_ratio,
+            "modal_damping_gate": modal_damping_gate,
             "force": float(force),
             **features,
             "max_abs_angle": float(np.max(np.abs(absolute))),
@@ -285,6 +353,11 @@ def main() -> None:
     parser.add_argument(
         "--handoff-objective", choices=("legacy", "modal"), default="legacy"
     )
+    parser.add_argument(
+        "--modal-swing",
+        action="store_true",
+        help="add three count-independent exact normal-mode energy/damping parameters",
+    )
     parser.add_argument("--out", required=True)
     parser.add_argument("--override", action="append", default=[])
     args = parser.parse_args()
@@ -295,17 +368,22 @@ def main() -> None:
     mode_env = NLinkCartPoleEnv(cfg, progress=args.progress, seed=0)
     mode_env.reset(seed=0)
     upright_modes = chain_normal_modes(mode_env, equilibrium="upright")
+    hanging_modes = chain_normal_modes(mode_env, equilibrium="hanging")
     mode_env.close()
     rng = np.random.default_rng(args.seed)
     center = np.asarray(
         [12.0, -4.0, -1.0, 1.0, 1.0, 2.0, 0.20, 0.0, 1.0, 0.35, 1.5, 0.40, 0.12],
         dtype=np.float64,
     )
+    if args.modal_swing:
+        center = np.r_[center, [0.25, 1.0, 2.0]]
     if args.init_json:
         prior = json.loads(Path(args.init_json).read_text(encoding="utf-8"))
         prior_vector = np.asarray(
             prior.get("best", {}).get("vector", []), dtype=np.float64
         )
+        if prior_vector.shape == (13,) and args.modal_swing:
+            prior_vector = np.r_[prior_vector, center[13:]]
         if prior_vector.shape != center.shape:
             raise ValueError(
                 f"{args.init_json} best vector has shape {prior_vector.shape}; expected {center.shape}"
@@ -315,6 +393,8 @@ def main() -> None:
     sigma[6] = 0.08
     sigma[7] = 0.50
     sigma[8:] = 0.15
+    if args.modal_swing:
+        sigma[13:] = [0.20, 0.40, 0.20]
     lower = np.asarray(
         [
             -40.0,
@@ -337,6 +417,9 @@ def main() -> None:
         [40.0, 40.0, 20.0, 20.0, 20.0, 30.0, 2.00, np.pi, 6.0, 0.80, 5.0, 1.50, 0.60],
         dtype=np.float64,
     )
+    if args.modal_swing:
+        lower = np.r_[lower, [0.0, 0.0, 0.1]]
+        upper = np.r_[upper, [5.0, 10.0, 5.0]]
     best: dict[str, Any] | None = None
     history: list[dict[str, Any]] = []
     started = time.time()
@@ -361,6 +444,7 @@ def main() -> None:
                 rail_limit=args.rail_limit,
                 handoff_objective=args.handoff_objective,
                 upright_modes=upright_modes,
+                hanging_modes=hanging_modes,
             )
             records.append({"vector": vector, "result": result})
         records.sort(key=lambda row: float(row["result"]["score"]))
@@ -416,6 +500,7 @@ def main() -> None:
         return_trace=True,
         handoff_objective=args.handoff_objective,
         upright_modes=upright_modes,
+        hanging_modes=hanging_modes,
     )
     payload = {
         "schema_version": 1,
@@ -427,7 +512,8 @@ def main() -> None:
         "seconds": float(args.seconds),
         "rail_limit": args.rail_limit,
         "handoff_objective": args.handoff_objective,
-        "parameter_names": PARAMETER_NAMES,
+        "parameter_names": PARAMETER_NAMES
+        + (MODAL_PARAMETER_NAMES if args.modal_swing else []),
         "search": {
             "seed": int(args.seed),
             "iterations": int(args.iterations),

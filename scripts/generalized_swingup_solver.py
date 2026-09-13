@@ -17,7 +17,7 @@ from typing import Any
 
 import numpy as np
 
-from gcartpole.config import dump_json, load_config
+from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.evidence import file_metadata, utc_timestamp
 from gcartpole.fddp import rollout_controls
@@ -146,8 +146,10 @@ def analyze_command(args: argparse.Namespace) -> None:
 
 
 def transfer_command(args: argparse.Namespace) -> None:
-    source_base = load_config(args.source_config)
-    target_base = load_config(args.target_config or args.source_config)
+    source_base = apply_overrides(load_config(args.source_config), args.source_override)
+    target_base = apply_overrides(
+        load_config(args.target_config or args.source_config), args.target_override
+    )
     source_cfg = (
         source_base
         if int(source_base["env"]["n_links"]) == args.source_links
@@ -290,6 +292,8 @@ def parser() -> argparse.ArgumentParser:
     transfer.add_argument("--target-links", type=int, required=True)
     transfer.add_argument("--controller", required=True)
     transfer.add_argument("--spec", default="benchmarks/p1_capture_envelope.yaml")
+    transfer.add_argument("--source-override", action="append", default=[])
+    transfer.add_argument("--target-override", action="append", default=[])
     transfer.add_argument("--out", required=True)
     transfer.set_defaults(run=transfer_command)
     return root

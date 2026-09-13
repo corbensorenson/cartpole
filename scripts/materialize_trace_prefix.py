@@ -21,6 +21,8 @@ from gcartpole.evidence import (
     runtime_metadata,
     utc_timestamp,
 )
+from gcartpole.generalized_modes import chain_normal_modes
+from gcartpole.generalized_solver import setup_from_config
 from gcartpole.ilqr import MujocoTransition, data_state
 from gcartpole.modal import StateScales, dimensionless_absolute_transform
 
@@ -29,14 +31,22 @@ try:
         force_for_cart_acceleration,
         state_features,
     )
-    from scripts.search_pfl_capture_controller import capture_blend, swing_acceleration
+    from scripts.search_pfl_capture_controller import (
+        capture_blend,
+        modal_swing_correction,
+        swing_acceleration,
+    )
     from scripts.search_swingup_capture import lqr_action, lqr_gain
 except ModuleNotFoundError:
     from search_energy_shaping_feedback import (
         force_for_cart_acceleration,
         state_features,
     )
-    from search_pfl_capture_controller import capture_blend, swing_acceleration
+    from search_pfl_capture_controller import (
+        capture_blend,
+        modal_swing_correction,
+        swing_acceleration,
+    )
     from search_swingup_capture import lqr_action, lqr_gain
 
 
@@ -180,11 +190,17 @@ def main() -> None:
         if not isinstance(best, dict) or not isinstance(best.get("vector"), list):
             raise ValueError("--pfl-feedback requires source best.vector parameters")
         parameters = np.asarray(best["vector"], dtype=np.float64)
-        if parameters.shape != (13,):
+        if parameters.shape not in {(13,), (16,)}:
             raise ValueError(
-                "--pfl-feedback currently requires the 13-parameter PFL law"
+                "--pfl-feedback requires the 13-parameter base or 16-parameter modal PFL law"
             )
         capture_gain = lqr_gain(cfg, progress=1.0, fd_eps=1.0e-7, control_cost=1000.0)
+        hanging_modes = (
+            None
+            if parameters.size == 13
+            else chain_normal_modes(env, equilibrium="hanging")
+        )
+        setup = setup_from_config(cfg, progress=1.0)
 
         def policy_action(coordinate_state: np.ndarray, time_seconds: float) -> float:
             physical = transition.to_physical(coordinate_state)
@@ -194,6 +210,14 @@ def main() -> None:
             mujoco.mj_forward(env.model, env.data)
             features = state_features(env, time_seconds)
             acceleration = swing_acceleration(parameters, features, time_seconds)
+            correction, _, _ = modal_swing_correction(
+                env,
+                parameters,
+                features,
+                hanging_modes,
+                gravity=setup.gravity,
+            )
+            acceleration += correction
             force = force_for_cart_acceleration(env, acceleration)
             swing = float(np.clip(force / env.force_limit, -1.0, 1.0))
             blend = capture_blend(parameters, features, env)

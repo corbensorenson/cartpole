@@ -1045,6 +1045,52 @@ then an exact `configs/swingup8_uniform.yaml` replay and canonical 20/100
 holdout gates. No split morphology, locked joint, altered rail, or diagnostic
 capture success may be reported as a uniform eight-link result.
 
+### Protected Capture-Continuation Boundary (2026-09-13)
+
+The six-link capture curriculum was used as a controlled test of whether the
+7-link incumbent-preservation pattern would transfer to the next morphology
+boundary. The inherited checkpoint was evaluated before and after each stage;
+the best checkpoint remained the only admissible incumbent, so a later PPO
+regression could not silently replace it.
+
+| Run | Exact continuation | Result | Decision |
+| --- | --- | --- | --- |
+| `runs/swingup6_capture_envelope_resume_p005` | Resume the `p=0.0500` frontier for 250 updates, standard learning rate, `p` step `0.0025` | `92.97%` at `p=0.0500`; `90.63%` at `p=0.0525`; later `75-83%` at `p=0.0550` | Preserve the update-25 incumbent; ordinary continuation overwrites the stabilizer |
+| `runs/swingup6_capture_envelope_lowrate_p00525` | Resume the protected `p=0.0525` frontier for 200 updates, learning rate `1e-5`, `p` step `0.00125`, entropy `1e-4` | `90.63%` at `p=0.0525`; `88.28%`, `81.25%`, `84.38%`, `86.72%`, and `85.16%` at `p=0.05375`; no stage advance | Lower-rate PPO reduces the damage but still fails the `>=90%` stage gate |
+
+The low-rate result is a negative control for the current learner, not a
+canonical six-link gate and not eight-link evidence. It confirms that the
+7-link techniques being reused here are the settled/known launch, saved
+time-varying feedback, explicit downstream capture expert, real-state replay,
+and rollback-on-regression discipline; the missing ingredient is an
+incumbent-preserving teacher or safety fallback during the morphology
+continuation. The next attempt must retain the incumbent on every rollout and
+learn only residual corrections or teacher labels, rather than applying more
+unprotected scalar PPO updates.
+
+### Eight-Link Micro-Step Boundary Probe (2026-09-13)
+
+The accepted locked split-to-uniform checkpoint at `p=0.00365` was replayed
+on the same target plant with no change to the settled launch, saved
+time-varying swing feedback, phase-adaptive matching, or medium modal capture
+weights. The next micro-step is already a hard route boundary:
+
+| Probe | Result | Decision |
+| --- | --- | --- |
+| `p=0.003651` replay | No capture; rail exit at `3.030 m` | Failed inherited route |
+| `p=0.00365025`, `0.00365050`, `0.00365075` replays | All three ended at the same `3.030 m` rail failure | Not a coarse `0.00365`/`0.00366` sampling artifact |
+| `p=0.003651`, prefix scales `0.98x`, `0.99x`, `1.01x`, `1.02x` for `0.20 s` | All failed before capture, `3.012-3.027 m` peak cart | Scalar launch retuning is insufficient |
+| `p=0.003651`, phase-adaptive disabled | Same failure, `3.056 m` peak cart | Route phase selection is not the missing fix |
+| `p=0.00365025`, target-plant Box-FDDP rebuild | `47` iterations, no upright interval, `3.067 m` peak cart | Direct route refinement did not repair the cliff |
+| `p=0.003651`, diagnostic `+/-6 m` rail | No upright handoff; exit at `6.069 m` | Not merely canonical-rail clipping |
+
+These artifacts are diagnostic only:
+`runs/swingup8_uniform_locked_morphology_p0003651_modal_medium_capture_feedback.json`,
+`runs/swingup8_uniform_locked_morphology_p000365025_modal_medium_fddp_refine.json`,
+and the associated prefix/no-adaptive/rail-6 probes. The next useful method is
+co-refining the swing route and capture basin with an incumbent fallback; more
+isolated terminal-LQR gain sweeps are not justified by this boundary.
+
 ### Current Canonical Seven-Link Result
 
 The final canonical control evaluation now passes independently of the earlier

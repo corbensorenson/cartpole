@@ -1405,6 +1405,56 @@ eight-link claim, video, or record comparison should be published until the
 final morphology is uniform, the joint is free, and independent 20/100
 episodes plus a no-reset video pass.
 
+## Protected PPO Continuation Boundary (2026-09-13)
+
+The existing six-link capture frontier was used to test the same
+incumbent-preserving curriculum discipline applied to the seven-link release.
+The inherited best checkpoint was retained separately from each training
+stream, and later regressions were not promoted.
+
+| Attempt | Setup | Result | Lesson |
+| --- | --- | --- | --- |
+| Standard PPO continuation | Resume `runs/swingup6_capture_envelope_allstates_gated_probe_75/checkpoints/frontier.safetensors`; 250 updates; progress step `0.0025` | `92.97%` at `p=0.0500`, `90.63%` at `p=0.0525`, then `75-83%` at `p=0.0550`; best artifact is the early protected checkpoint | A successful incumbent is destroyed when the next morphology stage is too hard |
+| Low-rate protected continuation | Resume the protected `p=0.0525` checkpoint; 200 updates; learning rate `1e-5`; progress step `0.00125`; entropy `1e-4` | `90.63%` at `p=0.0525`; the next stage reached `88.28%` at best and ended at `85.16%`; no advance | Slower PPO is less destructive but does not cross the boundary |
+
+Artifacts are `runs/swingup6_capture_envelope_resume_p005/` and
+`runs/swingup6_capture_envelope_lowrate_p00525/`. These are diagnostic
+six-link learner experiments, not P1 evidence: neither has the required
+1,000-state held-out success, no-rail successful episodes, or complete
+reusable-policy gate. They do establish a clean negative result against
+continuing with more scalar PPO alone.
+
+The next permitted continuation must preserve the existing capture expert as
+a hard fallback on every rollout and train only a bounded residual, a
+teacher-labeled correction, or an explicitly verified model-based recovery
+policy. Any candidate must first beat the incumbent on held-out states, then
+be replayed on the same frozen gate before the curriculum advances. This is
+also the control rule for extending the 7-link method toward uniform 8 links.
+
+## Eight-Link Micro-Step Boundary Probe (2026-09-13)
+
+The accepted `p=0.00365` locked split-to-uniform checkpoint was replayed on
+the same target plant at progressively smaller steps. The next point,
+`p=0.003651`, failed before capture and reached the canonical rail at
+`3.030 m`. The predecessor route failed identically. Additional probes found:
+
+| Probe | Result | Lesson |
+| --- | --- | --- |
+| `p=0.00365025`, `0.00365050`, `0.00365075` | All replayed to a `3.030 m` rail failure | The boundary is real at sub-micro-step resolution |
+| Prefix scale `0.98x`, `0.99x`, `1.01x`, `1.02x` for `0.20 s` | All failed before capture; `3.012-3.027 m` peak cart | Short launch retiming alone does not restore the route |
+| Phase-adaptive matching disabled | `3.056 m` peak cart and no handoff | The phase matcher is not the sole cause |
+| Target-plant Box-FDDP at `p=0.00365025` | `47` iterations, no upright interval, `3.067 m` peak cart | One-shot trajectory refinement cannot cross the cliff |
+| Diagnostic rail widened to `+/-6 m` | Still no handoff; exit at `6.069 m` | The failure is not only the canonical rail limit |
+
+Artifacts include
+`runs/swingup8_uniform_locked_morphology_p0003651_modal_medium_capture_feedback.json`,
+`runs/swingup8_uniform_locked_morphology_p000365025_modal_medium_fddp_refine.json`,
+and the named prefix, no-adaptive, predecessor, and rail-6 probes. The
+7-link method is therefore being applied faithfully, but its next transfer
+requires co-refining the route and the capture basin with a hard incumbent
+fallback; further isolated LQR gain sweeps would not address the measured
+failure.
+
 ## Bottom-Up Five-Link Promotion (2026-09-13)
 
 The generalized track reached a five-link `20/20` noisy hanging-start gate.
