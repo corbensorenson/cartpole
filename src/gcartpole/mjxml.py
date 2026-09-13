@@ -11,6 +11,35 @@ def _f(x: float) -> str:
     return f"{float(x):.9g}"
 
 
+def joint_lock_impedance(strength: float, schedule: str = "linear") -> float:
+    """Map a normalized lock strength to MuJoCo constraint impedance.
+
+    ``linear`` preserves the historical diagnostic schedule. ``log_compliance``
+    moves uniformly across the four orders of magnitude in ``1 - impedance``
+    so early continuation steps do not multiply constraint compliance abruptly.
+    """
+
+    strength = max(0.0, min(1.0, float(strength)))
+    minimum_impedance = 0.0001
+    maximum_impedance = 0.9999
+    if schedule == "linear":
+        return minimum_impedance + (maximum_impedance - minimum_impedance) * strength
+    if schedule == "log_compliance":
+        release = 1.0 - strength
+        minimum_compliance = 1.0 - maximum_impedance
+        maximum_compliance = 1.0 - minimum_impedance
+        compliance = float(
+            np.exp(
+                (1.0 - release) * np.log(minimum_compliance)
+                + release * np.log(maximum_compliance)
+            )
+        )
+        return 1.0 - compliance
+    raise ValueError(
+        "joint_lock_impedance_schedule must be 'linear' or 'log_compliance'"
+    )
+
+
 def _rigid_split_groups(morph: Morphology) -> dict[int, tuple[int, float]]:
     """Map group starts to inclusive ends and their common lock strength."""
 
@@ -40,6 +69,7 @@ def generate_nlink_cartpole_xml(
     joint_armature: float = 0.0005,
     link_radius: float = 0.025,
     rigid_split_inertia: bool = False,
+    joint_lock_impedance_schedule: str = "linear",
 ) -> str:
     """Generate a planar serial n-link inverted pendulum on a sliding cart.
 
@@ -146,7 +176,9 @@ def generate_nlink_cartpole_xml(
             # at exactly zero.  A constant refsafe-compatible time constant
             # avoids changing both constraint stiffness knobs simultaneously.
             strength = max(0.0, min(1.0, float(morph.joint_lock[i])))
-            impedance = 0.0001 + (0.9999 - 0.0001) * strength
+            impedance = joint_lock_impedance(
+                strength, joint_lock_impedance_schedule
+            )
             timeconst = max(2.0 * float(timestep), 1.0e-4)
             lines.append(
                 f'    <joint joint1="hinge_{int(i) + 1}" '

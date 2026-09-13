@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import unittest
 from pathlib import Path
 
@@ -87,6 +88,20 @@ class ExplicitMorphologyProfileTests(unittest.TestCase):
             start.close()
             middle.close()
             end.close()
+
+        logarithmic_cfg = copy.deepcopy(cfg)
+        logarithmic_cfg["env"]["joint_lock_impedance_schedule"] = "log_compliance"
+        logarithmic_middle = NLinkCartPoleEnv(
+            logarithmic_cfg, progress=0.5, seed=0
+        )
+        try:
+            expected_compliance = np.sqrt(0.0001 * 0.9999)
+            np.testing.assert_allclose(
+                logarithmic_middle.model.eq_solimp[0, :2],
+                [1.0 - expected_compliance, 1.0 - expected_compliance],
+            )
+        finally:
+            logarithmic_middle.close()
 
     def test_uniform_locked_stage_reaches_uniform_geometry_before_unlock(self) -> None:
         cfg = load_config(ROOT / "configs/swingup8_uniform_locked_morphology.yaml")

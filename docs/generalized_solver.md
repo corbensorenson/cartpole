@@ -110,10 +110,14 @@ each split group carries one combined source-equivalent capsule; only a
 compiled coordinates numerically valid, and inserted-joint armature is zero.
 As the lock releases, mass moves continuously from the combined capsule into
 the separate target segments and armature grows to the target value. Historical
-benchmark configurations do not enable this option. The equality itself now
+benchmark configurations do not enable this option. The equality itself
 continues through MuJoCo constraint impedance from `0.9999` to its minimum
 `0.0001`, rather than changing the spring time constant and leaving a material
-constraint at the end of the schedule.
+constraint at the end of the schedule. New split continuations interpolate
+`1 - impedance` logarithmically across that four-order-of-magnitude range.
+This prevents a tiny first morphology step from multiplying constraint
+compliance, while the historical linear-impedance schedule remains available
+for reproducing earlier artifacts.
 
 If \(E\) lifts source route coordinates onto that locked manifold, the solver
 constructs a length-weighted left inverse \(P\), satisfying
@@ -155,18 +159,30 @@ mean even a mathematically exact locked embedding must be reoptimized through
 short continuation steps; every released target still has to pass exact replay,
 rail measurement, sustained hold, and the independent noisy gate.
 
+The release driver carries forward the last waypoint horizon whose exact
+refinement passed. It tries that deterministic horizon first on the next step,
+then adjacent declared horizons in nearest-first order. This changes only solve
+ordering—not the controller class, acceptance gate, or continuation proposal—
+and avoids repeatedly paying for local windows already shown too short on the
+current route branch.
+
 The first executable back-check uses the accepted uniform two-link route and a
 three-link target whose final lengths are `[0.75, 1.0, 1.25] m` and masses are
 `[0.2, 0.3, 0.5] kg`. On the exactly locked start, 20 deterministic waypoint
 segments required at most `0.023` normalized action correction; the subsequent
 Box-FDDP replay held upright for `20.54 s` with `2.797 m` peak cart travel. The
-same architecture then accepted two nonzero releases, through `p=0.00026`.
-Both held for `20.54 s`; the current frontier used `2.889 m` peak cart travel
-and had body-aware rail demand `rho=1.02284`. The
-[resumable ledger](../runs/generalized_solver/n2_to_n3_split_homotopy/continuation.json)
-and [generated continuation](../configs/generalized_n2_to_n3_split_continuation.yaml)
-are development evidence. The ledger is explicitly `not_solution`; `p=1` and
-the independent noisy gate remain unsolved for this count-plus-morphology path.
+historical linear-impedance back-check accepted two nonzero releases through
+`p=0.00026`. The logarithmic-compliance schedule then accepted seven proposals
+through `p=0.21756`, with one rejected 0.05-wide proposal deterministically
+bisected, while keeping the same exact hold gate. The latest route held for
+`20.54 s`, used `3.838 m` peak cart travel, and had body-aware rail demand
+`rho=1.33927`. The
+[current resumable ledger](../runs/generalized_solver/n2_to_n3_split_logcompliance_homotopy/continuation.json),
+[generated continuation](../configs/generalized_n2_to_n3_split_logcompliance.yaml),
+and [historical ledger](../runs/generalized_solver/n2_to_n3_split_homotopy/continuation.json)
+are development evidence. Both ledgers are explicitly `not_solution`; `p=1`
+and the independent noisy gate remain unsolved for this count-plus-morphology
+path.
 
 ### Morphology-conditioned terminal set
 

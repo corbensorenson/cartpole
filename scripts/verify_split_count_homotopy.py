@@ -80,6 +80,15 @@ def check_exact_result(
     return result
 
 
+def result_passes(result: dict[str, Any], cfg: dict[str, Any]) -> bool:
+    return bool(
+        result.get("success")
+        and result.get("latched")
+        and float(result.get("max_upright_streak_seconds", 0.0))
+        >= float(cfg["env"]["success_sustain_seconds"])
+    )
+
+
 def check_waypoint_attempts(
     attempts: list[dict[str, Any]], label: str, errors: list[str]
 ) -> None:
@@ -163,6 +172,14 @@ def verify(path: Path) -> list[str]:
         check_waypoint_attempts(
             trial.get("waypoint_attempts", []), label, errors
         )
+        priority = trial.get("waypoint_priority")
+        if priority is not None:
+            attempted = [
+                int(attempt["segment_steps"])
+                for attempt in trial.get("waypoint_attempts", [])
+            ]
+            if attempted != [int(value) for value in priority[: len(attempted)]]:
+                errors.append(f"{label}: waypoint attempts disagree with priority")
         if cfg_path.is_file():
             cfg = load_config(cfg_path)
             compare_morphology(
@@ -179,7 +196,17 @@ def verify(path: Path) -> list[str]:
             if not np.isclose(float(cfg["env"]["rail_limit"]), expected_rail):
                 errors.append(f"{label}: rail does not match continuation progress")
             if trial.get("accepted"):
-                check_exact_result(result_path, cfg, f"{label} result", errors)
+                result = check_exact_result(
+                    result_path, cfg, f"{label} result", errors
+                )
+            elif result_path.is_file():
+                result = json.loads(result_path.read_text(encoding="utf-8")).get(
+                    "result", {}
+                )
+            else:
+                result = {}
+            if not trial.get("accepted") and result_passes(result, cfg):
+                errors.append(f"{label}: rejected result actually passes exact gate")
         if trial.get("accepted"):
             accepted_progress = proposed
             current_result = trial.get("result", {})

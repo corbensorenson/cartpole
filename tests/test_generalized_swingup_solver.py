@@ -19,6 +19,7 @@ from scripts.generalized_swingup_solver import (
 from scripts.run_split_count_homotopy import (
     controller_link_count,
     freeze_progress_config,
+    prioritized_waypoint_steps,
 )
 from scripts.verify_split_count_homotopy import verify
 
@@ -28,6 +29,7 @@ def test_split_command_builders_make_valid_count_continuation_and_invariant_gain
     source_cfg = uniform_config(base, 2)
     target_cfg = uniform_config(base, 3)
     continuation, embedding = split_continuation_config(source_cfg, target_cfg)
+    assert continuation["env"]["joint_lock_impedance_schedule"] == "log_compliance"
 
     source = setup_from_config(source_cfg)
     start = setup_from_config(continuation, progress=0.0)
@@ -173,3 +175,26 @@ def test_rigid_split_start_matches_source_one_step_dynamics():
 def test_published_split_count_checkpoint_verifies():
     ledger = "runs/generalized_solver/n2_to_n3_split_homotopy/continuation.json"
     assert verify(Path(ledger)) == []
+
+
+def test_waypoint_priority_reuses_latest_successful_horizon():
+    baseline = {
+        "accepted": True,
+        "waypoint_attempts": [
+            {"segment_steps": 24, "refinement_passed": True}
+        ],
+    }
+    trials = [
+        {
+            "accepted": True,
+            "waypoint_attempts": [
+                {"segment_steps": 24, "refinement_passed": False},
+                {"segment_steps": 96, "refinement_passed": True},
+            ],
+        }
+    ]
+    assert prioritized_waypoint_steps([24, 48, 96], baseline, trials) == [
+        96,
+        48,
+        24,
+    ]

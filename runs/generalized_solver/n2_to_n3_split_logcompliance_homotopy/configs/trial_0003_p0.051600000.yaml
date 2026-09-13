@@ -1,0 +1,112 @@
+experiment:
+  name: trial_0003_p0.051600000
+  seed: 84321
+  out_dir: runs/generalized_solver
+env:
+  n_links: 3
+  total_length: 3.0
+  total_mass: 1.0
+  cart_mass: 1.0
+  rail_limit: 5.0
+  force_limit: 80.0
+  timestep: 0.005
+  frame_skip: 4
+  episode_seconds: 30.0
+  init_mode: hanging
+  init_cart_noise: 0.0
+  init_cart_vel_noise: 0.05
+  init_angle_noise: 0.05
+  init_vel_noise: 0.05
+  terminate_abs_angle: null
+  success_upright_threshold: 0.15
+  success_sustain_seconds: 5.0
+  cart_damping: 0.02
+  cart_frictionloss: 0.0
+  joint_armature: 0.0005
+  link_radius: 0.025
+  obs_include_morphology: true
+  obs_include_frictionloss: false
+  obs_include_time: false
+  reward:
+    alive: 0.0
+    terminal_penalty: -200.0
+    angle_cos: 3.0
+    upright_bonus: 45.0
+    sustained_upright_bonus: 10.0
+    upright_streak: 12.0
+    capture_quality: 8.0
+    angle_abs: 1.0
+    angle_rel: 0.02
+    tip: 0.5
+    cart_pos: 1.0
+    cart_vel: 0.002
+    hinge_vel: 0.0005
+    control: 0.001
+    upright_threshold: 0.15
+    upright_streak_cap_seconds: 5.0
+  rigid_split_inertia: true
+  joint_lock_impedance_schedule: log_compliance
+morphology:
+  schedule_mode: all_linear
+  lengths_start:
+  - 0.6483857142857143
+  - 0.8645142857142858
+  - 1.4871
+  lengths_end:
+  - 0.6483857142857143
+  - 0.8645142857142858
+  - 1.4871
+  masses_start:
+  - 0.21354857142857145
+  - 0.28645142857142863
+  - 0.5
+  masses_end:
+  - 0.21354857142857145
+  - 0.28645142857142863
+  - 0.5
+  start:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    alpha_frictionloss: 0.0
+    total_damping: 0.015
+    total_frictionloss: 0.0
+  end:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    alpha_frictionloss: 0.0
+    total_damping: 0.015
+    total_frictionloss: 0.0
+  damping_start:
+  - 0.007371
+  - 0.00025800000000000004
+  - 0.007371
+  damping_end:
+  - 0.007371
+  - 0.00025800000000000004
+  - 0.007371
+  frictionloss_start:
+  - 0.0
+  - 0.0
+  - 0.0
+  frictionloss_end:
+  - 0.0
+  - 0.0
+  - 0.0
+  joint_stiffness_start:
+  - 0.0
+  - 0.0
+  - 0.0
+  joint_stiffness_end:
+  - 0.0
+  - 0.0
+  - 0.0
+  joint_lock_start:
+  - 0.0
+  - 0.9484
+  - 0.0
+  joint_lock_end:
+  - 0.0
+  - 0.9484
+  - 0.0

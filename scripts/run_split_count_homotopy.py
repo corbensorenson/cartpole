@@ -64,6 +64,37 @@ def controller_link_count(path: Path) -> int:
     return gains.shape[1] // 2 - 1
 
 
+def prioritized_waypoint_steps(
+    choices: list[int],
+    baseline: dict[str, Any] | None,
+    trials: list[dict[str, Any]],
+) -> list[int]:
+    """Try the most recently successful deterministic horizon first."""
+
+    preferred: int | None = None
+    records: list[dict[str, Any]] = [
+        trial for trial in trials if trial.get("accepted")
+    ]
+    if isinstance(baseline, dict) and baseline.get("accepted"):
+        records.insert(0, baseline)
+    for record in reversed(records):
+        for attempt in reversed(record.get("waypoint_attempts", [])):
+            if attempt.get("refinement_passed"):
+                preferred = int(attempt["segment_steps"])
+                break
+        if preferred is not None:
+            break
+    if preferred is None or preferred not in choices:
+        return list(choices)
+    return sorted(
+        choices,
+        key=lambda steps: (
+            abs(np.log2(float(steps) / float(preferred))),
+            -steps,
+        ),
+    )
+
+
 def scheduled_rail_limit(env: dict[str, Any], progress: float) -> float:
     target = float(env["rail_limit"])
     start = float(env.get("rail_limit_start", target))
@@ -164,6 +195,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--retry-iterations", type=int, default=100)
     parser.add_argument("--max-trials", type=int, default=200)
     parser.add_argument("--tracking-gain", type=float, default=1.0)
+    parser.add_argument(
+        "--baseline-replay-only",
+        action="store_true",
+        help=(
+            "accept the exact embedded source route as the locked-start "
+            "baseline without perturbing it through FDDP"
+        ),
+    )
     parser.add_argument("--disable-waypoint-repair", action="store_true")
     parser.add_argument("--waypoint-segment-steps", type=int, default=24)
     parser.add_argument(
@@ -290,7 +329,27 @@ def main() -> None:
         baseline_path = baseline_first
         baseline_passed = False
         baseline_waypoints: list[dict[str, Any]] = []
-        if not args.disable_waypoint_repair:
+        if args.baseline_replay_only:
+            replay_command = fddp_command(
+                cfg=baseline_cfg_path,
+                state=state_path,
+                controller=current_controller,
+                output=baseline_path,
+                iterations=args.iterations,
+                regularization=1e-6,
+                tracking_gain=0.0,
+                exact_initial_trajectory=True,
+                rail_soft_margin=args.waypoint_rail_soft_margin,
+            )
+            replay_command = [
+                argument
+                for argument in replay_command
+                if argument != "--initial-feasible"
+            ]
+            replay_command.insert(replay_command.index("--out"), "--replay-only")
+            run(replay_command)
+            baseline_passed = successful(baseline_path)
+        elif not args.disable_waypoint_repair:
             for segment_steps in waypoint_steps:
                 multiplier = segment_steps // args.waypoint_segment_steps
                 suffix = (
@@ -413,9 +472,12 @@ def main() -> None:
         accepted_path = first_path
         passed = False
         waypoint_attempts: list[dict[str, Any]] = []
+        trial_waypoint_steps = prioritized_waypoint_steps(
+            waypoint_steps, baseline, trials
+        )
 
         if not args.disable_waypoint_repair:
-            for segment_steps in waypoint_steps:
+            for segment_steps in trial_waypoint_steps:
                 multiplier = segment_steps // args.waypoint_segment_steps
                 suffix = "waypoint" if multiplier == 1 else f"waypoint_x{multiplier}"
                 waypoint_path = trials_dir / f"{label}_{suffix}.json"
@@ -511,6 +573,7 @@ def main() -> None:
             "config": file_metadata(cfg_path),
             "result": file_metadata(accepted_path),
             "outcome": result_summary(accepted_path, trial_cfg),
+            "waypoint_priority": [int(value) for value in trial_waypoint_steps],
             "dimensionless": dimensionless_setup(
                 setup_from_config(trial_cfg)
             ).to_dict(),

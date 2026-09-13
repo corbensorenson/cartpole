@@ -142,6 +142,9 @@ class NLinkCartPoleEnv(gym.Env):
             rigid_split_inertia=bool(
                 self.env_cfg.get("rigid_split_inertia", False)
             ),
+            joint_lock_impedance_schedule=str(
+                self.env_cfg.get("joint_lock_impedance_schedule", "linear")
+            ),
         )
         self.xml = xml
         self.model = mujoco.MjModel.from_xml_string(xml)

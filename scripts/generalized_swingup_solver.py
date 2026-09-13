@@ -174,6 +174,7 @@ def split_continuation_config(
     )
     cfg["env"].pop("plant_progress", None)
     cfg["env"]["rigid_split_inertia"] = True
+    cfg["env"]["joint_lock_impedance_schedule"] = "log_compliance"
     morph = cfg["morphology"]
     morph["schedule_mode"] = "all_linear"
     morph["lengths_start"] = embedding.source_lengths.tolist()
