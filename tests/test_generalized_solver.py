@@ -142,6 +142,45 @@ def test_bounded_force_adapter_learns_gain_and_compensates():
     assert np.isclose(true_gain * corrected + true_bias, desired, atol=2e-3)
 
 
+def test_bounded_force_adapter_rejects_structural_and_saturated_updates():
+    adapter = BoundedForceAdapter(
+        forgetting=1.0,
+        covariance=100.0,
+        structural_fraction_limit=0.25,
+    )
+    predicted = np.zeros(3)
+    jacobian = np.array([1.0, 0.0, 0.0])
+
+    structural = adapter.observe_diagnostic(
+        0.2,
+        predicted,
+        np.array([0.1, 1.0, 0.0]),
+        jacobian,
+    )
+    assert not structural["updated"]
+    assert structural["reason"] == "structural_mismatch"
+    assert adapter.updates == 0
+
+    saturated = adapter.observe_diagnostic(
+        0.9,
+        predicted,
+        np.array([0.1, 0.0, 0.0]),
+        jacobian,
+    )
+    assert not saturated["updated"]
+    assert saturated["reason"] == "command_near_saturation"
+    assert adapter.rejections == 2
+
+
+def test_bounded_force_adapter_correction_never_exceeds_declared_bound():
+    adapter = BoundedForceAdapter(correction_bound=0.12)
+    adapter.theta[:] = [0.5, 0.25]
+    for nominal in np.linspace(-1.0, 1.0, 101):
+        command = adapter.command(float(nominal))
+        assert -1.0 <= command <= 1.0
+        assert abs(command - nominal) <= 0.12 + 1e-12
+
+
 def test_count_homotopy_conserves_totals_and_uses_positive_ghosts():
     source_l = np.array([0.4, 0.6])
     source_m = np.array([0.3, 0.7])

@@ -159,6 +159,41 @@ squares, and compensates conservatively. Mass, length, timing, or contact errors
 that cannot be explained along the action direction require short-horizon
 re-optimization; they must not be hidden by an unbounded adaptive controller.
 
+The update has three explicit guards. It rejects commands near saturation,
+action-equivalent innovations outside a fixed bound, and transitions for which
+more than half the dimensionless innovation is orthogonal to the modeled action
+direction. The compensating command is always clipped to the actuator range
+and may differ from the deterministic command by at most `0.35`. A short,
+zero-mean deterministic excitation runs during the existing hanging prelude;
+the estimate is then frozen before swing-up so high-energy nonlinear residuals
+cannot silently rewrite the controller.
+
+### Bounded-adaptation ladder
+
+The [paired n=1..7 artifact](../runs/generalized_solver/adaptation_ladder_n1_n7.json)
+tests exactly one narrow residual family: an unannounced affine actuator map
+
+\[
+u_{delivered}=1.18u_{commanded}+0.06.
+\]
+
+For each link count, three noisy seeds were replayed both without compensation
+and with the same four-second projected-RLS calibration. The deterministic
+energy law or route, feedback gains, capture law, rail, and all solver
+parameters were held fixed. The perturbation produced `0/21` unadapted
+successes; bounded compensation produced `21/21`. Across the adapted trials,
+the largest command correction was `0.20333`, the largest gain error was
+`0.00259`, and the largest bias error was `0.00052`. The verifier checks paired
+seeds, full sustained-hold success, unchanged controller parameters, estimator
+tolerance, and the hard correction bound.
+
+This is development evidence that the residual layer is reusable across the
+existing ladder, not a general robustness claim. In particular, a weaker
+actuator can make a saturated nominal request physically unattainable. Early
+underactuation probes identified the gain accurately but still failed swing-up;
+that is a feasibility boundary, not an estimator failure and not something an
+RL residual should conceal.
+
 ## Rail-length relationship
 
 There is no morphology-only constant guaranteeing swing-up: rail demand also
@@ -214,6 +249,7 @@ records the new full-rank endpoint correction and accepted gate.
 
 ```bash
 make generalized-gates
+make generalized-adaptation-gates
 
 PYTHONPATH=src python scripts/generalized_swingup_solver.py analyze \
   --config configs/swingup7_uniform.yaml --min-links 1 --max-links 20 \

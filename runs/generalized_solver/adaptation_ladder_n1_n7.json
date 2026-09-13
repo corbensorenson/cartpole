@@ -1,0 +1,181 @@
+{
+  "claim_status": "verified_development_bounded_adaptation_ladder",
+  "generated_at": "2026-09-13T14:33:03+00:00",
+  "git": {
+    "available": true,
+    "commit": "51addb1f6ea1c8dd8b26e04d1b9f077f7feffc4b",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      " M Makefile",
+      " M README.md",
+      " M docs/generalized_solver.md",
+      " M scripts/search_swingup_tail_action_cem.py",
+      " M src/gcartpole/env.py",
+      " M src/gcartpole/generalized_solver.py",
+      " M src/gcartpole/roadmap.py",
+      " M tests/test_capture_envelope.py",
+      " M tests/test_generalized_solver.py",
+      "?? scripts/evaluate_generalized_force_adaptation.py",
+      "?? scripts/verify_generalized_adaptation.py",
+      "?? tests/test_generalized_adaptation.py"
+    ]
+  },
+  "passed": true,
+  "rows": [
+    {
+      "adaptive_successes": 3,
+      "artifact": {
+        "bytes": 9412,
+        "path": "runs/generalized_solver/adaptation_n1_paired3.json",
+        "sha256": "b752999697975b1e698f18421f5ca321978bf9fb9ac4efb3370da89a73793c29"
+      },
+      "baseline_successes": 0,
+      "correction_bound": 0.35,
+      "errors": [],
+      "maximum_action_correction": 0.11346902678376586,
+      "maximum_bias_absolute_error": 7.750683291041227e-05,
+      "maximum_gain_absolute_error": 0.0010799123458142823,
+      "maximum_required_rail_ratio": 0.9558916866205934,
+      "n_links": 1,
+      "paired_episodes": 3,
+      "passed": true
+    },
+    {
+      "adaptive_successes": 3,
+      "artifact": {
+        "bytes": 10534,
+        "path": "runs/generalized_solver/adaptation_n2_paired3.json",
+        "sha256": "d8a3deaaae739ebe5d03ae44a82eb90804619c0b6a2b8f13836781ce9114489a"
+      },
+      "baseline_successes": 0,
+      "correction_bound": 0.35,
+      "errors": [],
+      "maximum_action_correction": 0.20267479492577678,
+      "maximum_bias_absolute_error": 0.00015272636636174536,
+      "maximum_gain_absolute_error": 0.001009697665611986,
+      "maximum_required_rail_ratio": 1.013170015137942,
+      "n_links": 2,
+      "paired_episodes": 3,
+      "passed": true
+    },
+    {
+      "adaptive_successes": 3,
+      "artifact": {
+        "bytes": 10686,
+        "path": "runs/generalized_solver/adaptation_n3_paired3.json",
+        "sha256": "193a82086f6a91bea18dd55e200813d0a7cbba3615f0169ac23bd20ca034a1b9"
+      },
+      "baseline_successes": 0,
+      "correction_bound": 0.35,
+      "errors": [],
+      "maximum_action_correction": 0.202723899216955,
+      "maximum_bias_absolute_error": 0.0005166700350296566,
+      "maximum_gain_absolute_error": 0.002585162207923375,
+      "maximum_required_rail_ratio": 1.0025931183888714,
+      "n_links": 3,
+      "paired_episodes": 3,
+      "passed": true
+    },
+    {
+      "adaptive_successes": 3,
+      "artifact": {
+        "bytes": 10692,
+        "path": "runs/generalized_solver/adaptation_n4_paired3.json",
+        "sha256": "ec21f843ac46d36eba88b1871aa8ee6a30a4e90f13c27911a10a582ba8ee68f9"
+      },
+      "baseline_successes": 0,
+      "correction_bound": 0.35,
+      "errors": [],
+      "maximum_action_correction": 0.20286586580092203,
+      "maximum_bias_absolute_error": 0.00023455376842134584,
+      "maximum_gain_absolute_error": 0.0007498616496957045,
+      "maximum_required_rail_ratio": 0.9962986369858208,
+      "n_links": 4,
+      "paired_episodes": 3,
+      "passed": true
+    },
+    {
+      "adaptive_successes": 3,
+      "artifact": {
+        "bytes": 10819,
+        "path": "runs/generalized_solver/adaptation_n5_paired3.json",
+        "sha256": "3a91bba0d57e8b90947c30d8228f3829c41863f28a9e94893155ff95b231fc3a"
+      },
+      "baseline_successes": 0,
+      "correction_bound": 0.35,
+      "errors": [],
+      "maximum_action_correction": 0.20304153588890117,
+      "maximum_bias_absolute_error": 0.00020313364548964208,
+      "maximum_gain_absolute_error": 0.0008271021088666064,
+      "maximum_required_rail_ratio": 1.1698296734734162,
+      "n_links": 5,
+      "paired_episodes": 3,
+      "passed": true
+    },
+    {
+      "adaptive_successes": 3,
+      "artifact": {
+        "bytes": 11188,
+        "path": "runs/generalized_solver/adaptation_n6_paired3.json",
+        "sha256": "9f0684f8dd1fc43d4a6724ab57356b8287daa4fe711b521e9dda7f354295d61b"
+      },
+      "baseline_successes": 0,
+      "correction_bound": 0.35,
+      "errors": [],
+      "maximum_action_correction": 0.2031865751447507,
+      "maximum_bias_absolute_error": 0.00022562642279418121,
+      "maximum_gain_absolute_error": 0.0007153438045224281,
+      "maximum_required_rail_ratio": 1.0940292807667424,
+      "n_links": 6,
+      "paired_episodes": 3,
+      "passed": true
+    },
+    {
+      "adaptive_successes": 3,
+      "artifact": {
+        "bytes": 11222,
+        "path": "runs/generalized_solver/adaptation_n7_paired3.json",
+        "sha256": "758960bbe79610edcfcf67d15ac0543aff56efba48e379d95b4b864d765e2dee"
+      },
+      "baseline_successes": 0,
+      "correction_bound": 0.35,
+      "errors": [],
+      "maximum_action_correction": 0.20332780765653924,
+      "maximum_bias_absolute_error": 6.573550811379836e-05,
+      "maximum_gain_absolute_error": 0.00030337507915767503,
+      "maximum_required_rail_ratio": 0.8488932165356654,
+      "n_links": 7,
+      "paired_episodes": 3,
+      "passed": true
+    }
+  ],
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "scope": {
+    "episodes_per_mode_per_link": 3,
+    "expected_actuator_bias": 0.06,
+    "expected_actuator_gain": 1.18,
+    "link_range": [
+      1,
+      7
+    ],
+    "parameter_tolerance": 0.01,
+    "total_adaptive_successes": 21,
+    "total_baseline_successes": 0,
+    "total_trials_per_mode": 21
+  },
+  "summary": "The same bounded projected-RLS actuator calibration recovered all paired n=1..7 deterministic controllers under a hidden affine actuator mismatch; this is not arbitrary-morphology evidence."
+}

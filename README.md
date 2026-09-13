@@ -95,8 +95,9 @@ controller only after an uninterrupted noisy gate, then uses that accepted
 route to initialize the next link count. The deterministic layer supplies
 dimensionless scaling, exact mass-matrix partial feedback linearization,
 arc-length state/feedback transfer, Box-FDDP refinement, Riccati capture, and
-exact left/right symmetry. A bounded exact-model route selector is the thin
-adaptation layer; it does not learn the swing trajectory.
+exact left/right symmetry. The thin online layer consists of exact-model route
+selection plus bounded action-direction system identification; neither learns
+the swing trajectory.
 
 | Uniform chain | Current gate | Body-aware required rail ratio |
 |---:|---:|---:|
@@ -120,6 +121,17 @@ capture, and exact planar mirror passed all 20 uninterrupted noisy episodes.
 The n=7 row reuses the frozen record controller through this shared evaluator;
 it does not claim that the new modal synthesis has independently regenerated
 the record route. Arbitrary unequal morphologies and n>=8 remain active work.
+
+The same bounded actuator adapter has also passed a paired development check at
+every rung. A hidden map `delivered = 1.18 * commanded + 0.06` broke all 21
+unadapted trials, while four seconds of deterministic calibration followed by
+a frozen gain/bias estimate recovered **21/21** trials. Controller routes and
+energy parameters were unchanged, the largest action correction was `0.204`
+against a hard `0.35` bound, and the largest fitted-parameter error was
+`0.0026`. See the [verified adaptation ladder](runs/generalized_solver/adaptation_ladder_n1_n7.json).
+This is a deliberately small, fully compensable actuator diagnostic—not proof
+of arbitrary morphology robustness. Lost force authority at saturation and
+residuals outside the modeled action direction still require replanning.
 
 ## Current frontier: eight links
 

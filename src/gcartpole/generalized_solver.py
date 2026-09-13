@@ -17,7 +17,6 @@ from typing import Any
 
 import numpy as np
 
-
 GRAVITY = 9.81
 
 
@@ -320,7 +319,7 @@ def resample_controls(
     if target_steps is None:
         target_steps = max(
             1,
-            int(round(dimensionless_duration * target.natural_time / target.policy_dt)),
+            round(dimensionless_duration * target.natural_time / target.policy_dt),
         )
     if target_steps < 1:
         raise ValueError("target_steps must be positive")
@@ -400,6 +399,9 @@ class BoundedForceAdapter:
     bias_bound: float = 0.25
     correction_bound: float = 0.35
     projection_floor: float = 1e-10
+    command_update_limit: float = 0.85
+    structural_fraction_limit: float = 0.50
+    equivalent_delta_limit: float = 0.75
 
     def __post_init__(self) -> None:
         if not 0.0 < self.forgetting <= 1.0:
@@ -410,9 +412,17 @@ class BoundedForceAdapter:
             raise ValueError("gain_bounds must be ordered and positive")
         if self.bias_bound < 0.0 or self.correction_bound < 0.0:
             raise ValueError("adapter bounds must be nonnegative")
+        if not 0.0 < self.command_update_limit <= 1.0:
+            raise ValueError("command_update_limit must lie in (0, 1]")
+        if not 0.0 <= self.structural_fraction_limit <= 1.0:
+            raise ValueError("structural_fraction_limit must lie in [0, 1]")
+        if self.equivalent_delta_limit <= 0.0:
+            raise ValueError("equivalent_delta_limit must be positive")
         self.theta = np.array([1.0, 0.0], dtype=np.float64)
         self.P = float(self.covariance) * np.eye(2, dtype=np.float64)
         self.updates = 0
+        self.rejections = 0
+        self.last_observation: dict[str, float | bool | str] | None = None
 
     @property
     def gain(self) -> float:
@@ -435,6 +445,32 @@ class BoundedForceAdapter:
         observed_next_state: np.ndarray,
         action_jacobian: np.ndarray,
     ) -> bool:
+        return bool(
+            self.observe_diagnostic(
+                commanded_action,
+                predicted_next_state,
+                observed_next_state,
+                action_jacobian,
+            )["updated"]
+        )
+
+    def observe_diagnostic(
+        self,
+        commanded_action: float,
+        predicted_next_state: np.ndarray,
+        observed_next_state: np.ndarray,
+        action_jacobian: np.ndarray,
+    ) -> dict[str, float | bool | str]:
+        """Project one-step error onto actuation and conditionally update RLS.
+
+        State vectors and the action Jacobian should use the same dimensionless
+        coordinates.  Updates are rejected when the command is too close to
+        saturation, when the inferred action jump is implausibly large, or when
+        too much model error lies orthogonal to the action direction.  The last
+        condition is the explicit boundary between this narrow calibration
+        layer and structural mismatch that requires model correction/replanning.
+        """
+
         predicted = np.asarray(predicted_next_state, dtype=np.float64)
         observed = np.asarray(observed_next_state, dtype=np.float64)
         jacobian = np.asarray(action_jacobian, dtype=np.float64).reshape(-1)
@@ -442,9 +478,49 @@ class BoundedForceAdapter:
             raise ValueError("predicted, observed, and action_jacobian shapes must match")
         denominator = float(jacobian @ jacobian)
         if denominator <= self.projection_floor or not np.isfinite(denominator):
-            return False
-        equivalent_delta = float(jacobian @ (observed - predicted) / denominator)
+            diagnostic: dict[str, float | bool | str] = {
+                "updated": False,
+                "reason": "unobservable_action_direction",
+                "commanded_action": float(commanded_action),
+                "equivalent_action_delta": 0.0,
+                "structural_fraction": 1.0,
+                "innovation_norm": float(np.linalg.norm(observed - predicted)),
+            }
+            self.rejections += 1
+            self.last_observation = diagnostic
+            return diagnostic
+        innovation = observed - predicted
+        equivalent_delta = float(jacobian @ innovation / denominator)
+        projected = equivalent_delta * jacobian
+        innovation_norm = float(np.linalg.norm(innovation))
+        orthogonal_norm = float(np.linalg.norm(innovation - projected))
+        structural_fraction = (
+            orthogonal_norm / innovation_norm
+            if innovation_norm > self.projection_floor
+            else 0.0
+        )
         equivalent_action = float(commanded_action) + equivalent_delta
+        reason = "accepted"
+        if abs(float(commanded_action)) > self.command_update_limit:
+            reason = "command_near_saturation"
+        elif abs(equivalent_delta) > self.equivalent_delta_limit:
+            reason = "action_innovation_out_of_bounds"
+        elif structural_fraction > self.structural_fraction_limit:
+            reason = "structural_mismatch"
+        diagnostic = {
+            "updated": reason == "accepted",
+            "reason": reason,
+            "commanded_action": float(commanded_action),
+            "equivalent_action": equivalent_action,
+            "equivalent_action_delta": equivalent_delta,
+            "structural_fraction": structural_fraction,
+            "innovation_norm": innovation_norm,
+            "orthogonal_innovation_norm": orthogonal_norm,
+        }
+        if reason != "accepted":
+            self.rejections += 1
+            self.last_observation = diagnostic
+            return diagnostic
         feature = np.array([float(commanded_action), 1.0], dtype=np.float64)
         p_feature = self.P @ feature
         denominator_rls = self.forgetting + float(feature @ p_feature)
@@ -454,10 +530,17 @@ class BoundedForceAdapter:
         self.theta[0] = np.clip(self.theta[0], *self.gain_bounds)
         self.theta[1] = np.clip(self.theta[1], -self.bias_bound, self.bias_bound)
         self.updates += 1
-        return True
+        self.last_observation = diagnostic
+        return diagnostic
 
     def to_dict(self) -> dict[str, float | int]:
-        return {"gain": self.gain, "bias": self.bias, "updates": self.updates}
+        return {
+            "gain": self.gain,
+            "bias": self.bias,
+            "updates": self.updates,
+            "rejections": self.rejections,
+            "covariance_trace": float(np.trace(self.P)),
+        }
 
 
 def embed_morphology(

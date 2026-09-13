@@ -1,0 +1,348 @@
+{
+  "adaptation_contract": {
+    "calibration_amplitude": 0.25,
+    "calibration_seconds": 4.0,
+    "estimate_frozen_after_calibration": true,
+    "maximum_per_step_correction": 0.35,
+    "route_or_energy_parameters_changed": false,
+    "structural_residuals_require_replanning": true,
+    "type": "bounded_action_direction_projected_rls"
+  },
+  "claim_status": "development_bounded_adaptation_diagnostic",
+  "config": {
+    "bytes": 1790,
+    "path": "configs/swingup7_uniform.yaml",
+    "sha256": "1e92bc4621428f2fe343b7483b2c32d7804a82762159483db280e71a526b6c04"
+  },
+  "controllers": [
+    {
+      "bytes": 181470,
+      "path": "runs/generalized_solver/n6_route_solver.json",
+      "sha256": "867f8d9aaff2593dad0723d35335474ef2f7443a366ac696d44776054400b3bb"
+    },
+    {
+      "bytes": 181628,
+      "path": "runs/generalized_solver/n6_route_solver_mirror.json",
+      "sha256": "9f1b335343e6d661142b00d845f165cead6222a631df08bc494de9424b8ac3ec"
+    }
+  ],
+  "dimensionless_setup": {
+    "cart_damping_ratio": 0.00553001263609331,
+    "cart_half_length_ratio": 0.06,
+    "cart_to_link_mass": 1.0000000000000002,
+    "chain_length": 3.0,
+    "force_authority": 4.077471967380224,
+    "joint_armature_ratio": 2.777777777777778e-05,
+    "joint_damping_ratios": [
+      7.680573105685152e-05,
+      7.680573105685152e-05,
+      7.680573105685152e-05,
+      7.680573105685152e-05,
+      7.680573105685152e-05,
+      7.680573105685152e-05
+    ],
+    "length_fractions": [
+      0.16666666666666666,
+      0.16666666666666666,
+      0.16666666666666666,
+      0.16666666666666666,
+      0.16666666666666666,
+      0.16666666666666666
+    ],
+    "link_radius_ratio": 0.008333333333333333,
+    "mass_fractions": [
+      0.16666666666666669,
+      0.16666666666666669,
+      0.16666666666666669,
+      0.16666666666666669,
+      0.16666666666666669,
+      0.16666666666666669
+    ],
+    "n_links": 6,
+    "natural_time": 0.553001263609331,
+    "policy_dt_ratio": 0.03616628264005025,
+    "rail_ratio": 1.3333333333333333,
+    "system_mass": 2.0,
+    "usable_rail_ratio": 1.2733333333333332
+  },
+  "episodes_per_mode": 3,
+  "generated_at": "2026-09-13T14:32:58+00:00",
+  "git": {
+    "available": true,
+    "commit": "51addb1f6ea1c8dd8b26e04d1b9f077f7feffc4b",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      " M Makefile",
+      " M README.md",
+      " M docs/generalized_solver.md",
+      " M scripts/search_swingup_tail_action_cem.py",
+      " M src/gcartpole/env.py",
+      " M src/gcartpole/generalized_solver.py",
+      " M src/gcartpole/roadmap.py",
+      " M tests/test_capture_envelope.py",
+      " M tests/test_generalized_solver.py",
+      "?? scripts/evaluate_generalized_force_adaptation.py",
+      "?? scripts/verify_generalized_adaptation.py",
+      "?? tests/test_generalized_adaptation.py"
+    ]
+  },
+  "n_links": 6,
+  "results": [
+    {
+      "adaptation": {
+        "bias_absolute_error": 0.06,
+        "covariance_trace": 20.0,
+        "enabled": false,
+        "estimated_bias": 0.0,
+        "estimated_gain": 1.0,
+        "gain_absolute_error": 0.17999999999999994,
+        "maximum_action_correction": 0.0,
+        "rejection_reasons": {},
+        "rejections": 0,
+        "saturated_deliveries": 44,
+        "steps": 974,
+        "updates": 0
+      },
+      "max_cart_excursion": 4.029885772485342,
+      "max_upright_streak_seconds": 0.02,
+      "mode": "baseline",
+      "rail_requirement": {
+        "configured_rail_ratio": 1.3333333333333333,
+        "margin": -0.20988577248534135,
+        "max_cart_center_excursion": 4.029885772485342,
+        "required_rail_half_length": 4.209885772485341,
+        "required_rail_ratio": 1.4032952574951139
+      },
+      "seed": 82601,
+      "selected_prediction": {
+        "max_cart_excursion": 3.862597785680703,
+        "max_upright_streak_seconds": 26.060000000000002,
+        "success": true
+      },
+      "selected_route": 1,
+      "success": false,
+      "termination_reason": "rail_violation"
+    },
+    {
+      "adaptation": {
+        "bias_absolute_error": 4.2175427936906595e-05,
+        "covariance_trace": 0.1560744308316886,
+        "enabled": true,
+        "estimated_bias": 0.060042175427936904,
+        "estimated_gain": 1.1796437152927546,
+        "gain_absolute_error": 0.0003562847072453579,
+        "maximum_action_correction": 0.2031849851047679,
+        "rejection_reasons": {
+          "accepted": 198,
+          "structural_mismatch": 2
+        },
+        "rejections": 2,
+        "saturated_deliveries": 10,
+        "steps": 2250,
+        "updates": 198
+      },
+      "max_cart_excursion": 3.097766862303682,
+      "max_upright_streak_seconds": 26.060000000000002,
+      "mode": "adaptive",
+      "rail_requirement": {
+        "configured_rail_ratio": 1.3333333333333333,
+        "margin": 0.722233137696318,
+        "max_cart_center_excursion": 3.097766862303682,
+        "required_rail_half_length": 3.277766862303682,
+        "required_rail_ratio": 1.0925889541012272
+      },
+      "seed": 82601,
+      "selected_prediction": {
+        "max_cart_excursion": 3.097874272598851,
+        "max_upright_streak_seconds": 26.060000000000002,
+        "success": true
+      },
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "adaptation": {
+        "bias_absolute_error": 0.06,
+        "covariance_trace": 20.0,
+        "enabled": false,
+        "estimated_bias": 0.0,
+        "estimated_gain": 1.0,
+        "gain_absolute_error": 0.17999999999999994,
+        "maximum_action_correction": 0.0,
+        "rejection_reasons": {},
+        "rejections": 0,
+        "saturated_deliveries": 44,
+        "steps": 974,
+        "updates": 0
+      },
+      "max_cart_excursion": 4.029803074918295,
+      "max_upright_streak_seconds": 0.02,
+      "mode": "baseline",
+      "rail_requirement": {
+        "configured_rail_ratio": 1.3333333333333333,
+        "margin": -0.20980307491829464,
+        "max_cart_center_excursion": 4.029803074918295,
+        "required_rail_half_length": 4.209803074918295,
+        "required_rail_ratio": 1.4032676916394315
+      },
+      "seed": 82602,
+      "selected_prediction": {
+        "max_cart_excursion": 3.8625985587046894,
+        "max_upright_streak_seconds": 26.060000000000002,
+        "success": true
+      },
+      "selected_route": 1,
+      "success": false,
+      "termination_reason": "rail_violation"
+    },
+    {
+      "adaptation": {
+        "bias_absolute_error": 0.00022562642279418121,
+        "covariance_trace": 0.15601306960844663,
+        "enabled": true,
+        "estimated_bias": 0.05977437357720582,
+        "estimated_gain": 1.1792846561954775,
+        "gain_absolute_error": 0.0007153438045224281,
+        "maximum_action_correction": 0.2027152888971847,
+        "rejection_reasons": {
+          "accepted": 200
+        },
+        "rejections": 0,
+        "saturated_deliveries": 10,
+        "steps": 2250,
+        "updates": 200
+      },
+      "max_cart_excursion": 3.102087842300227,
+      "max_upright_streak_seconds": 26.060000000000002,
+      "mode": "adaptive",
+      "rail_requirement": {
+        "configured_rail_ratio": 1.3333333333333333,
+        "margin": 0.7179121576997729,
+        "max_cart_center_excursion": 3.102087842300227,
+        "required_rail_half_length": 3.282087842300227,
+        "required_rail_ratio": 1.0940292807667424
+      },
+      "seed": 82602,
+      "selected_prediction": {
+        "max_cart_excursion": 3.101623723938257,
+        "max_upright_streak_seconds": 26.060000000000002,
+        "success": true
+      },
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "adaptation": {
+        "bias_absolute_error": 0.06,
+        "covariance_trace": 20.0,
+        "enabled": false,
+        "estimated_bias": 0.0,
+        "estimated_gain": 1.0,
+        "gain_absolute_error": 0.17999999999999994,
+        "maximum_action_correction": 0.0,
+        "rejection_reasons": {},
+        "rejections": 0,
+        "saturated_deliveries": 44,
+        "steps": 974,
+        "updates": 0
+      },
+      "max_cart_excursion": 4.029826524688941,
+      "max_upright_streak_seconds": 0.02,
+      "mode": "baseline",
+      "rail_requirement": {
+        "configured_rail_ratio": 1.3333333333333333,
+        "margin": -0.2098265246889408,
+        "max_cart_center_excursion": 4.029826524688941,
+        "required_rail_half_length": 4.209826524688941,
+        "required_rail_ratio": 1.4032755082296469
+      },
+      "seed": 82603,
+      "selected_prediction": {
+        "max_cart_excursion": 3.8625989869508737,
+        "max_upright_streak_seconds": 26.060000000000002,
+        "success": true
+      },
+      "selected_route": 1,
+      "success": false,
+      "termination_reason": "rail_violation"
+    },
+    {
+      "adaptation": {
+        "bias_absolute_error": 4.1633957950898415e-05,
+        "covariance_trace": 0.15626851819025114,
+        "enabled": true,
+        "estimated_bias": 0.060041633957950896,
+        "estimated_gain": 1.1796467488142581,
+        "gain_absolute_error": 0.0003532511857418097,
+        "maximum_action_correction": 0.2031865751447507,
+        "rejection_reasons": {
+          "accepted": 199,
+          "structural_mismatch": 1
+        },
+        "rejections": 1,
+        "saturated_deliveries": 10,
+        "steps": 2250,
+        "updates": 199
+      },
+      "max_cart_excursion": 3.097778815442897,
+      "max_upright_streak_seconds": 26.060000000000002,
+      "mode": "adaptive",
+      "rail_requirement": {
+        "configured_rail_ratio": 1.3333333333333333,
+        "margin": 0.7222211845571027,
+        "max_cart_center_excursion": 3.097778815442897,
+        "required_rail_half_length": 3.2777788154428973,
+        "required_rail_ratio": 1.0925929384809658
+      },
+      "seed": 82603,
+      "selected_prediction": {
+        "max_cart_excursion": 3.097884912275344,
+        "max_upright_streak_seconds": 26.060000000000002,
+        "success": true
+      },
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    }
+  ],
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "seed_start": 82601,
+  "simulated_actuator": {
+    "bias": 0.06,
+    "equivalent_action": "gain * commanded_action + bias",
+    "gain": 1.18
+  },
+  "summary": "Paired uninterrupted exact-MuJoCo swing-up under a hidden affine actuator mismatch.",
+  "summary_by_mode": {
+    "adaptive": {
+      "max_required_rail_ratio": 1.0940292807667424,
+      "mean_bias_absolute_error": 0.00010314526956066207,
+      "mean_gain_absolute_error": 0.0004749598991698652,
+      "success_rate": 1.0,
+      "successes": 3
+    },
+    "baseline": {
+      "max_required_rail_ratio": 1.4032952574951139,
+      "mean_bias_absolute_error": 0.06,
+      "mean_gain_absolute_error": 0.17999999999999994,
+      "success_rate": 0.0,
+      "successes": 0
+    }
+  }
+}
