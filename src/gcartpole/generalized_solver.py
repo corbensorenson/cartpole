@@ -543,6 +543,267 @@ class BoundedForceAdapter:
         }
 
 
+@dataclass(frozen=True)
+class SplitEmbedding:
+    """Fixed-count representation of a smaller chain by locked link splits.
+
+    ``segment_source_links`` assigns every target-count segment to one source
+    link.  Consecutive segments with the same assignment are parts of one
+    rigid source link, so the later segment's joint is locked at the embedded
+    endpoint.  Length and mass totals are scaled to the target plant while the
+    source dimensionless distributions are preserved.
+    """
+
+    source_lengths: np.ndarray
+    source_masses: np.ndarray
+    target_lengths: np.ndarray
+    target_masses: np.ndarray
+    segment_source_links: np.ndarray
+    source_joint_locks: np.ndarray
+    target_joint_locks: np.ndarray
+    split_counts: np.ndarray
+    morphology_cost: float
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "source_lengths": self.source_lengths.astype(float).tolist(),
+            "source_masses": self.source_masses.astype(float).tolist(),
+            "target_lengths": self.target_lengths.astype(float).tolist(),
+            "target_masses": self.target_masses.astype(float).tolist(),
+            "segment_source_links": self.segment_source_links.astype(int).tolist(),
+            "source_joint_locks": self.source_joint_locks.astype(float).tolist(),
+            "target_joint_locks": self.target_joint_locks.astype(float).tolist(),
+            "split_counts": self.split_counts.astype(int).tolist(),
+            "morphology_cost": float(self.morphology_cost),
+        }
+
+
+def _split_block(
+    source_length_fraction: float,
+    source_mass_fraction: float,
+    target_length_fractions: np.ndarray,
+    target_mass_fractions: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray, float]:
+    """Fit one rigid source link to a consecutive target-segment block."""
+
+    length_share = target_length_fractions / float(np.sum(target_length_fractions))
+    embedded_lengths = source_length_fraction * length_share
+    # Preserve the source link's uniform linear density inside the rigid split.
+    embedded_masses = source_mass_fraction * length_share
+    length_residual = (embedded_lengths - target_length_fractions) / np.sqrt(
+        target_length_fractions
+    )
+    mass_residual = (embedded_masses - target_mass_fractions) / np.sqrt(
+        target_mass_fractions
+    )
+    cost = float(length_residual @ length_residual + mass_residual @ mass_residual)
+    return embedded_lengths, embedded_masses, cost
+
+
+def split_embedding(
+    source_lengths: np.ndarray | list[float],
+    source_masses: np.ndarray | list[float],
+    target_lengths: np.ndarray | list[float],
+    target_masses: np.ndarray | list[float],
+) -> SplitEmbedding:
+    """Embed a lower-count morphology in a target-count chain deterministically.
+
+    Dynamic programming assigns consecutive target segments to source links.
+    Each source link is divided in proportion to the target lengths in its
+    assigned block, and mass follows length so the locked pieces retain the
+    source link's linear density.  The objective is dimensionless and jointly
+    minimizes length- and mass-profile mismatch.  Equal-cost ties defer extra
+    splits distally, preserving proximal dynamics as long as possible.
+    """
+
+    source_l = _positive_vector("source_lengths", source_lengths)
+    source_m = _positive_vector("source_masses", source_masses)
+    target_l = _positive_vector("target_lengths", target_lengths)
+    target_m = _positive_vector("target_masses", target_masses)
+    if source_l.shape != source_m.shape or target_l.shape != target_m.shape:
+        raise ValueError("each morphology must have matching length and mass shapes")
+    source_count = int(source_l.size)
+    target_count = int(target_l.size)
+    if target_count < source_count:
+        raise ValueError("split embedding requires target count >= source count")
+
+    source_lf = source_l / float(np.sum(source_l))
+    source_mf = source_m / float(np.sum(source_m))
+    target_lf = target_l / float(np.sum(target_l))
+    target_mf = target_m / float(np.sum(target_m))
+    costs = np.full((source_count + 1, target_count + 1), np.inf)
+    previous = np.full((source_count + 1, target_count + 1), -1, dtype=np.int64)
+    costs[0, 0] = 0.0
+    tolerance = 1.0e-14
+    for source_index in range(1, source_count + 1):
+        minimum_end = source_index
+        maximum_end = target_count - (source_count - source_index)
+        for end in range(minimum_end, maximum_end + 1):
+            maximum_block = end - (source_index - 1)
+            for block_size in range(maximum_block, 0, -1):
+                start = end - block_size
+                prefix_cost = costs[source_index - 1, start]
+                if not np.isfinite(prefix_cost):
+                    continue
+                _, _, block_cost = _split_block(
+                    float(source_lf[source_index - 1]),
+                    float(source_mf[source_index - 1]),
+                    target_lf[start:end],
+                    target_mf[start:end],
+                )
+                candidate = float(prefix_cost + block_cost)
+                # Larger terminal blocks are visited first.  Not replacing an
+                # equal candidate therefore pushes surplus splits distally.
+                if candidate < costs[source_index, end] - tolerance:
+                    costs[source_index, end] = candidate
+                    previous[source_index, end] = start
+
+    assignments = np.empty(target_count, dtype=np.int64)
+    split_counts = np.empty(source_count, dtype=np.int64)
+    end = target_count
+    for source_index in range(source_count, 0, -1):
+        start = int(previous[source_index, end])
+        if start < 0:
+            raise RuntimeError("failed to construct a monotone split embedding")
+        assignments[start:end] = source_index - 1
+        split_counts[source_index - 1] = end - start
+        end = start
+
+    embedded_lf = np.empty(target_count, dtype=np.float64)
+    embedded_mf = np.empty(target_count, dtype=np.float64)
+    for source_index in range(source_count):
+        indices = np.flatnonzero(assignments == source_index)
+        block_l, block_m, _ = _split_block(
+            float(source_lf[source_index]),
+            float(source_mf[source_index]),
+            target_lf[indices],
+            target_mf[indices],
+        )
+        embedded_lf[indices] = block_l
+        embedded_mf[indices] = block_m
+
+    locks = np.zeros(target_count, dtype=np.float64)
+    locks[1:] = (assignments[1:] == assignments[:-1]).astype(np.float64)
+    return SplitEmbedding(
+        source_lengths=embedded_lf * float(np.sum(target_l)),
+        source_masses=embedded_mf * float(np.sum(target_m)),
+        target_lengths=target_l.copy(),
+        target_masses=target_m.copy(),
+        segment_source_links=assignments,
+        source_joint_locks=locks,
+        target_joint_locks=np.zeros(target_count, dtype=np.float64),
+        split_counts=split_counts,
+        morphology_cost=float(costs[source_count, target_count]),
+    )
+
+
+def split_joint_profile(
+    source_values: np.ndarray | list[float],
+    segment_source_links: np.ndarray | list[int],
+    *,
+    internal_value: float = 0.0,
+) -> np.ndarray:
+    """Lift per-joint values, assigning split-internal joints explicitly."""
+
+    values = np.asarray(source_values, dtype=np.float64)
+    assignments = np.asarray(segment_source_links, dtype=np.int64)
+    if values.ndim != 1 or values.size == 0 or not np.all(np.isfinite(values)):
+        raise ValueError("source_values must be a nonempty finite vector")
+    if assignments.ndim != 1 or assignments.size < values.size:
+        raise ValueError("segment_source_links has an invalid shape")
+    if not np.isfinite(internal_value):
+        raise ValueError("internal_value must be finite")
+    if assignments[0] != 0 or assignments[-1] != values.size - 1:
+        raise ValueError("segment assignments must cover every source link in order")
+    if np.any(np.diff(assignments) < 0) or np.any(np.diff(assignments) > 1):
+        raise ValueError("segment assignments must be contiguous and monotone")
+    result = np.full(assignments.size, float(internal_value), dtype=np.float64)
+    starts = np.r_[True, assignments[1:] != assignments[:-1]]
+    result[starts] = values[assignments[starts]]
+    return result
+
+
+def split_state_lift_matrix(
+    source_count: int,
+    segment_source_links: np.ndarray | list[int],
+    *,
+    length_scale: float = 1.0,
+) -> np.ndarray:
+    """Lift physical states into a split-link coordinate space.
+
+    State order is ``[x, relative angles, xdot, hinge rates]``.  Original joint
+    coordinates are copied to the first piece of their source link; inserted
+    split joints start at exactly zero.  Global dynamic-similarity scaling is
+    applied to cart position and all velocities.
+    """
+
+    assignments = np.asarray(segment_source_links, dtype=np.int64)
+    if source_count < 1 or assignments.ndim != 1 or assignments.size < source_count:
+        raise ValueError("source_count and segment assignments are inconsistent")
+    if assignments[0] != 0 or assignments[-1] != source_count - 1:
+        raise ValueError("segment assignments must cover every source link")
+    if np.any(np.diff(assignments) < 0) or np.any(np.diff(assignments) > 1):
+        raise ValueError("segment assignments must be contiguous and monotone")
+    if not np.isfinite(length_scale) or length_scale <= 0.0:
+        raise ValueError("length_scale must be finite and positive")
+    target_count = int(assignments.size)
+    source_d = source_count + 1
+    target_d = target_count + 1
+    matrix = np.zeros((2 * target_d, 2 * source_d), dtype=np.float64)
+    matrix[0, 0] = float(length_scale)
+    matrix[target_d, source_d] = float(np.sqrt(length_scale))
+    rate_scale = float(1.0 / np.sqrt(length_scale))
+    starts = np.r_[True, assignments[1:] != assignments[:-1]]
+    for segment in np.flatnonzero(starts):
+        source_link = int(assignments[segment])
+        matrix[1 + segment, 1 + source_link] = 1.0
+        matrix[target_d + 1 + segment, source_d + 1 + source_link] = rate_scale
+    return matrix
+
+
+def split_absolute_coordinate_lift_matrix(
+    source_count: int,
+    segment_source_links: np.ndarray | list[int],
+    *,
+    length_scale: float = 1.0,
+) -> np.ndarray:
+    """Lift ``[x, absolute angles, xdot, hinge rates]`` route coordinates."""
+
+    assignments = np.asarray(segment_source_links, dtype=np.int64)
+    physical = split_state_lift_matrix(
+        source_count,
+        assignments,
+        length_scale=length_scale,
+    )
+    target_count = int(assignments.size)
+    source_d = source_count + 1
+    target_d = target_count + 1
+    matrix = physical.copy()
+    matrix[1:target_d, 1:source_d] = 0.0
+    for segment, source_link in enumerate(assignments):
+        matrix[1 + segment, 1 + int(source_link)] = 1.0
+    return matrix
+
+
+def split_state_projection(
+    lift_matrix: np.ndarray,
+    segment_length_fractions: np.ndarray | list[float],
+) -> np.ndarray:
+    """Return a length-weighted left inverse for a split-state lift matrix."""
+
+    lift = np.asarray(lift_matrix, dtype=np.float64)
+    fractions = _positive_vector("segment_length_fractions", segment_length_fractions)
+    if lift.ndim != 2 or lift.shape[0] != 2 * (fractions.size + 1):
+        raise ValueError("lift matrix does not match segment length fractions")
+    weights = np.ones(lift.shape[0], dtype=np.float64)
+    weights[1 : fractions.size + 1] = fractions
+    weighted_lift = weights[:, None] * lift
+    gram = lift.T @ weighted_lift
+    if np.linalg.matrix_rank(gram) != gram.shape[0]:
+        raise ValueError("lift matrix must have full column rank")
+    return np.linalg.solve(gram, lift.T * weights[None, :])
+
+
 def embed_morphology(
     lengths: np.ndarray | list[float],
     masses: np.ndarray | list[float],

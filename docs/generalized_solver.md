@@ -88,6 +88,54 @@ symmetry-derived library with the plant model; it is not an RL policy. The
 bounded actuator RLS adapter is narrower still: it can estimate force gain and
 bias, but structural mismatch must trigger replanning.
 
+### Count continuation by deterministic locked splits
+
+Arc-length interpolation is the right generic seed when both plants are already
+free chains, but it is a poor way to cross a link-count boundary: a tiny
+`ghost` link creates an ill-conditioned plant and does not exactly contain the
+old controller. The generalized solver therefore has a second, deterministic
+count-continuation map.
+
+For source link \(i\), a dynamic program assigns one or more consecutive target
+segments. It minimizes a dimensionless length-and-mass profile mismatch, with a
+fixed distal-first tie break, and then divides the source link across that block
+while preserving its linear density. New internal joints are initially locked.
+The result has the target link count and target total length and mass, but its
+locked endpoint represents the source chain without any near-zero masses or
+lengths. There are no constants indexed by link count.
+
+If \(E\) lifts source route coordinates onto that locked manifold, the solver
+constructs a length-weighted left inverse \(P\), satisfying
+
+\[
+PE=I, \qquad K_{target}=s_F K_{source}P,
+\qquad K_{target}E\,\delta z=s_FK_{source}\delta z,
+\]
+
+where \(s_F\) is the dimensionless force-authority conversion. Thus the lifted
+feedback law is preserved exactly on the locked manifold; duplicating gain
+columns would incorrectly double feedback on a split link. Cart position and
+all velocities are also scaled on the gravitational time clock. A continuation
+configuration then releases the inserted joints while moving length, mass,
+damping, friction, and stiffness profiles to the requested target morphology.
+
+The public entry point writes both that configuration and its algebraic warm
+start:
+
+```bash
+PYTHONPATH=src:scripts python scripts/generalized_swingup_solver.py split \
+  --source-config SOURCE.yaml --source-links N \
+  --target-config TARGET_N_PLUS_K.yaml --controller SOURCE_ROUTE.json \
+  --out-config CONTINUATION.yaml --out LOCKED_SPLIT_WARM_START.json
+```
+
+The artifact records the assignment, locks, lift and projection matrices,
+dimensionless compatibility errors, and numerical feedback-invariance error.
+It is always marked `not_solution`. Constraint tolerances and chaotic divergence
+mean even a mathematically exact locked embedding must be reoptimized through
+short continuation steps; every released target still has to pass exact replay,
+rail measurement, sustained hold, and the independent noisy gate.
+
 ### Morphology-conditioned terminal set
 
 A fixed componentwise handoff box does not scale with link count: it ignores

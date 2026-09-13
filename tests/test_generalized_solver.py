@@ -13,6 +13,11 @@ from gcartpole.generalized_solver import (
     mirror_feedback_route,
     rail_requirement,
     resample_controls,
+    split_absolute_coordinate_lift_matrix,
+    split_embedding,
+    split_joint_profile,
+    split_state_lift_matrix,
+    split_state_projection,
     state_transfer_matrix,
     transfer_state,
 )
@@ -199,6 +204,72 @@ def test_count_homotopy_conserves_totals_and_uses_positive_ghosts():
         assert np.isclose(np.sum(masses), 1.0)
         assert np.all(lengths > 0.0)
         assert np.all(masses > 0.0)
+
+
+def test_split_embedding_preserves_totals_and_defers_equal_cost_split_distally():
+    source_lengths = np.full(8, 3.0 / 8.0)
+    source_masses = np.full(8, 1.0 / 8.0)
+    target_lengths = np.full(9, 3.0 / 9.0)
+    target_masses = np.full(9, 1.0 / 9.0)
+
+    result = split_embedding(
+        source_lengths,
+        source_masses,
+        target_lengths,
+        target_masses,
+    )
+
+    np.testing.assert_array_equal(result.split_counts, [1, 1, 1, 1, 1, 1, 1, 2])
+    np.testing.assert_array_equal(result.segment_source_links, [0, 1, 2, 3, 4, 5, 6, 7, 7])
+    np.testing.assert_array_equal(result.source_joint_locks, [0, 0, 0, 0, 0, 0, 0, 0, 1])
+    assert np.isclose(np.sum(result.source_lengths), np.sum(target_lengths))
+    assert np.isclose(np.sum(result.source_masses), np.sum(target_masses))
+    assert np.all(result.source_lengths > 0.0)
+    assert np.all(result.source_masses > 0.0)
+
+
+def test_split_embedding_optimizes_contiguous_unequal_target_partition():
+    result = split_embedding(
+        [0.4, 0.6],
+        [0.3, 0.7],
+        [0.2, 0.3, 0.5],
+        [0.2, 0.2, 0.6],
+    )
+
+    np.testing.assert_array_equal(result.segment_source_links, [0, 0, 1])
+    np.testing.assert_allclose(result.source_lengths, [0.16, 0.24, 0.6])
+    np.testing.assert_allclose(result.source_masses, [0.12, 0.18, 0.7])
+    np.testing.assert_array_equal(result.source_joint_locks, [0, 1, 0])
+
+
+def test_split_joint_profile_zeros_only_inserted_joints():
+    result = split_joint_profile([0.1, 0.2], [0, 0, 1], internal_value=0.0)
+    np.testing.assert_allclose(result, [0.1, 0.0, 0.2])
+
+
+def test_split_physical_lift_zeros_inserted_joint_and_scales_natural_time():
+    lift = split_state_lift_matrix(2, [0, 0, 1], length_scale=4.0)
+    state = np.array([0.5, 0.1, 0.2, 1.0, 0.3, 0.4])
+    lifted = lift @ state
+    np.testing.assert_allclose(
+        lifted,
+        [2.0, 0.1, 0.0, 0.2, 2.0, 0.15, 0.0, 0.2],
+    )
+
+
+def test_split_coordinate_projection_preserves_feedback_on_locked_manifold():
+    assignments = np.array([0, 0, 1])
+    lift = split_absolute_coordinate_lift_matrix(2, assignments)
+    projection = split_state_projection(lift, [0.16, 0.24, 0.6])
+    np.testing.assert_allclose(projection @ lift, np.eye(6), atol=1e-12)
+
+    source_gain = np.array([[0.4, -0.2, 0.6, 0.1, -0.3, 0.7]])
+    refined_gain = source_gain @ projection
+    source_error = np.array([0.2, 0.1, -0.3, 0.4, -0.5, 0.6])
+    assert np.isclose(
+        (refined_gain @ (lift @ source_error)).item(),
+        (source_gain @ source_error).item(),
+    )
 
 
 def test_adaptive_homotopy_grows_and_bisects_deterministically():

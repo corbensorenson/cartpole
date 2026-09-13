@@ -17,17 +17,22 @@ from typing import Any
 
 import numpy as np
 
-from gcartpole.config import apply_overrides, dump_json, load_config
+from gcartpole.config import apply_overrides, dump_json, load_config, save_config
 from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.evidence import file_metadata, utc_timestamp
 from gcartpole.fddp import rollout_controls
 from gcartpole.generalized_modes import chain_normal_modes
 from gcartpole.generalized_solver import (
+    PhysicalSetup,
     dimensionless_setup,
     force_action_scale,
     rail_requirement,
     resample_controls,
     setup_from_config,
+    split_embedding,
+    split_joint_profile,
+    split_state_lift_matrix,
+    split_state_projection,
     state_transfer_matrix,
     transfer_feedback_gains,
     transfer_state,
@@ -35,6 +40,7 @@ from gcartpole.generalized_solver import (
 from gcartpole.ilqr import MujocoTransition, data_state
 from gcartpole.linear import analyze_morphology
 from gcartpole.modal import StateScales, dimensionless_absolute_transform
+from gcartpole.morphology import build_morphology
 
 DEFAULT_SCALES = StateScales(
     cart_position=3.0,
@@ -99,6 +105,224 @@ def time_interpolate_rows(
             for column in range(rows.shape[1])
         ]
     )
+
+
+def time_interpolate_samples(rows: np.ndarray, target_count: int) -> np.ndarray:
+    """Interpolate state samples while preserving both time endpoints."""
+
+    rows = np.asarray(rows, dtype=np.float64)
+    if rows.ndim != 2 or rows.shape[0] < 2 or target_count < 2:
+        raise ValueError("state samples and target count must both have endpoints")
+    source_phase = np.linspace(0.0, 1.0, rows.shape[0])
+    target_phase = np.linspace(0.0, 1.0, target_count)
+    return np.column_stack(
+        [
+            np.interp(target_phase, source_phase, rows[:, column])
+            for column in range(rows.shape[1])
+        ]
+    )
+
+
+def split_continuation_config(
+    source_cfg: dict[str, Any],
+    target_cfg: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Build a target-count homotopy whose start is a locked source chain."""
+
+    source = setup_from_config(source_cfg)
+    target = setup_from_config(target_cfg)
+    if target.n_links <= source.n_links:
+        raise ValueError("split continuation requires target links > source links")
+    embedding = split_embedding(
+        source.lengths,
+        source.masses,
+        target.lengths,
+        target.masses,
+    )
+    source_morph = build_morphology(
+        source_cfg["env"], source_cfg["morphology"], progress=1.0
+    )
+    target_morph = build_morphology(
+        target_cfg["env"], target_cfg["morphology"], progress=1.0
+    )
+    source_rotational_scale = (
+        source.system_mass * source.chain_length**2 / source.natural_time
+    )
+    target_rotational_scale = (
+        target.system_mass * target.chain_length**2 / target.natural_time
+    )
+    start_damping = split_joint_profile(
+        source.joint_damping
+        * (target_rotational_scale / source_rotational_scale),
+        embedding.segment_source_links,
+    )
+    torque_scale = (
+        target.system_mass * target.gravity * target.chain_length
+    ) / (source.system_mass * source.gravity * source.chain_length)
+    start_friction = split_joint_profile(
+        source_morph.frictionloss * torque_scale,
+        embedding.segment_source_links,
+    )
+    start_stiffness = split_joint_profile(
+        source_morph.joint_stiffness * torque_scale,
+        embedding.segment_source_links,
+    )
+
+    cfg = copy.deepcopy(target_cfg)
+    cfg["experiment"]["name"] = (
+        f"split_continuation_n{source.n_links}_to_n{target.n_links}"
+    )
+    cfg["env"].pop("plant_progress", None)
+    morph = cfg["morphology"]
+    morph["schedule_mode"] = "all_linear"
+    morph["lengths_start"] = embedding.source_lengths.tolist()
+    morph["lengths_end"] = target.lengths.tolist()
+    morph["masses_start"] = embedding.source_masses.tolist()
+    morph["masses_end"] = target.masses.tolist()
+    morph["damping_start"] = start_damping.tolist()
+    morph["damping_end"] = target.joint_damping.tolist()
+    morph["frictionloss_start"] = start_friction.tolist()
+    morph["frictionloss_end"] = target_morph.frictionloss.tolist()
+    morph["joint_stiffness_start"] = start_stiffness.tolist()
+    morph["joint_stiffness_end"] = target_morph.joint_stiffness.tolist()
+    morph["joint_lock_start"] = embedding.source_joint_locks.tolist()
+    morph["joint_lock_end"] = embedding.target_joint_locks.tolist()
+    for endpoint, damping, friction in (
+        ("start", start_damping, start_friction),
+        ("end", target.joint_damping, target_morph.frictionloss),
+    ):
+        morph.setdefault(endpoint, {})
+        morph[endpoint]["alpha_length"] = 0.0
+        morph[endpoint]["alpha_mass"] = 0.0
+        morph[endpoint]["alpha_damping"] = 0.0
+        morph[endpoint]["alpha_frictionloss"] = 0.0
+        morph[endpoint]["total_damping"] = float(np.sum(damping))
+        morph[endpoint]["total_frictionloss"] = float(np.sum(friction))
+
+    source_pi = dimensionless_setup(source)
+    start = setup_from_config(cfg, progress=0.0)
+    start_pi = dimensionless_setup(start)
+    embedded_source_damping = split_joint_profile(
+        source_pi.joint_damping_ratios,
+        embedding.segment_source_links,
+    )
+    compatibility = {
+        "cart_to_link_mass_error": float(
+            start_pi.cart_to_link_mass - source_pi.cart_to_link_mass
+        ),
+        "cart_damping_ratio_error": float(
+            start_pi.cart_damping_ratio - source_pi.cart_damping_ratio
+        ),
+        "link_radius_ratio_error": float(
+            start_pi.link_radius_ratio - source_pi.link_radius_ratio
+        ),
+        "joint_armature_ratio_error": float(
+            start_pi.joint_armature_ratio - source_pi.joint_armature_ratio
+        ),
+        "joint_damping_ratio_max_error": float(
+            np.max(
+                np.abs(
+                    start_pi.joint_damping_ratios - embedded_source_damping
+                )
+            )
+        ),
+    }
+    compatibility["global_dynamic_similarity"] = bool(
+        max(abs(float(value)) for value in compatibility.values()) <= 1.0e-10
+    )
+    metadata = embedding.to_dict()
+    metadata["compatibility"] = compatibility
+    return cfg, metadata
+
+
+def split_warm_start(
+    payload: dict[str, Any],
+    source: PhysicalSetup,
+    target_start: PhysicalSetup,
+    embedding_metadata: dict[str, Any],
+    source_transform: np.ndarray,
+    target_transform: np.ndarray,
+) -> dict[str, Any]:
+    """Lift a route and its feedback through the locked-split injection."""
+
+    controller, search = controller_record(payload)
+    controls_source = np.asarray(controller["controls"], dtype=np.float64)
+    gains_source = np.asarray(controller["feedback_gains"], dtype=np.float64)
+    states_source = np.asarray(
+        search["nominal_coordinate_states"], dtype=np.float64
+    )
+    source_dim = 2 * (source.n_links + 1)
+    if gains_source.shape != (controls_source.size, source_dim):
+        raise ValueError("source feedback gains do not match source morphology")
+    if states_source.shape != (controls_source.size + 1, source_dim):
+        raise ValueError("source nominal states do not match source morphology")
+
+    assignments = np.asarray(
+        embedding_metadata["segment_source_links"], dtype=np.int64
+    )
+    physical_lift = split_state_lift_matrix(
+        source.n_links,
+        assignments,
+        length_scale=target_start.chain_length / source.chain_length,
+    )
+    coordinate_lift = (
+        target_transform @ physical_lift @ np.linalg.inv(source_transform)
+    )
+    projection = split_state_projection(
+        coordinate_lift,
+        np.asarray(embedding_metadata["source_lengths"], dtype=np.float64)
+        / target_start.chain_length,
+    )
+    action_scale = force_action_scale(source, target_start)
+    controls = resample_controls(controls_source, source, target_start)
+    spatial_gains = (
+        action_scale * gains_source @ projection
+    )
+    feedback_gains = time_interpolate_rows(
+        spatial_gains, controls_source.size, controls.size
+    )
+    lifted_states = states_source @ coordinate_lift.T
+    states = time_interpolate_samples(lifted_states, controls.size + 1)
+    initial_physical = physical_lift @ np.linalg.solve(
+        source_transform, states_source[0]
+    )
+    nq = target_start.n_links + 1
+    invariant_error = float(
+        np.max(np.abs(projection @ coordinate_lift - np.eye(source_dim)))
+    )
+    return {
+        "selected_state": {
+            "qpos": initial_physical[:nq].tolist(),
+            "qvel": initial_physical[nq:].tolist(),
+            "state_index": 0,
+        },
+        "controller": {
+            "type": "generalized_locked_split_warm_start",
+            "controls": controls.tolist(),
+            "feedback_gains": feedback_gains.tolist(),
+            "horizon_steps": int(controls.size),
+            "horizon_seconds": float(controls.size * target_start.policy_dt),
+            "policy_dt": target_start.policy_dt,
+            "coordinate_transform": target_transform.tolist(),
+        },
+        "search": {
+            "nominal_coordinate_states": states.tolist(),
+            "is_feasible": False,
+            "iterations": 0,
+            "cost": None,
+        },
+        "embedding": {
+            **embedding_metadata,
+            "state_lift_matrix": physical_lift.tolist(),
+            "coordinate_lift_matrix": coordinate_lift.tolist(),
+            "coordinate_projection_matrix": projection.tolist(),
+            "feedback_invariance_max_abs_error": invariant_error,
+            "force_action_scale": action_scale,
+            "force_scaling_requires_clipping": bool(
+                np.max(np.abs(controls_source)) * action_scale > 1.0
+            ),
+        },
+    }
 
 
 def analyze_command(args: argparse.Namespace) -> None:
@@ -271,6 +495,67 @@ def transfer_command(args: argparse.Namespace) -> None:
     )
 
 
+def split_command(args: argparse.Namespace) -> None:
+    """Materialize a count-increase curriculum and its algebraic warm start."""
+
+    source_base = apply_overrides(load_config(args.source_config), args.source_override)
+    target_base = apply_overrides(load_config(args.target_config), args.target_override)
+    source_cfg = (
+        source_base
+        if int(source_base["env"]["n_links"]) == args.source_links
+        else uniform_config(source_base, args.source_links)
+    )
+    continuation_cfg, embedding = split_continuation_config(source_cfg, target_base)
+    source = setup_from_config(source_cfg)
+    target_start = setup_from_config(continuation_cfg, progress=0.0)
+    spec = None if args.spec is None else load_config(args.spec)
+    source_transform = coordinate_transform(source.n_links, spec)
+    target_transform = coordinate_transform(target_start.n_links, spec)
+    source_path = Path(args.controller)
+    payload = json.loads(source_path.read_text(encoding="utf-8"))
+    warm_start = split_warm_start(
+        payload,
+        source,
+        target_start,
+        embedding,
+        source_transform,
+        target_transform,
+    )
+    output = {
+        "schema_version": 1,
+        "generated_at": utc_timestamp(),
+        "claim_status": "locked_split_warm_start_not_solution_evidence",
+        "not_solution": True,
+        "summary": (
+            "Deterministic locked-split count continuation; exact optimization "
+            "and the sustained-upright gates are still required."
+        ),
+        "source": {
+            "config": file_metadata(Path(args.source_config)),
+            "controller": file_metadata(source_path),
+            "dimensionless": dimensionless_setup(source).to_dict(),
+        },
+        "target": {
+            "config": file_metadata(Path(args.target_config)),
+            "continuation_config": str(Path(args.out_config)),
+            "dimensionless_start": dimensionless_setup(target_start).to_dict(),
+            "dimensionless_end": dimensionless_setup(
+                setup_from_config(continuation_cfg, progress=1.0)
+            ).to_dict(),
+        },
+        **warm_start,
+    }
+    save_config(continuation_cfg, args.out_config)
+    dump_json(output, args.out)
+    compatibility = embedding["compatibility"]["global_dynamic_similarity"]
+    print(
+        f"wrote {args.out_config} and {args.out}: "
+        f"n={source.n_links}->{target_start.n_links}, "
+        f"globally_similar={compatibility}, "
+        f"feedback_error={warm_start['embedding']['feedback_invariance_max_abs_error']:.3e}"
+    )
+
+
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
@@ -296,6 +581,20 @@ def parser() -> argparse.ArgumentParser:
     transfer.add_argument("--target-override", action="append", default=[])
     transfer.add_argument("--out", required=True)
     transfer.set_defaults(run=transfer_command)
+
+    split = commands.add_parser(
+        "split", help="build a locked-split count continuation and warm start"
+    )
+    split.add_argument("--source-config", default="configs/swingup7_uniform.yaml")
+    split.add_argument("--target-config", required=True)
+    split.add_argument("--source-links", type=int, required=True)
+    split.add_argument("--controller", required=True)
+    split.add_argument("--spec", default="benchmarks/p1_capture_envelope.yaml")
+    split.add_argument("--source-override", action="append", default=[])
+    split.add_argument("--target-override", action="append", default=[])
+    split.add_argument("--out-config", required=True)
+    split.add_argument("--out", required=True)
+    split.set_defaults(run=split_command)
     return root
 
 
