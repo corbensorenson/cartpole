@@ -330,6 +330,15 @@ morphology step is evidence that rail demand is route-branch dependent. It is
 therefore carried as an optimization coordinate and acceptance metric, rather
 than inferred from link count or total chain length alone.
 
+The compact [n=3 morphology/rail frontier](../runs/generalized_solver/n3_unequal_rail_frontier.json)
+now exposes this relationship across the full deterministic campaign. Of 50
+trials, 27 exact replays were accepted and all 23 rejected final replays ended
+in rail violations. Required ratios on accepted routes ranged from `1.07470`
+to `1.36641`. Trial 50 advanced the exact-only continuation to
+`p=0.036035462` with `rho_required=1.36490`, but it has not replaced the
+`p=0.036023373` noisy 20/100 checkpoint. Failed-route excursions are retained
+separately and are not interpreted as sufficient rail estimates.
+
 ## Verified bottom-up checkpoint
 
 All rows use uniform 3 m, 1 kg chains, a 1 kg cart, 80 N authority, 50 Hz
@@ -399,6 +408,10 @@ PYTHONPATH=src:scripts python scripts/run_generalized_homotopy.py \
 PYTHONPATH=src:scripts python \
   scripts/verify_generalized_homotopy_checkpoint.py \
   runs/generalized_solver/n3_unequal_adaptive_checkpoint.json
+
+PYTHONPATH=src:scripts python scripts/summarize_generalized_homotopy.py \
+  --continuation runs/generalized_solver/n3_unequal_waypoint_homotopy/continuation.json \
+  --out runs/generalized_solver/n3_unequal_rail_frontier.json
 
 PYTHONPATH=src:scripts python scripts/evaluate_generalized_adaptive_library.py \
   --config configs/generalized_n3_unequal_p036023.yaml \

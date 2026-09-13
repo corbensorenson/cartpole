@@ -24,6 +24,7 @@ from gcartpole.generalized_solver import (
     AdaptiveHomotopy,
     dimensionless_setup,
     homotopy_morphology,
+    rail_requirement,
     setup_from_config,
 )
 
@@ -146,6 +147,40 @@ def successful(path: Path) -> bool:
     payload = json.loads(path.read_text(encoding="utf-8"))
     result = payload.get("result", {})
     return bool(result.get("success")) and bool(result.get("latched"))
+
+
+def result_summary(path: Path, cfg: dict[str, Any]) -> dict[str, Any]:
+    """Extract compact acceptance and rail evidence from a full replay artifact."""
+
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    result = payload.get("result", {})
+    maximum_cart = float(result.get("max_cart_excursion", float("nan")))
+    summary: dict[str, Any] = {
+        "success": bool(result.get("success")),
+        "latched": bool(result.get("latched")),
+        "termination_reason": result.get("termination_reason"),
+        "max_upright_streak_seconds": float(
+            result.get("max_upright_streak_seconds", 0.0)
+        ),
+        "max_cart_excursion": maximum_cart,
+    }
+    if np.isfinite(maximum_cart):
+        summary["rail_requirement"] = rail_requirement(
+            np.asarray([maximum_cart], dtype=np.float64), setup_from_config(cfg)
+        )
+    return summary
+
+
+def backfill_trial_outcomes(trials: list[dict[str, Any]]) -> None:
+    """Enrich a local resumable ledger without requiring bulky traces publicly."""
+
+    for record in trials:
+        if "outcome" in record:
+            continue
+        config_path = Path(str(record.get("config", {}).get("path", "")))
+        result_path = Path(str(record.get("result", {}).get("path", "")))
+        if config_path.is_file() and result_path.is_file():
+            record["outcome"] = result_summary(result_path, load_config(config_path))
 
 
 def waypoint_successful(path: Path) -> bool:
@@ -305,6 +340,7 @@ def main() -> None:
         )
         current_controller = Path(saved["current_controller"]["path"])
         trials = list(saved["trials"])
+        backfill_trial_outcomes(trials)
     else:
         schedule = AdaptiveHomotopy(
             step=args.initial_step,
@@ -432,6 +468,7 @@ def main() -> None:
             "accepted": bool(passed),
             "config": file_metadata(cfg_path),
             "result": file_metadata(accepted_path),
+            "outcome": result_summary(accepted_path, trial_cfg),
             "dimensionless": dimensionless_setup(setup_from_config(trial_cfg)).to_dict(),
         }
         if waypoint_attempted:

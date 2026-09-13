@@ -3,7 +3,9 @@ from __future__ import annotations
 from pathlib import Path
 
 from scripts.run_generalized_homotopy import (
+    backfill_trial_outcomes,
     fddp_command,
+    result_summary,
     waypoint_command,
     waypoint_lookaheads,
     waypoint_usable,
@@ -73,3 +75,31 @@ def test_rail_safe_exact_waypoint_is_usable_even_if_reference_gate_failed(
 
 def test_waypoint_lookaheads_expand_and_deduplicate() -> None:
     assert waypoint_lookaheads(24, [1, 2, 2, 4]) == (24, 48, 96)
+
+
+def test_result_summary_records_body_aware_rail_demand(tmp_path: Path) -> None:
+    artifact = tmp_path / "result.json"
+    artifact.write_text(
+        """{
+          "result": {
+            "success": true,
+            "latched": true,
+            "termination_reason": "time_limit",
+            "max_upright_streak_seconds": 6.0,
+            "max_cart_excursion": 2.0
+          }
+        }""",
+        encoding="utf-8",
+    )
+    from gcartpole.config import load_config
+
+    summary = result_summary(artifact, load_config("configs/generalized_n3_unequal.yaml"))
+    assert summary["success"] is True
+    assert summary["rail_requirement"]["max_cart_center_excursion"] == 2.0
+    assert summary["rail_requirement"]["required_rail_half_length"] == 2.18
+
+
+def test_backfill_trial_outcomes_skips_missing_public_traces() -> None:
+    trials = [{"result": {"path": "missing.json"}, "config": {"path": "missing.yaml"}}]
+    backfill_trial_outcomes(trials)
+    assert "outcome" not in trials[0]

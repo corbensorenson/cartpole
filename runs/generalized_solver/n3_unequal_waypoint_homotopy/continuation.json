@@ -1,12 +1,12 @@
 {
   "claim_status": "development_continuation_not_record_evidence",
   "current_controller": {
-    "bytes": 277383,
-    "path": "runs/generalized_solver/n3_unequal_p036023_route.json",
-    "sha256": "16ba461368e443cd0859ab89d57c750a0279d9ae0824c9eff5005eef909118ce"
+    "bytes": 274892,
+    "path": "runs/generalized_solver/n3_unequal_p036035_route.json",
+    "sha256": "dccfcc05edb3743ec373301e64a73a9eefc3ce93f1571f8106ddd09b4f489fb6"
   },
-  "next_step": 0.00019342813113834098,
-  "progress": 0.03602337317097499,
+  "next_step": 1.93428131138341e-05,
+  "progress": 0.03603546242917113,
   "schema_version": 1,
   "source_config": {
     "bytes": 2097,
@@ -54,6 +54,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.025,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.044092594156136,
+        "max_upright_streak_seconds": 18.8,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.775907405843864,
+          "max_cart_center_excursion": 3.044092594156136,
+          "required_rail_half_length": 3.224092594156136,
+          "required_rail_ratio": 1.0746975313853786
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.02525,
       "result": {
         "bytes": 2304622,
@@ -114,6 +128,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.02525,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.148306065243069,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.6716939347569308,
+          "max_cart_center_excursion": 3.148306065243069,
+          "required_rail_half_length": 3.328306065243069,
+          "required_rail_ratio": 1.109435355081023
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.025650000000000003,
       "result": {
         "bytes": 2287674,
@@ -174,6 +202,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.025650000000000003,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.160603851358162,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.659396148641838,
+          "max_cart_center_excursion": 3.160603851358162,
+          "required_rail_half_length": 3.340603851358162,
+          "required_rail_ratio": 1.1135346171193874
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.026290000000000004,
       "result": {
         "bytes": 2291986,
@@ -234,6 +276,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.026290000000000004,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.1183679878382202,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.7016320121617796,
+          "max_cart_center_excursion": 3.1183679878382202,
+          "required_rail_half_length": 3.2983679878382204,
+          "required_rail_ratio": 1.0994559959460735
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.027314000000000005,
       "result": {
         "bytes": 2301302,
@@ -294,6 +350,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.027314000000000005,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.1538540143366594,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.6661459856633405,
+          "max_cart_center_excursion": 3.1538540143366594,
+          "required_rail_half_length": 3.3338540143366595,
+          "required_rail_ratio": 1.111284671445553
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.028952400000000007,
       "result": {
         "bytes": 2287717,
@@ -354,6 +424,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.028952400000000007,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.066554578330527,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.2465545783305263,
+          "max_cart_center_excursion": 5.066554578330527,
+          "required_rail_half_length": 5.246554578330526,
+          "required_rail_ratio": 1.7488515261101754
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.031573840000000006,
       "result": {
         "bytes": 1062083,
@@ -410,6 +494,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.028952400000000007,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.307651973467935,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.5123480265320648,
+          "max_cart_center_excursion": 3.307651973467935,
+          "required_rail_half_length": 3.487651973467935,
+          "required_rail_ratio": 1.162550657822645
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.030263120000000008,
       "result": {
         "bytes": 2288856,
@@ -466,6 +564,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.030263120000000008,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.018912484154108,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.1989124841541079,
+          "max_cart_center_excursion": 5.018912484154108,
+          "required_rail_half_length": 5.198912484154108,
+          "required_rail_ratio": 1.7329708280513694
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.03236027200000001,
       "result": {
         "bytes": 643346,
@@ -522,6 +634,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.030263120000000008,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.042623813866558,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.22262381386655772,
+          "max_cart_center_excursion": 5.042623813866558,
+          "required_rail_half_length": 5.222623813866558,
+          "required_rail_ratio": 1.740874604622186
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.03131169600000001,
       "result": {
         "bytes": 496559,
@@ -578,6 +704,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.030263120000000008,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.0083457966684275,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.1883457966684272,
+          "max_cart_center_excursion": 5.0083457966684275,
+          "required_rail_half_length": 5.188345796668427,
+          "required_rail_ratio": 1.7294485988894757
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.03078740800000001,
       "result": {
         "bytes": 600754,
@@ -634,6 +774,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.030263120000000008,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.3183720469050715,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.5016279530949284,
+          "max_cart_center_excursion": 3.3183720469050715,
+          "required_rail_half_length": 3.4983720469050716,
+          "required_rail_ratio": 1.1661240156350239
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.030525264000000007,
       "result": {
         "bytes": 2287960,
@@ -695,6 +849,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.030525264000000007,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.3038840495945556,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.5161159504054442,
+          "max_cart_center_excursion": 3.3038840495945556,
+          "required_rail_half_length": 3.4838840495945558,
+          "required_rail_ratio": 1.1612946831981852
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.030944694400000007,
       "result": {
         "bytes": 2291374,
@@ -756,6 +924,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.030944694400000007,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.097446455114426,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.27744645511442556,
+          "max_cart_center_excursion": 5.097446455114426,
+          "required_rail_half_length": 5.277446455114426,
+          "required_rail_ratio": 1.7591488183714752
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.031615783040000005,
       "result": {
         "bytes": 864166,
@@ -813,6 +995,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.030944694400000007,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.4797379855974158,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.340262014402584,
+          "max_cart_center_excursion": 3.4797379855974158,
+          "required_rail_half_length": 3.659737985597416,
+          "required_rail_ratio": 1.2199126618658054
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.031280238720000006,
       "result": {
         "bytes": 2280786,
@@ -874,6 +1070,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.031280238720000006,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.5151863264050105,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.3048136735949893,
+          "max_cart_center_excursion": 3.5151863264050105,
+          "required_rail_half_length": 3.6951863264050107,
+          "required_rail_ratio": 1.2317287754683368
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.031817109632000004,
       "result": {
         "bytes": 2274924,
@@ -931,6 +1141,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.031817109632000004,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.050933814450665,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.23093381445066452,
+          "max_cart_center_excursion": 5.050933814450665,
+          "required_rail_half_length": 5.2309338144506645,
+          "required_rail_ratio": 1.743644604816888
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.032676103091200004,
       "result": {
         "bytes": 1168580,
@@ -988,6 +1212,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.031817109632000004,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.54227711417545,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.27772288582455,
+          "max_cart_center_excursion": 3.54227711417545,
+          "required_rail_half_length": 3.72227711417545,
+          "required_rail_ratio": 1.2407590380584834
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.032246606361600004,
       "result": {
         "bytes": 2282992,
@@ -1045,6 +1283,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.032246606361600004,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.033458784526813,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.21345878452681255,
+          "max_cart_center_excursion": 5.033458784526813,
+          "required_rail_half_length": 5.2134587845268126,
+          "required_rail_ratio": 1.7378195948422708
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.03293380112896001,
       "result": {
         "bytes": 760071,
@@ -1102,6 +1354,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.032246606361600004,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.081377972128149,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.26137797212814906,
+          "max_cart_center_excursion": 5.081377972128149,
+          "required_rail_half_length": 5.261377972128149,
+          "required_rail_ratio": 1.7537926573760496
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.03259020374528,
       "result": {
         "bytes": 981459,
@@ -1159,6 +1425,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.032246606361600004,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.054303225950504,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.23430322595050335,
+          "max_cart_center_excursion": 5.054303225950504,
+          "required_rail_half_length": 5.234303225950503,
+          "required_rail_ratio": 1.744767741983501
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.03241840505344001,
       "result": {
         "bytes": 1159246,
@@ -1216,6 +1496,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.032246606361600004,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.009872760676264,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.18987276067626357,
+          "max_cart_center_excursion": 5.009872760676264,
+          "required_rail_half_length": 5.189872760676264,
+          "required_rail_ratio": 1.7299575868920878
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.032332505707520005,
       "result": {
         "bytes": 1119775,
@@ -1273,6 +1567,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.032246606361600004,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.000973617878997,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.18097361787899668,
+          "max_cart_center_excursion": 5.000973617878997,
+          "required_rail_half_length": 5.180973617878997,
+          "required_rail_ratio": 1.7269912059596655
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.032289556034560005,
       "result": {
         "bytes": 524296,
@@ -1330,6 +1638,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.032246606361600004,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.0072093223382375,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.18720932233823717,
+          "max_cart_center_excursion": 5.0072093223382375,
+          "required_rail_half_length": 5.187209322338237,
+          "required_rail_ratio": 1.7290697741127456
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.03226808119808,
       "result": {
         "bytes": 675426,
@@ -1387,6 +1709,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.032246606361600004,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.3839118959385788,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.436088104061421,
+          "max_cart_center_excursion": 3.3839118959385788,
+          "required_rail_half_length": 3.563911895938579,
+          "required_rail_ratio": 1.1879706319795262
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.032257343779840006,
       "result": {
         "bytes": 2269258,
@@ -1444,6 +1780,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.032257343779840006,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.081273373738654,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.26127337373865345,
+          "max_cart_center_excursion": 5.081273373738654,
+          "required_rail_half_length": 5.2612733737386534,
+          "required_rail_ratio": 1.753757791246218
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.03227452364902401,
       "result": {
         "bytes": 495358,
@@ -1501,6 +1851,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.032257343779840006,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.2866842486860284,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.5333157513139715,
+          "max_cart_center_excursion": 3.2866842486860284,
+          "required_rail_half_length": 3.4666842486860285,
+          "required_rail_ratio": 1.1555614162286763
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.03227452364902401,
       "result": {
         "bytes": 2276412,
@@ -1584,6 +1948,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.03227452364902401,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.286706790104238,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.5332932098957617,
+          "max_cart_center_excursion": 3.286706790104238,
+          "required_rail_half_length": 3.4667067901042383,
+          "required_rail_ratio": 1.155568930034746
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.032302011439718406,
       "result": {
         "bytes": 2273835,
@@ -1667,6 +2045,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.032302011439718406,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.286742175495256,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.533257824504744,
+          "max_cart_center_excursion": 3.286742175495256,
+          "required_rail_half_length": 3.466742175495256,
+          "required_rail_ratio": 1.1555807251650854
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.032345991904829445,
       "result": {
         "bytes": 2272816,
@@ -1750,6 +2142,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.032345991904829445,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.286777396414731,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.5332226035852687,
+          "max_cart_center_excursion": 3.286777396414731,
+          "required_rail_half_length": 3.4667773964147313,
+          "required_rail_ratio": 1.155592465471577
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.03241636064900711,
       "result": {
         "bytes": 2278605,
@@ -1833,6 +2239,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.03241636064900711,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.286834748103479,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.5331652518965209,
+          "max_cart_center_excursion": 3.286834748103479,
+          "required_rail_half_length": 3.466834748103479,
+          "required_rail_ratio": 1.1556115827011597
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.03252895063969137,
       "result": {
         "bytes": 2279485,
@@ -1916,6 +2336,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.03252895063969137,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.3435243212755603,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.4764756787244395,
+          "max_cart_center_excursion": 3.3435243212755603,
+          "required_rail_half_length": 3.5235243212755605,
+          "required_rail_ratio": 1.1745081070918535
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.03270909462478619,
       "result": {
         "bytes": 2278351,
@@ -1999,6 +2433,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.03270909462478619,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.287165381784026,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.5328346182159738,
+          "max_cart_center_excursion": 3.287165381784026,
+          "required_rail_half_length": 3.4671653817840262,
+          "required_rail_ratio": 1.1557217939280087
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.032997325000937903,
       "result": {
         "bytes": 2273652,
@@ -2086,6 +2534,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.032997325000937903,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.0346684007004985,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.2146684007004982,
+          "max_cart_center_excursion": 5.0346684007004985,
+          "required_rail_half_length": 5.214668400700498,
+          "required_rail_ratio": 1.7382228002334994
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.033458493602780644,
       "result": {
         "bytes": 575921,
@@ -2178,6 +2640,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.032997325000937903,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.2874854582536597,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.5325145417463402,
+          "max_cart_center_excursion": 3.2874854582536597,
+          "required_rail_half_length": 3.46748545825366,
+          "required_rail_ratio": 1.1558284860845534
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.033227909301859274,
       "result": {
         "bytes": 2273579,
@@ -2261,6 +2737,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.033227909301859274,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.029622742485246,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.20962274248524615,
+          "max_cart_center_excursion": 5.029622742485246,
+          "required_rail_half_length": 5.209622742485246,
+          "required_rail_ratio": 1.7365409141617487
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.03359684418333347,
       "result": {
         "bytes": 494281,
@@ -2357,6 +2847,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.033227909301859274,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.289000174548809,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.530999825451191,
+          "max_cart_center_excursion": 3.289000174548809,
+          "required_rail_half_length": 3.469000174548809,
+          "required_rail_ratio": 1.1563333915162697
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.03341237674259637,
       "result": {
         "bytes": 2273232,
@@ -2440,6 +2944,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.03341237674259637,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.287761753847773,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.532238246152227,
+          "max_cart_center_excursion": 3.287761753847773,
+          "required_rail_half_length": 3.467761753847773,
+          "required_rail_ratio": 1.1559205846159244
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.03370752464777572,
       "result": {
         "bytes": 2275417,
@@ -2523,6 +3041,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.03370752464777572,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.287376967735779,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.5326230322642207,
+          "max_cart_center_excursion": 3.287376967735779,
+          "required_rail_half_length": 3.4673769677357793,
+          "required_rail_ratio": 1.155792322578593
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.034179761296062684,
       "result": {
         "bytes": 2273244,
@@ -2606,6 +3138,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.034179761296062684,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.3434760114095803,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.4765239885904196,
+          "max_cart_center_excursion": 3.3434760114095803,
+          "required_rail_half_length": 3.5234760114095804,
+          "required_rail_ratio": 1.1744920038031934
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.034935339933321825,
       "result": {
         "bytes": 2270019,
@@ -2689,6 +3235,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.034935339933321825,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.05990453748059,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.23990453748058993,
+          "max_cart_center_excursion": 5.05990453748059,
+          "required_rail_half_length": 5.23990453748059,
+          "required_rail_ratio": 1.7466348458268632
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.03614426575293646,
       "result": {
         "bytes": 1144222,
@@ -2781,6 +3341,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.034935339933321825,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.3711981817748997,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 1.4488018182251001,
+          "max_cart_center_excursion": 3.3711981817748997,
+          "required_rail_half_length": 3.5511981817749,
+          "required_rail_ratio": 1.1837327272583
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.03553980284312914,
       "result": {
         "bytes": 2273445,
@@ -2877,6 +3451,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.03553980284312914,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.084055100703857,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.26405510070385674,
+          "max_cart_center_excursion": 5.084055100703857,
+          "required_rail_half_length": 5.264055100703857,
+          "required_rail_ratio": 1.7546850335679522
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.036506943498820846,
       "result": {
         "bytes": 1237978,
@@ -2969,6 +3557,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.03553980284312914,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.919233530235127,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.9007664697648732,
+          "max_cart_center_excursion": 3.919233530235127,
+          "required_rail_half_length": 4.099233530235127,
+          "required_rail_ratio": 1.3664111767450422
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
       "proposed_progress": 0.03602337317097499,
       "result": {
         "bytes": 2282746,
@@ -3052,6 +3654,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.03602337317097499,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.007509083024399,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.1875090830243984,
+          "max_cart_center_excursion": 5.007509083024399,
+          "required_rail_half_length": 5.187509083024398,
+          "required_rail_ratio": 1.729169694341466
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.03679708569552835,
       "result": {
         "bytes": 559240,
@@ -3148,6 +3764,20 @@
         "usable_rail_ratio": 1.6066666666666667
       },
       "from_progress": 0.03602337317097499,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.017753202379521,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.19775320237952076,
+          "max_cart_center_excursion": 5.017753202379521,
+          "required_rail_half_length": 5.197753202379521,
+          "required_rail_ratio": 1.7325844007931737
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
       "proposed_progress": 0.03641022943325167,
       "result": {
         "bytes": 681833,
@@ -3205,7 +3835,536 @@
         "search_passed": false,
         "used_for_refinement": true
       }
+    },
+    {
+      "accepted": false,
+      "config": {
+        "bytes": 1707,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0046_p0.036216801.yaml",
+        "sha256": "9f2fccf3e4753190d3f0bd3e1d25962af6800b4f0a9ca939d809b00b45ae8f3e"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0000000000000002,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.3303152665581572,
+          0.3333333333333333,
+          0.33635140010850945
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.32850442649305156,
+          0.3321261066232629,
+          0.3393694668836856
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.03602337317097499,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.163161429932459,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.3431614299324588,
+          "max_cart_center_excursion": 5.163161429932459,
+          "required_rail_half_length": 5.343161429932459,
+          "required_rail_ratio": 1.7810538099774862
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
+      "proposed_progress": 0.03621680130211333,
+      "result": {
+        "bytes": 1187947,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0046_p0.036216801_pass2.json",
+        "sha256": "22968f4076ab1197fb169252f05d574b4ad09bb2c4e0238a524da1607b7e14c4"
+      },
+      "step": 0.00019342813113833873,
+      "trial": 46,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 365063,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0046_p0.036216801_waypoint.json",
+              "sha256": "645f0156736406e445b9ce9a8abd3f407de752d65621f2375682e5d0a31853d1"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 361478,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0046_p0.036216801_waypoint_x2.json",
+              "sha256": "cb36c4c1a67a0e5014ac7732418e57e6c1c602200bf4cd54483185eeaeeefd56"
+            },
+            "refinement": {
+              "bytes": 1189308,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0046_p0.036216801_waypoint_x2_fddp.json",
+              "sha256": "f5d3a1aea00beafddfc9bb7145aa1a4d4c12ed4faf5a1a7e557bac576a894ee7"
+            },
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": true
+          },
+          {
+            "artifact": {
+              "bytes": 358693,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0046_p0.036216801_waypoint_x4.json",
+              "sha256": "5bb636523af7193ad773b1bd52f5ac8133272ed76e1f41ca56a7e9e87f723539"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 4,
+            "segment_steps": 96,
+            "used_for_refinement": false
+          }
+        ],
+        "search_passed": false,
+        "used_for_refinement": true
+      }
+    },
+    {
+      "accepted": false,
+      "config": {
+        "bytes": 1690,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0047_p0.036120087.yaml",
+        "sha256": "129a8627acc427d7284a10437cc14d177e27fba5fdf81ab54f1023c126c89ff5"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.3303233260636213,
+          0.3333333333333333,
+          0.3363433406030454
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.3285173217017941,
+          0.3321293304254485,
+          0.33935334787275734
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.03602337317097499,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.110848779692312,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.29084877969231204,
+          "max_cart_center_excursion": 5.110848779692312,
+          "required_rail_half_length": 5.290848779692312,
+          "required_rail_ratio": 1.7636162598974374
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
+      "proposed_progress": 0.03612008723654416,
+      "result": {
+        "bytes": 596226,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0047_p0.036120087_pass2.json",
+        "sha256": "503f0fb7e33ae85b97cb4e33434a080bbd7e4b0fe47fb7ca07fab0422bc612ad"
+      },
+      "step": 9.671406556917284e-05,
+      "trial": 47,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 366002,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0047_p0.036120087_waypoint.json",
+              "sha256": "eea05b2ad93fc7c89337d5c1a4525a9f4acc57a50d043014fa13de491d1505fc"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 361555,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0047_p0.036120087_waypoint_x2.json",
+              "sha256": "251b06d233cdfe479d9b1c45128f5554f0dab12586277d9dfd775541be03c786"
+            },
+            "refinement": {
+              "bytes": 1132039,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0047_p0.036120087_waypoint_x2_fddp.json",
+              "sha256": "3c119d23988df499531b3b36576a6c12868f3e685343a9fa68e73bcff1cab410"
+            },
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": true
+          },
+          {
+            "artifact": {
+              "bytes": 358924,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0047_p0.036120087_waypoint_x4.json",
+              "sha256": "13af25b8c9d30c2128c2863196ee22de6f59aa36fe622307696c6e454dc5d4eb"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 4,
+            "segment_steps": 96,
+            "used_for_refinement": false
+          }
+        ],
+        "search_passed": false,
+        "used_for_refinement": true
+      }
+    },
+    {
+      "accepted": false,
+      "config": {
+        "bytes": 1692,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0048_p0.036071730.yaml",
+        "sha256": "fc0f3e172724753b7093f13271f5df1db30388d22d45fe2d262f09d51a00901d"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.33032735581635336,
+          0.3333333333333333,
+          0.33633931085031327
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.3285237693061654,
+          0.33213094232654133,
+          0.3393452883672932
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.03602337317097499,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.04560423762849,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.2256042376284899,
+          "max_cart_center_excursion": 5.04560423762849,
+          "required_rail_half_length": 5.22560423762849,
+          "required_rail_ratio": 1.7418680792094967
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
+      "proposed_progress": 0.036071730203759575,
+      "result": {
+        "bytes": 1133065,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0048_p0.036071730_pass2.json",
+        "sha256": "6e62f1b71a71bf8d3405419f980d09a1b75d37c5c6268ccba3845f8d477f4fc9"
+      },
+      "step": 4.835703278458642e-05,
+      "trial": 48,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 365708,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0048_p0.036071730_waypoint.json",
+              "sha256": "3824824a5824a2ebe34a0920cd6ecd338e0492f992b60af56bc96bd6c4f96b22"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 360911,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0048_p0.036071730_waypoint_x2.json",
+              "sha256": "8dd24ef85625f3c8cf3f038e2dada8820d2932c5c001b1a52831c8a435d90dea"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 358826,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0048_p0.036071730_waypoint_x4.json",
+              "sha256": "5983305b8711bcb017fa0b49eff0f1c25096f0f7cebcd7ada9cd706f3129ff2b"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 4,
+            "segment_steps": 96,
+            "used_for_refinement": false
+          }
+        ],
+        "search_passed": false,
+        "used_for_refinement": false
+      }
+    },
+    {
+      "accepted": false,
+      "config": {
+        "bytes": 1694,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0049_p0.036047552.yaml",
+        "sha256": "c8e359a2770ced038203f0359d211d8a4b341b57ad6c2823e509f6eac89a297a"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.3303293706927194,
+          0.3333333333333333,
+          0.33633729597394724
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.32852699310835104,
+          0.33213174827708775,
+          0.3393412586145612
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.03602337317097499,
+      "outcome": {
+        "latched": false,
+        "max_cart_excursion": 5.03858460660738,
+        "max_upright_streak_seconds": 0.0,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": -0.21858460660737933,
+          "max_cart_center_excursion": 5.03858460660738,
+          "required_rail_half_length": 5.218584606607379,
+          "required_rail_ratio": 1.7395282022024599
+        },
+        "success": false,
+        "termination_reason": "rail_violation"
+      },
+      "proposed_progress": 0.03604755168736728,
+      "result": {
+        "bytes": 634274,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0049_p0.036047552_pass2.json",
+        "sha256": "f7d61157798a3a3d028b513b0e802620a3cca0fa41c4a6bfa4cdc1ec4770ad62"
+      },
+      "step": 2.417851639228974e-05,
+      "trial": 49,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 365028,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0049_p0.036047552_waypoint.json",
+              "sha256": "a9468df404fb143c1276535dc605e1729cf80cf88f56f5611a4cd2e39c3fd765"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 361129,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0049_p0.036047552_waypoint_x2.json",
+              "sha256": "bba7b242c81870e4d60a8020c77debdd7e01c43a5745b33f29d8c8478116fcc8"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 359173,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0049_p0.036047552_waypoint_x4.json",
+              "sha256": "9743209c4aa4b8b7a04dcd096c777840f1c76b534565f56fe883247f6d61e374"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 4,
+            "segment_steps": 96,
+            "used_for_refinement": false
+          }
+        ],
+        "search_passed": false,
+        "used_for_refinement": false
+      }
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 1694,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0050_p0.036035462.yaml",
+        "sha256": "d01ae428fb9a790f1acd7961713ebb3079f512d01d58bc6fbe08ea7ae9da8bbc"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.33033037813090244,
+          0.3333333333333333,
+          0.3363362885357643
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.32852860500944386,
+          0.33213215125236095,
+          0.3393392437381952
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.03602337317097499,
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 3.914706066124987,
+        "max_upright_streak_seconds": 18.78,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.9052939338750132,
+          "max_cart_center_excursion": 3.914706066124987,
+          "required_rail_half_length": 4.094706066124987,
+          "required_rail_ratio": 1.3649020220416623
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.03603546242917113,
+      "result": {
+        "bytes": 2282262,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0050_p0.036035462_waypoint_x2_fddp.json",
+        "sha256": "38c2d03a2d233a928f32c1f0e034c4c7469abfa499afa1786ff729f73ea89375"
+      },
+      "step": 1.208925819614487e-05,
+      "trial": 50,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 365786,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0050_p0.036035462_waypoint.json",
+              "sha256": "0fdcf0d8ccf3a2437203e7d25fa35dfa58beb1cad10c88ffb57a455a419fc9d7"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 361421,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0050_p0.036035462_waypoint_x2.json",
+              "sha256": "a7c61c562f390fdb2b6f304530eaf12d024d68bc6da6543cdd9b9b2475201594"
+            },
+            "refinement": {
+              "bytes": 2282262,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0050_p0.036035462_waypoint_x2_fddp.json",
+              "sha256": "38c2d03a2d233a928f32c1f0e034c4c7469abfa499afa1786ff729f73ea89375"
+            },
+            "refinement_passed": true,
+            "search_passed": true,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": true
+          }
+        ],
+        "search_passed": true,
+        "used_for_refinement": true
+      }
     }
   ],
-  "updated_at": "2026-09-13T17:47:40+00:00"
+  "updated_at": "2026-09-13T18:13:51+00:00"
 }
