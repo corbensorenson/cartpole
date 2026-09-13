@@ -152,6 +152,20 @@ PYTHONPATH=src:scripts python scripts/verify_split_count_homotopy.py \
   --ledger runs/generalized_solver/SPLIT_RELEASE/continuation.json
 ```
 
+If the exact equality-removal boundary is the blocker, generate the three-stage
+supported handoff from the last accepted frozen configuration:
+
+```bash
+PYTHONPATH=src:. python scripts/build_supported_unlock_continuations.py \
+  --locked-config LAST_ACCEPTED.yaml --target-config TARGET.yaml \
+  --ramp-out SUPPORT_RAMP.yaml --release-out EQUALITY_RELEASE.yaml \
+  --relaxation-out SUPPORT_RELAXATION.yaml
+```
+
+Each emitted file runs through the same adaptive driver and exact replay gate;
+the ramp stage explicitly uses `--allow-locked-target` because retaining the
+constraint is the intended intermediate contract.
+
 The artifact records the assignment, locks, lift and projection matrices,
 dimensionless compatibility errors, and numerical feedback-invariance error.
 It is always marked `not_solution`. Constraint tolerances and chaotic divergence
@@ -172,17 +186,37 @@ three-link target whose final lengths are `[0.75, 1.0, 1.25] m` and masses are
 segments required at most `0.023` normalized action correction; the subsequent
 Box-FDDP replay held upright for `20.54 s` with `2.797 m` peak cart travel. The
 historical linear-impedance back-check accepted two nonzero releases through
-`p=0.00026`. The logarithmic-compliance schedule then accepted seven proposals
-through `p=0.21756`, with one rejected 0.05-wide proposal deterministically
-bisected, while keeping the same exact hold gate. The latest route held for
-`20.54 s`, used `3.838 m` peak cart travel, and had body-aware rail demand
-`rho=1.33927`. The
+`p=0.00026`. The logarithmic-compliance schedule has now carried the same route
+through `p=0.99954875`. Trial 50 held upright for `20.58 s`, used `4.500052 m`
+peak cart-center travel, and had body-aware rail demand `rho=1.560017`. The
+continuation scheduler retains a sorted stack of failed upper boundaries, so a
+successful midpoint cannot forget an enclosing failed proposal. It also treats
+the `4.5 m` waypoint rail as an optimization target rather than a hard physical
+limit: a finite seed inside the exact `5.0 m` rail may proceed to Box-FDDP, but
+only the unchanged replay gate can accept it. A rank-deficient dense waypoint
+SVD retries deterministically with LSMR, and a failed child process no longer
+prevents the remaining declared horizons from running.
+
+The exact `p=1` proposal remains rejected. Its final replay reached `5.014187 m`
+and never entered the upright hold; a separate 12-step waypoint probe also
+failed. This boundary is qualitatively different from an ordinary small
+morphology step: every positive lock value emits a MuJoCo equality constraint,
+whereas `p=1` removes that constraint. Further bisection improves the warm start
+but cannot make the plant topology continuous. The next deterministic stage is
+therefore a supported unlock: add dimensionless spring/damping while the joint
+is constrained, remove the equality with that physical support active, then
+anneal the support to the measured target on the fully unlocked plant. The
+generic builder now emits those three resumable configurations. Its first live
+support-ramp back-check accepted all eight proposals through `p=0.29256`; the
+latest exact replay held for `20.58 s` with `4.500030 m` peak cart travel. This
+is only the first of the three stages and remains development evidence. The
 [current resumable ledger](../runs/generalized_solver/n2_to_n3_split_logcompliance_homotopy/continuation.json),
+[support-ramp ledger](../runs/generalized_solver/n2_to_n3_supported_unlock_ramp/continuation.json),
 [generated continuation](../configs/generalized_n2_to_n3_split_logcompliance.yaml),
 and [historical ledger](../runs/generalized_solver/n2_to_n3_split_homotopy/continuation.json)
-are development evidence. Both ledgers are explicitly `not_solution`; `p=1`
-and the independent noisy gate remain unsolved for this count-plus-morphology
-path.
+are development evidence. Both ledgers are explicitly `not_solution`; the
+supported `p=1` handoff and independent noisy gate remain unsolved for this
+count-plus-morphology path.
 
 ### Morphology-conditioned terminal set
 

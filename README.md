@@ -228,6 +228,22 @@ same parked-launch promotion with a `1.053` body-aware ratio from the noisy
 100-episode maximum. Neither is an independent modal-synthesis regeneration.
 Arbitrary unequal morphologies and n>=10 remain active work.
 
+The count-agnostic locked-split continuation has also advanced its deliberately
+hard n=2 to unequal-n=3 back-check to `p=0.99954875`: the last accepted exact
+replay held for `20.58 s` with body-aware required rail ratio `1.560017`. The
+fully unlocked `p=1` plant is still rejected and is not counted as solved. That
+endpoint removes a simulator equality constraint, so it is a topology change
+rather than an ordinary infinitesimal parameter step. The resumable scheduler
+now preserves nested failed boundaries, survives rank-deficient waypoint solves
+with a deterministic LSMR fallback, and records the exact-unlock failure for the
+next supported-unlock stage. See the
+[count-release ledger](runs/generalized_solver/n2_to_n3_split_logcompliance_homotopy/continuation.json)
+and [support-ramp ledger](runs/generalized_solver/n2_to_n3_supported_unlock_ramp/continuation.json),
+which has accepted its first eight exact proposals through `p=0.29256`. This is
+stage one of three and is not an unlocked solution. See the
+[generalized solver notes](docs/generalized_solver.md) for the remaining
+release and relaxation gates.
+
 The same bounded actuator adapter has also passed a paired development check at
 every rung. A hidden map `delivered = 1.18 * commanded + 0.06` broke all 21
 unadapted trials, while four seconds of deterministic calibration followed by

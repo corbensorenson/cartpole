@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +25,7 @@ from gcartpole.evidence import file_metadata, utc_timestamp
 from gcartpole.generalized_solver import (
     AdaptiveHomotopy,
     dimensionless_setup,
+    recover_homotopy_failed_upper_bounds,
     setup_from_config,
 )
 from gcartpole.morphology import build_morphology
@@ -93,6 +95,13 @@ def prioritized_waypoint_steps(
             -steps,
         ),
     )
+
+
+def recover_failed_upper_bound(trials: list[dict[str, Any]]) -> float | None:
+    """Recover the active failed bracket from a pre-bracket ledger."""
+
+    bounds = recover_homotopy_failed_upper_bounds(trials)
+    return bounds[0] if bounds else None
 
 
 def scheduled_rail_limit(env: dict[str, Any], progress: float) -> float:
@@ -166,6 +175,8 @@ def write_manifest(
             "link_count": int(cfg["env"]["n_links"]),
             "progress": float(schedule.progress),
             "next_step": float(schedule.step),
+            "failed_upper_bound": schedule.failed_upper_bound,
+            "failed_upper_bounds": list(schedule.failed_upper_bounds),
             "current_controller": file_metadata(current_controller),
             "locked_start_baseline": baseline,
             "endpoint_dimensionless": {
@@ -203,7 +214,25 @@ def parse_args() -> argparse.Namespace:
             "baseline without perturbing it through FDDP"
         ),
     )
+    parser.add_argument(
+        "--replay-only-first",
+        action="store_true",
+        help=(
+            "screen each release step with the inherited exact route before "
+            "starting a local FDDP repair"
+        ),
+    )
     parser.add_argument("--disable-waypoint-repair", action="store_true")
+    parser.add_argument(
+        "--allow-unlocked-start",
+        action="store_true",
+        help="allow a free inserted-link curriculum with no initial joint lock",
+    )
+    parser.add_argument(
+        "--allow-locked-target",
+        action="store_true",
+        help="allow an intermediate support-ramp stage that retains its joint lock",
+    )
     parser.add_argument("--waypoint-segment-steps", type=int, default=24)
     parser.add_argument(
         "--waypoint-segment-multipliers", type=int, nargs="+", default=[1, 2, 4]
@@ -256,9 +285,9 @@ def validate_args(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
         raise ValueError("source controller and continuation link counts disagree")
     start = build_morphology(cfg["env"], cfg["morphology"], progress=0.0)
     end = build_morphology(cfg["env"], cfg["morphology"], progress=1.0)
-    if not np.any(start.joint_lock > 0.0):
+    if not args.allow_unlocked_start and not np.any(start.joint_lock > 0.0):
         raise ValueError("continuation start must contain at least one locked joint")
-    if np.any(end.joint_lock > 0.0):
+    if not args.allow_locked_target and np.any(end.joint_lock > 0.0):
         raise ValueError("continuation target must release every inserted joint")
     return cfg, count
 
@@ -283,18 +312,24 @@ def main() -> None:
         current_meta = file_metadata(Path(args.continuation_config))
         if saved["continuation_config"]["sha256"] != current_meta["sha256"]:
             raise ValueError("saved ledger uses a different continuation config")
+        trials = list(saved["trials"])
+        failed_upper_bounds = (
+            tuple(float(value) for value in saved["failed_upper_bounds"])
+            if "failed_upper_bounds" in saved
+            else recover_homotopy_failed_upper_bounds(trials)
+        )
         schedule = AdaptiveHomotopy(
             progress=float(saved["progress"]),
             step=float(saved["next_step"]),
             minimum_step=args.minimum_step,
             maximum_step=args.maximum_step,
             growth=args.growth,
+            failed_upper_bounds=failed_upper_bounds,
         )
         current_controller = Path(saved["current_controller"]["path"])
         baseline = saved.get("locked_start_baseline")
         if not isinstance(baseline, dict) or not baseline.get("accepted"):
             raise ValueError("saved ledger has no accepted locked-start baseline")
-        trials = list(saved["trials"])
     else:
         schedule = AdaptiveHomotopy(
             step=args.initial_step,
@@ -471,31 +506,75 @@ def main() -> None:
         first_path = trials_dir / f"{label}_pass1.json"
         accepted_path = first_path
         passed = False
+        replay_attempt: dict[str, Any] | None = None
         waypoint_attempts: list[dict[str, Any]] = []
         trial_waypoint_steps = prioritized_waypoint_steps(
             waypoint_steps, baseline, trials
         )
 
-        if not args.disable_waypoint_repair:
+        if args.replay_only_first:
+            replay_path = trials_dir / f"{label}_replay_only.json"
+            replay_command = fddp_command(
+                cfg=cfg_path,
+                state=state_path,
+                controller=current_controller,
+                output=replay_path,
+                iterations=args.iterations,
+                regularization=1e-6,
+                tracking_gain=0.0,
+                exact_initial_trajectory=True,
+                rail_soft_margin=args.waypoint_rail_soft_margin,
+            )
+            replay_command = [
+                argument
+                for argument in replay_command
+                if argument != "--initial-feasible"
+            ]
+            replay_command.insert(replay_command.index("--out"), "--replay-only")
+            run(replay_command)
+            passed = successful(replay_path)
+            accepted_path = replay_path
+            replay_attempt = {
+                "passed": bool(passed),
+                "artifact": file_metadata(replay_path),
+            }
+
+        if not passed and not args.disable_waypoint_repair:
             for segment_steps in trial_waypoint_steps:
                 multiplier = segment_steps // args.waypoint_segment_steps
                 suffix = "waypoint" if multiplier == 1 else f"waypoint_x{multiplier}"
                 waypoint_path = trials_dir / f"{label}_{suffix}.json"
                 refined_path = trials_dir / f"{label}_{suffix}_fddp.json"
-                run(
-                    waypoint_command(
-                        cfg=cfg_path,
-                        controller=current_controller,
-                        output=waypoint_path,
-                        segment_steps=segment_steps,
-                        max_evaluations=args.waypoint_max_evaluations,
-                        endpoint_weight=args.waypoint_endpoint_weight,
-                        control_regularization=args.waypoint_control_regularization,
-                        rail_soft_margin=args.waypoint_rail_soft_margin,
-                        rail_weight=args.waypoint_rail_weight,
-                        endpoint_tolerance=args.waypoint_endpoint_tolerance,
-                    )
+                command = waypoint_command(
+                    cfg=cfg_path,
+                    controller=current_controller,
+                    output=waypoint_path,
+                    segment_steps=segment_steps,
+                    max_evaluations=args.waypoint_max_evaluations,
+                    endpoint_weight=args.waypoint_endpoint_weight,
+                    control_regularization=args.waypoint_control_regularization,
+                    rail_soft_margin=args.waypoint_rail_soft_margin,
+                    rail_weight=args.waypoint_rail_weight,
+                    endpoint_tolerance=args.waypoint_endpoint_tolerance,
                 )
+                try:
+                    run(command)
+                except subprocess.CalledProcessError as error:
+                    waypoint_attempts.append(
+                        {
+                            "segment_steps": int(segment_steps),
+                            "search_passed": False,
+                            "used_for_refinement": False,
+                            "refinement_passed": False,
+                            "artifact": None,
+                            "refinement": None,
+                            "failure": {
+                                "returncode": int(error.returncode),
+                                "command": [str(value) for value in command],
+                            },
+                        }
+                    )
+                    continue
                 search_passed = waypoint_successful(waypoint_path)
                 usable = waypoint_usable(waypoint_path)
                 refinement_passed = False
@@ -574,6 +653,7 @@ def main() -> None:
             "result": file_metadata(accepted_path),
             "outcome": result_summary(accepted_path, trial_cfg),
             "waypoint_priority": [int(value) for value in trial_waypoint_steps],
+            "replay_only_attempt": replay_attempt,
             "dimensionless": dimensionless_setup(
                 setup_from_config(trial_cfg)
             ).to_dict(),
@@ -583,11 +663,13 @@ def main() -> None:
         if passed:
             schedule.accept(proposed)
             current_controller = accepted_path
-            status = (
-                "unlocked_target_exact_replay_passed"
-                if np.isclose(schedule.progress, 1.0)
-                else "running"
-            )
+            status = "running"
+            if np.isclose(schedule.progress, 1.0):
+                status = (
+                    "target_exact_replay_passed"
+                    if args.allow_locked_target
+                    else "unlocked_target_exact_replay_passed"
+                )
             write_manifest(
                 manifest_path,
                 args,
@@ -602,15 +684,18 @@ def main() -> None:
                 flush=True,
             )
             if np.isclose(schedule.progress, 1.0):
-                print(
-                    "Unlocked target passed exact replay. Package its mirror and "
-                    "run the independent noisy gates before promotion.",
-                    flush=True,
+                message = (
+                    "Intermediate target passed exact replay; continue with the "
+                    "next declared topology-safe stage."
+                    if args.allow_locked_target
+                    else "Unlocked target passed exact replay. Package its mirror "
+                    "and run the independent noisy gates before promotion."
                 )
+                print(message, flush=True)
                 return
         else:
             try:
-                schedule.reject()
+                schedule.reject(proposed)
             except RuntimeError as error:
                 write_manifest(
                     manifest_path,

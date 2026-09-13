@@ -12,6 +12,7 @@ from gcartpole.generalized_solver import (
     homotopy_morphology,
     mirror_feedback_route,
     rail_requirement,
+    recover_homotopy_failed_upper_bounds,
     resample_controls,
     split_absolute_coordinate_lift_matrix,
     split_embedding,
@@ -278,8 +279,44 @@ def test_adaptive_homotopy_grows_and_bisects_deterministically():
     schedule.accept(schedule.proposal())
     assert np.isclose(schedule.progress, 0.01)
     assert np.isclose(schedule.step, 0.02)
-    schedule.reject()
+    rejected = schedule.proposal()
+    schedule.reject(rejected)
     assert np.isclose(schedule.step, 0.01)
+    assert np.isclose(schedule.failed_upper_bound, 0.03)
+    schedule.accept(schedule.proposal())
+    assert np.isclose(schedule.progress, 0.02)
+    assert np.isclose(schedule.step, 0.01)
+    assert np.isclose(schedule.proposal(), 0.03)
+    schedule.accept(schedule.proposal())
+    assert schedule.failed_upper_bound is None
+    assert np.isclose(schedule.proposal(), 0.05)
+
+
+def test_adaptive_homotopy_restores_enclosing_failed_boundary():
+    schedule = AdaptiveHomotopy(
+        progress=0.6,
+        step=0.1,
+        minimum_step=0.001,
+        maximum_step=0.1,
+        growth=2.0,
+    )
+    schedule.reject(0.7)
+    schedule.reject(0.65)
+    assert np.allclose(schedule.failed_upper_bounds, [0.65, 0.7])
+    schedule.accept(0.625)
+    schedule.accept(0.65)
+    assert np.allclose(schedule.failed_upper_bounds, [0.7])
+    assert schedule.proposal() <= 0.7
+
+    recovered = recover_homotopy_failed_upper_bounds(
+        [
+            {"proposed_progress": 0.7, "accepted": False},
+            {"proposed_progress": 0.65, "accepted": False},
+            {"proposed_progress": 0.625, "accepted": True},
+            {"proposed_progress": 0.65, "accepted": True},
+        ]
+    )
+    assert np.allclose(recovered, [0.7])
 
 
 def test_mirror_feedback_route_reflects_the_nominal_feedback_law():

@@ -904,13 +904,20 @@ def homotopy_morphology(
 
 @dataclass
 class AdaptiveHomotopy:
-    """Deterministic accept/grow, reject/bisect continuation schedule."""
+    """Deterministic accept/grow, reject/bisect continuation schedule.
+
+    A rejected proposal is a known local upper boundary for the current route
+    branch.  Intermediate accepts may improve the warm start, but the next
+    proposal must revisit that boundary before advancing beyond it.
+    """
 
     progress: float = 0.0
     step: float = 0.001
     minimum_step: float = 1e-5
     maximum_step: float = 0.10
     growth: float = 1.6
+    failed_upper_bound: float | None = None
+    failed_upper_bounds: tuple[float, ...] = ()
 
     def __post_init__(self) -> None:
         if not 0.0 <= self.progress <= 1.0:
@@ -919,18 +926,77 @@ class AdaptiveHomotopy:
             raise ValueError("step bounds must be positive and ordered")
         if self.growth <= 1.0:
             raise ValueError("growth must exceed one")
+        bounds = list(self.failed_upper_bounds)
+        if self.failed_upper_bound is not None:
+            bounds.append(float(self.failed_upper_bound))
+        if any(not self.progress < bound <= 1.0 for bound in bounds):
+            raise ValueError("failed upper bounds must lie ahead of progress")
+        self._set_failed_upper_bounds(bounds)
+
+    def _set_failed_upper_bounds(self, bounds: list[float]) -> None:
+        unique: list[float] = []
+        for bound in sorted(float(value) for value in bounds):
+            if not unique or not np.isclose(bound, unique[-1]):
+                unique.append(bound)
+        self.failed_upper_bounds = tuple(unique)
+        self.failed_upper_bound = unique[0] if unique else None
 
     def proposal(self) -> float:
-        return float(min(1.0, self.progress + self.step))
+        upper = 1.0 if self.failed_upper_bound is None else self.failed_upper_bound
+        return float(min(upper, self.progress + self.step))
 
     def accept(self, proposed: float) -> None:
         if proposed <= self.progress or proposed > 1.0:
             raise ValueError("accepted progress must advance within [0, 1]")
+        if (
+            self.failed_upper_bound is not None
+            and proposed > self.failed_upper_bound
+            and not np.isclose(proposed, self.failed_upper_bound)
+        ):
+            raise ValueError("accepted progress cannot cross a failed upper bound")
         self.progress = float(proposed)
-        self.step = float(min(self.maximum_step, self.step * self.growth))
+        self._set_failed_upper_bounds(
+            [
+                bound
+                for bound in self.failed_upper_bounds
+                if bound > proposed and not np.isclose(bound, proposed)
+            ]
+        )
+        next_step = min(self.maximum_step, self.step * self.growth)
+        if self.failed_upper_bound is not None:
+            next_step = min(next_step, self.failed_upper_bound - self.progress)
+        self.step = float(next_step)
 
-    def reject(self) -> None:
-        next_step = self.step / 2.0
+    def reject(self, proposed: float | None = None) -> None:
+        rejected = self.proposal() if proposed is None else float(proposed)
+        if rejected <= self.progress or rejected > 1.0:
+            raise ValueError("rejected progress must lie ahead within [0, 1]")
+        self._set_failed_upper_bounds([*self.failed_upper_bounds, rejected])
+        next_step = (rejected - self.progress) / 2.0
         if next_step < self.minimum_step:
             raise RuntimeError("homotopy step fell below minimum_step")
         self.step = float(next_step)
+
+
+def recover_homotopy_failed_upper_bounds(
+    trials: list[dict[str, Any]],
+    *,
+    proposal_key: str = "proposed_progress",
+) -> tuple[float, ...]:
+    """Reconstruct nested failed boundaries from an older continuation ledger."""
+
+    bounds: list[float] = []
+    for trial in trials:
+        if proposal_key not in trial:
+            continue
+        proposed = float(trial[proposal_key])
+        if trial.get("accepted"):
+            bounds = [
+                bound
+                for bound in bounds
+                if bound > proposed and not np.isclose(bound, proposed)
+            ]
+        elif not any(np.isclose(proposed, bound) for bound in bounds):
+            bounds.append(proposed)
+            bounds.sort()
+    return tuple(bounds)

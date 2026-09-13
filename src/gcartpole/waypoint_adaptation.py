@@ -93,18 +93,35 @@ def adapt_route_to_waypoints(
                 sqrt_rail * rail,
             ]
 
-        optimized = least_squares(
-            residual,
-            base,
-            args=(current.copy(), target.copy(), base.copy()),
-            bounds=(-1.0, 1.0),
-            jac="2-point",
-            x_scale="jac",
-            max_nfev=max_evaluations,
-            ftol=1.0e-10,
-            xtol=1.0e-10,
-            gtol=1.0e-10,
-        )
+        solve_options = {
+            "args": (current.copy(), target.copy(), base.copy()),
+            "bounds": (-1.0, 1.0),
+            "jac": "2-point",
+            "max_nfev": max_evaluations,
+            "ftol": 1.0e-10,
+            "xtol": 1.0e-10,
+            "gtol": 1.0e-10,
+        }
+        optimizer_fallback: str | None = None
+        try:
+            optimized = least_squares(
+                residual,
+                base,
+                x_scale="jac",
+                **solve_options,
+            )
+        except np.linalg.LinAlgError:
+            # Near a released count-continuation boundary, finite-difference
+            # columns can become numerically rank deficient.  LSMR avoids the
+            # dense SVD while preserving the same residual and box constraints.
+            optimized = least_squares(
+                residual,
+                base,
+                x_scale=1.0,
+                tr_solver="lsmr",
+                **solve_options,
+            )
+            optimizer_fallback = "dense_svd_to_lsmr"
         segment_controls = np.asarray(optimized.x, dtype=np.float64)
         segment_states = rollout_segment(transition, current, segment_controls)
         endpoint_error = transition.difference(segment_states[-1], target)
@@ -128,6 +145,7 @@ def adapt_route_to_waypoints(
                 "evaluations": int(optimized.nfev),
                 "optimizer_status": int(optimized.status),
                 "optimizer_message": str(optimized.message),
+                "optimizer_fallback": optimizer_fallback,
             }
         )
         adapted_controls.extend(segment_controls.astype(float).tolist())

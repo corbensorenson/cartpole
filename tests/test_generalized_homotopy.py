@@ -87,6 +87,32 @@ def test_rail_safe_exact_waypoint_is_usable_even_if_reference_gate_failed(
     assert waypoint_usable(artifact)
 
 
+def test_waypoint_soft_margin_is_not_a_physical_feasibility_boundary(
+    tmp_path: Path,
+) -> None:
+    artifact = tmp_path / "waypoint.json"
+    artifact.write_text(
+        """{
+          "controller": {
+            "controls": [0.1, -0.1],
+            "nominal_coordinate_states": [[0, 0], [0.1, 0], [0, 0]]
+          },
+          "search": {
+            "success": false,
+            "maximum_cart_excursion": 1.51,
+            "rail_soft_limit": 1.5,
+            "physical_rail_limit": 2.0
+          }
+        }""",
+        encoding="utf-8",
+    )
+    assert waypoint_usable(artifact)
+
+    payload = artifact.read_text(encoding="utf-8").replace("1.51", "2.01")
+    artifact.write_text(payload, encoding="utf-8")
+    assert not waypoint_usable(artifact)
+
+
 def test_waypoint_lookaheads_expand_and_deduplicate() -> None:
     assert waypoint_lookaheads(24, [1, 2, 2, 4]) == (24, 48, 96)
 

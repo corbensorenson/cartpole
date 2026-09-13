@@ -27,6 +27,7 @@ from gcartpole.generalized_solver import (
     AdaptiveHomotopy,
     dimensionless_setup,
     homotopy_morphology,
+    recover_homotopy_failed_upper_bounds,
     setup_from_config,
 )
 
@@ -283,6 +284,8 @@ def write_manifest(
             "target_config": file_metadata(target_config),
             "morphology_progress": float(morphology.progress),
             "next_morphology_step": float(morphology.step),
+            "failed_morphology_upper_bound": morphology.failed_upper_bound,
+            "failed_morphology_upper_bounds": list(morphology.failed_upper_bounds),
             "rail_ratio": float(rail_ratio),
             "target_rail_ratio": float(target_ratio),
             "next_rail_step": float(rail_step),
@@ -368,6 +371,21 @@ def main() -> None:
             minimum_step=args.minimum_morphology_step,
             maximum_step=args.maximum_morphology_step,
             growth=args.morphology_growth,
+            failed_upper_bounds=(
+                tuple(
+                    float(value)
+                    for value in saved["failed_morphology_upper_bounds"]
+                )
+                if "failed_morphology_upper_bounds" in saved
+                else recover_homotopy_failed_upper_bounds(
+                    [
+                        trial
+                        for trial in saved["trials"]
+                        if trial.get("stage") == "morphology"
+                    ],
+                    proposal_key="proposed_morphology_progress",
+                )
+            ),
         )
         rail_ratio = float(saved["rail_ratio"])
         rail_step = float(saved["next_rail_step"])
@@ -502,7 +520,7 @@ def main() -> None:
         else:
             try:
                 if stage == "morphology":
-                    morphology.reject()
+                    morphology.reject(proposed_progress)
                 else:
                     rail_step /= 2.0
                     if rail_step < args.minimum_rail_step:

@@ -100,6 +100,7 @@ def main() -> None:
         [transition.to_physical(state) for state in result.states],
         dtype=np.float64,
     )
+    physical_rail_limit = float(cfg["env"]["rail_limit"])
     env.close()
     artifact = {
         "schema_version": 1,
@@ -128,6 +129,7 @@ def main() -> None:
             "endpoint_weight": float(args.endpoint_weight),
             "control_regularization": float(args.control_regularization),
             "rail_soft_limit": float(args.rail_soft_limit),
+            "physical_rail_limit": physical_rail_limit,
             "rail_weight": float(args.rail_weight),
             "endpoint_tolerance": float(args.endpoint_tolerance),
             "maximum_endpoint_error_norm": float(

@@ -159,12 +159,19 @@ def verify(path: Path) -> list[str]:
         )
 
     accepted_progress = 0.0
+    failed_upper_bounds: list[float] = []
     current_result = baseline.get("result", {})
     for index, trial in enumerate(ledger.get("trials", []), start=1):
         label = f"trial {index}"
         proposed = float(trial.get("proposed_progress", -1.0))
         if not accepted_progress < proposed <= 1.0:
             errors.append(f"{label}: proposed progress is not ahead of frontier")
+        if (
+            failed_upper_bounds
+            and proposed > failed_upper_bounds[0]
+            and not np.isclose(proposed, failed_upper_bounds[0])
+        ):
+            errors.append(f"{label}: proposal jumps over a failed upper bound")
         if not np.isclose(float(trial.get("from_progress", -1.0)), accepted_progress):
             errors.append(f"{label}: from_progress disagrees with accepted frontier")
         cfg_path = check_metadata(trial.get("config", {}), f"{label} config", errors)
@@ -210,9 +217,33 @@ def verify(path: Path) -> list[str]:
         if trial.get("accepted"):
             accepted_progress = proposed
             current_result = trial.get("result", {})
+            failed_upper_bounds = [
+                bound
+                for bound in failed_upper_bounds
+                if bound > proposed and not np.isclose(bound, proposed)
+            ]
+        else:
+            if not any(np.isclose(proposed, bound) for bound in failed_upper_bounds):
+                failed_upper_bounds.append(proposed)
+                failed_upper_bounds.sort()
 
     if not np.isclose(float(ledger.get("progress", -1.0)), accepted_progress):
         errors.append("ledger: progress does not equal last accepted trial")
+    recorded_upper = ledger.get("failed_upper_bound")
+    if recorded_upper is not None and not np.isclose(
+        float(recorded_upper),
+        np.nan if not failed_upper_bounds else failed_upper_bounds[0],
+    ):
+        errors.append("ledger: failed_upper_bound disagrees with trial history")
+    if "failed_upper_bounds" in ledger:
+        recorded_bounds = np.asarray(
+            ledger["failed_upper_bounds"], dtype=np.float64
+        )
+        recovered_bounds = np.asarray(failed_upper_bounds, dtype=np.float64)
+        if recorded_bounds.shape != recovered_bounds.shape or not np.allclose(
+            recorded_bounds, recovered_bounds
+        ):
+            errors.append("ledger: failed_upper_bounds disagree with trial history")
     current = ledger.get("current_controller", {})
     check_metadata(current, "current controller", errors)
     if current.get("sha256") != current_result.get("sha256"):

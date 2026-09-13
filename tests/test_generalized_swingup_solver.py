@@ -20,6 +20,7 @@ from scripts.run_split_count_homotopy import (
     controller_link_count,
     freeze_progress_config,
     prioritized_waypoint_steps,
+    recover_failed_upper_bound,
 )
 from scripts.verify_split_count_homotopy import verify
 
@@ -198,3 +199,24 @@ def test_waypoint_priority_reuses_latest_successful_horizon():
         48,
         24,
     ]
+
+
+def test_split_resume_recovers_active_failed_bracket():
+    trials = [
+        {"proposed_progress": 0.2, "accepted": True},
+        {"proposed_progress": 0.3, "accepted": False},
+        {"proposed_progress": 0.25, "accepted": True},
+    ]
+    assert np.isclose(recover_failed_upper_bound(trials), 0.3)
+    trials.append({"proposed_progress": 0.3, "accepted": True})
+    assert recover_failed_upper_bound(trials) is None
+
+
+def test_split_resume_recovers_enclosing_failed_bracket():
+    trials = [
+        {"proposed_progress": 0.7, "accepted": False},
+        {"proposed_progress": 0.65, "accepted": False},
+        {"proposed_progress": 0.625, "accepted": True},
+        {"proposed_progress": 0.65, "accepted": True},
+    ]
+    assert np.isclose(recover_failed_upper_bound(trials), 0.7)

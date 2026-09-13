@@ -25,6 +25,7 @@ from gcartpole.generalized_solver import (
     dimensionless_setup,
     homotopy_morphology,
     rail_requirement,
+    recover_homotopy_failed_upper_bounds,
     setup_from_config,
 )
 
@@ -196,7 +197,14 @@ def waypoint_successful(path: Path) -> bool:
 
 
 def waypoint_usable(path: Path) -> bool:
-    """Require an exact, finite, rail-safe trajectory before FDDP refinement."""
+    """Require an exact, finite, physically rail-safe trajectory for refinement.
+
+    The soft limit is an optimization target, not a hard feasibility boundary.
+    FDDP may safely pull a waypoint route that misses the buffer back inward as
+    long as the exact seed itself remains inside the plant's physical rail.
+    Historical artifacts without an explicit physical limit retain the former
+    conservative soft-limit behavior.
+    """
 
     payload = json.loads(path.read_text(encoding="utf-8"))
     controller = payload.get("controller", {})
@@ -207,6 +215,9 @@ def waypoint_usable(path: Path) -> bool:
     search = payload.get("search", {})
     maximum_cart = float(search.get("maximum_cart_excursion", float("inf")))
     rail_soft_limit = float(search.get("rail_soft_limit", 0.0))
+    physical_rail_limit = float(
+        search.get("physical_rail_limit", rail_soft_limit)
+    )
     return bool(
         controls.ndim == 1
         and controls.size > 0
@@ -214,7 +225,7 @@ def waypoint_usable(path: Path) -> bool:
         and states.shape[0] == controls.size + 1
         and np.all(np.isfinite(controls))
         and np.all(np.isfinite(states))
-        and maximum_cart <= rail_soft_limit
+        and maximum_cart <= physical_rail_limit
     )
 
 
@@ -253,6 +264,8 @@ def write_manifest(
             "target_links": int(args.target_links),
             "progress": float(schedule.progress),
             "next_step": float(schedule.step),
+            "failed_upper_bound": schedule.failed_upper_bound,
+            "failed_upper_bounds": list(schedule.failed_upper_bounds),
             "current_controller": file_metadata(current_controller),
             "trials": trials,
         },
@@ -344,6 +357,11 @@ def main() -> None:
             minimum_step=args.minimum_step,
             maximum_step=args.maximum_step,
             growth=args.growth,
+            failed_upper_bounds=(
+                tuple(float(value) for value in saved["failed_upper_bounds"])
+                if "failed_upper_bounds" in saved
+                else recover_homotopy_failed_upper_bounds(list(saved["trials"]))
+            ),
         )
         current_controller = Path(saved["current_controller"]["path"])
         trials = list(saved["trials"])
@@ -500,7 +518,7 @@ def main() -> None:
                 return
         else:
             try:
-                schedule.reject()
+                schedule.reject(proposed)
             except RuntimeError as error:
                 write_manifest(
                     manifest_path,

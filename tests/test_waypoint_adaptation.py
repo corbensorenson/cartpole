@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 
+from gcartpole import waypoint_adaptation
 from gcartpole.waypoint_adaptation import adapt_route_to_waypoints
 
 
@@ -37,3 +38,38 @@ def test_waypoint_adaptation_retargets_each_exact_segment() -> None:
     )
     assert result.success
     np.testing.assert_allclose(result.states[[2, 4]], np.asarray(reference_states)[[2, 4]], atol=1e-5)
+
+
+def test_waypoint_adaptation_falls_back_when_dense_svd_fails(monkeypatch) -> None:
+    real_least_squares = waypoint_adaptation.least_squares
+    calls: list[dict[str, object]] = []
+
+    def flaky_least_squares(*args, **kwargs):
+        calls.append(kwargs)
+        if len(calls) == 1:
+            raise np.linalg.LinAlgError("synthetic dense SVD failure")
+        return real_least_squares(*args, **kwargs)
+
+    monkeypatch.setattr(waypoint_adaptation, "least_squares", flaky_least_squares)
+    transition = DoubleIntegrator()
+    controls = np.array([0.2, -0.2])
+    states = [np.zeros(2)]
+    for action in controls:
+        states.append(transition(states[-1], float(action)))
+
+    result = adapt_route_to_waypoints(
+        transition,
+        np.zeros(2),
+        controls,
+        np.asarray(states),
+        segment_steps=2,
+        max_evaluations=30,
+        rail_soft_limit=10.0,
+        endpoint_tolerance=1.0e-5,
+    )
+
+    assert result.success
+    assert calls[0]["x_scale"] == "jac"
+    assert calls[1]["x_scale"] == 1.0
+    assert calls[1]["tr_solver"] == "lsmr"
+    assert result.segments[0]["optimizer_fallback"] == "dense_svd_to_lsmr"
