@@ -13,7 +13,7 @@ from dataclasses import dataclass
 
 import mujoco
 import numpy as np
-from scipy.linalg import eigh
+from scipy.linalg import eigh, expm
 
 from gcartpole.env import NLinkCartPoleEnv, wrap_angle
 from gcartpole.generalized_solver import setup_from_config
@@ -98,6 +98,114 @@ class ChainNormalModes:
             "stiffness_matrix": self.stiffness_matrix.astype(float).tolist(),
             "damping_matrix": self.damping_matrix.astype(float).tolist(),
         }
+
+
+@dataclass(frozen=True)
+class ModalPhaseSeed:
+    """Minimum-energy linear modal schedule used only as a nonlinear warm start."""
+
+    policy_dt: float
+    horizon_seconds: float
+    accelerations: np.ndarray
+    states: np.ndarray
+    target_state: np.ndarray
+    terminal_residual: np.ndarray
+    unclipped_accelerations: np.ndarray
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "policy_dt": float(self.policy_dt),
+            "horizon_seconds": float(self.horizon_seconds),
+            "accelerations": self.accelerations.astype(float).tolist(),
+            "states": self.states.astype(float).tolist(),
+            "target_state": self.target_state.astype(float).tolist(),
+            "terminal_residual": self.terminal_residual.astype(float).tolist(),
+            "unclipped_accelerations": self.unclipped_accelerations.astype(
+                float
+            ).tolist(),
+        }
+
+
+def minimum_energy_modal_phase_seed(
+    modes: ChainNormalModes,
+    *,
+    policy_dt: float,
+    horizon_seconds: float,
+    gravity: float,
+    acceleration_limit_ratio: float = 4.0,
+    regularization: float = 1.0e-8,
+) -> ModalPhaseSeed:
+    """Solve a morphology-derived finite-horizon modal phase schedule.
+
+    The hanging small-oscillation model includes the cart double integrator,
+    every mass-normalized chain mode, exact modal damping, and the exact cart
+    acceleration coupling. A regularized controllability-Gramian solve finds
+    the minimum-energy acceleration sequence that places all modes at the
+    upright relative configuration with zero velocity. The clipped schedule is
+    a deterministic warm start only; exact nonlinear optimization must verify
+    and refine it before any success claim.
+    """
+
+    if min(policy_dt, horizon_seconds, gravity, acceleration_limit_ratio) <= 0.0:
+        raise ValueError("time, gravity, and acceleration limit must be positive")
+    if regularization < 0.0 or not np.isfinite(regularization):
+        raise ValueError("regularization must be finite and nonnegative")
+    steps = max(2, round(horizon_seconds / policy_dt))
+    n = modes.n_links
+    d = n + 1
+    state_dim = 2 * d
+    continuous_a = np.zeros((state_dim, state_dim), dtype=np.float64)
+    continuous_b = np.zeros((state_dim, 1), dtype=np.float64)
+    continuous_a[:d, d:] = np.eye(d, dtype=np.float64)
+    continuous_a[d + 1 :, 1:d] = -np.diag(modes.squared_frequencies)
+    modal_damping = (
+        modes.relative_shapes.T @ modes.damping_matrix @ modes.relative_shapes
+    )
+    continuous_a[d + 1 :, d + 1 :] = -modal_damping
+    continuous_b[d, 0] = 1.0
+    continuous_b[d + 1 :, 0] = modes.cart_acceleration_coupling
+
+    augmented = np.zeros((state_dim + 1, state_dim + 1), dtype=np.float64)
+    augmented[:state_dim, :state_dim] = continuous_a
+    augmented[:state_dim, state_dim:] = continuous_b
+    discrete = expm(augmented * policy_dt)
+    state_matrix = discrete[:state_dim, :state_dim]
+    input_matrix = discrete[:state_dim, state_dim:]
+
+    target_position, _ = modes.coordinates(
+        np.zeros(n, dtype=np.float64),
+        np.zeros(n, dtype=np.float64),
+    )
+    target = np.zeros(state_dim, dtype=np.float64)
+    target[1:d] = target_position
+    powers: list[np.ndarray] = [np.eye(state_dim, dtype=np.float64)]
+    for _ in range(steps - 1):
+        powers.append(state_matrix @ powers[-1])
+    reachability = np.column_stack(
+        [powers[steps - 1 - step] @ input_matrix for step in range(steps)]
+    )
+    gramian = reachability @ reachability.T
+    rhs = np.linalg.solve(
+        gramian + regularization * np.eye(state_dim, dtype=np.float64), target
+    )
+    unconstrained = reachability.T @ rhs
+    limit = acceleration_limit_ratio * gravity
+    accelerations = np.clip(unconstrained, -limit, limit)
+    states = [np.zeros(state_dim, dtype=np.float64)]
+    for acceleration in accelerations:
+        states.append(
+            state_matrix @ states[-1] + input_matrix[:, 0] * float(acceleration)
+        )
+    state_rows = np.asarray(states, dtype=np.float64)
+    return ModalPhaseSeed(
+        policy_dt=float(policy_dt),
+        horizon_seconds=float(steps * policy_dt),
+        accelerations=accelerations,
+        states=state_rows,
+        target_state=target,
+        terminal_residual=state_rows[-1] - target,
+        unclipped_accelerations=unconstrained,
+    )
 
 
 def modal_handoff_metrics(

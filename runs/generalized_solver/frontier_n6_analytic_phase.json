@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-13T11:21:47+00:00",
+  "claim_status": "development_analytic_warm_start_not_solved",
+  "not_solution": true,
+  "summary": "A zero-learned-parameter modal controllability schedule gives the best generalized n=6 upright approach so far, but retains excessive angular velocity and rail demand and is not a swing-up-and-hold solution.",
+  "n_links": 6,
+  "morphology": {
+    "total_chain_length": 3.0,
+    "total_chain_mass": 1.0,
+    "cart_mass": 1.0,
+    "force_limit": 80.0,
+    "policy_dt": 0.02,
+    "diagnostic_rail_half_length": 12.0
+  },
+  "algorithm": {
+    "name": "minimum_energy_modal_phase_seed",
+    "learned_parameter_count": 0,
+    "per_link_tuned_parameter_count": 0,
+    "horizon_seconds": 3.9,
+    "acceleration_limit_gravity_ratio": 4.0,
+    "regularization": 1e-8,
+    "dimensionless_modal_frequencies": [
+      1.202552840439567,
+      2.7975922015989214,
+      4.479165149244556,
+      6.344346453580064,
+      8.71776679053841,
+      11.763433171139768
+    ],
+    "linear_terminal_residual_l2": 0.0005359764905104431,
+    "maximum_commanded_cart_acceleration": 19.85899844660395
+  },
+  "exact_mujoco_replay": {
+    "best_time_seconds": 2.56,
+    "best_max_abs_angle": 0.1782912442324669,
+    "best_absolute_angular_velocity_rms": 3.9027832529608752,
+    "best_cart_position": -2.9453504152391647,
+    "best_cart_velocity": 3.68685248556513,
+    "max_cart_center_excursion": 5.659227947000738,
+    "body_aware_required_rail_half_length": 5.8392279470007376,
+    "body_aware_required_rail_ratio": 1.9464093156669124,
+    "termination_events": [],
+    "result": "outside capture envelope"
+  },
+  "corrected_tail_search": {
+    "action_precision": "float32_environment_api",
+    "iterations": 100,
+    "population": 512,
+    "feasible_handoffs": 0,
+    "best_batch_max_abs_angle": 0.6993643476874531,
+    "best_batch_absolute_angular_velocity_rms": 2.669195190217622,
+    "serial_completed": false,
+    "serial_termination_reason": "rail_violation",
+    "serial_max_cart_center_excursion": 12.046439433957126
+  },
+  "reproduce": "PYTHONPATH=src python scripts/materialize_modal_phase_seed.py --config configs/swingup7_uniform.yaml --n-links 6 --seconds 3.9 --override env.rail_limit=12.0 --out runs/generalized_solver/n6_analytic_modal_seed_h3p9.json",
+  "full_local_artifact_sha256": "c60097d4e62c00c04fd0fbd3cb4dfc3e07bca78bf1fb7cd9dac74fe2998d7e8c",
+  "controls_sha256": "85a51e8d32a0b3b71a49f6f325469f6276f84e15ae28b406226ae9c36b845dc9"
+}

@@ -213,7 +213,39 @@ best exact-modal handoff, but retained too much absolute-rate and internal-mode
 energy for the tested tail optimizer. A three-scalar extension adds exact
 collective-mode pumping, gated internal-mode damping, and a modal acceleration
 limit while keeping parameter count independent of links. It reduced unwanted
-motion but did not improve the complete handoff score. The next deterministic
-step is phase-scheduled modal forcing derived from each plant's frequency and
-cart-coupling spectrum; adding a larger capture learner is not justified by
-this boundary. See [the compact frontier record](../runs/generalized_solver/frontier_n6.json).
+motion but did not improve the complete handoff score.
+
+The next deterministic layer is now implemented. It builds the exact hanging
+small-oscillation model from the measured mass, stiffness, damping, and cart
+coupling matrices, discretizes it on the plant's natural clock, and solves a
+regularized finite-horizon controllability-Gramian problem. The resulting
+acceleration schedule has no learned or per-link tuning parameters. At n=6, a
+3.9 s schedule placed the *linear* model within `5.36e-4` of its complete target
+and the exact nonlinear plant passed within `0.1783 rad` of upright at 2.56 s.
+That is the best six-link approach on this generalized track, but its
+`3.9028 rad/s` absolute angular-rate RMS and body-aware required rail ratio
+`1.9464` are far outside the capture envelope. It is a warm start, not a solve.
+
+This experiment also exposed an action-precision trap: tail CEM had evaluated
+float64 actions while `env.step` accepts float32 actions. The chaotic n=6
+trajectory diverged under real replay. Tail search now quantizes every batched
+candidate at the public action boundary and emits a mandatory independent
+serial verification. The invalid earlier tail proposal is not evidence and is
+not published as a controller. A fresh 100-iteration search under the corrected
+precision contract produced no feasible handoff; its best proposal crossed the
+12 m diagnostic rail at 12.046 m and was still 0.699 rad from upright.
+
+Reproduce the analytic warm start with:
+
+```bash
+PYTHONPATH=src python scripts/materialize_modal_phase_seed.py \
+  --config configs/swingup7_uniform.yaml --n-links 6 --seconds 3.9 \
+  --override env.rail_limit=12.0 \
+  --out runs/generalized_solver/n6_analytic_modal_seed_h3p9.json
+```
+
+The next step is deterministic nonlinear continuation that jointly penalizes
+cart travel and terminal modal velocity before Box-FDDP, followed by the same
+noisy gate and lower-count regressions. See the
+[compact frontier record](../runs/generalized_solver/frontier_n6.json) and
+[analytic checkpoint](../runs/generalized_solver/frontier_n6_analytic_phase.json).

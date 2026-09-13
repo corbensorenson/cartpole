@@ -105,6 +105,7 @@ adaptation layer; it does not learn the swing trajectory.
 | 3 links | **20/20** | 1.001 |
 | 4 links | **20/20** | 0.995 |
 | 5 links | **20/20** | 1.171 |
+| 6 links | not promoted | not certified |
 
 These are development results, not additions to the public seven-link record
 claim. See the [generalized solver design and honest frontier](docs/generalized_solver.md),
@@ -114,7 +115,11 @@ that rail length belongs inside the continuation: a 4.5 m half-rail enabled a
 deterministic route whose measured body-aware requirement was 1.171 chain
 lengths. Full-horizon Box-FDDP supplies the trajectory and time-varying local
 feedback, while exact forward simulation selects only between the route and
-its analytic mirror.
+its analytic mirror. At six links, a new zero-learned-parameter modal
+controllability schedule reaches within 0.178 rad of upright, but carries too
+much angular velocity to hold; it is published only as an
+[honest analytic frontier](runs/generalized_solver/frontier_n6_analytic_phase.json),
+not as a success.
 
 ## Current frontier: eight links
 
@@ -160,7 +165,7 @@ For individual replay commands and the evidence contract, follow the
 | [`scripts`](scripts) | Training, search, evaluation, replay, and rendering entry points |
 | [`tests`](tests) | Dynamics, optimizer, morphology, and evidence-contract tests |
 | [`docs`](docs) | Paper, roadmap support, experiment ledger, and reproduction notes |
-| [`runs/generalized_solver`](runs/generalized_solver) | Curated n=1..5 development gates and route artifacts |
+| [`runs/generalized_solver`](runs/generalized_solver) | Curated n=1..5 gates plus the explicit unsolved n=6 frontier |
 | [`runs/swingup7_uniform`](runs/swingup7_uniform) | Curated public seven-link evidence bundle |
 
 Research history is intentionally preserved, including negative results. Start

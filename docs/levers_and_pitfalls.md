@@ -1455,6 +1455,47 @@ requires co-refining the route and the capture basin with a hard incumbent
 fallback; further isolated LQR gain sweeps would not address the measured
 failure.
 
+## Action Precision Is Part of the Controller Contract (2026-09-13)
+
+A six-link tail search exposed a numerical trap that is negligible on easier
+plants but decisive in a chaotic high-link trajectory. Batched MuJoCo rollout
+was receiving float64 interpolated actions, while the public `env.step` path
+casts each policy action to float32. A saved tail could therefore look useful
+in the batch and follow a completely different serial trajectory.
+
+The tail CEM now quantizes candidates to float32 before batched scoring, then
+replays its winner independently through `env.step` and records termination
+and physical metrics. The corrected n=6 rerun found no feasible handoff and
+terminated at the 12 m diagnostic rail. General rule: action dtype,
+interpolation grid, frame skip, and termination semantics belong in the
+evidence contract; a batched optimizer result is only a proposal until the
+ordinary controller path reproduces it.
+
+## Uniform Capture Endpoint Audit (2026-09-13)
+
+The protected six-link capture checkpoint was checked at the actual endpoint,
+not only at its easier curriculum stage. On the frozen 1,000-state test split
+it reached `974/1000` at `p=0.05`, with a `15.020 s` median hold and `26` rail
+exits. The same checkpoint at exact uniform `p=1.0` reached `0/1000`, had a
+`0.040 s` median hold, and exited the rail in all 1,000 episodes. This is a
+negative P1 endpoint audit, not a six-link result.
+
+The existing model-based/distillation candidates do not close that gap yet:
+
+| Candidate | Exact endpoint probe | Result | Interpretation |
+| --- | --- | --- | --- |
+| Source-grouped supervisor distillation | 64 held-out states, uniform `p=1.0` | `0/64`, `0.040 s` median, `64` rail exits | Curriculum teacher does not transfer |
+| Supervised LQR distillation | 64 held-out states, uniform `p=1.0` | `0/64`, `0.040 s` median, `64` rail exits | Static LQR imitation is insufficient |
+| Trajectory-conditioned policy | 64 held-out states, uniform `p=1.0` | `0/64`, `0.040 s` median, `64` rail exits | Time/initial-state features do not create a basin |
+| Time-conditioned policy | 64 held-out states, uniform `p=1.0` | `0/64`, `0.040 s` median, `64` rail exits | Same endpoint failure |
+| Scheduled-target exact-MuJoCo planner | 16 uniform endpoint states | `0/16`, no recovery | Planner probe is diagnostic only |
+
+The lesson is specific: the seven-link architecture is being reused, but the
+capture expert must be learned from state-specific model-based teachers with
+an incumbent fallback and then audited on held-out endpoint states. A good
+`p=0.05` score, an isolated teacher, a widened rail, or a partial morphology
+hold is not evidence for the canonical six-link gate or the eight-link claim.
+
 ## Bottom-Up Five-Link Promotion (2026-09-13)
 
 The generalized track reached a five-link `20/20` noisy hanging-start gate.

@@ -1091,6 +1091,56 @@ and the associated prefix/no-adaptive/rail-6 probes. The next useful method is
 co-refining the swing route and capture basin with an incumbent fallback; more
 isolated terminal-LQR gain sweeps are not justified by this boundary.
 
+### Six-Link Analytic Modal Phase Seed (2026-09-13)
+
+The generalized bottom-up track now has a zero-learned-parameter phase
+scheduler. It derives the hanging linear model from the exact target mass,
+stiffness, damping, and cart-coupling matrices, then solves the regularized
+finite-horizon controllability Gramian for a minimum-energy cart-acceleration
+sequence. Its parameter count does not grow with links.
+
+For uniform n=6, the 3.9 s schedule left a `5.36e-4` linear terminal residual.
+Exact nonlinear replay passed within `0.1783 rad` of upright at `2.56 s`, the
+best generalized-track approach so far, but retained `3.9028 rad/s` absolute
+angular-rate RMS and required a body-aware rail ratio of `1.9464`. It is a
+warm start, not a hold. A corrected 100-iteration tail search found no feasible
+handoff and exited the 12 m diagnostic rail at `12.046 m`.
+
+That tail rerun repaired an evidence-integrity flaw: batched search previously
+used float64 action samples even though the environment API accepts float32.
+At n=6 the tiny difference can cause a different chaotic trajectory. Tail CEM
+now quantizes candidates at the deployed action boundary and serially replays
+every saved winner. The earlier float64 tail proposal is invalid as a
+controller. Next work should continue the analytic route nonlinearly while
+penalizing terminal modal velocity and cart travel, not add a larger fuzzy
+policy to patch this fly-through.
+
+### Uniform Capture Endpoint Audit (2026-09-13)
+
+The existing six-link capture checkpoint was audited at the exact frozen
+uniform endpoint before treating its curriculum performance as reusable
+evidence. The protected checkpoint reached `974/1000` on the test states at
+`p=0.05`, with a `15.020 s` median hold and `26` rail exits, but the required
+`p=1.0` evaluation was `0/1000`, with a `0.040 s` median hold and `1000/1000`
+rail exits. The frozen P1 gate therefore remains open; the easy-curriculum
+result is not endpoint transfer.
+
+Four previously trained capture variants were then tested at exact `p=1.0`
+for 64 held-out states: source-grouped supervisor distillation, supervised
+LQR distillation, trajectory-conditioned distillation, and time-conditioned
+distillation each scored `0/64`, `0.040 s` median hold, and `64/64` rail exits.
+An exact-MuJoCo scheduled-target planner probe also scored `0/16` on the same
+uniform endpoint, with no recovery and no valid handoff. The planner artifact
+is explicitly diagnostic and cannot satisfy P1.
+
+This is a reusable-policy boundary, not evidence that the plant is
+uncontrollable: state-specific local model-based teachers still reach some
+near-upright captures. The next permitted step is to turn those teachers into
+an incumbent-preserving, held-out capture policy or residual controller, then
+re-evaluate the same frozen 1,000-state gate. Do not promote `p=0.05`, a
+state-specific teacher, or any widened-rail result to six-link or eight-link
+evidence.
+
 ### Current Canonical Seven-Link Result
 
 The final canonical control evaluation now passes independently of the earlier

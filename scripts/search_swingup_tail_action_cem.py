@@ -85,6 +85,10 @@ def load_tail_center(
         final_eval = payload.get("final_eval")
         if isinstance(final_eval, dict):
             trace_rows = final_eval.get("trace")
+    if not isinstance(trace_rows, list) or not trace_rows:
+        exact_replay = payload.get("exact_replay")
+        if isinstance(exact_replay, dict):
+            trace_rows = exact_replay.get("trace")
     if isinstance(trace_rows, list):
         rows = [
             row
@@ -250,6 +254,10 @@ def load_trace_state(
         if isinstance(final_eval, dict):
             rows = final_eval.get("trace")
     if not isinstance(rows, list) or not rows:
+        exact_replay = payload.get("exact_replay")
+        if isinstance(exact_replay, dict):
+            rows = exact_replay.get("trace")
+    if not isinstance(rows, list) or not rows:
         raise ValueError(f"{path} does not contain a non-empty trace")
     row = min(
         (candidate for candidate in rows if isinstance(candidate, dict)),
@@ -314,6 +322,134 @@ def physical_metrics(
     }
 
 
+def serial_verify_tail(
+    env: NLinkCartPoleEnv,
+    initial_state: np.ndarray,
+    knots: np.ndarray,
+    interpolation: np.ndarray,
+    *,
+    min_tail_steps: int,
+    angle_weight: float,
+    hinge_weight: float,
+    max_hinge_weight: float,
+    absolute_velocity_weight: float,
+    cart_weight: float,
+    cart_velocity_weight: float,
+    rail_penalty_limit: float,
+    rail_penalty_weight: float,
+    best_score_weight: float,
+    terminal_score_weight: float,
+    tail_average_weight: float,
+    robust_window_steps: int,
+) -> dict[str, Any]:
+    """Replay one candidate through the public environment action path.
+
+    Batched MuJoCo rollout bypasses ``env.step``.  This independent replay is
+    therefore the authority on action precision, termination, and whether a
+    saved knot vector is usable by downstream scripts.
+    """
+
+    env.reset(seed=0)
+    mujoco.mj_setState(
+        env.model,
+        env.data,
+        initial_state,
+        mujoco.mjtState.mjSTATE_FULLPHYSICS.value,
+    )
+    mujoco.mj_forward(env.model, env.data)
+    actions = np.clip(knots @ interpolation.T, -1.0, 1.0)
+    sampled: list[np.ndarray] = []
+    termination_reason: str | None = None
+    for action in actions:
+        _, _, terminated, truncated, info = env.step([float(action)])
+        state = np.empty_like(initial_state)
+        mujoco.mj_getState(
+            env.model,
+            env.data,
+            state,
+            mujoco.mjtState.mjSTATE_FULLPHYSICS.value,
+        )
+        sampled.append(state)
+        if terminated or truncated:
+            termination_reason = str(info.get("termination_reason"))
+            break
+
+    sampled_array = np.asarray(sampled, dtype=np.float64)[None, ...]
+    metrics = physical_metrics(sampled_array, n_links=env.n)
+    angle_ratio = metrics["max_angle"] / 0.15
+    hinge_ratio = metrics["hinge_rms"] / 0.75
+    max_hinge_ratio = metrics["max_hinge"] / 1.50
+    absolute_velocity_ratio = metrics["absolute_angular_velocity_rms"] / 0.75
+    cart_ratio = metrics["cart_abs"] / 1.25
+    cart_velocity_ratio = metrics["cart_velocity_abs"] / 0.50
+    state_score = (
+        float(angle_weight) * angle_ratio**2
+        + float(hinge_weight) * hinge_ratio**2
+        + float(max_hinge_weight) * max_hinge_ratio**2
+        + float(absolute_velocity_weight) * absolute_velocity_ratio**2
+        + float(cart_weight) * cart_ratio**2
+        + float(cart_velocity_weight) * cart_velocity_ratio**2
+    )[0]
+    first_scored_step = min(max(0, int(min_tail_steps)), len(state_score) - 1)
+    late = state_score[first_scored_step:]
+    best_index = first_scored_step + int(np.argmin(late))
+    terminal_score = float(state_score[-1])
+    tail_average = float(np.mean(state_score[-min(20, len(state_score)) :]))
+    robust_window = min(len(state_score), max(1, int(robust_window_steps)))
+    robust_slice = slice(-robust_window, None)
+    robust_score = float(np.max(state_score[robust_slice]))
+    raw_cost = (
+        float(best_score_weight) * float(state_score[best_index])
+        + float(terminal_score_weight) * terminal_score
+        + float(tail_average_weight) * tail_average
+    )
+    if robust_window_steps > 0:
+        raw_cost += 0.35 * robust_score
+    rail = float(np.max(metrics["cart_abs"]))
+    raw_cost += (
+        float(rail_penalty_weight)
+        * max(0.0, rail / float(rail_penalty_limit) - 1.0) ** 2
+    )
+    # Match the actual float32 values accepted by env.step.
+    applied_actions = actions[: len(sampled)].astype(np.float32).astype(np.float64)
+    raw_cost += 0.02 * float(np.mean(applied_actions**2))
+    completed = len(sampled) == len(actions) and termination_reason is None
+    record_index = len(state_score) - 1 if robust_window_steps > 0 else best_index
+    return {
+        "completed": bool(completed),
+        "completed_steps": len(sampled),
+        "expected_steps": len(actions),
+        "termination_reason": termination_reason,
+        "cost": float(raw_cost) if completed else 1.0e30,
+        "partial_trajectory_cost": float(raw_cost),
+        "best_time_seconds": float((best_index + 1) * env.dt),
+        "handoff_time_seconds": float((record_index + 1) * env.dt),
+        "max_angle": float(metrics["max_angle"][0, record_index]),
+        "hinge_rms": float(metrics["hinge_rms"][0, record_index]),
+        "max_hinge": float(metrics["max_hinge"][0, record_index]),
+        "absolute_angular_velocity_rms": float(
+            metrics["absolute_angular_velocity_rms"][0, record_index]
+        ),
+        "max_absolute_angular_velocity": float(
+            metrics["max_absolute_angular_velocity"][0, record_index]
+        ),
+        "cart_abs": float(metrics["cart_abs"][0, record_index]),
+        "cart_velocity_abs": float(metrics["cart_velocity_abs"][0, record_index]),
+        "rail": rail,
+        "robust_window_steps": robust_window,
+        "robust_max_angle": float(np.max(metrics["max_angle"][0, robust_slice])),
+        "robust_max_hinge": float(np.max(metrics["hinge_rms"][0, robust_slice])),
+        "robust_max_absolute_velocity": float(
+            np.max(metrics["absolute_angular_velocity_rms"][0, robust_slice])
+        ),
+        "robust_max_cart": float(np.max(metrics["cart_abs"][0, robust_slice])),
+        "robust_max_cart_velocity": float(
+            np.max(metrics["cart_velocity_abs"][0, robust_slice])
+        ),
+        "action_precision": "float32_environment_api",
+    }
+
+
 def score_batch(
     env: NLinkCartPoleEnv,
     initial_state: np.ndarray,
@@ -335,9 +471,14 @@ def score_batch(
     tail_average_weight: float,
     robust_window_steps: int,
 ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
-    # Preserve float64 through candidate scoring so a saved tail knot vector
-    # has the same force sequence when it is replayed step by step.
-    actions = np.clip(knots @ interpolation.T, -1.0, 1.0).astype(np.float64)
+    # Match the float32 policy-action boundary in env.step before converting
+    # forces back to MuJoCo's float64 control buffer.  At high link counts, the
+    # previous sub-float32 discrepancy could grow into a different trajectory.
+    actions = (
+        np.clip(knots @ interpolation.T, -1.0, 1.0)
+        .astype(np.float32)
+        .astype(np.float64)
+    )
     controls = np.repeat(actions, env.frame_skip, axis=1)[:, :, None] * env.force_limit
     initial = np.repeat(initial_state[None, :], len(knots), axis=0)
     rollout_states, _ = mujoco_rollout.rollout(
@@ -540,6 +681,10 @@ def main() -> None:
         "init_cart_noise_end": 0.0,
         "init_cart_vel_noise_start": 0.0,
         "init_cart_vel_noise_end": 0.0,
+        # Batch rollout applies the candidate control directly. Keep the
+        # independent serial replay on that identical controller boundary.
+        "action_lqr_residual": {"enabled": False},
+        "action_lqr_switch": {"enabled": False},
     }
     env = NLinkCartPoleEnv(cfg, progress=args.progress, seed=0)
     if args.initial_trace_json:
@@ -715,11 +860,51 @@ def main() -> None:
         )
 
     assert best_record is not None
+    serial_verification = serial_verify_tail(
+        env,
+        initial_state,
+        np.asarray(best_record["knots"], dtype=np.float64),
+        interpolation,
+        min_tail_steps=max(1, round(0.20 / env.dt)),
+        angle_weight=args.angle_weight,
+        hinge_weight=args.hinge_weight,
+        max_hinge_weight=args.max_hinge_weight,
+        absolute_velocity_weight=args.absolute_velocity_weight,
+        cart_weight=args.cart_weight,
+        cart_velocity_weight=args.cart_velocity_weight,
+        rail_penalty_limit=args.rail_penalty_limit,
+        rail_penalty_weight=args.rail_penalty_weight,
+        best_score_weight=args.best_score_weight,
+        terminal_score_weight=args.terminal_score_weight,
+        tail_average_weight=args.tail_average_weight,
+        robust_window_steps=args.robust_window_steps,
+    )
+    feasible_serial_verification = None
+    if best_feasible is not None:
+        feasible_serial_verification = serial_verify_tail(
+            env,
+            initial_state,
+            np.asarray(best_feasible["knots"], dtype=np.float64),
+            interpolation,
+            min_tail_steps=max(1, round(0.20 / env.dt)),
+            angle_weight=args.angle_weight,
+            hinge_weight=args.hinge_weight,
+            max_hinge_weight=args.max_hinge_weight,
+            absolute_velocity_weight=args.absolute_velocity_weight,
+            cart_weight=args.cart_weight,
+            cart_velocity_weight=args.cart_velocity_weight,
+            rail_penalty_limit=args.rail_penalty_limit,
+            rail_penalty_weight=args.rail_penalty_weight,
+            best_score_weight=args.best_score_weight,
+            terminal_score_weight=args.terminal_score_weight,
+            tail_average_weight=args.tail_average_weight,
+            robust_window_steps=args.robust_window_steps,
+        )
     result = {
         "schema_version": 1,
         "generated_at": utc_timestamp(),
         "not_solution": True,
-        "summary": "Exact-MuJoCo CEM tail search for a low-momentum handoff; final evidence still requires reset-free feedback replay.",
+        "summary": "Exact-MuJoCo CEM tail search for a low-momentum handoff, with mandatory serial environment replay; final evidence still requires reset-free feedback replay.",
         "source_controller": controller,
         "source_controller_json": (
             None
@@ -771,6 +956,8 @@ def main() -> None:
         },
         "best": best_record,
         "best_feasible": best_feasible,
+        "serial_verification": serial_verification,
+        "best_feasible_serial_verification": feasible_serial_verification,
         "history": history,
         "initial_state": {
             "qpos": initial_state[1 : 1 + env.model.nq].astype(float).tolist(),

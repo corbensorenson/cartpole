@@ -2,7 +2,7 @@
   "schema_version": 1,
   "claim_status": "development_bottom_up_boundary_not_solved",
   "not_solution": true,
-  "summary": "Six links remains unpromoted after exact transfer, rail continuation, aggregate/modal PFL, Box-FDDP, and tail-search probes. The measured blocker is modal phase/energy, not demonstrated rail insufficiency.",
+  "summary": "Six links remains unpromoted after exact transfer, rail continuation, aggregate/modal PFL, analytic modal phase scheduling, Box-FDDP, and tail-search probes. The analytic schedule produced the best generalized approach so far, but the measured blocker remains terminal modal velocity and route energy, not demonstrated rail insufficiency.",
   "n_links": 6,
   "accepted_predecessor": "runs/generalized_solver/frontier_n5.json",
   "transfer_probes": [
@@ -40,6 +40,32 @@
     "modal_extension": "collective pumping plus energy-gated internal damping and bounded acceleration",
     "modal_extension_result": "lowered some unwanted motion but did not improve the complete handoff score"
   },
+  "analytic_modal_phase_seed": {
+    "algorithm": "regularized minimum-energy finite-horizon controllability-Gramian solve on the exact hanging linear modal model",
+    "learned_parameter_count": 0,
+    "per_link_tuned_parameter_count": 0,
+    "horizon_seconds": 3.9,
+    "linear_terminal_residual_l2": 0.0005359764905104431,
+    "exact_best_time_seconds": 2.56,
+    "exact_best_max_abs_angle": 0.1782912442324669,
+    "exact_best_absolute_angular_velocity_rms": 3.9027832529608752,
+    "exact_max_cart_center_excursion": 5.659227947000738,
+    "exact_body_aware_required_rail_ratio": 1.9464093156669124,
+    "result": "best generalized six-link upright approach so far, but outside the low-momentum capture envelope",
+    "compact_evidence": "runs/generalized_solver/frontier_n6_analytic_phase.json"
+  },
+  "numerical_integrity_boundary": {
+    "finding": "float64 batched tail actions can diverge from the float32 public environment action path at n=6",
+    "repair": "tail CEM now quantizes candidates to float32 before batch rollout and independently serial-replays its saved result",
+    "prior_tail_status": "invalid as a replayable controller and excluded from evidence",
+    "corrected_search": {
+      "iterations": 100,
+      "feasible_handoffs": 0,
+      "best_batch_max_abs_angle": 0.6993643476874531,
+      "serial_result": "rail_violation",
+      "serial_max_cart_center_excursion": 12.046439433957126
+    }
+  },
   "rail_conclusion": "No minimum rail is certified for n=6. Tested failures persisted with large diagnostic headroom, so route/modal phasing is the current blocker.",
-  "next_method": "deterministic phase-scheduled modal forcing derived from exact dimensionless frequencies and cart-acceleration coupling, followed by the same Box-FDDP and noisy-gate promotion path"
+  "next_method": "deterministic nonlinear continuation of the analytic modal phase seed with explicit cart-travel and terminal-modal-velocity penalties, followed by the same Box-FDDP, serial replay, noisy-gate, and lower-count regression path"
 }

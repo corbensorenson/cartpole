@@ -9,6 +9,7 @@ from gcartpole.config import load_config
 from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.generalized_modes import (
     chain_normal_modes,
+    minimum_energy_modal_phase_seed,
     modal_energy_acceleration_ratio,
     modal_handoff_metrics,
 )
@@ -136,4 +137,24 @@ def test_modal_handoff_score_is_zero_at_centered_upright_rest():
     )
     assert np.isclose(metrics["score"], 0.0)
     assert len(metrics["modal_energy_fraction"]) == 4
+    env.close()
+
+
+def test_minimum_energy_modal_seed_is_finite_and_places_linear_target():
+    env = uniform_env(2)
+    env.reset(seed=0)
+    modes = chain_normal_modes(env, equilibrium="hanging")
+    seed = minimum_energy_modal_phase_seed(
+        modes,
+        policy_dt=float(env.dt),
+        horizon_seconds=6.0,
+        gravity=9.81,
+        acceleration_limit_ratio=1.0e6,
+        regularization=1.0e-10,
+    )
+    assert seed.accelerations.shape == (round(6.0 / env.dt),)
+    assert seed.states.shape == (seed.accelerations.size + 1, 6)
+    assert np.all(np.isfinite(seed.states))
+    assert np.linalg.norm(seed.terminal_residual) < 1.0e-4
+    assert len(seed.to_dict()["accelerations"]) == seed.accelerations.size
     env.close()
