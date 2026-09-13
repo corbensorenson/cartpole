@@ -5,6 +5,7 @@ import json
 import numpy as np
 
 from scripts.refine_swingup_endpoint_gauss_newton import (
+    blend_controls,
     interpolation_matrix,
     load_controls,
 )
@@ -33,3 +34,13 @@ def test_load_controls_accepts_refiner_search_horizon(tmp_path) -> None:
     controls, seconds = load_controls(artifact, "best")
     np.testing.assert_allclose(controls, [-1.0, 0.25, 1.0])
     assert seconds == 0.06
+
+
+def test_blend_controls_uses_requested_horizon() -> None:
+    blended = blend_controls(
+        np.array([0.0, 0.2, 0.4, 0.6]),
+        np.array([1.0, 0.8, 0.6, 0.4]),
+        alpha=0.25,
+        step_count=3,
+    )
+    np.testing.assert_allclose(blended, [0.25, 0.35, 0.45])

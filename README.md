@@ -131,7 +131,18 @@ diagnostic artifacts are included so progress and failures remain auditable:
 - [`configs/swingup8_uniform.yaml`](configs/swingup8_uniform.yaml)
 - [`configs/swingup8_gradient_discovery.yaml`](configs/swingup8_gradient_discovery.yaml)
 - [`configs/swingup8_ghost_continuation.yaml`](configs/swingup8_ghost_continuation.yaml)
+- [Direct modal/endpoint frontier](runs/generalized_solver/n8_gn_stage13.json)
 - [`ROADMAP.md`](ROADMAP.md)
+
+The direct morphology-derived branch now reaches a full-rank exact endpoint at
+`3.94 s` that passes the common capture limits: `0.1147 rad` maximum angle,
+`0.2433 rad/s` hinge-rate RMS, `0.6698 rad/s` absolute-rate RMS, `-1.0649 m`
+cart position, and `0.4605 m/s` cart velocity, with `3.7162 m` peak cart-center
+travel. This is a meaningful deterministic capture milestone, not an
+eight-link solution: the tested local LQR leaves the nonlinear basin after
+only `0.08-0.14 s` and then violates the diagnostic rail. The next step is a
+capture controller whose verified basin contains this endpoint; no eight-link
+hold or record claim is made.
 
 The project advances one link only after the same evidence bundle passes.
 

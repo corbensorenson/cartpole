@@ -1091,6 +1091,69 @@ and the associated prefix/no-adaptive/rail-6 probes. The next useful method is
 co-refining the swing route and capture basin with an incumbent fallback; more
 isolated terminal-LQR gain sweeps are not justified by this boundary.
 
+### Continuous Free-Joint Homotopy Boundary (2026-09-13)
+
+The split-unlock schedule was audited for a hidden discontinuity. At
+`p=0.999`, the final equality constraint still exists and the inherited
+phase-adaptive controller holds `25.50 s`; at exact `p=1.0`, the equality
+constraint is deleted and the same replay rails immediately. This is a
+training-wheel artifact, not near-canonical evidence.
+
+A continuous final-joint spring was then used only as a bridge. Starting from
+the verified spring-`75` replay, zero-scale inherited-feedback rebuilds plus
+exact MuJoCo Box-FDDP refinement produced a chain of full holds through spring
+`60`, `50`, `40`, `30`, `25`, `22.5`, and down to `16.9`. Representative
+successful replays remain `25.48-25.52 s` with `2.405-2.415 m` peak cart
+excursion. The next probe, spring `16.8`, failed immediately at the rail.
+The spring is applied only to the final joint and is nonzero in every one of
+these artifacts; none is an eight-link result.
+
+The decisive endpoint controls were also negative: direct replay of the
+spring-`16.9` controller under `configs/swingup8_uniform.yaml` scored `0.00 s`
+hold and exited at `3.010 m`; canonical zero-spring Box-FDDP refinement from
+that controller scored `0.00 s` and exited at `3.081 m`. The nonzero spring is
+therefore doing causal work in the current route.
+
+This is the strongest current 8-link diagnostic because it preserves the
+settled launch, saved time-varying swing feedback, phase-adaptive route
+matching, measured-state capture, terminal hold, incumbent rollback, and
+exact-model refinement from the 7-link method. The remaining task is to
+co-refine the free final-joint route/capture controller across the
+`16.8-16.9` boundary and then reach exactly zero stiffness under
+`configs/swingup8_uniform.yaml`. No spring-regularized controller may produce
+the canonical 20/100 evidence bundle, video, or record claim.
+
+### Free-Joint Boundary and Canonical Six-Link Rail Controls (2026-09-13)
+
+The fine continuation probe at final-joint spring `16.85` was negative. Direct
+replay of the spring-`16.9` incumbent on that plant failed immediately; a
+target-specific 700-iteration exact Box-FDDP refinement stopped after 271
+iterations with a large terminal cost and exited at `3.056 m`. A replay of the
+same spring-`16.9` route on the exact zero-spring uniform-eight plant with a
+`+/-6 m` diagnostic rail still failed with no upright interval and walked to
+`6.019 m`. The current boundary is therefore a free-joint capture failure, not
+just insufficient canonical rail width.
+
+The predecessor-transfer recipe was then re-run explicitly. The existing
+`scripts/pad_fddp_controller.py` contract lifted the released seven-link route
+into an eight-link warm start; exact uniform replay exited at `3.077 m`, and
+100 target-plant Box-FDDP refinement iterations stopped after 31 solver
+iterations and still exited at `3.037 m` with no upright interval. The same
+refinement on a `+/-6 m` diagnostic rail exited at `6.005 m`, also with no
+upright interval. A longer 8-second zero-control FDDP attempt from the exact
+symmetric hanging state produced no search direction and exited at `3.011 m`.
+The 7-link timing and padded feedback therefore do not discover the eighth
+mode by themselves; the next 8-link method must co-refine the route and the
+free-joint capture transition.
+
+The generalized six-link controller was also replayed on the frozen `+/-3 m`
+rail as a control. It scored `0/20`; every episode exited the rail before an
+upright hold, with `3.0045 m` minimum peak cart-center travel and a maximum
+body-aware required rail ratio of `1.0615`. The existing `20/20` six-link
+promotion remains a `+/-4 m` development-rail result. It cannot satisfy the
+canonical six-link calibration gates or substitute for the unfinished capture
+basin.
+
 ### Six-Link Analytic Modal Phase Seed (2026-09-13)
 
 The generalized bottom-up track now has a zero-learned-parameter phase
@@ -1191,3 +1254,64 @@ not weaken or substitute for the stronger integrated seven-link evidence.
 - [x] P7 public comparison and limitations documentation completed.
 
 Only after every required checkbox is verified should the project goal be marked complete.
+
+### Eight-Link Conditioning Transfer Probe (2026-09-13)
+
+The complete seven-link settled-launch sequence was replayed on the exact
+uniform eight-link plant using the dimensionally valid eight-link
+Box-FDDP/padded-route artifact. This included the same 10-second hanging
+equilibrium LQR conditioning phase used by the released seven-link controller,
+followed by the saved time-varying route and terminal upright LQR. Five noisy
+episodes were run for each configuration through the ordinary evaluator:
+
+| Configuration | Result | Interpretation |
+| --- | --- | --- |
+| Route without conditioning | `0/5`, `0.00 s` hold, rail exit `3.105 m` | Baseline transfer failure |
+| Route after 10-second hanging LQR | `0/5`, `0.00 s` hold, rail exit `3.039 m` | Conditioning improves rail margin but does not produce an upright interval |
+| Same, with settled-cart nominal shift | `0/5`, `0.00 s` hold, rail exit `3.039 m` | Cart-reference alignment is not the missing eighth-link mode |
+
+Artifacts are the ignored diagnostic files
+`runs/swingup8_prelude_probe_baseline.json`,
+`runs/swingup8_prelude_probe_10s.json`, and
+`runs/swingup8_prelude_probe_10s_shift.json`. This confirms that the seven-link
+conditioning technique is being applied to eight links; the remaining failure
+is in free-joint route discovery/capture, not merely hanging-state noise.
+
+### Eight-Link Near-Upright Tail Probe (2026-09-13)
+
+The strongest exact uniform-eight global-CEM approach was given a separate
+closed-loop iLQR tail before terminal LQR capture. This tests whether the
+remaining problem is only a short capture window:
+
+| Tail | Result | Interpretation |
+| --- | --- | --- |
+| Start `10.0 s`, optimize `4.0 s` | `0.00 s` hold; `3.027 m` rail violation | Near-upright approach still carries unrecoverable internal motion |
+| Start `11.5 s`, optimize `3.0 s` | `0.00 s` hold; `2.990 rad` terminal angle; rail violation | Delaying capture is worse, not a missing terminal-LQR scale |
+
+Diagnostic artifacts are
+`runs/swingup8_softcanonical_tail_ilqr_10to14.json` and
+`runs/swingup8_softcanonical_tail_ilqr_11p5to14p5.json`. The eight-link route
+must shape internal modal velocity before the capture window; a late tail alone
+does not transfer the seven-link solution.
+
+### Direct Uniform-Eight Modal Endpoint (2026-09-13)
+
+A separate branch synthesized directly from the exact uniform-eight
+morphology rather than transferring the seven-link route. Deterministic
+normal-mode horizon selection, bounded residual CEM, and full-rank exact
+endpoint Gauss--Newton produced a `3.94 s` route whose final state passes all
+five shared capture limits: `0.114742 rad` maximum angle, `0.243317 rad/s`
+hinge RMS, `0.669792 rad/s` absolute-rate RMS, `-1.064930 m` cart position,
+and `0.460546 m/s` cart velocity. Peak cart-center travel is `3.716165 m` on a
+diagnostic `+/-12 m` rail. The public artifact is
+`runs/generalized_solver/n8_gn_stage13.json` and is explicitly marked
+`not_solution`.
+
+Exact feedback replay remains negative. Several local-LQR weightings latched
+at the valid endpoint but left the nonlinear basin after `0.08 s`; a Box-FDDP
+tail extended this only to `0.14 s` before rail violation. Eight-link swing-up
+and hold is therefore still open. The next target is a morphology-conditioned
+terminal invariant set and capture controller, not another energy-only swing
+search. The endpoint refiner now supports reproducible convex blending between
+exact routes so competing terminal objectives can be continued without manual
+artifact editing.

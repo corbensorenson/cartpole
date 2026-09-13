@@ -1455,6 +1455,70 @@ requires co-refining the route and the capture basin with a hard incumbent
 fallback; further isolated LQR gain sweeps would not address the measured
 failure.
 
+## Continuous Free-Joint Homotopy Boundary (2026-09-13)
+
+The split-unlock curriculum contained a discrete mechanics change: for every
+`p<1` the final equality constraint remains in the MuJoCo XML, while at
+`p=1` it is removed. The accepted phase-adaptive replay therefore held
+`25.50 s` at `p=0.999` but failed immediately at exact `p=1.0`. That result
+cannot be described as an almost-solved uniform eight-link plant.
+
+As a controlled bridge, the final joint was given an explicit spring and the
+spring was reduced by incumbent-preserving exact Box-FDDP continuation. The
+successful chain retained the 7-link method: settled launch, saved
+time-varying swing feedback, phase-adaptive matching, separate capture/hold,
+zero-scale inherited-feedback rebuild, and rollback on failed holds.
+
+| Final-joint spring | Result | Status |
+| ---: | --- | --- |
+| `100` direct replay | `25.50 s` hold, `2.413 m` peak cart | Diagnostic bridge |
+| `60`, `50`, `40`, `30`, `25` | `25.48-25.50 s` holds, `2.406-2.411 m` peak cart | Accepted continuation checkpoints |
+| `22.5`, `22.4`, `22.35`, `22.3`, `22.25`, `22.2`, `22.0` | `25.48-25.52 s` holds, about `2.408-2.416 m` peak cart | Accepted fine continuation |
+| `21.5`, `21.0`, `20.5`, `20.0`, `19.5`, `19.0`, `18.0`, `17.0`, `16.9` | `25.48 s` holds, `2.405-2.414 m` peak cart | Strongest current diagnostics |
+| `16.8` | Immediate rail failure; no upright interval | Rejected boundary probe |
+
+The decisive endpoint controls were negative. Direct replay of the best
+spring-`16.9` controller under `configs/swingup8_uniform.yaml` held `0.00 s`
+and exited at `3.010 m`; canonical zero-spring Box-FDDP refinement from the
+same controller held `0.00 s` and exited at `3.081 m`. The nonzero spring is
+causally supporting the current route.
+
+The spring is nonzero in every success above, so these are not canonical
+eight-link evidence. The next step is a free-joint capture-aware controller
+that can cross the `16.8-16.9` basin boundary and continue to exactly zero
+stiffness under `configs/swingup8_uniform.yaml`. Until then, the project is
+closer to 8 than the earlier locked-joint results, but it has not solved 8.
+
+### Fine Free-Joint and Rail Controls (2026-09-13)
+
+The interpolated spring-`16.85` checkpoint did not cross the current free-joint
+boundary. Direct replay of the spring-`16.9` incumbent failed, and a
+target-specific exact Box-FDDP refinement stopped after 271 iterations with a
+large terminal cost and `3.056 m` peak cart excursion. The same spring-`16.9`
+controller replayed on the exact zero-spring uniform-eight plant with a `+/-6
+m` diagnostic rail still produced no upright interval and walked to `6.019 m`.
+The longer rail is therefore a diagnostic control, not a repair: the missing
+piece is a free-joint capture transition.
+
+The predecessor-transfer recipe was then re-run explicitly. A dimensionally
+correct seven-link route was lifted with the existing
+`scripts/pad_fddp_controller.py` contract, replayed on exact uniform eight,
+and refined with target-plant Box-FDDP. The lifted replay exited at `3.077 m`
+with no upright interval; 100 refinement iterations stopped after 31 solver
+iterations and still exited at `3.037 m`. Repeating the same refinement on a
+`+/-6 m` diagnostic rail exited at `6.005 m` with no upright interval. A
+longer 8-second zero-control FDDP attempt from the exact symmetric hanging
+state also produced no search direction and exited at `3.011 m`. These tests
+show that the 7-link timing and padded feedback are not sufficient to discover
+the extra mode, even when the rail is widened or the route horizon is longer.
+
+The generalized six-link route was separately replayed on the frozen `+/-3 m`
+rail. It scored `0/20`; all episodes exited the rail before capture, with
+`3.0045 m` minimum peak cart-center travel and a maximum body-aware required
+rail ratio of `1.0615`. The published generalized six-link promotion remains
+valid only as a `+/-4 m` development-rail gate, not as the unfinished
+canonical six-link calibration result.
+
 ## Action Precision Is Part of the Controller Contract (2026-09-13)
 
 A six-link tail search exposed a numerical trap that is negligible on easier
@@ -1556,3 +1620,75 @@ gates remain the regression set; the frozen n=7 route also passes the shared
 evaluator `20/20` with its published 10-second conditioning and scale-2 route
 feedback. The remaining research boundary is synthesis for arbitrary unequal
 morphologies and n>=8, not whether the shared runtime can execute n=1...7.
+
+## Eight-Link Settled-Launch Transfer Probe (2026-09-13)
+
+The seven-link release's full three-stage architecture was tested on the exact
+uniform eight-link plant: 10 seconds of hanging-equilibrium LQR conditioning,
+the saved eight-link time-varying route, and terminal upright LQR capture. The
+route was the dimensionally correct seven-to-eight padded/refined artifact, so
+this was a transfer test rather than a shape-mismatched replay.
+
+| Variant | Exact noisy replay | Lesson |
+| --- | --- | --- |
+| No conditioning prelude | `0/5`, `0.00 s` hold, `3.105 m` rail exit | Direct transfer remains a failure |
+| 10-second hanging LQR prelude | `0/5`, `0.00 s` hold, `3.039 m` rail exit | Settling improves margin but does not create an upright interval |
+| Prelude plus settled-cart nominal shift | `0/5`, `0.00 s` hold, `3.039 m` rail exit | Cart-reference alignment is not causal |
+
+The exact evaluator artifacts are
+`runs/swingup8_prelude_probe_baseline.json`,
+`runs/swingup8_prelude_probe_10s.json`, and
+`runs/swingup8_prelude_probe_10s_shift.json`. The seven-link conditioning
+technique is therefore applied and verified as a negative transfer control;
+the unresolved problem is the eighth free-joint swing/capture transition.
+
+## Eight-Link Near-Upright Tail Probe (2026-09-13)
+
+The best exact uniform-eight global-CEM approach was followed by an exact
+closed-loop iLQR tail and then terminal LQR. The two tested tail placements
+were:
+
+| Tail | Replay result | Lesson |
+| --- | --- | --- |
+| `10.0 s` to `14.0 s` | `0.00 s` hold; `3.027 m` rail violation | A late capture tail cannot absorb the internal-link rates |
+| `11.5 s` to `14.5 s` | `0.00 s` hold; `2.990 rad` terminal angle; rail violation | Delaying the tail makes the route less recoverable |
+
+Artifacts:
+`runs/swingup8_softcanonical_tail_ilqr_10to14.json` and
+`runs/swingup8_softcanonical_tail_ilqr_11p5to14p5.json`. This supports a
+specific design rule for eight links: the swing expert must deliver a
+low-modal-velocity handoff; terminal LQR cannot be used as a substitute for
+that handoff.
+
+## Eight-Link Direct Modal Endpoint (2026-09-13)
+
+The morphology-native route generator was also exercised directly at eight
+links, independently of the seven-link transfer and spring-homotopy branches.
+A deterministic normal-mode seed plus bounded exact-model residual search
+reached the upright neighborhood. Staged endpoint Gauss--Newton then retained
+rank 18 across every terminal coordinate and produced a route satisfying all
+componentwise capture limits at `3.94 s`:
+
+- maximum absolute angle `0.114742 rad`;
+- hinge-rate RMS `0.243317 rad/s`;
+- absolute-rate RMS `0.669792 rad/s`;
+- cart position `-1.064930 m`;
+- cart velocity `0.460546 m/s`;
+- peak cart-center excursion `3.716165 m` on the diagnostic rail.
+
+The route is preserved in
+`runs/generalized_solver/n8_gn_stage13.json` with `not_solution: true`. It is a
+stronger frontier than the earlier energy-only approaches because it passes
+the declared componentwise handoff box through exact serial replay. It is not
+a hold: several exact local-LQR weightings lasted only `0.08 s`, and a
+Box-FDDP capture attempt reached `0.14 s` before rail violation.
+
+Two endpoint objectives bracketed the final feasible tradeoff. Their exact
+control sequences were convexly blended, then corrected with a very small
+full-rank Gauss--Newton step. The refiner now implements this as
+`--secondary-controller` and `--blend-alpha`, making the continuation
+reproducible and useful for any link count. The larger lesson is that the old
+componentwise handoff box does not approximate the shrinking nonlinear
+invariant set closely enough at eight links. Future promotion should target a
+morphology-conditioned terminal invariant-set metric, while retaining the
+componentwise values as readable diagnostics.

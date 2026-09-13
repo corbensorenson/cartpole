@@ -71,6 +71,19 @@ def load_controls(path: Path, record_key: str) -> tuple[np.ndarray, float]:
     return np.clip(controls, -1.0, 1.0), seconds
 
 
+def blend_controls(
+    primary: np.ndarray, secondary: np.ndarray, *, alpha: float, step_count: int
+) -> np.ndarray:
+    """Blend compatible exact routes without extrapolating their horizons."""
+    if not 0.0 <= alpha <= 1.0:
+        raise ValueError("blend alpha must be in [0, 1]")
+    if primary.size < step_count or secondary.size < step_count:
+        raise ValueError("controllers are shorter than the requested blend")
+    return (
+        (1.0 - alpha) * primary[:step_count] + alpha * secondary[:step_count]
+    )
+
+
 def deterministic_config(base: dict[str, Any]) -> dict[str, Any]:
     cfg = copy.deepcopy(base)
     cfg["env"]["init_mode"] = "hanging"
@@ -174,6 +187,17 @@ def main() -> None:
     parser.add_argument("--config", default="configs/swingup7_uniform.yaml")
     parser.add_argument("--controller", required=True)
     parser.add_argument("--record-key", default="best")
+    parser.add_argument(
+        "--secondary-controller",
+        help="optional second exact route to blend into the primary warm start",
+    )
+    parser.add_argument("--secondary-record-key", default="best")
+    parser.add_argument(
+        "--blend-alpha",
+        type=float,
+        default=0.0,
+        help="secondary-route fraction in [0, 1]",
+    )
     parser.add_argument("--seconds", type=float, required=True)
     parser.add_argument("--knot-count", type=int, default=48)
     parser.add_argument("--iterations", type=int, default=20)
@@ -217,6 +241,10 @@ def main() -> None:
         raise ValueError("rail weight must be nonnegative")
     if not 0.0 <= args.progress <= 1.0:
         raise ValueError("progress must be in [0, 1]")
+    if not 0.0 <= args.blend_alpha <= 1.0:
+        raise ValueError("blend alpha must be in [0, 1]")
+    if args.blend_alpha > 0.0 and not args.secondary_controller:
+        raise ValueError("positive blend alpha requires --secondary-controller")
 
     cfg = deterministic_config(apply_overrides(load_config(args.config), args.override))
     env = NLinkCartPoleEnv(cfg, progress=args.progress, seed=0)
@@ -231,6 +259,27 @@ def main() -> None:
     if source_controls.size < step_count:
         raise ValueError("source controller is shorter than the requested refinement")
     base_actions = source_controls[:step_count].copy()
+    secondary_path: Path | None = None
+    if args.secondary_controller:
+        secondary_path = Path(args.secondary_controller)
+        secondary_controls, secondary_seconds = load_controls(
+            secondary_path, args.secondary_record_key
+        )
+        secondary_dt = secondary_seconds / secondary_controls.size
+        if not np.isclose(secondary_dt, env.dt, rtol=0.0, atol=1.0e-10):
+            raise ValueError(
+                f"secondary policy period {secondary_dt} does not match target {env.dt}"
+            )
+        if secondary_controls.size < step_count:
+            raise ValueError(
+                "secondary controller is shorter than the requested refinement"
+            )
+        base_actions = blend_controls(
+            base_actions,
+            secondary_controls,
+            alpha=args.blend_alpha,
+            step_count=step_count,
+        )
     interpolation = interpolation_matrix(args.knot_count, step_count)
     correction = np.zeros(args.knot_count, dtype=np.float64)
     regularization = float(args.regularization)
@@ -327,8 +376,15 @@ def main() -> None:
         "summary": "Damped exact-serial Gauss-Newton endpoint refinement; requires feedback and noisy-gate validation.",
         "source_controller": file_metadata(source_path),
         "source_record_key": args.record_key,
+        "secondary_controller": (
+            file_metadata(secondary_path) if secondary_path is not None else None
+        ),
+        "secondary_record_key": (
+            args.secondary_record_key if secondary_path is not None else None
+        ),
         "search": {
             "algorithm": "damped_minimum_norm_gauss_newton_with_rail_aware_line_search",
+            "blend_alpha": float(args.blend_alpha),
             "iterations": int(args.iterations),
             "horizon_seconds": float(step_count * env.dt),
             "knot_count": int(args.knot_count),

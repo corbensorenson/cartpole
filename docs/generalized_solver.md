@@ -306,3 +306,48 @@ prove automatic synthesis for arbitrary unequal lengths/masses or n>=8. In
 particular, the n=7 shared gate consumes the already frozen record route;
 regenerating that route from the new analytic modal seed remains a useful
 back-check, while n=8 is the next synthesis test.
+
+## Eight-link direct modal endpoint frontier
+
+The morphology-derived branch has now been run directly on the uniform
+eight-link plant; it does not pad, lock, spring, or replay the seven-link
+record route. A deterministic horizon scan selected a `3.8 s` analytic normal-
+mode seed. A bounded 56-knot exact-model residual search then reduced the
+capture-envelope violation from `6.69` to `3.23` while keeping all candidates
+valid and peak cart-center travel below `4.93 m`.
+
+Exact endpoint Gauss--Newton subsequently differentiated all 18 terminal
+coordinates against the smooth correction knots through the ordinary float32
+MuJoCo step path. Every stage retained rank 18. Competing rate and cart
+objectives were resolved by a reproducible convex blend of two exact routes,
+followed by another bounded correction. The refiner exposes this generally as
+`--secondary-controller` plus `--blend-alpha`; it is deterministic route-space
+continuation, not learned policy interpolation.
+
+The strongest endpoint at `3.94 s` has:
+
+| Quantity | Exact value | Common handoff limit |
+| --- | ---: | ---: |
+| Maximum absolute angle | `0.114742 rad` | `< 0.15 rad` |
+| Hinge velocity RMS | `0.243317 rad/s` | `< 0.75 rad/s` |
+| Absolute angular velocity RMS | `0.669792 rad/s` | `< 0.75 rad/s` |
+| Cart position | `-1.064930 m` | `|x| < 1.25 m` |
+| Cart velocity | `0.460546 m/s` | `< 0.50 m/s` |
+| Peak cart-center excursion | `3.716165 m` | diagnostic `+/-12 m` rail |
+
+The [exact frontier artifact](../runs/generalized_solver/n8_gn_stage13.json)
+contains the route, trace, source hashes, endpoint, and full optimization
+history. It is marked `not_solution`. Exact local-LQR and Box-FDDP replay from
+the gate-valid endpoint latched but held upright for only `0.08-0.14 s` before
+leaving the nonlinear basin and violating the diagnostic rail. Alternative
+LQR control and state weightings did not improve that boundary. Therefore the
+direct branch has deterministically solved eight-link swing-up *to the common
+capture envelope*, but it has not solved swing-up-and-hold.
+
+This sharpens the generalized design requirement. As link count rises, the
+linear upright controller's practical nonlinear basin contracts faster than
+the earlier componentwise capture box. The next generalized layer should
+compute or approximate a link-count- and morphology-conditioned invariant
+terminal set, then drive the endpoint into that set with the same full-rank
+exact correction. Promotion still requires an uninterrupted noisy 20-episode
+gate and then the canonical evidence bundle.
