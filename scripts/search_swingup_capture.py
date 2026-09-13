@@ -33,10 +33,17 @@ except ModuleNotFoundError:
     )
 
 
-def lqr_gain(cfg: dict[str, Any], *, progress: float, fd_eps: float, control_cost: float) -> np.ndarray:
+def lqr_gain(
+    cfg: dict[str, Any],
+    *,
+    progress: float,
+    fd_eps: float,
+    control_cost: float,
+    q_weights: dict[str, float] | None = None,
+) -> np.ndarray:
     a, b = finite_difference_dynamics(cfg, progress, fd_eps)
     n = int(cfg["env"]["n_links"])
-    q_weights = {
+    weights = {
         "cart_position": 0.1,
         "absolute_angle": 100.0,
         "cart_velocity": 0.1,
@@ -44,7 +51,9 @@ def lqr_gain(cfg: dict[str, Any], *, progress: float, fd_eps: float, control_cos
         "relative_angle": 1.0,
         "relative_angular_velocity": 0.01,
     }
-    q = absolute_angle_cost(n, q_weights)
+    if q_weights is not None:
+        weights.update({key: float(value) for key, value in q_weights.items()})
+    q = absolute_angle_cost(n, weights)
     r = np.array([[float(control_cost)]], dtype=np.float64)
     p = solve_discrete_are(a, b, q, r)
     return np.linalg.solve(b.T @ p @ b + r, b.T @ p @ a).reshape(-1)

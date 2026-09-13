@@ -989,6 +989,33 @@ evidence. All phase-adaptive artifacts remain diagnostic until the final
 uniform plant passes the canonical 20/100 evaluation, video, manifest, hashes,
 and fresh-clone checks.
 
+### Prefix-Corrected Swing And Retuned Capture Frontier (2026-09-13)
+
+The next continuation tests separated the two experts at the active boundary.
+Relative to the original `p=0.619375` route, scaling only the first
+`0.18-0.20 s` of feedforward swing force crossed several unlock steps. The
+terminal LQR was then retuned at the real route handoff rather than assuming
+the seven-link capture gain remained valid.
+
+| Unlock progress | Swing/capture change | Result |
+| --- | --- | --- |
+| `0.6200` | `1.10x` feedforward prefix for `0.20 s` | `23.44 s` hold, `2.359 m` peak cart |
+| `0.6210` | `1.02x` prefix for `0.18 s` | `24.32 s` hold, `2.360 m` peak cart |
+| `0.6220`-`0.6300` | Chained saved route, phase-adaptive replay | `24.22-24.30 s` holds, `2.360 m` peak cart |
+| `0.6350` | Chained route, unchanged prefix | `23.48 s` hold, `2.360 m` peak cart |
+| `0.6360` | Capture LQR cost `10000` | `24.06 s` hold, `2.917 m` peak cart |
+| `0.6375` | Capture LQR scale `0.6`, cost `5000` | `24.06 s` hold, `2.706 m` peak cart |
+| `0.6380` | Capture LQR scale `1.0`, cost `5000` | `24.06 s` hold, `2.902 m` peak cart |
+| `0.6390` | Best local retuning and prefix screen | `2.44 s` transient, then rail exit |
+
+The `p=0.6390` route was also materialized at its actual `4.56 s` handoff.
+Reset-free receding-horizon capture held `0.10 s`; a dedicated six-second
+exact-MuJoCo Box-FDDP capture search from that measured state held `0.18 s`
+and became unstable. The active bottleneck is therefore a real capture-basin
+boundary at the newly released joint. These split-morphology artifacts are
+useful curriculum evidence, but none advances the canonical uniform-eight
+claim.
+
 ### Current Canonical Seven-Link Result
 
 The final canonical control evaluation now passes independently of the earlier

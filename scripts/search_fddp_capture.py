@@ -156,6 +156,12 @@ def main() -> None:
         default=1000.0,
         help="R term used to compute the post-handoff LQR gain",
     )
+    parser.add_argument("--lqr-cart-position-cost", type=float, default=0.1)
+    parser.add_argument("--lqr-absolute-angle-cost", type=float, default=100.0)
+    parser.add_argument("--lqr-cart-velocity-cost", type=float, default=0.1)
+    parser.add_argument("--lqr-absolute-angular-velocity-cost", type=float, default=1.0)
+    parser.add_argument("--lqr-relative-angle-cost", type=float, default=1.0)
+    parser.add_argument("--lqr-relative-angular-velocity-cost", type=float, default=0.01)
     parser.add_argument("--control-cost", type=float, default=0.1)
     parser.add_argument("--stage-weight", type=float, default=0.1)
     parser.add_argument("--terminal-weight", type=float, default=10_000.0)
@@ -225,6 +231,12 @@ def main() -> None:
             args.initial_regularization,
             args.lqr_scale,
             args.lqr_control_cost,
+            args.lqr_cart_position_cost,
+            args.lqr_absolute_angle_cost,
+            args.lqr_cart_velocity_cost,
+            args.lqr_absolute_angular_velocity_cost,
+            args.lqr_relative_angle_cost,
+            args.lqr_relative_angular_velocity_cost,
             args.control_cost,
             args.stage_weight,
             args.terminal_weight,
@@ -289,7 +301,21 @@ def main() -> None:
         }
     cfg = fixed_state_cfg(base_cfg, state, float(base_cfg["env"]["episode_seconds"]))
 
-    gain = lqr_gain(cfg, progress=lqr_progress, fd_eps=1e-7, control_cost=args.lqr_control_cost)
+    lqr_weights = {
+        "cart_position": args.lqr_cart_position_cost,
+        "absolute_angle": args.lqr_absolute_angle_cost,
+        "cart_velocity": args.lqr_cart_velocity_cost,
+        "absolute_angular_velocity": args.lqr_absolute_angular_velocity_cost,
+        "relative_angle": args.lqr_relative_angle_cost,
+        "relative_angular_velocity": args.lqr_relative_angular_velocity_cost,
+    }
+    gain = lqr_gain(
+        cfg,
+        progress=lqr_progress,
+        fd_eps=1e-7,
+        control_cost=args.lqr_control_cost,
+        q_weights=lqr_weights,
+    )
     spec = load_config(args.spec)
     distribution = spec["distribution"]
     transform = dimensionless_absolute_transform(
@@ -416,7 +442,7 @@ def main() -> None:
         controls = initial_controls.copy()
         nominal_states = replay_nominal_states
         solver_feedback_gains = source_feedback_gains.copy()
-        feedback_gains = source_feedback_gains.copy()
+        feedback_gains = args.tracking_gain_scale * source_feedback_gains.copy()
         converged = False
         search_seconds = 0.0
         search_iterations = 0
@@ -528,6 +554,7 @@ def main() -> None:
             "lqr_scale": float(args.lqr_scale),
             "lqr_progress": float(lqr_progress),
             "lqr_control_cost": float(args.lqr_control_cost),
+            "lqr_weights": {key: float(value) for key, value in lqr_weights.items()},
             "control_cost": float(args.control_cost),
             "stage_weight": float(args.stage_weight),
             "terminal_weight": float(args.terminal_weight),

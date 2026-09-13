@@ -18,6 +18,17 @@ from gcartpole.evidence import data_sha256, file_metadata, git_metadata, runtime
 
 
 def find_state(payload: dict[str, Any], selector: str) -> dict[str, Any]:
+    if selector.startswith("trajectory:"):
+        try:
+            index = int(selector.split(":", 1)[1])
+        except ValueError as error:
+            raise ValueError("trajectory selector must be trajectory:<index>") from error
+        trajectory = payload.get("result", {}).get("trajectory")
+        if not isinstance(trajectory, list) or not trajectory:
+            raise ValueError("input artifact has no serialized result trajectory")
+        if index < 0 or index >= len(trajectory):
+            raise IndexError(f"trajectory index {index} outside 0..{len(trajectory) - 1}")
+        return dict(trajectory[index])
     if selector in {"best", "best_state"}:
         best = payload.get("best")
         if isinstance(best, dict) and isinstance(best.get("best_state"), dict):

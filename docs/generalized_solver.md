@@ -100,9 +100,12 @@ that cancel in aggregate momentum. The two-link ladder therefore adds an
 explicit deterministic phase term. At three links, an exact modal objective
 (absolute-angle coherence plus absolute-rate damping) is needed before Box-FDDP
 can arrest the chain. At four links, one aggregate phase variable reaches the
-upright neighborhood but leaves too much energy in the distal modes. That is
-the current frontier and motivates a phase coordinate per morphology-derived
-linear mode rather than more opaque policy capacity.
+upright neighborhood but leaves too much energy in the distal modes. Exact
+morphology-derived normal modes resolve that ambiguity: ranking measured PFL
+states by collective and internal modal energy identifies a better handoff,
+and full-horizon Box-FDDP then closes the route. This promotes four links while
+retaining the same fixed-size 13-parameter PFL proposal and deterministic
+optimization architecture. Five links is the next unsolved ladder stage.
 
 The online adapter estimates only actuator effectiveness and bias. It projects
 observed one-step model error onto the exact model's action Jacobian, fits
@@ -144,14 +147,15 @@ upright requirement.
 | 1 | 20/20 | energy PFL -> exact LQR | 0.9594 |
 | 2 | 20/20 | phase-aware PFL -> Box-FDDP -> exact LQR; mirror selection | 1.0127 |
 | 3 | 20/20 | modal route -> full-horizon Box-FDDP -> exact LQR; mirror selection | 1.0008 |
-| 4 | not promoted | best angle 0.3008 rad, hinge RMS 5.3414 rad/s | — |
+| 4 | 20/20 | modal-ranked PFL handoff -> full-horizon Box-FDDP -> exact LQR; mirror selection | 0.9953 |
 
 Evidence: [n=1 gate](../runs/generalized_solver/energy_n1_noisy20_v2.json),
 [n=2 gate](../runs/generalized_solver/n2_gate.json), and
-[n=3 gate](../runs/generalized_solver/n3_gate.json).
-Prediction and uninterrupted execution agree on every accepted n=2 and n=3
-episode. The [n=4 frontier artifact](../runs/generalized_solver/frontier_n4.json)
-retains the failed handoff as a boundary, not success.
+[n=3 gate](../runs/generalized_solver/n3_gate.json), and
+[n=4 gate](../runs/generalized_solver/n4_gate_20.json).
+Prediction and uninterrupted execution agree on every accepted n=2 through
+n=4 episode. The [n=4 frontier artifact](../runs/generalized_solver/frontier_n4.json)
+records both the earlier aggregate-phase failure and the modal-ranking repair.
 
 ## Current reproducible commands
 
@@ -173,11 +177,11 @@ PYTHONPATH=src python scripts/generalized_swingup_solver.py transfer \
   --out runs/generalized_solver/n3_to_n4_warm_start.json
 
 PYTHONPATH=src python scripts/evaluate_generalized_route_library.py \
-  --config configs/swingup7_uniform.yaml --n-links 3 \
-  --controller runs/generalized_solver/n3_route.json \
-  --controller runs/generalized_solver/n3_route_mirror.json \
+  --config configs/swingup7_uniform.yaml --n-links 4 \
+  --controller runs/generalized_solver/n4_route_solver.json \
+  --controller runs/generalized_solver/n4_route_solver_mirror.json \
   --episodes 20 --conditioning-seconds 15 --tracking-gain-scale 1 \
-  --phase-window 6 --out runs/generalized_solver/n3_gate.json
+  --phase-window 0 --out runs/generalized_solver/n4_gate_20.json
 ```
 
 The morphology table and transfer output are analysis/warm starts, not success

@@ -1324,3 +1324,34 @@ boundary, not a capture/stabilization failure and not an eight-link claim.
 The phase tracker includes a defensive end-of-route fallback so a morphology
 jump cannot crash evaluation with an empty search window. This is an
 implementation repair, not performance evidence.
+
+## Prefix-Corrected Swing And Retuned Capture (2026-09-13)
+
+The next continuation separated the two controller responsibilities at the
+observed boundary. A short feedforward correction was applied only to the
+opening swing prefix, while the saved phase-aware feedback route and deferred
+handoff remained unchanged. The terminal capture LQR was then tuned from the
+actual route handoff.
+
+| Attempt | Exact setup | Result | Decision |
+|---|---|---|---|
+| Unlock `0.6200` | Original `p=0.619375` route, first `0.20 s` feedforward scaled `1.10x` | `23.44 s` hold; max cart `2.359 m` | Accepted |
+| Unlock `0.6210` | Original route, first `0.18 s` scaled `1.02x` | `24.32 s` hold; max cart `2.360 m` | Accepted |
+| Unlock `0.6220`-`0.6300` | Chained saved controllers with phase-adaptive replay | `24.22-24.30 s` holds; max cart `2.360 m` | Accepted curriculum chain |
+| Unlock `0.6350` | Chained route, unchanged prefix | `23.48 s` hold; max cart `2.360 m` | Accepted |
+| Unlock `0.6360` | Same route, LQR scale `1.0`, control cost `10000` | `24.06 s` hold; max cart `2.917 m` | Accepted |
+| Unlock `0.6375` | LQR scale `0.6`, control cost `5000` | `24.06 s` hold; max cart `2.706 m` | Accepted |
+| Unlock `0.6380` | LQR scale `1.0`, control cost `5000` | `24.06 s` hold; max cart `2.902 m` | Current accepted frontier |
+| Unlock `0.6390` | Prefix/LQR grid, real-handoff MPC, and dedicated capture FDDP | Best transient `2.44 s`; MPC `0.10 s`; FDDP `0.18 s`; all rail-failed or unstable | Rejected boundary |
+
+Representative artifacts include
+`runs/swingup8_split_unlock_p062_prefix_s11_t02.json`,
+`runs/swingup8_split_unlock_p0621_prefix_s102t018.json`,
+`runs/swingup8_split_unlock_p0635_prefix_s1t018.json`,
+`runs/swingup8_split_unlock_p0636_lqr_l1r10000.json`, and
+`runs/swingup8_split_unlock_p0638_lqr_l1r5000.json`. The exact `p=0.639`
+handoff was materialized in
+`runs/swingup8_split_unlock_p0639_handoff_state.json` before the independent
+MPC and Box-FDDP capture probes. This is the first direct test of a capture
+expert trained from a real failed swing handoff at the current frontier; it
+did not produce a reusable basin.

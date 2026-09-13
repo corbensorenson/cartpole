@@ -103,12 +103,15 @@ adaptation layer; it does not learn the swing trajectory.
 | 1 link | **20/20** | 0.959 |
 | 2 links | **20/20** | 1.013 |
 | 3 links | **20/20** | 1.001 |
-| 4 links | not solved; best handoff is outside the capture funnel | not promoted |
+| 4 links | **20/20** | 0.995 |
 
 These are development results, not additions to the public seven-link record
 claim. See the [generalized solver design and honest frontier](docs/generalized_solver.md),
 including why total chain energy and one aggregate phase variable stop being
-sufficient as internal modes appear.
+sufficient as internal modes appear. The accepted four-link route is the first
+one seeded by exact morphology-derived normal modes: modal ranking chooses the
+handoff, full-horizon Box-FDDP supplies the trajectory and time-varying
+feedback, and exact forward simulation selects the route or its mirror.
 
 ## Current frontier: eight links
 

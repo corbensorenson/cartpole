@@ -20,7 +20,16 @@ def main() -> None:
     parser.add_argument("--controller", required=True)
     parser.add_argument("--out", required=True)
     parser.add_argument("--mirror", action="store_true")
+    parser.add_argument(
+        "--feedback-gain-source",
+        choices=("applied", "solver"),
+        default="applied",
+        help="Select the already-scaled gains or the optimizer's unscaled gains.",
+    )
+    parser.add_argument("--feedback-gain-scale", type=float, default=1.0)
     args = parser.parse_args()
+    if args.feedback_gain_scale < 0.0:
+        raise ValueError("--feedback-gain-scale must be nonnegative")
     source_path = Path(args.controller)
     source = json.loads(source_path.read_text(encoding="utf-8"))
     packaged = {
@@ -37,8 +46,24 @@ def main() -> None:
             "source": file_metadata(source_path),
         }
     )
+    controller = packaged["controller"]
+    if args.feedback_gain_source == "solver":
+        if "solver_feedback_gains" not in controller:
+            raise ValueError("controller does not contain solver feedback gains")
+        source_gains = np.asarray(controller["solver_feedback_gains"], dtype=np.float64)
+    else:
+        source_gains = np.asarray(controller["feedback_gains"], dtype=np.float64)
+    controller["feedback_gains"] = (
+        (args.feedback_gain_scale * source_gains).astype(float).tolist()
+    )
+    controller["source_tracking_gain_scale"] = float(
+        controller.get("tracking_gain_scale", 1.0)
+    )
+    controller["tracking_gain_scale"] = 1.0
+    controller["packaged_feedback_gain_source"] = args.feedback_gain_source
+    controller["packaged_feedback_gain_scale"] = float(args.feedback_gain_scale)
+    controller.pop("solver_feedback_gains", None)
     if args.mirror:
-        controller = packaged["controller"]
         search = packaged["search"]
         controls, states, gains = mirror_feedback_route(
             np.asarray(controller["controls"], dtype=np.float64),
@@ -51,8 +76,12 @@ def main() -> None:
         search["nominal_coordinate_states"] = states.astype(float).tolist()
         selected = packaged.get("selected_state")
         if isinstance(selected, dict):
-            selected["qpos"] = (-np.asarray(selected["qpos"], dtype=np.float64)).astype(float).tolist()
-            selected["qvel"] = (-np.asarray(selected["qvel"], dtype=np.float64)).astype(float).tolist()
+            selected["qpos"] = (
+                (-np.asarray(selected["qpos"], dtype=np.float64)).astype(float).tolist()
+            )
+            selected["qvel"] = (
+                (-np.asarray(selected["qvel"], dtype=np.float64)).astype(float).tolist()
+            )
     dump_json(packaged, Path(args.out))
     print(f"wrote {args.out}")
 

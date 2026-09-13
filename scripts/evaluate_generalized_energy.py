@@ -13,14 +13,24 @@ import numpy as np
 
 from gcartpole.config import dump_json, load_config
 from gcartpole.env import NLinkCartPoleEnv
-from gcartpole.evidence import data_sha256, file_metadata, git_metadata, runtime_metadata, utc_timestamp
+from gcartpole.evidence import (
+    data_sha256,
+    file_metadata,
+    git_metadata,
+    runtime_metadata,
+    utc_timestamp,
+)
 from gcartpole.generalized_energy import (
     EnergySwingParameters,
     GeneralizedEnergyController,
     hanging_lqr_action,
     hanging_lqr_gain,
 )
-from gcartpole.generalized_solver import dimensionless_setup, rail_requirement, setup_from_config
+from gcartpole.generalized_solver import (
+    dimensionless_setup,
+    rail_requirement,
+    setup_from_config,
+)
 
 
 def run_episode(
@@ -34,7 +44,7 @@ def run_episode(
     _, reset_info = env.reset(seed=seed)
     controller = GeneralizedEnergyController(env, parameters)
     settle_gain = hanging_lqr_gain(env)
-    conditioning_steps = int(round(conditioning_seconds / env.dt))
+    conditioning_steps = round(conditioning_seconds / env.dt)
     cart_positions = [float(env.data.qpos[0])]
     trace: list[dict[str, Any]] = []
     final_info = reset_info
@@ -68,7 +78,9 @@ def run_episode(
         "termination_reason": final_info.get("termination_reason"),
         "conditioning_seconds": float(conditioning_steps * env.dt),
         "switch_time_after_conditioning": controller.switch_time,
-        "max_upright_streak_seconds": float(final_info.get("max_upright_streak_seconds", 0.0)),
+        "max_upright_streak_seconds": float(
+            final_info.get("max_upright_streak_seconds", 0.0)
+        ),
         "max_cart_excursion": float(max(abs(value) for value in cart_positions)),
         "rail_requirement": rail_requirement(np.asarray(cart_positions), setup),
         "final_info": final_info,
@@ -88,6 +100,9 @@ def main() -> None:
     parser.add_argument("--out", required=True)
     parser.add_argument("--include-traces", action="store_true")
     parser.add_argument("--conditioning-seconds", type=float, default=10.0)
+    parser.add_argument("--collective-modal-gain", type=float, default=0.0)
+    parser.add_argument("--internal-modal-damping-gain", type=float, default=0.0)
+    parser.add_argument("--modal-acceleration-limit-ratio", type=float, default=2.0)
     args = parser.parse_args()
     if min(args.n_links, args.episodes) < 1:
         raise ValueError("link count and episode count must be positive")
@@ -104,7 +119,20 @@ def main() -> None:
     cfg["env"]["init_mode"] = "hanging"
     cfg["env"]["action_lqr_residual"] = {"enabled": False}
     cfg["env"]["action_lqr_switch"] = {"enabled": False}
-    parameters = EnergySwingParameters()
+    if (
+        min(
+            args.collective_modal_gain,
+            args.internal_modal_damping_gain,
+            args.modal_acceleration_limit_ratio,
+        )
+        < 0.0
+    ):
+        raise ValueError("modal gains and acceleration limit must be nonnegative")
+    parameters = EnergySwingParameters(
+        collective_modal_gain=args.collective_modal_gain,
+        internal_modal_damping_gain=args.internal_modal_damping_gain,
+        modal_acceleration_limit_ratio=args.modal_acceleration_limit_ratio,
+    )
     episodes = [
         run_episode(
             cfg,
@@ -134,8 +162,12 @@ def main() -> None:
         "seed_start": args.seed,
         "conditioning_seconds": args.conditioning_seconds,
         "success_rate": success_rate,
-        "termination_counts": dict(Counter(str(row["termination_reason"]) for row in episodes)),
-        "max_rail_ratio": float(max(row["rail_requirement"]["required_rail_ratio"] for row in episodes)),
+        "termination_counts": dict(
+            Counter(str(row["termination_reason"]) for row in episodes)
+        ),
+        "max_rail_ratio": float(
+            max(row["rail_requirement"]["required_rail_ratio"] for row in episodes)
+        ),
         "episode_results": episodes,
         "runtime": runtime_metadata(),
         "git": git_metadata(Path(__file__).resolve().parents[1]),

@@ -9,6 +9,10 @@ import numpy as np
 from scipy.linalg import solve_discrete_are
 
 from gcartpole.env import NLinkCartPoleEnv, serial_absolute_angles, wrap_angle
+from gcartpole.generalized_modes import (
+    chain_normal_modes,
+    modal_energy_acceleration_ratio,
+)
 from gcartpole.generalized_solver import dimensionless_setup, setup_from_config
 from gcartpole.ilqr import MujocoTransition, data_state
 
@@ -30,7 +34,9 @@ def absolute_state_cost(n_links: int) -> np.ndarray:
     return cost
 
 
-def upright_lqr_gain(env: NLinkCartPoleEnv, *, control_cost: float = 10.0) -> np.ndarray:
+def upright_lqr_gain(
+    env: NLinkCartPoleEnv, *, control_cost: float = 10.0
+) -> np.ndarray:
     """Linearize the exact target plant and compute normalized-action LQR."""
 
     transition = MujocoTransition(env)
@@ -47,7 +53,9 @@ def upright_lqr_gain(env: NLinkCartPoleEnv, *, control_cost: float = 10.0) -> np
     ).reshape(-1)
 
 
-def hanging_lqr_gain(env: NLinkCartPoleEnv, *, control_cost: float = 1000.0) -> np.ndarray:
+def hanging_lqr_gain(
+    env: NLinkCartPoleEnv, *, control_cost: float = 1000.0
+) -> np.ndarray:
     """Compute an exact local regulator without wrapping across the pi branch."""
 
     n = env.n
@@ -74,12 +82,11 @@ def hanging_lqr_gain(env: NLinkCartPoleEnv, *, control_cost: float = 1000.0) -> 
         delta = np.zeros(state_size, dtype=np.float64)
         delta[column] = epsilon
         state_matrix[:, column] = (
-            step_map(equilibrium + delta, 0.0)
-            - step_map(equilibrium - delta, 0.0)
+            step_map(equilibrium + delta, 0.0) - step_map(equilibrium - delta, 0.0)
         ) / (2.0 * epsilon)
-    input_matrix = (
-        step_map(equilibrium, epsilon) - step_map(equilibrium, -epsilon)
-    )[:, None] / (2.0 * epsilon)
+    input_matrix = (step_map(equilibrium, epsilon) - step_map(equilibrium, -epsilon))[
+        :, None
+    ] / (2.0 * epsilon)
     state_cost = absolute_state_cost(n)
     input_cost = np.array([[float(control_cost)]], dtype=np.float64)
     riccati = solve_discrete_are(state_matrix, input_matrix, state_cost, input_cost)
@@ -114,6 +121,9 @@ class EnergySwingParameters:
     kick_frequency_ratio: float = 0.166
     kick_duration_ratio: float = 3.62
     kick_phase: float = 0.0
+    collective_modal_gain: float = 0.0
+    internal_modal_damping_gain: float = 0.0
+    modal_acceleration_limit_ratio: float = 2.0
     enter_angle: float = 0.20
     enter_absolute_rate_ratio: float = 0.67
     enter_cart_velocity_ratio: float = 0.14
@@ -140,7 +150,9 @@ def chain_energy_features(env: NLinkCartPoleEnv) -> dict[str, float]:
     velocity_scale = np.sqrt(setup.gravity * setup.chain_length)
     relative_horizontal_momentum = float(mass_matrix[0, 1:] @ joint_rates)
     momentum_ratio = relative_horizontal_momentum / (setup.link_mass * velocity_scale)
-    absolute_angles = serial_absolute_angles(np.asarray(env.data.qpos[1:], dtype=np.float64))
+    absolute_angles = serial_absolute_angles(
+        np.asarray(env.data.qpos[1:], dtype=np.float64)
+    )
     absolute_rates = np.cumsum(joint_rates)
     return {
         "energy_error": float(energy_error),
@@ -162,7 +174,9 @@ def force_for_desired_cart_acceleration(
     mass_matrix = np.zeros((env.model.nv, env.model.nv), dtype=np.float64)
     mujoco.mj_fullM(env.model, mass_matrix, env.data.qM)
     # MuJoCo forward dynamics: M*qacc + bias = passive + actuator.
-    generalized_bias = np.asarray(env.data.qfrc_bias - env.data.qfrc_passive, dtype=np.float64)
+    generalized_bias = np.asarray(
+        env.data.qfrc_bias - env.data.qfrc_passive, dtype=np.float64
+    )
     joint_mass = mass_matrix[1:, 1:]
     joint_acceleration = np.linalg.solve(
         joint_mass,
@@ -207,7 +221,9 @@ def modal_coherence_acceleration(
     relative_angles = wrap_angle(np.asarray(env.data.qpos[1:], dtype=np.float64))
     absolute_angles = serial_absolute_angles(relative_angles)
     absolute_rates = np.cumsum(np.asarray(env.data.qvel[1:], dtype=np.float64))
-    weights = np.asarray(env.morphology.masses * env.morphology.lengths, dtype=np.float64)
+    weights = np.asarray(
+        env.morphology.masses * env.morphology.lengths, dtype=np.float64
+    )
     weights /= float(np.sum(weights))
     mean_angle = float(
         np.arctan2(weights @ np.sin(absolute_angles), weights @ np.cos(absolute_angles))
@@ -240,12 +256,14 @@ def modal_coherence_acceleration(
     response_internal = internal(response)
     desired = (
         -float(position_gain) * angle_error / (setup.natural_time**2)
-        -float(velocity_gain) * rate_error / setup.natural_time
+        - float(velocity_gain) * rate_error / setup.natural_time
     )
     denominator = float(weights @ (response_internal**2))
     correction = 0.0
     if denominator > 1e-12:
-        correction = float(weights @ (response_internal * (desired - predicted)) / denominator)
+        correction = float(
+            weights @ (response_internal * (desired - predicted)) / denominator
+        )
     limit = float(max_correction_ratio * setup.gravity)
     correction = float(np.clip(correction_weight * correction, -limit, limit))
     return float(base_acceleration + correction), {
@@ -260,11 +278,14 @@ def modal_coherence_acceleration(
 class GeneralizedEnergyController:
     """Energy pump with a state-gated exact upright LQR handoff."""
 
-    def __init__(self, env: NLinkCartPoleEnv, parameters: EnergySwingParameters) -> None:
+    def __init__(
+        self, env: NLinkCartPoleEnv, parameters: EnergySwingParameters
+    ) -> None:
         self.parameters = parameters
         self.setup = setup_from_config(env.cfg, progress=env.plant_progress)
         self.pi = dimensionless_setup(self.setup)
         self.lqr_gain = upright_lqr_gain(env, control_cost=parameters.lqr_control_cost)
+        self.hanging_modes = chain_normal_modes(env, equilibrium="hanging")
         self.mode = "energy"
         self.switch_time: float | None = None
 
@@ -272,7 +293,9 @@ class GeneralizedEnergyController:
         self.mode = "energy"
         self.switch_time = None
 
-    def _should_capture(self, env: NLinkCartPoleEnv, features: dict[str, float]) -> bool:
+    def _should_capture(
+        self, env: NLinkCartPoleEnv, features: dict[str, float]
+    ) -> bool:
         p = self.parameters
         return bool(
             features["max_abs_angle"] <= p.enter_angle
@@ -280,7 +303,9 @@ class GeneralizedEnergyController:
             and abs(features["cart_velocity_ratio"]) <= p.enter_cart_velocity_ratio
         )
 
-    def action(self, env: NLinkCartPoleEnv, time_seconds: float) -> tuple[float, dict[str, float | str]]:
+    def action(
+        self, env: NLinkCartPoleEnv, time_seconds: float
+    ) -> tuple[float, dict[str, float | str]]:
         features = chain_energy_features(env)
         if self.mode == "energy" and self._should_capture(env, features):
             self.mode = "lqr"
@@ -308,6 +333,29 @@ class GeneralizedEnergyController:
             - self.parameters.cart_velocity_gain * features["cart_velocity_ratio"]
             + kick
         )
+        modal_diagnostics: dict[str, object] = {}
+        if (
+            self.parameters.collective_modal_gain > 0.0
+            or self.parameters.internal_modal_damping_gain > 0.0
+        ):
+            modal_ratio, modal_diagnostics = modal_energy_acceleration_ratio(
+                self.hanging_modes,
+                np.asarray(env.data.qpos[1:], dtype=np.float64),
+                np.asarray(env.data.qvel[1:], dtype=np.float64),
+                total_energy_error=features["energy_error"],
+                energy_scale=float(env._energy_gap),
+                collective_gain=self.parameters.collective_modal_gain,
+                internal_damping_gain=self.parameters.internal_modal_damping_gain,
+            )
+            modal_ratio = float(
+                np.clip(
+                    modal_ratio,
+                    -self.parameters.modal_acceleration_limit_ratio,
+                    self.parameters.modal_acceleration_limit_ratio,
+                )
+            )
+            acceleration_ratio += modal_ratio
+            modal_diagnostics["limited_modal_acceleration_ratio"] = modal_ratio
         desired_acceleration = self.setup.gravity * float(acceleration_ratio)
         force = force_for_desired_cart_acceleration(env, desired_acceleration)
         action = float(np.clip(force / env.force_limit, -1.0, 1.0))
@@ -316,4 +364,5 @@ class GeneralizedEnergyController:
             "mode": self.mode,
             "desired_acceleration_ratio": float(acceleration_ratio),
             "unclipped_action": float(force / env.force_limit),
+            **modal_diagnostics,
         }

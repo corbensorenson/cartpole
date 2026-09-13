@@ -186,7 +186,13 @@ def main() -> None:
     cfg["env"].setdefault("action_lqr_switch", {"enabled": False})["enabled"] = False
     env = NLinkCartPoleEnv(cfg, progress=1.0, seed=args.seed)
     env.reset(seed=args.seed)
-    gain = lqr_gain(cfg, progress=1.0, fd_eps=1e-7, control_cost=1000.0)
+    gain = lqr_gain(
+        cfg,
+        progress=1.0,
+        fd_eps=1e-7,
+        control_cost=controller["lqr_control_cost"],
+        q_weights=controller["lqr_weights"],
+    )
     settle_gain = (
         hanging_lqr_gain(
             cfg,

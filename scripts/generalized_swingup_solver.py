@@ -21,6 +21,7 @@ from gcartpole.config import dump_json, load_config
 from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.evidence import file_metadata, utc_timestamp
 from gcartpole.fddp import rollout_controls
+from gcartpole.generalized_modes import chain_normal_modes
 from gcartpole.generalized_solver import (
     dimensionless_setup,
     force_action_scale,
@@ -34,7 +35,6 @@ from gcartpole.generalized_solver import (
 from gcartpole.ilqr import MujocoTransition, data_state
 from gcartpole.linear import analyze_morphology
 from gcartpole.modal import StateScales, dimensionless_absolute_transform
-
 
 DEFAULT_SCALES = StateScales(
     cart_position=3.0,
@@ -79,7 +79,7 @@ def controller_record(payload: dict[str, Any]) -> tuple[dict[str, Any], dict[str
     controller = payload.get("controller")
     search = payload.get("search")
     if not isinstance(controller, dict) or not isinstance(search, dict):
-        raise ValueError("source controller must contain controller and search objects")
+        raise TypeError("source controller must contain controller and search objects")
     return controller, search
 
 
@@ -119,13 +119,24 @@ def analyze_command(args: argparse.Namespace) -> None:
         )
         record = pi.to_dict()
         record["upright_linearization"] = linear.to_dict()
-        record["minimum_geometric_rail_ratio"] = physical.cart_half_length / physical.chain_length
+        env = NLinkCartPoleEnv(cfg, progress=1.0, seed=0)
+        env.reset(seed=0)
+        record["hanging_normal_modes"] = chain_normal_modes(
+            env, equilibrium="hanging"
+        ).to_dict()
+        record["upright_normal_modes"] = chain_normal_modes(
+            env, equilibrium="upright"
+        ).to_dict()
+        env.close()
+        record["minimum_geometric_rail_ratio"] = (
+            physical.cart_half_length / physical.chain_length
+        )
         records.append(record)
     payload = {
         "schema_version": 1,
         "generated_at": utc_timestamp(),
         "claim_status": "analysis_not_solution_evidence",
-        "summary": "Dimensionless morphology table for the generalized solver.",
+        "summary": "Dimensionless morphology and exact normal-mode table for the generalized solver.",
         "source_config": file_metadata(Path(args.config)),
         "link_range": [args.min_links, args.max_links],
         "records": records,
@@ -158,7 +169,9 @@ def transfer_command(args: argparse.Namespace) -> None:
     controller, search = controller_record(payload)
     source_controls = np.asarray(controller["controls"], dtype=np.float64)
     source_gains = np.asarray(controller.get("feedback_gains", []), dtype=np.float64)
-    source_coordinate_states = np.asarray(search["nominal_coordinate_states"], dtype=np.float64)
+    source_coordinate_states = np.asarray(
+        search["nominal_coordinate_states"], dtype=np.float64
+    )
     source_dim = 2 * (source_setup.n_links + 1)
     if source_coordinate_states.shape != (source_controls.size + 1, source_dim):
         raise ValueError("source nominal states do not match source morphology")
@@ -167,19 +180,31 @@ def transfer_command(args: argparse.Namespace) -> None:
 
     controls = resample_controls(source_controls, source_setup, target_setup)
     spatial_gains = transfer_feedback_gains(source_gains, source_setup, target_setup)
-    feedback_gains = time_interpolate_rows(spatial_gains, source_controls.size, controls.size)
+    feedback_gains = time_interpolate_rows(
+        spatial_gains, source_controls.size, controls.size
+    )
 
-    source_initial_physical = np.linalg.solve(source_transform, source_coordinate_states[0])
-    target_initial_physical = transfer_state(source_initial_physical, source_setup, target_setup)
+    source_initial_physical = np.linalg.solve(
+        source_transform, source_coordinate_states[0]
+    )
+    target_initial_physical = transfer_state(
+        source_initial_physical, source_setup, target_setup
+    )
     cfg = copy.deepcopy(target_cfg)
     cfg["env"]["init_mode"] = "fixed_state"
     nq = target_setup.n_links + 1
     cfg["env"]["init_qpos"] = target_initial_physical[:nq].tolist()
     cfg["env"]["init_qvel"] = target_initial_physical[nq:].tolist()
     cfg["env"]["episode_seconds"] = max(
-        float(cfg["env"]["episode_seconds"]), controls.size * target_setup.policy_dt + 1.0
+        float(cfg["env"]["episode_seconds"]),
+        controls.size * target_setup.policy_dt + 1.0,
     )
-    for key in ("init_angle_noise", "init_vel_noise", "init_cart_noise", "init_cart_vel_noise"):
+    for key in (
+        "init_angle_noise",
+        "init_vel_noise",
+        "init_cart_noise",
+        "init_cart_vel_noise",
+    ):
         cfg["env"][key] = 0.0
     env = NLinkCartPoleEnv(cfg, progress=1.0, seed=0)
     env.reset(seed=0)
@@ -229,7 +254,9 @@ def transfer_command(args: argparse.Namespace) -> None:
         },
         "search": {
             "nominal_coordinate_states": target_states.tolist(),
-            "is_feasible": bool(np.max(np.abs(physical_cart)) < target_setup.rail_half_length),
+            "is_feasible": bool(
+                np.max(np.abs(physical_cart)) < target_setup.rail_half_length
+            ),
             "iterations": 0,
             "cost": None,
         },
@@ -245,14 +272,18 @@ def transfer_command(args: argparse.Namespace) -> None:
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
-    analyze = commands.add_parser("analyze", help="write a dimensionless morphology table")
+    analyze = commands.add_parser(
+        "analyze", help="write a dimensionless morphology table"
+    )
     analyze.add_argument("--config", default="configs/swingup7_uniform.yaml")
     analyze.add_argument("--min-links", type=int, default=1)
     analyze.add_argument("--max-links", type=int, default=20)
     analyze.add_argument("--out", required=True)
     analyze.set_defaults(run=analyze_command)
 
-    transfer = commands.add_parser("transfer", help="generate an exact target warm start")
+    transfer = commands.add_parser(
+        "transfer", help="generate an exact target warm start"
+    )
     transfer.add_argument("--source-config", default="configs/swingup7_uniform.yaml")
     transfer.add_argument("--target-config", default=None)
     transfer.add_argument("--source-links", type=int, required=True)
@@ -266,7 +297,9 @@ def parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = parser().parse_args()
-    if getattr(args, "min_links", 1) < 1 or getattr(args, "max_links", 1) < getattr(args, "min_links", 1):
+    if getattr(args, "min_links", 1) < 1 or getattr(args, "max_links", 1) < getattr(
+        args, "min_links", 1
+    ):
         raise ValueError("link range must be positive and ordered")
     if getattr(args, "source_links", 1) < 1 or getattr(args, "target_links", 1) < 1:
         raise ValueError("link counts must be positive")

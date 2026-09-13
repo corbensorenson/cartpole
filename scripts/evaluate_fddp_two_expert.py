@@ -79,6 +79,10 @@ def load_controller(path: Path, n_links: int, spec: dict[str, Any]) -> dict[str,
         "transform": transform,
         "lqr_scale": float(controller.get("lqr_scale", 1.0)),
         "lqr_control_cost": float(controller.get("lqr_control_cost", 1000.0)),
+        "lqr_weights": {
+            key: float(value)
+            for key, value in controller.get("lqr_weights", {}).items()
+        },
         "horizon_steps": int(controls.size),
         "horizon_seconds": float(controls.size * 0.02),
         "payload_summary": payload.get("summary"),
@@ -434,7 +438,13 @@ def main() -> None:
     action_dim = int(probe.action_space.shape[0])
     action_frequency_hz = float(1.0 / probe.dt)
     probe.close()
-    gain = lqr_gain(cfg, progress=1.0, fd_eps=1e-7, control_cost=1000.0)
+    gain = lqr_gain(
+        cfg,
+        progress=1.0,
+        fd_eps=1e-7,
+        control_cost=controller["lqr_control_cost"],
+        q_weights=controller["lqr_weights"],
+    )
     settle_gain = (
         hanging_lqr_gain(
             cfg,
