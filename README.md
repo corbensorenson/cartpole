@@ -188,11 +188,18 @@ fail, so the pipeline stops before promotion. See the
 [one-command n=3 frontier](runs/generalized_solver/n3_unequal_pipeline.json).
 This is the current boundary for arbitrary within-count morphology transfer;
 the uniform n=3 gate above remains valid. The deterministic continuation now
-repairs nearby routes through short exact-model waypoint solves before the
-full-horizon feedback pass. Its first curated n=3 checkpoint advanced the
-strong-morphology path from `p=0.02500` to `p=0.02525` and held upright for
-`18.80 s`; [the manifest](runs/generalized_solver/n3_unequal_waypoint_homotopy/continuation.json)
-labels this as partial continuation, not a solution of the `p=1` target.
+repairs nearby routes through adaptive exact-model waypoint horizons before the
+full-horizon feedback pass. When the original `0.48 s` horizon hit a trajectory
+branch wall, the same generic driver automatically tried `0.96 s` and `1.92 s`
+lookahead rather than adding a per-morphology controller. The curated n=3
+checkpoint has now advanced the strong-morphology path from `p=0.02500` to
+`p=0.0332279`; its exact hanging replay held upright for `18.78 s` with a
+body-aware required rail ratio of `1.156`. A fresh noisy diagnostic passed only
+**13/20**, so this remains an honest partial continuation—not a solution of the
+`p=1` target. See the
+[compact verified checkpoint](runs/generalized_solver/n3_unequal_waypoint_checkpoint.json),
+[packaged route](runs/generalized_solver/n3_unequal_p033227_route.json), and
+[noisy boundary](runs/generalized_solver/n3_unequal_p033227_noisy20.json).
 
 ## Next frontier: nine links
 

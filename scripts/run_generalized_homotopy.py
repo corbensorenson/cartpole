@@ -176,6 +176,15 @@ def waypoint_usable(path: Path) -> bool:
     )
 
 
+def waypoint_lookaheads(base_steps: int, multipliers: list[int]) -> tuple[int, ...]:
+    """Return ordered, de-duplicated deterministic waypoint horizons."""
+
+    unique = tuple(dict.fromkeys(multipliers))
+    if base_steps < 1 or not unique or any(value < 1 for value in unique):
+        raise ValueError("waypoint steps and multipliers must be positive integers")
+    return tuple(base_steps * value for value in unique)
+
+
 def hanging_state(count: int, path: Path) -> None:
     qpos = [0.0, float(np.pi)] + [0.0] * (count - 1)
     dump_json(
@@ -226,6 +235,16 @@ def main() -> None:
     parser.add_argument("--tracking-gain", type=float, default=1.0)
     parser.add_argument("--disable-waypoint-repair", action="store_true")
     parser.add_argument("--waypoint-segment-steps", type=int, default=24)
+    parser.add_argument(
+        "--waypoint-segment-multipliers",
+        type=int,
+        nargs="+",
+        default=[1, 2, 4],
+        help=(
+            "deterministic lookahead multipliers tried in order after a failed "
+            "waypoint/FDDP repair (default: 1 2 4)"
+        ),
+    )
     parser.add_argument("--waypoint-max-evaluations", type=int, default=120)
     parser.add_argument("--waypoint-endpoint-weight", type=float, default=10_000.0)
     parser.add_argument("--waypoint-control-regularization", type=float, default=1e-6)
@@ -234,6 +253,9 @@ def main() -> None:
     parser.add_argument("--waypoint-endpoint-tolerance", type=float, default=0.5)
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
+    waypoint_steps = waypoint_lookaheads(
+        args.waypoint_segment_steps, args.waypoint_segment_multipliers
+    )
 
     source_cfg = load_config(args.source_config)
     source = setup_from_config(source_cfg)
@@ -310,46 +332,69 @@ def main() -> None:
         trial_cfg = explicit_config(target_cfg, lengths, masses, label)
         cfg_path = configs_dir / f"{label}.yaml"
         save_config(trial_cfg, cfg_path)
-        waypoint_path = trials_dir / f"{label}_waypoint.json"
-        waypoint_fddp_path = trials_dir / f"{label}_waypoint_fddp.json"
         first_path = trials_dir / f"{label}_pass1.json"
         waypoint_attempted = not args.disable_waypoint_repair
         waypoint_passed = False
         waypoint_refined = False
+        waypoint_attempts: list[dict[str, Any]] = []
         passed = False
         accepted_path = first_path
         if waypoint_attempted:
-            run(
-                waypoint_command(
-                    cfg=cfg_path,
-                    controller=current_controller,
-                    output=waypoint_path,
-                    segment_steps=args.waypoint_segment_steps,
-                    max_evaluations=args.waypoint_max_evaluations,
-                    endpoint_weight=args.waypoint_endpoint_weight,
-                    control_regularization=args.waypoint_control_regularization,
-                    rail_soft_margin=args.waypoint_rail_soft_margin,
-                    rail_weight=args.waypoint_rail_weight,
-                    endpoint_tolerance=args.waypoint_endpoint_tolerance,
-                )
-            )
-            waypoint_passed = waypoint_successful(waypoint_path)
-            waypoint_refined = waypoint_usable(waypoint_path)
-            if waypoint_refined:
+            for segment_steps in waypoint_steps:
+                multiplier = segment_steps // args.waypoint_segment_steps
+                suffix = "waypoint" if multiplier == 1 else f"waypoint_x{multiplier}"
+                waypoint_path = trials_dir / f"{label}_{suffix}.json"
+                waypoint_fddp_path = trials_dir / f"{label}_{suffix}_fddp.json"
                 run(
-                    fddp_command(
+                    waypoint_command(
                         cfg=cfg_path,
-                        state=state_path,
-                        controller=waypoint_path,
-                        output=waypoint_fddp_path,
-                        iterations=args.iterations,
-                        regularization=1e-6,
-                        tracking_gain=args.tracking_gain,
-                        exact_initial_trajectory=True,
+                        controller=current_controller,
+                        output=waypoint_path,
+                        segment_steps=segment_steps,
+                        max_evaluations=args.waypoint_max_evaluations,
+                        endpoint_weight=args.waypoint_endpoint_weight,
+                        control_regularization=args.waypoint_control_regularization,
+                        rail_soft_margin=args.waypoint_rail_soft_margin,
+                        rail_weight=args.waypoint_rail_weight,
+                        endpoint_tolerance=args.waypoint_endpoint_tolerance,
                     )
                 )
-                accepted_path = waypoint_fddp_path
-                passed = successful(waypoint_fddp_path)
+                search_passed = waypoint_successful(waypoint_path)
+                usable = waypoint_usable(waypoint_path)
+                refinement_passed = False
+                waypoint_passed = waypoint_passed or search_passed
+                waypoint_refined = waypoint_refined or usable
+                if usable:
+                    run(
+                        fddp_command(
+                            cfg=cfg_path,
+                            state=state_path,
+                            controller=waypoint_path,
+                            output=waypoint_fddp_path,
+                            iterations=args.iterations,
+                            regularization=1e-6,
+                            tracking_gain=args.tracking_gain,
+                            exact_initial_trajectory=True,
+                        )
+                    )
+                    accepted_path = waypoint_fddp_path
+                    refinement_passed = successful(waypoint_fddp_path)
+                    passed = refinement_passed
+                waypoint_attempts.append(
+                    {
+                        "segment_multiplier": multiplier,
+                        "segment_steps": segment_steps,
+                        "search_passed": search_passed,
+                        "used_for_refinement": usable,
+                        "refinement_passed": refinement_passed,
+                        "artifact": file_metadata(waypoint_path),
+                        "refinement": (
+                            file_metadata(waypoint_fddp_path) if usable else None
+                        ),
+                    }
+                )
+                if passed:
+                    break
         if not passed:
             run(
                 fddp_command(
@@ -393,12 +438,7 @@ def main() -> None:
             record["waypoint"] = {
                 "search_passed": waypoint_passed,
                 "used_for_refinement": waypoint_refined,
-                "artifact": file_metadata(waypoint_path),
-                "refinement": (
-                    file_metadata(waypoint_fddp_path)
-                    if waypoint_passed
-                    else None
-                ),
+                "attempts": waypoint_attempts,
             }
         trials.append(record)
         if passed:

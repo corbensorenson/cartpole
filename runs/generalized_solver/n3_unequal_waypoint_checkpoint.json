@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "claim_status": "development_partial_morphology_continuation",
+  "not_solution_of_full_target": true,
+  "summary": "Deterministic adaptive-lookahead continuation crossed the former local branch wall and produced an independently replayed exact n=3 route at p=0.033227909301859274.",
+  "full_target": {
+    "lengths": [0.75, 1.0, 1.25],
+    "masses": [0.2, 0.3, 0.5],
+    "required_progress": 1.0
+  },
+  "checkpoint": {
+    "progress": 0.033227909301859274,
+    "lengths": [0.9916930226745352, 1.0, 1.008306977325465],
+    "masses": [0.32890294542641874, 0.3322257363566047, 0.3388713182169765],
+    "next_step": 0.00018446744073709575,
+    "campaign_trials": 35,
+    "accepted_trials": 20,
+    "rejected_trials": 15,
+    "last_accepted_trial": 34,
+    "last_rejected_trial": 35
+  },
+  "deterministic_repair": {
+    "base_segment_steps": 24,
+    "lookahead_multipliers": [1, 2, 4],
+    "accepted_segment_steps": 48,
+    "accepted_waypoint_endpoint_error_norm": 0.0125545934539975,
+    "rule": "Try longer exact-model waypoint horizons only after a shorter horizon and its exact refinement fail; promote only after uninterrupted exact replay."
+  },
+  "dimensionless": {
+    "n_links": 3,
+    "chain_length": 3.0,
+    "rail_ratio": 1.6666666666666667,
+    "usable_rail_ratio": 1.6066666666666667,
+    "force_authority": 4.077471967380224,
+    "natural_time": 0.553001263609331,
+    "cart_to_link_mass": 1.0,
+    "length_fractions": [0.3305643408915117, 0.3333333333333333, 0.336102325775155],
+    "mass_fractions": [0.32890294542641874, 0.3322257363566047, 0.3388713182169765]
+  },
+  "exact_gate": {
+    "episodes": 1,
+    "successes": 1,
+    "success_rate": 1.0,
+    "held_upright_seconds": 18.78,
+    "maximum_cart_excursion": 3.287485454999546,
+    "required_rail_ratio": 1.1558284849998486,
+    "termination_reason": "time_limit"
+  },
+  "noise_boundary": {
+    "episodes": 20,
+    "successes": 13,
+    "success_rate": 0.65,
+    "rail_violations": 7,
+    "interpretation": "This partial route is not promoted as a robust unequal-morphology solution; the bounded residual/capture layer still needs improvement before p=1 promotion."
+  },
+  "artifacts": {
+    "config": {
+      "path": "configs/generalized_n3_unequal_p033227.yaml",
+      "sha256": "6a718b2516f7b0dbebcc541cd97dedf5fecbd9b563f8ba59c69bf8c579eceb8b"
+    },
+    "controller": {
+      "path": "runs/generalized_solver/n3_unequal_p033227_route.json",
+      "sha256": "41be22c336857f36c53f3a219cbfc0d2bd4c80617100c7ef87540fb93a95e9ed"
+    },
+    "exact_gate": {
+      "path": "runs/generalized_solver/n3_unequal_p033227_exact1.json",
+      "sha256": "281f0b944efd1f3792c33191330491d0536945a2a81b19c779a6d605ee1e6a6a"
+    },
+    "noisy_gate": {
+      "path": "runs/generalized_solver/n3_unequal_p033227_noisy20.json",
+      "sha256": "b0238ad1e2a6e1f39adb596f08007d8b8831de4326a5b2a2eeec2e4072fab841"
+    }
+  }
+}

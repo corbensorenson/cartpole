@@ -255,21 +255,32 @@ hide this structural error.
 The first such deterministic repair is now implemented. Transformed-coordinate
 differences are evaluated on the wrapped angle manifold, so crossing `-pi/pi`
 cannot masquerade as a large discontinuity. The continuation driver divides a
-neighboring accepted route into 24-control (`0.48 s`) segments, uses bounded
-exact-target least squares to reach each neighboring waypoint from the previous
-*exact* target endpoint, and then gives the resulting feasible route to
-full-horizon Box-FDDP for time-varying feedback. This is a deterministic
-multiple-shooting-style bridge; it does not learn a route or relax the final
-gate.
+neighboring accepted route into bounded exact-target waypoint problems, starts
+with 24 controls (`0.48 s`), and tries deterministic `2x` and `4x` lookahead
+only if the cheaper horizon and its exact refinement fail. Every retained
+waypoint trajectory must be finite and rail-safe. Full-horizon Box-FDDP then
+builds time-varying feedback, and only uninterrupted exact replay can advance
+the homotopy. This is a deterministic multiple-shooting-style bridge; it does
+not learn a route or relax the final gate.
 
-The [curated n=3 waypoint checkpoint](../runs/generalized_solver/n3_unequal_waypoint_homotopy/continuation.json)
-advances the strong-target homotopy from `p=0.02500` to `p=0.02525`. All 24
-waypoint endpoints remained within `0.02024` dimensionless norm of their
-reference, the largest normalized action correction was `0.21022`, and the
-exact feedback refinement held upright for `18.80 s` with `3.0441 m` maximum
-cart excursion. The manifest stops at its declared one-trial budget and records
-the next proposed step. This validates the repair mechanism at one incremental
-step; it is not evidence that the full `p=1` morphology is solved.
+That adaptive horizon crossed the earlier local branch wall. The
+[compact verified n=3 checkpoint](../runs/generalized_solver/n3_unequal_waypoint_checkpoint.json)
+advances the strong-target homotopy from `p=0.02500` to
+`p=0.033227909301859274` over 35 accepted/rejected trials. At the last accepted
+step, the 24-control repair left the rail-safe branch, while the generic
+48-control repair reached its waypoints with `0.0125546` maximum dimensionless
+endpoint error. Its exact feedback replay held upright for `18.78 s`, used
+`3.28749 m` maximum cart-center excursion, and measured a `1.15583` body-aware
+required rail ratio. The [packaged route](../runs/generalized_solver/n3_unequal_p033227_route.json)
+and [exact gate](../runs/generalized_solver/n3_unequal_p033227_exact1.json) are
+published independently of the bulky local campaign traces.
+
+This is still a development checkpoint, not a robust solution. The
+[20-episode noisy diagnostic](../runs/generalized_solver/n3_unequal_p033227_noisy20.json)
+passed 13 episodes and hit the rail in 7. That failure is retained because it
+locates the next thin-layer requirement: stronger bounded capture/residual
+adaptation before further morphology promotion. Neither the checkpoint nor the
+exact replay is evidence that the full `p=1` morphology is solved.
 
 ## Rail-length relationship
 
@@ -349,6 +360,19 @@ PYTHONPATH=src python scripts/generalized_swingup_solver.py transfer \
   --source-links 3 --target-links 4 \
   --controller runs/generalized_solver/n3_route.json \
   --out runs/generalized_solver/n3_to_n4_warm_start.json
+
+# Resume bounded morphology continuation with adaptive deterministic lookahead.
+PYTHONPATH=src:scripts python scripts/run_generalized_homotopy.py \
+  --source-config runs/generalized_solver/n3_uniform_exact.yaml \
+  --source-controller runs/generalized_solver/n3_route.json \
+  --target-config configs/generalized_n3_unequal.yaml \
+  --output-dir runs/generalized_solver/n3_unequal_waypoint_homotopy \
+  --waypoint-segment-steps 24 \
+  --waypoint-segment-multipliers 1 2 4 --resume
+
+PYTHONPATH=src:scripts python \
+  scripts/verify_generalized_homotopy_checkpoint.py \
+  runs/generalized_solver/n3_unequal_waypoint_checkpoint.json
 
 PYTHONPATH=src python scripts/evaluate_generalized_route_library.py \
   --config configs/swingup7_uniform.yaml --n-links 5 \

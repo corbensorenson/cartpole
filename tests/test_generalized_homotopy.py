@@ -5,6 +5,7 @@ from pathlib import Path
 from scripts.run_generalized_homotopy import (
     fddp_command,
     waypoint_command,
+    waypoint_lookaheads,
     waypoint_usable,
 )
 
@@ -68,3 +69,7 @@ def test_rail_safe_exact_waypoint_is_usable_even_if_reference_gate_failed(
         encoding="utf-8",
     )
     assert waypoint_usable(artifact)
+
+
+def test_waypoint_lookaheads_expand_and_deduplicate() -> None:
+    assert waypoint_lookaheads(24, [1, 2, 2, 4]) == (24, 48, 96)

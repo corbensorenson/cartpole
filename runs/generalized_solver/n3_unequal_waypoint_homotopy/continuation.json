@@ -1,19 +1,19 @@
 {
   "claim_status": "development_continuation_not_record_evidence",
   "current_controller": {
-    "bytes": 2269258,
-    "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0024_p0.032257344_waypoint_fddp.json",
-    "sha256": "0b949702edf0c386f0265cac521f47f1635268a960f10013dfdee23de9808ea5"
+    "bytes": 273200,
+    "path": "runs/generalized_solver/n3_unequal_p033227_route.json",
+    "sha256": "41be22c336857f36c53f3a219cbfc0d2bd4c80617100c7ef87540fb93a95e9ed"
   },
-  "next_step": 1.7179869184000015e-05,
-  "progress": 0.032257343779840006,
+  "next_step": 0.00018446744073709575,
+  "progress": 0.033227909301859274,
   "schema_version": 1,
   "source_config": {
     "bytes": 2097,
     "path": "runs/generalized_solver/n3_uniform_exact.yaml",
     "sha256": "dcf1c0ba28da9cd295eaed4cf04eec014ad86310d1122a1c158e58fbd4bebbc0"
   },
-  "status": "minimum_step_frontier_reached",
+  "status": "trial_budget_exhausted",
   "target_links": 3,
   "trials": [
     {
@@ -1462,7 +1462,863 @@
         "search_passed": false,
         "used_for_refinement": true
       }
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 1707,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0026_p0.032274524.yaml",
+        "sha256": "ebde556ff90ba13aec4cde56338d633474476d05ca759bcfe60ad43100fac647"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0000000000000002,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.3306437896959146,
+          0.3333333333333333,
+          0.336022876970752
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.3290300635134635,
+          0.3322575158783659,
+          0.3387124206081707
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.032257343779840006,
+      "proposed_progress": 0.03227452364902401,
+      "result": {
+        "bytes": 2276412,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0026_p0.032274524_waypoint_x2_fddp.json",
+        "sha256": "18263d6654bfa59a71da183be595131eb3a9ab5687d17433a9063accbb54d4ce"
+      },
+      "step": 1.717986918400166e-05,
+      "trial": 26,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 364978,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0026_p0.032274524_waypoint.json",
+              "sha256": "fabd0dcbb3ac9334594c373b56430b3c3d38f2c4c8bfc97e9f30e925859cf287"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 360709,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0026_p0.032274524_waypoint_x2.json",
+              "sha256": "28fe4db895992eea13c846bee44c48d49218a0f0481ff4080617f11047864c3f"
+            },
+            "refinement": {
+              "bytes": 2276412,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0026_p0.032274524_waypoint_x2_fddp.json",
+              "sha256": "18263d6654bfa59a71da183be595131eb3a9ab5687d17433a9063accbb54d4ce"
+            },
+            "refinement_passed": true,
+            "search_passed": true,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": true
+          }
+        ],
+        "search_passed": true,
+        "used_for_refinement": true
+      }
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 1694,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0027_p0.032302011.yaml",
+        "sha256": "4ed850c833276716caeb1948829a371f1819c90f782e7e708e632a7021ed5a8c"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.3306414990466901,
+          0.3333333333333333,
+          0.33602516761997653
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.3290263984747042,
+          0.33225659961867604,
+          0.33871700190661974
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.03227452364902401,
+      "proposed_progress": 0.032302011439718406,
+      "result": {
+        "bytes": 2273835,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0027_p0.032302011_waypoint_x2_fddp.json",
+        "sha256": "43a8f28d80f0697c437577b2bbc7d55cc0558c17471cd9e084a49f02eb2ff303"
+      },
+      "step": 2.7487790694398495e-05,
+      "trial": 27,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 365729,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0027_p0.032302011_waypoint.json",
+              "sha256": "3650a76eaf3b816041030f47b6cfe5dbbca05458e0f52999a3546fff3b523d2a"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 361265,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0027_p0.032302011_waypoint_x2.json",
+              "sha256": "6b4b13d8508285fb467dc904588392442a96f65a173924b21b456dff197b453b"
+            },
+            "refinement": {
+              "bytes": 2273835,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0027_p0.032302011_waypoint_x2_fddp.json",
+              "sha256": "43a8f28d80f0697c437577b2bbc7d55cc0558c17471cd9e084a49f02eb2ff303"
+            },
+            "refinement_passed": true,
+            "search_passed": true,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": true
+          }
+        ],
+        "search_passed": true,
+        "used_for_refinement": true
+      }
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 1707,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0028_p0.032345992.yaml",
+        "sha256": "927e99cde1d8e60a13339bac24c7acd97fd0d3fb9eb10aef3eb9de2eacfad3d6"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0000000000000002,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.33063783400793084,
+          0.3333333333333333,
+          0.3360288326587358
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.3290205344126894,
+          0.3322551336031724,
+          0.33872433198413826
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.032302011439718406,
+      "proposed_progress": 0.032345991904829445,
+      "result": {
+        "bytes": 2272816,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0028_p0.032345992_waypoint_x2_fddp.json",
+        "sha256": "75d8d871721fd6c9c56f3d218f09734c568c4be13a470ee9b4c815ffdc740130"
+      },
+      "step": 4.398046511103898e-05,
+      "trial": 28,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 365166,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0028_p0.032345992_waypoint.json",
+              "sha256": "ba9ce6b9d96ccb5963c5470c45c14a4b01dbe1b8b90fb286532fc480cc52fce7"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 361008,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0028_p0.032345992_waypoint_x2.json",
+              "sha256": "567f4d366794bfa55c74f6857457e53ec8bc14228be1067f16766e38f15d0b6a"
+            },
+            "refinement": {
+              "bytes": 2272816,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0028_p0.032345992_waypoint_x2_fddp.json",
+              "sha256": "75d8d871721fd6c9c56f3d218f09734c568c4be13a470ee9b4c815ffdc740130"
+            },
+            "refinement_passed": true,
+            "search_passed": true,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": true
+          }
+        ],
+        "search_passed": true,
+        "used_for_refinement": true
+      }
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 1705,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0029_p0.032416361.yaml",
+        "sha256": "580360d6e70301f8e686ed545bfa5a6fe8b6a74a9a428eade96b2aee55f3cace"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0000000000000002,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.3306319699459161,
+          0.3333333333333333,
+          0.3360346967207506
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.32901115191346575,
+          0.33225278797836644,
+          0.33873606010816787
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.032345991904829445,
+      "proposed_progress": 0.03241636064900711,
+      "result": {
+        "bytes": 2278605,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0029_p0.032416361_waypoint_x2_fddp.json",
+        "sha256": "9e498d55fe75bec9deb54ccbfb6d165ff0695d131b7d5e9631fde313fd73baf5"
+      },
+      "step": 7.036874417766514e-05,
+      "trial": 29,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 365213,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0029_p0.032416361_waypoint.json",
+              "sha256": "5f03a35b6025921f077b591b2c8a867a738d58d0b3c05d5bb425583f6fbf106c"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 360912,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0029_p0.032416361_waypoint_x2.json",
+              "sha256": "09c9a617fcdefeb3b82bb4a032e28773adea0b49575d4f8b5dea008108e3d020"
+            },
+            "refinement": {
+              "bytes": 2278605,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0029_p0.032416361_waypoint_x2_fddp.json",
+              "sha256": "9e498d55fe75bec9deb54ccbfb6d165ff0695d131b7d5e9631fde313fd73baf5"
+            },
+            "refinement_passed": true,
+            "search_passed": true,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": true
+          }
+        ],
+        "search_passed": true,
+        "used_for_refinement": true
+      }
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 1690,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0030_p0.032528951.yaml",
+        "sha256": "eb0f2f62d562256edfd8a2b909db27de94ff8ca8d242e6771a2ac578754c9ec7"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.3306225874466924,
+          0.3333333333333333,
+          0.3360440792199743
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.3289961399147078,
+          0.3322490349786769,
+          0.3387548251066152
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.03241636064900711,
+      "proposed_progress": 0.03252895063969137,
+      "result": {
+        "bytes": 2279485,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0030_p0.032528951_waypoint_x2_fddp.json",
+        "sha256": "866a4d691a1bcd2de02d64fe5b3df78079f3feb13f11d0fb0a2c2b53e8f90f96"
+      },
+      "step": 0.00011258999068426007,
+      "trial": 30,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 365718,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0030_p0.032528951_waypoint.json",
+              "sha256": "6671311b2d8a84938298cc159997df70f6b9a01ebd41dfc77a97bb301f9464ac"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 361165,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0030_p0.032528951_waypoint_x2.json",
+              "sha256": "38055bfcfbb9fdfbb65c7de71610839c30b7a53f032eec83b0888555c99d4be6"
+            },
+            "refinement": {
+              "bytes": 2279485,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0030_p0.032528951_waypoint_x2_fddp.json",
+              "sha256": "866a4d691a1bcd2de02d64fe5b3df78079f3feb13f11d0fb0a2c2b53e8f90f96"
+            },
+            "refinement_passed": true,
+            "search_passed": true,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": true
+          }
+        ],
+        "search_passed": true,
+        "used_for_refinement": true
+      }
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 1692,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0031_p0.032709095.yaml",
+        "sha256": "c74969a15992ebc5110e02c62fcff767b86065b93539d13087c2f33b5dd2214e"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.33060757544793445,
+          0.3333333333333333,
+          0.3360590912187322
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.3289721207166952,
+          0.3322430301791738,
+          0.33878484910413104
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.03252895063969137,
+      "proposed_progress": 0.03270909462478619,
+      "result": {
+        "bytes": 2278351,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0031_p0.032709095_waypoint_x2_fddp.json",
+        "sha256": "8f64bfff8382c5ea9c262aeeec5178aa0687da014bfdec0814707c5323b3580b"
+      },
+      "step": 0.00018014398509481888,
+      "trial": 31,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 365137,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0031_p0.032709095_waypoint.json",
+              "sha256": "f3a3fd390691661f218675cecf0d916636aad02d19733a7cb94ee1c80a68cfad"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 361197,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0031_p0.032709095_waypoint_x2.json",
+              "sha256": "cccc1817c63609409f13bef35ed2f9a4b59b751f2ee6819082b54ea239c92a74"
+            },
+            "refinement": {
+              "bytes": 2278351,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0031_p0.032709095_waypoint_x2_fddp.json",
+              "sha256": "8f64bfff8382c5ea9c262aeeec5178aa0687da014bfdec0814707c5323b3580b"
+            },
+            "refinement_passed": true,
+            "search_passed": true,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": true
+          }
+        ],
+        "search_passed": true,
+        "used_for_refinement": true
+      }
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 1707,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0032_p0.032997325.yaml",
+        "sha256": "f2e57218a6139402474208ad89e6c83c0591983d8ede3cd56ed2af2f75c499de"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0000000000000002,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.33058355624992186,
+          0.3333333333333333,
+          0.3360831104167448
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.328933689999875,
+          0.33223342249996873,
+          0.33883288750015633
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.03270909462478619,
+      "proposed_progress": 0.032997325000937903,
+      "result": {
+        "bytes": 2273652,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0032_p0.032997325_waypoint_x2_fddp.json",
+        "sha256": "119b4d9357746573809302708d750fe6edf45171089acee6ac1ac245ebdd1042"
+      },
+      "step": 0.0002882303761517144,
+      "trial": 32,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 365117,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0032_p0.032997325_waypoint.json",
+              "sha256": "097647e88d80923c256449d8145ef9937398b66734b77b7c5b479bcf6967fbde"
+            },
+            "refinement": {
+              "bytes": 1079688,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0032_p0.032997325_waypoint_fddp.json",
+              "sha256": "d5cadfcb9513d94f255da2dc4c89f2352341ce954a3d7b210376e76cf4d575ba"
+            },
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": true
+          },
+          {
+            "artifact": {
+              "bytes": 361268,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0032_p0.032997325_waypoint_x2.json",
+              "sha256": "14ef4717ffa7079d60c6567a2d6b42a9bab984e58ac0bfbe9fc4d252d57e4719"
+            },
+            "refinement": {
+              "bytes": 2273652,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0032_p0.032997325_waypoint_x2_fddp.json",
+              "sha256": "119b4d9357746573809302708d750fe6edf45171089acee6ac1ac245ebdd1042"
+            },
+            "refinement_passed": true,
+            "search_passed": true,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": true
+          }
+        ],
+        "search_passed": true,
+        "used_for_refinement": true
+      }
+    },
+    {
+      "accepted": false,
+      "config": {
+        "bytes": 1690,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0033_p0.033458494.yaml",
+        "sha256": "84c929099a991b7295353ad81271581f6b82ead008e43d13e402546557a5842d"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.3305451255331016,
+          0.3333333333333333,
+          0.336121541133565
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.3288722008529626,
+          0.33221805021324063,
+          0.3389097489337968
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.032997325000937903,
+      "proposed_progress": 0.033458493602780644,
+      "result": {
+        "bytes": 575921,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0033_p0.033458494_pass2.json",
+        "sha256": "ed4c689be84acf21345ecb71a0a41e7267b87d62c40e11270c101a406f2c5df3"
+      },
+      "step": 0.0004611686018427402,
+      "trial": 33,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 365256,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0033_p0.033458494_waypoint.json",
+              "sha256": "f5819abc1d8bfb8ef2ac132da4aa6e3abac5c41cf6689373e0e0ebef946cde8d"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 360734,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0033_p0.033458494_waypoint_x2.json",
+              "sha256": "1a6fce512c59df6ecae769757b8d7e2fabb678fc8c4bd421bbd8dde1590c568b"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 358119,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0033_p0.033458494_waypoint_x4.json",
+              "sha256": "6118066ddf89345443f08e3178a997d85b19ebcc2c84bb309cb8868b4bd6aeb8"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 4,
+            "segment_steps": 96,
+            "used_for_refinement": false
+          }
+        ],
+        "search_passed": false,
+        "used_for_refinement": false
+      }
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 1690,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0034_p0.033227909.yaml",
+        "sha256": "f3c2f8730159cc42d66138060b7c9bb9c937e7e34af3b657448cefa5e009c4ce"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.3305643408915117,
+          0.3333333333333333,
+          0.336102325775155
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.32890294542641874,
+          0.3322257363566047,
+          0.3388713182169765
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.032997325000937903,
+      "proposed_progress": 0.033227909301859274,
+      "result": {
+        "bytes": 2273579,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0034_p0.033227909_waypoint_x2_fddp.json",
+        "sha256": "d2ed76741252ada03593185b9476465f30b17820f4ccbd9823e029c8a1a92707"
+      },
+      "step": 0.0002305843009213701,
+      "trial": 34,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 365568,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0034_p0.033227909_waypoint.json",
+              "sha256": "3faf2beea24fe5e0fbcb68a2dacb29b11d2f976d3b544750a9800a94d1e20105"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 361264,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0034_p0.033227909_waypoint_x2.json",
+              "sha256": "5293495096205996dc8706cae0d10f93d0aaa974388a11bf267d2d3dffac4047"
+            },
+            "refinement": {
+              "bytes": 2273579,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0034_p0.033227909_waypoint_x2_fddp.json",
+              "sha256": "d2ed76741252ada03593185b9476465f30b17820f4ccbd9823e029c8a1a92707"
+            },
+            "refinement_passed": true,
+            "search_passed": true,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": true
+          }
+        ],
+        "search_passed": true,
+        "used_for_refinement": true
+      }
+    },
+    {
+      "accepted": false,
+      "config": {
+        "bytes": 1709,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0035_p0.033596844.yaml",
+        "sha256": "12e1466bfdc8176eab3bf2e1191a34f777d6e0613fdc797800c49085bfa87e9a"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0000000000000002,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.33053359631805557,
+          0.3333333333333333,
+          0.3361330703486112
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.3288537541088889,
+          0.33221343852722224,
+          0.3389328073638889
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.033227909301859274,
+      "proposed_progress": 0.03359684418333347,
+      "result": {
+        "bytes": 494281,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0035_p0.033596844_pass2.json",
+        "sha256": "4717a99e4c1a83f12ed05a22e52ed89c4b302bea841976b81df47b1afaf05177"
+      },
+      "step": 0.00036893488147419357,
+      "trial": 35,
+      "waypoint": {
+        "attempts": [
+          {
+            "artifact": {
+              "bytes": 365516,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0035_p0.033596844_waypoint.json",
+              "sha256": "67d60c38f0c9d28e4d2b60117c19928540b3156a656e7d900a94b6bb956318c9"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 1,
+            "segment_steps": 24,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 360455,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0035_p0.033596844_waypoint_x2.json",
+              "sha256": "e15d422608e41306d6dad778c1c542cc10db56fe8bada83b1ee89da2efeb17cc"
+            },
+            "refinement": null,
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 2,
+            "segment_steps": 48,
+            "used_for_refinement": false
+          },
+          {
+            "artifact": {
+              "bytes": 358296,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0035_p0.033596844_waypoint_x4.json",
+              "sha256": "e612b3ac2fdf847d9b26d24dd35d674f7fb993db5b1ed07bbad130480b6e3a90"
+            },
+            "refinement": {
+              "bytes": 1143406,
+              "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0035_p0.033596844_waypoint_x4_fddp.json",
+              "sha256": "a6d811fcc3c116edb6d713abf57ab7e2233cafc59988e3b9d0d9e3ebfb7f608f"
+            },
+            "refinement_passed": false,
+            "search_passed": false,
+            "segment_multiplier": 4,
+            "segment_steps": 96,
+            "used_for_refinement": true
+          }
+        ],
+        "search_passed": false,
+        "used_for_refinement": true
+      }
     }
   ],
-  "updated_at": "2026-09-13T16:05:38+00:00"
+  "updated_at": "2026-09-13T16:35:30+00:00"
 }
