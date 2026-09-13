@@ -1493,3 +1493,30 @@ controller and preserve the `14.0 s` settled launch, saved feedback route,
 angle-weighted terminal objective, parked cart target, and terminal LQR while
 re-optimizing only the link-count-dependent route. The public nine-link bundle
 is an internal benchmark result, not an external world-record claim.
+
+## Ten-Link Frontier Diagnostics (2026-09-13)
+
+The ten-link campaign is active, but it has not produced a canonical solve.
+The uniform ten-link plant, not a ghost-link or temporarily supported plant, is
+the acceptance target. The following experiments are retained as measured
+diagnostics:
+
+| Experiment | Result | Decision |
+| --- | --- | --- |
+| Direct nine-to-ten route transfer | Brief upright neighborhood crossing, followed by internal-mode momentum and rail loss | Preserve the nine-link launch contract, but retime and reshape the ten-link terminal route |
+| Locked ghost continuation | `29.98 s` hold at release `1e-7`--`2e-7`; failure by `3e-7` | Training wheel only; do not count as ten-link evidence |
+| Free tiny ghost with damping/stiffness | `29.98 s` at the supported start; `1%` release accepted and `2.5%` failed | Temporary support is causal and must be removed before promotion |
+| Energy/modal controller | `0/20` tested uniform-ten episodes | Energy reachability without internal phase synchronization is insufficient |
+| Full-length free light-tip gradient | A `0.033 m`/`0.0001 kg` free tip reached the `+/-6 m` rail; one FDDP repair held upright only `0.18 s` | Light mass alone is not a valid continuation endpoint |
+| Shortened nine-link backbone | Re-timing the `2.7 m` backbone failed before capture and reached `6.07 m` | The added mode changes the whole-chain timing, not just the distal link |
+| Cart-position CEM | All ten absolute angles crossed within `0.139 rad`, but hinge RMS was `2.555 rad/s` and upright streak was `0.02 s` | A brief angle crossing is not a capture handoff |
+| Long-tail online MPC | Six-second replay had no low-momentum interval, `0.02 s` upright streak, and ended at `1.558 rad` maximum angle | The measured crossing remains outside the tested capture basin |
+| Force CEM seeded from cart-position excitation | Best point after 30 iterations remained `2.039 rad` angle with `4.668 rad/s` hinge RMS and `224.5` capture violation | Force refinement did not repair the smooth-crossing seed |
+
+The strongest current positive signals are still the two curriculum diagnostics
+`runs/generalized_solver/n10_ghost_unlocked_d1k10_p0_cost1000.json` and
+`runs/generalized_solver/n10_ghost_fine_p2e-7_cost2000.json`. They are not
+promotion artifacts because they depend on temporary support or an effectively
+locked inserted mode. The next route search must preserve incumbent rollback,
+use the saved nine-link parked launch, score the downstream capture value at
+the actual terminal state, and remove every support before any 10-link claim.
