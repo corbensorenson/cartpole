@@ -3,7 +3,8 @@
   "generated_at": "2026-09-13T11:21:47+00:00",
   "claim_status": "development_analytic_warm_start_not_solved",
   "not_solution": true,
-  "summary": "A zero-learned-parameter modal controllability schedule gives the best generalized n=6 upright approach so far, but retains excessive angular velocity and rail demand and is not a swing-up-and-hold solution.",
+  "summary": "Historical analytic n=6 warm-start checkpoint. It retained excessive angular velocity and rail demand by itself; a later exact endpoint refinement and feedback pass promoted n=6.",
+  "superseded_by": "runs/generalized_solver/frontier_n6.json",
   "n_links": 6,
   "morphology": {
     "total_chain_length": 3.0,
@@ -87,7 +88,7 @@
     "box_fddp_result": "rejected; exact warm-start refinement became numerically unstable and exited the diagnostic rail"
   },
   "reproduce": "PYTHONPATH=src python scripts/materialize_modal_phase_seed.py --config configs/swingup7_uniform.yaml --n-links 6 --seconds 3.9 --override env.rail_limit=12.0 --out runs/generalized_solver/n6_analytic_modal_seed_h3p9.json",
-  "reproduce_continuation": "make generalized-modal-continue6",
+  "reproduce_continuation": "make generalized-endpoint-refine6",
   "full_local_artifact_sha256": "c60097d4e62c00c04fd0fbd3cb4dfc3e07bca78bf1fb7cd9dac74fe2998d7e8c",
   "controls_sha256": "85a51e8d32a0b3b71a49f6f325469f6276f84e15ae28b406226ae9c36b845dc9"
 }

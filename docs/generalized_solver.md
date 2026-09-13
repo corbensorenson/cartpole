@@ -112,7 +112,9 @@ proposal produce a handoff that exact tail optimization could arrest. A final
 full-horizon Box-FDDP pass from hanging supplied stabilizing feedback for the
 entire route. Allowing phase-adaptive skips reduced robustness; strict
 time-order replay with local feedback passed. This promotes five links without
-adding per-link learned parameters. Six links is the next unsolved stage.
+adding per-link learned parameters. Six links then required an analytic modal
+controllability seed and an exact endpoint sensitivity correction; it did not
+require a neural policy.
 
 The online adapter estimates only actuator effectiveness and bias. It projects
 observed one-step model error onto the exact model's action Jacobian, fits
@@ -156,16 +158,21 @@ upright requirement.
 | 3 | 20/20 | modal route -> full-horizon Box-FDDP -> exact LQR; mirror selection | 1.0008 |
 | 4 | 20/20 | modal-ranked PFL handoff -> full-horizon Box-FDDP -> exact LQR; mirror selection | 0.9953 |
 | 5 | 20/20 | PFL handoff -> rail continuation -> tail/full-horizon Box-FDDP -> exact LQR; mirror selection | 1.1706 |
+| 6 | 20/20 | analytic modal seed -> bounded residual -> endpoint Gauss--Newton -> Box-FDDP -> exact LQR; mirror selection | 1.0929 |
+| 7 | 20/20 shared evaluator; 100/100 release | frozen Box-FDDP reference route -> exact LQR; mirror selection in shared gate | 0.8501 |
 
 Evidence: [n=1 gate](../runs/generalized_solver/energy_n1_noisy20_v2.json),
-[n=2 gate](../runs/generalized_solver/n2_gate.json), and
-[n=3 gate](../runs/generalized_solver/n3_gate.json), and
-[n=4 gate](../runs/generalized_solver/n4_gate_20.json), and
-[n=5 gate](../runs/generalized_solver/n5_gate_20.json).
+[n=2 gate](../runs/generalized_solver/n2_gate.json),
+[n=3 gate](../runs/generalized_solver/n3_gate.json),
+[n=4 gate](../runs/generalized_solver/n4_gate_20.json),
+[n=5 gate](../runs/generalized_solver/n5_gate_20.json),
+[n=6 gate](../runs/generalized_solver/n6_gate_20.json), and
+[n=7 shared-architecture gate](../runs/generalized_solver/n7_gate_20.json).
 Prediction and uninterrupted execution agree on every accepted n=2 through
-n=5 episode. The [n=5 frontier artifact](../runs/generalized_solver/frontier_n5.json)
+n=7 episode. The [n=5 frontier artifact](../runs/generalized_solver/frontier_n5.json)
 records the three-metre failure boundary, rail continuation, deterministic
-repair, and accepted gate.
+repair, and accepted gate. The [n=6 promotion record](../runs/generalized_solver/frontier_n6.json)
+records the new full-rank endpoint correction and accepted gate.
 
 ## Current reproducible commands
 
@@ -194,19 +201,21 @@ PYTHONPATH=src python scripts/evaluate_generalized_route_library.py \
   --episodes 20 --seed 78001 --conditioning-seconds 15 \
   --tracking-gain-scale 1 --phase-window 0 \
   --out runs/generalized_solver/n5_gate_20.json
+
+# Rebuild the n=6 deterministic/modal route and thin exact-model refinements.
+make generalized-endpoint-refine6
 ```
 
 The morphology table and transfer output are analysis/warm starts, not success
 claims. Promotion requires exact optimization followed by independent noisy
 evaluation with rail checks and a five-second upright hold.
 
-## Current six-link boundary
+## Six-link deterministic promotion
 
-Six links has not been promoted. Arc-length transfer from both accepted n=5
-and the frozen n=7 release produced exact, rail-feasible target-plant warm
-starts, but neither direct replay nor full-horizon Box-FDDP reached capture.
-Increasing the diagnostic rail from 6 m to 12 m did not fix the n=7-to-n=6
-route, which rules out rail clipping as that branch's primary failure.
+Six links now passes the bottom-up 20-episode development gate. Earlier
+arc-length transfers from both n=5 and the frozen n=7 release failed even with
+large diagnostic rail headroom, so the successful branch starts from the
+morphology itself rather than copying a neighboring route.
 
 The fixed-size 13-parameter PFL search reached 0.936 rad from upright at its
 best exact-modal handoff, but retained too much absolute-rate and internal-mode
@@ -215,16 +224,17 @@ collective-mode pumping, gated internal-mode damping, and a modal acceleration
 limit while keeping parameter count independent of links. It reduced unwanted
 motion but did not improve the complete handoff score.
 
-The next deterministic layer is now implemented. It builds the exact hanging
+The decisive deterministic layer builds the exact hanging
 small-oscillation model from the measured mass, stiffness, damping, and cart
 coupling matrices, discretizes it on the plant's natural clock, and solves a
 regularized finite-horizon controllability-Gramian problem. The resulting
 acceleration schedule has no learned or per-link tuning parameters. At n=6, a
 3.9 s schedule placed the *linear* model within `5.36e-4` of its complete target
 and the exact nonlinear plant passed within `0.1783 rad` of upright at 2.56 s.
-That is the best six-link approach on this generalized track, but its
+That analytic approach reached six links, but its
 `3.9028 rad/s` absolute angular-rate RMS and body-aware required rail ratio
-`1.9464` are far outside the capture envelope. It is a warm start, not a solve.
+`1.9464` were far outside the capture envelope, so this stage remained only a
+warm start.
 
 This experiment also exposed an action-precision trap: tail CEM had evaluated
 float64 actions while `env.step` accepts float32 actions. The chaotic n=6
@@ -244,10 +254,7 @@ PYTHONPATH=src python scripts/materialize_modal_phase_seed.py \
   --out runs/generalized_solver/n6_analytic_modal_seed_h3p9.json
 ```
 
-The next step is deterministic nonlinear continuation that jointly penalizes
-cart travel and terminal modal velocity before Box-FDDP, followed by the same
-noisy gate and lower-count regressions. See the
-[compact frontier record](../runs/generalized_solver/frontier_n6.json) and
+See the [promotion record](../runs/generalized_solver/frontier_n6.json) and
 [analytic checkpoint](../runs/generalized_solver/frontier_n6_analytic_phase.json).
 
 ### Whole-route nonlinear continuation
@@ -270,14 +277,32 @@ On n=6, 100 barrier iterations reduced violation from `8.7709` to `4.1654`.
 The best serial state at 4.18 s had `0.1772 rad` maximum angle, `1.0144 rad/s`
 hinge RMS, `2.2515 rad/s` absolute-rate RMS, cart position `0.3435 m`, and cart
 velocity `-0.4601 m/s`. Maximum cart-center travel fell to `4.6148 m`, a
-body-aware rail ratio of `1.5983`. This is meaningful progress but still not a
-valid handoff.
+body-aware rail ratio of `1.5983`. That intermediate was still not a valid
+handoff.
 
 Exact upright modal decomposition localizes the remaining error: `98.05%` of
 the measured modal energy is in the first collective mode and only `1.95%` in
 all internal modes combined. The core solver now also exposes a finite-horizon
 minimum-energy modal transition from any measured state, not only the hanging
 equilibrium. Direct linear capture-tail probes were not nonlinear-feasible at
-this energy, and Box-FDDP became unstable, so neither is promoted. The next
-deterministic continuation should shape a phase-paired collective-mode braking
-segment inside the full route rather than adding a larger learned controller.
+this energy. Instead, the endpoint refiner finite-differenced all 14 terminal
+coordinates against 48 smooth correction knots through the ordinary float32
+`env.step` path. Its Jacobian retained full rank 14. Damped minimum-norm
+Gauss--Newton reduced the endpoint to `0.09335 rad` maximum angle,
+`0.38612 rad/s` hinge-rate RMS, `0.73249 rad/s` absolute-rate RMS, `0.52950 m`
+cart offset, and `0.30060 m/s` cart speed. Every declared handoff limit passed.
+
+Box-FDDP then supplied time-varying feedback around that exact route and the
+upright Riccati controller held for the remainder of the 30-second episode.
+The route plus its exact planar mirror passed `20/20` independent noisy,
+uninterrupted episodes on a `+/-4.0 m` cart-center rail. Every prediction
+matched execution, all episodes reached the time limit, minimum hold was
+`26.06 s`, maximum cart-center travel was `3.09881 m`, and the worst
+body-aware rail ratio was `1.09294`.
+
+This closes uniform 3 m/1 kg link-count coverage from n=1 through n=7 under one
+runtime recipe and the explicitly declared per-rung rails. It does not yet
+prove automatic synthesis for arbitrary unequal lengths/masses or n>=8. In
+particular, the n=7 shared gate consumes the already frozen record route;
+regenerating that route from the new analytic modal seed remains a useful
+back-check, while n=8 is the next synthesis test.

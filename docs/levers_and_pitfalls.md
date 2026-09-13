@@ -1528,3 +1528,31 @@ tracking passed all five over feedback scales from 0.5 through 1.25, then
 passed the independent 20-seed gate at scale 1.0. Higher-link work should keep
 the optimized route clock deterministic unless a phase change is proven safe
 by a separate gate.
+
+## Bottom-Up Six-Link Promotion (2026-09-13)
+
+The morphology-derived n=6 modal route is now promoted through the generalized
+development gate. The capture-barrier CEM alone remained outside the handoff
+envelope, but it provided a useful nonlinear route on which the exact endpoint
+map had full rank: all 14 terminal cart/link position and velocity coordinates
+were locally controllable through 48 smooth action-correction knots.
+
+A staged damped Gauss--Newton solve through the ordinary float32 `env.step`
+path reduced the 4.18-second endpoint to `0.09335 rad` maximum angle,
+`0.38612 rad/s` hinge-rate RMS, `0.73249 rad/s` absolute-rate RMS, `-0.52950 m`
+cart position, and `0.30060 m/s` cart speed. This passes all five declared
+handoff limits. A 60-iteration exact-MuJoCo Box-FDDP pass was feasible but hit
+its iteration limit rather than reporting formal convergence; its resulting
+time-varying feedback nevertheless replayed successfully and handed off to
+upright LQR.
+
+The packaged route and its exact planar mirror passed `20/20` independent,
+uninterrupted noisy hanging-start episodes at scale-1 route feedback and no
+phase skips. All 20 reached the time limit, each held upright for `26.06 s`,
+maximum cart-center travel was `3.09881 m`, and the maximum body-aware required
+rail ratio was `1.09294`. This is an upper bound for the tested controller on a
+`+/-4.0 m` center rail, not a minimum-rail certificate. The n=1 through n=5
+gates remain the regression set; the frozen n=7 route also passes the shared
+evaluator `20/20` with its published 10-second conditioning and scale-2 route
+feedback. The remaining research boundary is synthesis for arbitrary unequal
+morphologies and n>=8, not whether the shared runtime can execute n=1...7.

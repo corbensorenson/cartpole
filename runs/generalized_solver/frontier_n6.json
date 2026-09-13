@@ -1,84 +1,72 @@
 {
-  "schema_version": 1,
-  "claim_status": "development_bottom_up_boundary_not_solved",
+  "schema_version": 2,
+  "claim_status": "development_bottom_up_gate_accepted_not_record_evidence",
   "not_solution": true,
-  "summary": "Six links remains unpromoted after exact transfer, rail continuation, aggregate/modal PFL, analytic modal phase scheduling, Box-FDDP, and tail-search probes. The analytic schedule produced the best generalized approach so far, but the measured blocker remains terminal modal velocity and route energy, not demonstrated rail insufficiency.",
+  "summary": "The generalized bottom-up ladder promotes n=6 after a morphology-derived modal seed, bounded exact-model continuation, full-rank endpoint Gauss--Newton refinement, Box-FDDP feedback, and a 20/20 uninterrupted noisy gate. This is solver-development evidence, not a new public record claim.",
   "n_links": 6,
   "accepted_predecessor": "runs/generalized_solver/frontier_n5.json",
-  "transfer_probes": [
-    {
-      "source_links": 5,
-      "diagnostic_rail_half_length": 6.0,
-      "warm_start_max_cart_center_excursion": 2.7325697275934617,
-      "warm_start_body_aware_required_rail_ratio": 0.9708565758644873,
-      "result": "full_horizon_Box_FDDP_failed"
-    },
-    {
-      "source_links": 7,
-      "diagnostic_rail_half_length": 6.0,
-      "warm_start_max_cart_center_excursion": 2.0575573295745144,
-      "warm_start_body_aware_required_rail_ratio": 0.7458524431915049,
-      "result": "full_horizon_Box_FDDP_failed",
-      "minimum_lyapunov": 337456.0
-    },
-    {
-      "source_links": 7,
-      "diagnostic_rail_half_length": 12.0,
-      "result": "full_horizon_Box_FDDP_failed_with_numerical_instability",
-      "interpretation": "wider rail alone does not repair this transfer"
-    }
-  ],
-  "count_independent_policy_probes": {
-    "aggregate_parameter_count": 13,
-    "best_time_seconds": 11.72,
-    "best_max_abs_angle": 0.9363,
-    "best_exact_modal_score": 59.5166,
-    "best_absolute_rate_rms_ratio": 2.175,
-    "best_internal_modal_energy_fraction": 0.123,
-    "exact_tail_result": "failed_to_produce_robust_handoff",
-    "modal_extension_parameter_count": 16,
-    "modal_extension": "collective pumping plus energy-gated internal damping and bounded acceleration",
-    "modal_extension_result": "lowered some unwanted motion but did not improve the complete handoff score"
-  },
-  "analytic_modal_phase_seed": {
-    "algorithm": "regularized minimum-energy finite-horizon controllability-Gramian solve on the exact hanging linear modal model",
+  "deterministic_backbone": {
+    "modal_seed": "regularized minimum-energy finite-horizon controllability solve on the exact hanging linearization",
     "learned_parameter_count": 0,
     "per_link_tuned_parameter_count": 0,
-    "horizon_seconds": 3.9,
+    "modal_seed_horizon_seconds": 3.9,
     "linear_terminal_residual_l2": 0.0005359764905104431,
-    "exact_best_time_seconds": 2.56,
-    "exact_best_max_abs_angle": 0.1782912442324669,
-    "exact_best_absolute_angular_velocity_rms": 3.9027832529608752,
-    "exact_max_cart_center_excursion": 5.659227947000738,
-    "exact_body_aware_required_rail_ratio": 1.9464093156669124,
-    "result": "deterministic center for the best generalized six-link upright approach so far, but outside the low-momentum capture envelope",
-    "compact_evidence": "runs/generalized_solver/frontier_n6_analytic_phase.json"
+    "bounded_residual": "48 smooth action-correction knots around the full-resolution morphology-derived controller",
+    "action_contract": "all candidates and saved routes use the float32 env.step boundary"
   },
-  "nonlinear_constraint_continuation": {
-    "architecture": "bounded low-dimensional residual CEM around the full-resolution deterministic modal schedule, evaluated only by serial env.step replay",
-    "capture_constraint_violation_before": 8.770921048788665,
-    "capture_constraint_violation_after": 4.16537577121867,
-    "best_max_abs_angle": 0.1772022925969896,
-    "best_hinge_velocity_rms": 1.0144137020968755,
-    "best_absolute_angular_velocity_rms": 2.251535929437128,
-    "best_cart_position": 0.3435265030300458,
-    "best_cart_velocity": -0.46007482198618566,
-    "body_aware_required_rail_ratio": 1.5982761944241435,
-    "collective_mode_energy_fraction": 0.9805065854563422,
-    "capture_constraints_satisfied": false
+  "endpoint_refinement": {
+    "method": "damped minimum-norm Gauss--Newton with exact serial finite-difference sensitivities and rail-aware line search",
+    "terminal_state_dimension": 14,
+    "jacobian_rank": 14,
+    "horizon_seconds": 4.18,
+    "maximum_angle_rad": 0.093347140194739,
+    "hinge_velocity_rms_rad_s": 0.38612312501584445,
+    "absolute_angular_velocity_rms_rad_s": 0.7324909643407553,
+    "cart_position_m": -0.5295045070386449,
+    "cart_velocity_m_s": 0.3005994522222004,
+    "maximum_cart_center_excursion_m": 3.6091144768982324,
+    "all_handoff_limits_satisfied": true
   },
-  "numerical_integrity_boundary": {
-    "finding": "float64 batched tail actions can diverge from the float32 public environment action path at n=6",
-    "repair": "tail CEM now quantizes candidates to float32 before batch rollout and independently serial-replays its saved result",
-    "prior_tail_status": "invalid as a replayable controller and excluded from evidence",
-    "corrected_search": {
-      "iterations": 100,
-      "feasible_handoffs": 0,
-      "best_batch_max_abs_angle": 0.6993643476874531,
-      "serial_result": "rail_violation",
-      "serial_max_cart_center_excursion": 12.046439433957126
+  "feedback_repair": {
+    "trajectory_optimizer": "exact MuJoCo Box-FDDP",
+    "optimizer_iterations": 60,
+    "optimizer_feasible": true,
+    "optimizer_reported_converged": false,
+    "route_horizon_steps": 209,
+    "route_horizon_seconds": 4.18,
+    "feedback": "time-varying Box-FDDP gains at full scale",
+    "capture": "upright discrete Riccati feedback",
+    "route_library": "optimized route plus exact planar mirror",
+    "selection": "exact forward model argmin",
+    "phase_adaptive_skips": false
+  },
+  "gate": {
+    "path": "runs/generalized_solver/n6_gate_20.json",
+    "episodes": 20,
+    "success_count": 20,
+    "success_rate": 1.0,
+    "seed_start": 79001,
+    "minimum_upright_hold_seconds": 26.06,
+    "maximum_cart_center_excursion_m": 3.098808612006567,
+    "maximum_body_aware_required_rail_ratio": 1.092936204002189,
+    "prediction_execution_disagreements": 0,
+    "termination_counts": {
+      "time_limit": 20
     }
   },
-  "rail_conclusion": "No minimum rail is certified for n=6. Tested failures persisted with large diagnostic headroom, so route/modal phasing is the current blocker.",
-  "next_method": "phase-paired deterministic braking of the first collective mode inside the full nonlinear route optimization, followed by Box-FDDP only after a serially verified capture-feasible warm start, then the noisy gate and lower-count regression path"
+  "rail_interpretation": {
+    "chain_length_m": 3.0,
+    "cart_half_length_m": 0.18,
+    "configured_cart_center_half_rail_m": 4.0,
+    "configured_center_limit_ratio": 1.3333333333333333,
+    "measured_body_aware_requirement_ratio": 1.092936204002189,
+    "status": "passing upper bound, not a minimum-rail certificate"
+  },
+  "artifacts": {
+    "route": "runs/generalized_solver/n6_route_solver.json",
+    "mirror": "runs/generalized_solver/n6_route_solver_mirror.json",
+    "analytic_checkpoint": "runs/generalized_solver/frontier_n6_analytic_phase.json"
+  },
+  "scope_boundary": "This promotes the canonical uniform n=6 development rung. It does not establish a universal solver for arbitrary unequal morphologies or n>=8.",
+  "next_stage": "back-check n=1..7 and apply the morphology-derived synthesis path to unequal chains and n=8"
 }

@@ -65,7 +65,7 @@ terminal state, rail outcome, and capture outcome in `docs/levers_and_pitfalls.m
 
 | Frontier | Status | Advancement target |
 |---:|---|---|
-| 6 | Calibration required | Complete the frozen six-link end-to-end gates |
+| 6 | Generalized development gate 20/20 at `+/-4 m`; canonical calibration remains | Complete the frozen `+/-3 m` 20/100 evidence bundle |
 | 7 | Canonical 20/100 control gate passed | Finish audit items, then retain as reference |
 | 8 | Active | Pass the full canonical evidence bundle |
 | 9+ | Queued | Start automatically after the preceding frontier passes |
