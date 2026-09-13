@@ -32,6 +32,20 @@ def test_fddp_warm_mode_distinguishes_feedback_and_exact_trajectory(
     assert "--rebuild-initial-feedback" not in exact
 
 
+def test_fddp_can_use_physical_rail_margin() -> None:
+    command = fddp_command(
+        cfg=Path("configs/generalized_n3_unequal.yaml"),
+        state=Path("state.json"),
+        controller=Path("controller.json"),
+        output=Path("output.json"),
+        iterations=10,
+        regularization=1e-6,
+        tracking_gain=1.0,
+        rail_soft_margin=0.25,
+    )
+    assert command[command.index("--rail-soft-limit") + 1] == "4.75"
+
+
 def test_waypoint_command_uses_target_rail_and_generic_parameters(
     tmp_path: Path,
 ) -> None:

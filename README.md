@@ -1,6 +1,20 @@
-# Seven- and Eight-Link Cart-Pole Swing-Up & Hold
+# Eight- and Seven-Link Cart-Pole Swing-Up & Hold
 
-> **7 links · noisy hanging start · 100/100 successful episodes · zero resets · ±3 m rail**
+> **Highest verified internal benchmark: 8 links · noisy hanging start · 100/100 successful episodes · zero resets · ±3 m rail**
+
+<p align="center">
+  <a href="runs/generalized_solver/eight_link_swingup_success.mp4">
+    <img src="assets/eight-link-swingup.gif" alt="Eight-link cart-pole swinging from a noisy hanging start and holding upright" width="760">
+  </a>
+</p>
+
+<p align="center">
+  <strong><a href="runs/generalized_solver/eight_link_swingup_success.mp4">Watch the full eight-link run</a></strong>
+  · <a href="docs/eight_link_swingup_paper.md">Read the eight-link paper</a>
+  · <a href="runs/generalized_solver/eight_link_swingup_manifest.json">Inspect the eight-link manifest</a>
+</p>
+
+> **Frozen seven-link release: noisy hanging start · 100/100 successful episodes · zero resets · ±3 m rail**
 
 <p align="center">
   <a href="runs/swingup7_uniform/seven_link_swingup_success.mp4">
@@ -9,18 +23,28 @@
 </p>
 
 <p align="center">
-  <strong><a href="runs/swingup7_uniform/seven_link_swingup_success.mp4">Watch the full 30-second run</a></strong>
-  · <a href="docs/seven_link_swingup_paper.md">Read the method paper</a>
-  · <a href="runs/swingup7_uniform/seven_link_swingup_manifest.json">Inspect the controller manifest</a>
+  <strong><a href="runs/swingup7_uniform/seven_link_swingup_success.mp4">Watch the full seven-link run</a></strong>
+  · <a href="docs/seven_link_swingup_paper.md">Read the seven-link paper</a>
+  · <a href="runs/swingup7_uniform/seven_link_swingup_manifest.json">Inspect the seven-link manifest</a>
 </p>
 
-This repository demonstrates a reset-free swing-up and sustained hold of a
-uniform seven-link cart-pole in MuJoCo. One frozen hybrid controller passed
-both held-out gates—`20/20` and `100/100`—from the declared noisy hanging-start
-distribution. The full evidence bundle, controller hashes, negative controls,
-and reproduction commands are public.
+This repository demonstrates reset-free swing-up and sustained hold of uniform
+seven- and eight-link cart-poles in MuJoCo. Each frozen hybrid controller passed
+disjoint `20/20` and `100/100` noisy hanging-start gates on its declared plant.
+The videos above are held-out, uninterrupted 30-second replays; click either
+animated preview for the source MP4. Controllers, hashes, negative controls,
+method papers, and reproduction commands are public.
 
-## The seven-link record
+| Result | Noisy 20-episode gate | Disjoint noisy 100-episode gate | Held-out video | Method |
+|---|---:|---:|---|---|
+| **8 links — latest internal benchmark** | **20/20** | **100/100** | [MP4](runs/generalized_solver/eight_link_swingup_success.mp4) | [paper](docs/eight_link_swingup_paper.md) |
+| **7 links — frozen release** | **20/20** | **100/100** | [MP4](runs/swingup7_uniform/seven_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |
+
+These are repository benchmark records, not universal world-record claims.
+An external record claim requires a matched plant, force convention, rail
+geometry, timing, initialization distribution, and independent judging rules.
+
+## The seven-link frozen record
 
 | Benchmark property | Result |
 |---|---:|
@@ -87,11 +111,11 @@ force, morphology, damping, sensor-noise, and control-delay perturbations. This
 is a strong benchmark result with a narrow plant-and-timing contract, not a
 claim of broad robustness.
 
-## The eight-link extension
+## The eight-link record extension
 
 The same two-expert idea now reaches eight links on the repository's canonical
-uniform plant. This is an internal eight-link benchmark promotion, not a claim
-about an external competition record:
+uniform plant. This is the repository's highest verified internal benchmark,
+not a claim about an external competition record:
 
 | Benchmark property | Result |
 |---|---:|
@@ -142,6 +166,7 @@ the swing trajectory.
 | 5 links | **20/20** | 1.171 |
 | 6 links | **20/20** | 1.093 |
 | 7 links | **20/20** through shared evaluator; canonical release is **100/100** | 0.850 |
+| 8 links | Separate parked-launch release is **100/100** | 1.037 |
 
 These are development results, not additions to the public seven-link record
 claim. See the [generalized solver design and honest frontier](docs/generalized_solver.md),
@@ -154,8 +179,10 @@ full-rank endpoint Gauss--Newton correction, Box-FDDP feedback, Riccati
 capture, and exact planar mirror passed all 20 uninterrupted noisy episodes.
 The n=7 row reuses the frozen record controller through this shared evaluator;
 it does not claim that the new modal synthesis has independently regenerated
-the record route. The eight-link result is a separate parked-launch promotion;
-arbitrary unequal morphologies and n>=9 remain active work.
+the record route. The n=8 row is the separate parked-launch promotion and its
+`1.037` body-aware ratio is `(2.9300 m + 0.18 m) / 3 m`; it is not an independent
+modal-synthesis regeneration. Arbitrary unequal morphologies and n>=9 remain
+active work.
 
 The same bounded actuator adapter has also passed a paired development check at
 every rung. A hidden map `delivered = 1.18 * commanded + 0.06` broke all 21
@@ -181,13 +208,12 @@ whole transfer -> exact-target refinement -> mirror -> noisy-gate -> verifier
 sequence from source controller and target morphology files; it contains no
 link-count branch or per-count controller constants.
 
-The next deliberately stronger three-link target is published as a negative
-frontier, not a success. Its lengths `[0.75, 1.0, 1.25] m` and masses
-`[0.2, 0.3, 0.5] kg` caused direct transfer and direct exact refinement to
-fail, so the pipeline stops before promotion. See the
-[one-command n=3 frontier](runs/generalized_solver/n3_unequal_pipeline.json).
-This is the current boundary for arbitrary within-count morphology transfer;
-the uniform n=3 gate above remains valid. The deterministic continuation now
+The next deliberately stronger three-link target is still unsolved at full
+strength. Its lengths `[0.75, 1.0, 1.25] m` and masses `[0.2, 0.3, 0.5] kg`
+caused direct transfer and direct exact refinement to fail, so the one-shot
+pipeline correctly stops before promotion. See the
+[one-command n=3 negative frontier](runs/generalized_solver/n3_unequal_pipeline.json).
+The uniform n=3 gate above remains valid. Deterministic continuation now
 repairs nearby routes through adaptive exact-model waypoint horizons before the
 full-horizon feedback pass. When the original `0.48 s` horizon hit a trajectory
 branch wall, the same generic driver automatically tried `0.96 s` and `1.92 s`
@@ -201,11 +227,30 @@ executes the shortest predicted success. It then passed **20/20** and a
 disjoint **100/100**, with prediction matching execution every time. Of the
 100 episodes, 99 launched immediately and one used only the first `0.25 tau`
 rung; maximum required rail ratio was `1.369`. The selector uses zero learned
-parameters and no link-count constants. This is a verified partial-morphology
-gate, not a solution of the `p=1` target. See the
+parameters and no link-count constants. A 50-trial continuation ledger contains
+27 accepted and 23 rejected proposals; every rejected final replay hit the
+rail, exposing rail length as an active continuation coordinate rather than a
+link-count constant. The new joint driver advanced exact replay to
+`p=0.0360548` on the original rail. That route passed a fresh **20/20** cohort
+but scored **96/100** on the disjoint larger gate; all four failures were
+predicted by the exact selector and ended at the rail. It is therefore retained
+as a negative robustness boundary, while `p=0.0360234` remains the robust
+**100/100** checkpoint. This is a verified partial-morphology frontier, not a
+solution of the `p=1` target. See the
 [adaptive checkpoint](runs/generalized_solver/n3_unequal_adaptive_checkpoint.json),
 [packaged route](runs/generalized_solver/n3_unequal_p036023_route.json), and
 [100-episode adaptive gate](runs/generalized_solver/n3_unequal_p036023_adaptive100.json).
+The [measured morphology/rail frontier](runs/generalized_solver/n3_unequal_rail_frontier.json)
+keeps successful route requirements separate from failed-controller excursions.
+The resumable
+[`run_joint_morphology_rail_homotopy.py`](scripts/run_joint_morphology_rail_homotopy.py)
+expands rail only after a measured rail collision, continues morphology, then
+contracts rail toward the requested target; expanded-rail passes remain
+development evidence until the final target-rail replay succeeds.
+The newer [exact route](runs/generalized_solver/n3_unequal_p036055_route.json),
+[20-episode pass](runs/generalized_solver/n3_unequal_p036055_adaptive20.json),
+and [96/100 negative gate](runs/generalized_solver/n3_unequal_p036055_adaptive100.json)
+make that promotion boundary inspectable.
 
 ## Next frontier: nine links
 
@@ -236,13 +281,19 @@ cd cartpole
 
 make setup-aligator
 make release-swingup7
+
+# Verify the published eight-link controller, gates, video, and manifest.
+cd runs/generalized_solver
+shasum -a 256 -c SHA256SUMS
 ```
 
 `release-swingup7` regenerates two disjoint evaluation cohorts, the independent
 video, the non-canonical robustness sweep, checksums, and the final verifier
 report. It intentionally refuses to run when tracked source files are dirty.
 For individual replay commands and the evidence contract, follow the
-[paper's reproduction section](docs/seven_link_swingup_paper.md#6-reproduction).
+[seven-link paper's reproduction section](docs/seven_link_swingup_paper.md#6-reproduction).
+The [eight-link reproduction section](docs/eight_link_swingup_paper.md#6-reproduction)
+contains the exact parked-launch evaluation and rendering commands.
 
 ## Repository map
 

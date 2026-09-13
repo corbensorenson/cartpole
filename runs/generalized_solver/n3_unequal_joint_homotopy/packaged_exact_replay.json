@@ -1,0 +1,107 @@
+{
+  "claim_status": "development_deterministic_model_predictive_library",
+  "config": {
+    "bytes": 1716,
+    "path": "runs/generalized_solver/n3_unequal_joint_homotopy/configs/trial_0001_morphology_p0.036054805_rho1.666667_r0.yaml",
+    "sha256": "ed883d01eedd132219daadc79b75a615d816af8903e12d77e5062234050565ce"
+  },
+  "controllers": [
+    {
+      "bytes": 275754,
+      "path": "runs/generalized_solver/n3_unequal_p036055_route.json",
+      "sha256": "98ff65bbd1bdfe218d071b9b952b600663a710de719503c06d1e3acf3a483e87"
+    }
+  ],
+  "episode_results": [
+    {
+      "episode": 0,
+      "max_cart_excursion": 3.9302470950901394,
+      "max_upright_streak_seconds": 18.78,
+      "predictions": [
+        {
+          "max_cart_excursion": 3.9302470950901394,
+          "max_upright_streak_seconds": 18.78,
+          "success": true
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8897529049098605,
+        "max_cart_center_excursion": 3.9302470950901394,
+        "required_rail_half_length": 4.1102470950901395,
+        "required_rail_ratio": 1.3700823650300464
+      },
+      "seed": 83655,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    }
+  ],
+  "episodes": 1,
+  "generated_at": "2026-09-13T18:27:24+00:00",
+  "git": {
+    "available": true,
+    "commit": "d91e5efc9b65ba6e281380e456115ef1001b52bb",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      " M README.md",
+      " M ROADMAP.md",
+      " M docs/eight_link_swingup_paper.md",
+      " M docs/levers_and_pitfalls.md",
+      " M scripts/evaluate_fddp_two_expert.py",
+      " M scripts/evaluate_generalized_route_library.py",
+      " M scripts/render_fddp_parked_route_video.py",
+      " M scripts/run_generalized_homotopy.py",
+      " M scripts/search_swingup_tail_action_cem.py",
+      "?? assets/eight-link-swingup.gif",
+      "?? configs/swingup9_mid_split_locked_continuation.yaml",
+      "?? configs/swingup9_split_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_302_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_continuation.yaml",
+      "?? configs/swingup9_uniform.yaml",
+      "?? scripts/convert_gn_endpoint_route.py",
+      "?? scripts/embed_locked_split_route.py",
+      "?? scripts/run_joint_morphology_rail_homotopy.py",
+      "?? scripts/translate_generalized_route.py",
+      "?? tests/test_joint_morphology_rail_homotopy.py"
+    ]
+  },
+  "max_required_rail_ratio": 1.3700823650300464,
+  "route_counts": {
+    "0": 1
+  },
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "seed_start": 83655,
+  "selection": {
+    "cart_target": 0.0,
+    "conditioning_seconds": 0.0,
+    "conditioning_target": 0.0,
+    "park_seconds": 0.0,
+    "phase_window": 0,
+    "route_lqr_control_costs": [
+      1000.0
+    ],
+    "route_target_mode": "fixed",
+    "tracking_gain_scale": 1.0,
+    "type": "exact_forward_model_argmin"
+  },
+  "success_rate": 1.0,
+  "summary": "Uninterrupted noisy evaluation with exact forward selection over mirror-symmetric deterministic routes.",
+  "termination_counts": {
+    "time_limit": 1
+  }
+}

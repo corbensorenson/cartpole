@@ -1,0 +1,3532 @@
+{
+  "adaptation": {
+    "conditioning_schedule": [
+      {
+        "ratio": 0.0,
+        "seconds": 0.0,
+        "steps": 0
+      },
+      {
+        "ratio": 0.25,
+        "seconds": 0.14,
+        "steps": 7
+      },
+      {
+        "ratio": 0.5,
+        "seconds": 0.28,
+        "steps": 14
+      },
+      {
+        "ratio": 1.0,
+        "seconds": 0.56,
+        "steps": 28
+      },
+      {
+        "ratio": 2.0,
+        "seconds": 1.1,
+        "steps": 55
+      },
+      {
+        "ratio": 4.0,
+        "seconds": 2.22,
+        "steps": 111
+      }
+    ],
+    "early_exit_after_first_successful_duration": true,
+    "execution_resets_after_measurement": 0,
+    "learned_parameters": 0,
+    "natural_time_seconds": 0.553001263609331,
+    "phase_window": 0,
+    "tracking_gain_scale": 1.0,
+    "type": "bounded_exact_model_natural_time_conditioning_and_route_selection",
+    "uses_measured_initial_state": true
+  },
+  "claim_status": "development_bounded_deterministic_adaptation_gate",
+  "conditioning_ratio_counts": {
+    "0.0": 60,
+    "0.25": 18,
+    "0.5": 10,
+    "1.0": 8,
+    "2.0": 2,
+    "4.0": 2
+  },
+  "config": {
+    "bytes": 1716,
+    "path": "runs/generalized_solver/n3_unequal_joint_homotopy/configs/trial_0001_morphology_p0.036054805_rho1.666667_r0.yaml",
+    "sha256": "ed883d01eedd132219daadc79b75a615d816af8903e12d77e5062234050565ce"
+  },
+  "controllers": [
+    {
+      "bytes": 275754,
+      "path": "runs/generalized_solver/n3_unequal_p036055_route.json",
+      "sha256": "98ff65bbd1bdfe218d071b9b952b600663a710de719503c06d1e3acf3a483e87"
+    },
+    {
+      "bytes": 275605,
+      "path": "runs/generalized_solver/n3_unequal_p036055_route_mirror.json",
+      "sha256": "6208674b0078e23cc9df739edacc210ee673eed6847901b99765f460c5e5ead6"
+    }
+  ],
+  "episode_results": [
+    {
+      "episode": 0,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.159468189790656,
+        0.033075260501204844,
+        0.04976730203854379
+      ],
+      "initial_qvel": [
+        0.03148821355445116,
+        -0.04637846864437973,
+        -0.11813738061633244,
+        0.06588759740598746
+      ],
+      "max_cart_excursion": 3.907111500129254,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9128884998707463,
+        "max_cart_center_excursion": 3.907111500129254,
+        "required_rail_half_length": 4.087111500129254,
+        "required_rail_ratio": 1.3623705000430846
+      },
+      "resets_inside_episode": 0,
+      "seed": 86201,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 1,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1330299669075385,
+        -0.04175336669328472,
+        -0.046251152336923645
+      ],
+      "initial_qvel": [
+        0.10588418598920357,
+        -0.01588614205609663,
+        -0.06309902261763758,
+        0.05458300002613042
+      ],
+      "max_cart_excursion": 3.929377229706388,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8906227702936125,
+        "max_cart_center_excursion": 3.929377229706388,
+        "required_rail_half_length": 4.1093772297063875,
+        "required_rail_ratio": 1.3697924099021292
+      },
+      "resets_inside_episode": 0,
+      "seed": 86202,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 2,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.0891867275121223,
+        0.049668285281311904,
+        -0.019254549663388063
+      ],
+      "initial_qvel": [
+        -0.08307326261425889,
+        0.036501512944607475,
+        -0.058400667683355494,
+        0.07342413165653958
+      ],
+      "max_cart_excursion": 3.910433794346055,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9095662056539453,
+        "max_cart_center_excursion": 3.910433794346055,
+        "required_rail_half_length": 4.090433794346055,
+        "required_rail_ratio": 1.363477931448685
+      },
+      "resets_inside_episode": 0,
+      "seed": 86203,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 3,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.2049119255213534,
+        -0.11511752925724653,
+        0.03076277023184523
+      ],
+      "initial_qvel": [
+        0.050741336543224526,
+        -0.08762637606334797,
+        0.011493769883195587,
+        0.029156506058892712
+      ],
+      "max_cart_excursion": 3.918248747734542,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9017512522654583,
+        "max_cart_center_excursion": 3.918248747734542,
+        "required_rail_half_length": 4.098248747734542,
+        "required_rail_ratio": 1.366082915911514
+      },
+      "resets_inside_episode": 0,
+      "seed": 86204,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 4,
+      "evaluated_candidates": 6,
+      "initial_qpos": [
+        0.0,
+        3.0543193675839495,
+        0.05175432775617683,
+        0.04652479001766349
+      ],
+      "initial_qvel": [
+        -0.0718897883036157,
+        -0.07524762793308577,
+        -0.0809384120951487,
+        0.01485546545916165
+      ],
+      "max_cart_excursion": 3.777015322628025,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 1.0429846773719746,
+        "max_cart_center_excursion": 3.777015322628025,
+        "required_rail_half_length": 3.9570153226280254,
+        "required_rail_ratio": 1.3190051075426752
+      },
+      "resets_inside_episode": 0,
+      "seed": 86205,
+      "selected_conditioning_seconds": 0.28,
+      "selected_conditioning_time_ratio": 0.5,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 5,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.097482947057141,
+        -0.11934941006904305,
+        -0.03289688111010732
+      ],
+      "initial_qvel": [
+        0.008018140997951924,
+        0.08054942026213177,
+        -0.10381411507684146,
+        0.035342817590317564
+      ],
+      "max_cart_excursion": 3.776028191399299,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 1.043971808600701,
+        "max_cart_center_excursion": 3.776028191399299,
+        "required_rail_half_length": 3.956028191399299,
+        "required_rail_ratio": 1.3186760637997663
+      },
+      "resets_inside_episode": 0,
+      "seed": 86206,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 6,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.158790920130175,
+        -0.016276184668636094,
+        -0.12557005664508453
+      ],
+      "initial_qvel": [
+        0.0228764569619869,
+        -0.022936147850563318,
+        0.03932475797984105,
+        -0.018181396501021976
+      ],
+      "max_cart_excursion": 3.924433619662187,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8955663803378133,
+        "max_cart_center_excursion": 3.924433619662187,
+        "required_rail_half_length": 4.104433619662187,
+        "required_rail_ratio": 1.3681445398873955
+      },
+      "resets_inside_episode": 0,
+      "seed": 86207,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 7,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.157118160898206,
+        0.08006530514239192,
+        -0.0160305492153196
+      ],
+      "initial_qvel": [
+        0.028480118004204014,
+        0.018978915040112752,
+        0.09582338289041864,
+        -0.03053098162820818
+      ],
+      "max_cart_excursion": 3.854765970903678,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9652340290963224,
+        "max_cart_center_excursion": 3.854765970903678,
+        "required_rail_half_length": 4.034765970903678,
+        "required_rail_ratio": 1.344921990301226
+      },
+      "resets_inside_episode": 0,
+      "seed": 86208,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 8,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1398952862196268,
+        -0.056300845617884565,
+        -0.028044978180826165
+      ],
+      "initial_qvel": [
+        0.11811498586770833,
+        -0.02663135126476106,
+        -0.034792114700687424,
+        -0.044514096121888835
+      ],
+      "max_cart_excursion": 3.930333570539134,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.889666429460866,
+        "max_cart_center_excursion": 3.930333570539134,
+        "required_rail_half_length": 4.110333570539134,
+        "required_rail_ratio": 1.3701111901797114
+      },
+      "resets_inside_episode": 0,
+      "seed": 86209,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 9,
+      "evaluated_candidates": 6,
+      "initial_qpos": [
+        0.0,
+        3.1667943751825223,
+        -0.029045758072482938,
+        -0.03871262295897507
+      ],
+      "initial_qvel": [
+        -0.0008071560080650819,
+        0.060938877111926075,
+        -0.013477547492495301,
+        0.026466706209848218
+      ],
+      "max_cart_excursion": 3.9421402211910994,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8778597788089009,
+        "max_cart_center_excursion": 3.9421402211910994,
+        "required_rail_half_length": 4.122140221191099,
+        "required_rail_ratio": 1.3740467403970331
+      },
+      "resets_inside_episode": 0,
+      "seed": 86210,
+      "selected_conditioning_seconds": 0.28,
+      "selected_conditioning_time_ratio": 0.5,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 10,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.114377190022312,
+        -0.07879448618236386,
+        0.03778638060266809
+      ],
+      "initial_qvel": [
+        0.05169653647802383,
+        -0.006027536815486567,
+        0.008639058771665034,
+        -0.04384022059855603
+      ],
+      "max_cart_excursion": 3.875378289976076,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9446217100239238,
+        "max_cart_center_excursion": 3.875378289976076,
+        "required_rail_half_length": 4.055378289976076,
+        "required_rail_ratio": 1.3517927633253588
+      },
+      "resets_inside_episode": 0,
+      "seed": 86211,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 11,
+      "evaluated_candidates": 6,
+      "initial_qpos": [
+        0.0,
+        3.1508564277261293,
+        0.004286622479193645,
+        -0.014903929072295938
+      ],
+      "initial_qvel": [
+        -0.0635014949116796,
+        0.019520879274230518,
+        0.06249649752044476,
+        -0.05581482399314047
+      ],
+      "max_cart_excursion": 3.946034642678732,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8739653573212678,
+        "max_cart_center_excursion": 3.946034642678732,
+        "required_rail_half_length": 4.126034642678732,
+        "required_rail_ratio": 1.3753448808929107
+      },
+      "resets_inside_episode": 0,
+      "seed": 86212,
+      "selected_conditioning_seconds": 0.28,
+      "selected_conditioning_time_ratio": 0.5,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 12,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.093732475294682,
+        0.014102117763965017,
+        -0.050256284184838185
+      ],
+      "initial_qvel": [
+        0.018916085565059408,
+        -0.00019603513879244794,
+        -0.014851271808200242,
+        0.046250082734030556
+      ],
+      "max_cart_excursion": 3.9158572408430032,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.904142759156997,
+        "max_cart_center_excursion": 3.9158572408430032,
+        "required_rail_half_length": 4.095857240843003,
+        "required_rail_ratio": 1.3652857469476676
+      },
+      "resets_inside_episode": 0,
+      "seed": 86213,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 13,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.0924407060084773,
+        -0.003844332992001577,
+        0.0392986515567014
+      ],
+      "initial_qvel": [
+        0.0315044556679933,
+        0.004115509780214243,
+        -0.06639025773291601,
+        0.00830042148771229
+      ],
+      "max_cart_excursion": 3.898819074921529,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9211809250784713,
+        "max_cart_center_excursion": 3.898819074921529,
+        "required_rail_half_length": 4.078819074921529,
+        "required_rail_ratio": 1.3596063583071762
+      },
+      "resets_inside_episode": 0,
+      "seed": 86214,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 14,
+      "evaluated_candidates": 12,
+      "initial_qpos": [
+        0.0,
+        3.1191538634498728,
+        0.0697942367548187,
+        0.014743682502958117
+      ],
+      "initial_qvel": [
+        -0.0929092221820978,
+        -0.0059380186793369615,
+        0.06260809781069762,
+        -0.03433929352396112
+      ],
+      "max_cart_excursion": 5.022445729570636,
+      "max_upright_streak_seconds": 0.0,
+      "prediction_execution_agreement": true,
+      "prediction_success": false,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": -0.2024457295706359,
+        "max_cart_center_excursion": 5.022445729570636,
+        "required_rail_half_length": 5.202445729570636,
+        "required_rail_ratio": 1.7341485765235454
+      },
+      "resets_inside_episode": 0,
+      "seed": 86215,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": false,
+      "termination_reason": "rail_violation"
+    },
+    {
+      "episode": 15,
+      "evaluated_candidates": 6,
+      "initial_qpos": [
+        0.0,
+        3.0410037877399168,
+        0.054246209622336,
+        0.0007493592686999475
+      ],
+      "initial_qvel": [
+        -0.010703143147371601,
+        0.04917042777747257,
+        0.05798454004737326,
+        -0.01007613141760488
+      ],
+      "max_cart_excursion": 3.837435877781375,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9825641222186254,
+        "max_cart_center_excursion": 3.837435877781375,
+        "required_rail_half_length": 4.017435877781375,
+        "required_rail_ratio": 1.3391452925937914
+      },
+      "resets_inside_episode": 0,
+      "seed": 86216,
+      "selected_conditioning_seconds": 0.28,
+      "selected_conditioning_time_ratio": 0.5,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 16,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.1436660105055547,
+        -0.029397213922920624,
+        0.02487805821248233
+      ],
+      "initial_qvel": [
+        0.009086127289627348,
+        0.05049247207351344,
+        -0.017204978549148202,
+        -0.03308163893962928
+      ],
+      "max_cart_excursion": 3.920623261719274,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8993767382807256,
+        "max_cart_center_excursion": 3.920623261719274,
+        "required_rail_half_length": 4.100623261719274,
+        "required_rail_ratio": 1.3668744205730914
+      },
+      "resets_inside_episode": 0,
+      "seed": 86217,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 17,
+      "evaluated_candidates": 8,
+      "initial_qpos": [
+        0.0,
+        2.9983045355181175,
+        -0.004192485096953267,
+        -0.00659326007380831
+      ],
+      "initial_qvel": [
+        0.005722261117581757,
+        -0.008006672772480475,
+        0.011847547246869261,
+        -0.013564026295663393
+      ],
+      "max_cart_excursion": 3.9297222823019995,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8902777176980008,
+        "max_cart_center_excursion": 3.9297222823019995,
+        "required_rail_half_length": 4.109722282301999,
+        "required_rail_ratio": 1.3699074274339997
+      },
+      "resets_inside_episode": 0,
+      "seed": 86218,
+      "selected_conditioning_seconds": 0.56,
+      "selected_conditioning_time_ratio": 1.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 18,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.144524179493204,
+        -0.020405637407597918,
+        -0.04725098434726491
+      ],
+      "initial_qvel": [
+        -0.05567758382712328,
+        -0.029208610078198582,
+        0.025622021378266076,
+        -0.08187855046017524
+      ],
+      "max_cart_excursion": 3.918843269050057,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9011567309499426,
+        "max_cart_center_excursion": 3.918843269050057,
+        "required_rail_half_length": 4.098843269050057,
+        "required_rail_ratio": 1.3662810896833524
+      },
+      "resets_inside_episode": 0,
+      "seed": 86219,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 19,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.0826264679736424,
+        -0.02052240519591334,
+        0.004999423780844714
+      ],
+      "initial_qvel": [
+        -0.036033645260694434,
+        -0.08121095536916792,
+        -0.11075677709955511,
+        0.00029439729887524883
+      ],
+      "max_cart_excursion": 3.8555039775025173,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9644960224974826,
+        "max_cart_center_excursion": 3.8555039775025173,
+        "required_rail_half_length": 4.035503977502517,
+        "required_rail_ratio": 1.345167992500839
+      },
+      "resets_inside_episode": 0,
+      "seed": 86220,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 20,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1026061467720885,
+        0.0012586722701328585,
+        0.07934236556403124
+      ],
+      "initial_qvel": [
+        0.026332806552192157,
+        -0.022706719538556366,
+        0.12805948478257395,
+        0.0590203683986025
+      ],
+      "max_cart_excursion": 3.9211726670346567,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8988273329653431,
+        "max_cart_center_excursion": 3.9211726670346567,
+        "required_rail_half_length": 4.101172667034657,
+        "required_rail_ratio": 1.367057555678219
+      },
+      "resets_inside_episode": 0,
+      "seed": 86221,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 21,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.17130842169482,
+        0.028542856677635228,
+        -0.05862190888852964
+      ],
+      "initial_qvel": [
+        0.0022992437942260194,
+        -0.08901804083839382,
+        0.07368753136239403,
+        -0.0336437727535723
+      ],
+      "max_cart_excursion": 3.891579382689347,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9284206173106533,
+        "max_cart_center_excursion": 3.891579382689347,
+        "required_rail_half_length": 4.071579382689347,
+        "required_rail_ratio": 1.3571931275631155
+      },
+      "resets_inside_episode": 0,
+      "seed": 86222,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 22,
+      "evaluated_candidates": 12,
+      "initial_qpos": [
+        0.0,
+        3.107424918706082,
+        0.07893585354987048,
+        0.059891333752868404
+      ],
+      "initial_qvel": [
+        -0.009955692417291518,
+        -0.001650032363678425,
+        -0.04716334230144219,
+        0.002125205826205295
+      ],
+      "max_cart_excursion": 3.9354129159477864,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8845870840522139,
+        "max_cart_center_excursion": 3.9354129159477864,
+        "required_rail_half_length": 4.115412915947786,
+        "required_rail_ratio": 1.3718043053159288
+      },
+      "resets_inside_episode": 0,
+      "seed": 86223,
+      "selected_conditioning_seconds": 2.22,
+      "selected_conditioning_time_ratio": 4.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 23,
+      "evaluated_candidates": 12,
+      "initial_qpos": [
+        0.0,
+        3.159621641698289,
+        -0.031991729068324724,
+        -0.05479087733335917
+      ],
+      "initial_qvel": [
+        0.02505795301794212,
+        -0.012902382620963541,
+        -0.04385365196312566,
+        0.015041314354083877
+      ],
+      "max_cart_excursion": 5.083698449299087,
+      "max_upright_streak_seconds": 0.0,
+      "prediction_execution_agreement": true,
+      "prediction_success": false,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": -0.2636984492990866,
+        "max_cart_center_excursion": 5.083698449299087,
+        "required_rail_half_length": 5.263698449299087,
+        "required_rail_ratio": 1.7545661497663623
+      },
+      "resets_inside_episode": 0,
+      "seed": 86224,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": false,
+      "termination_reason": "rail_violation"
+    },
+    {
+      "episode": 24,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.1431860347453333,
+        -0.033448465994918596,
+        0.059214926443254816
+      ],
+      "initial_qvel": [
+        -0.04463091898185087,
+        -0.05451819845464465,
+        -0.007856437595670144,
+        0.07912128347455855
+      ],
+      "max_cart_excursion": 3.922447089703995,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8975529102960049,
+        "max_cart_center_excursion": 3.922447089703995,
+        "required_rail_half_length": 4.102447089703995,
+        "required_rail_ratio": 1.367482363234665
+      },
+      "resets_inside_episode": 0,
+      "seed": 86225,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 25,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.2183647143886214,
+        0.031651246736658256,
+        0.17247397649543655
+      ],
+      "initial_qvel": [
+        -0.009163186583202336,
+        -0.03219466764103744,
+        0.04975175390939948,
+        -0.03288027656201854
+      ],
+      "max_cart_excursion": 3.786962486996837,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 1.0330375130031628,
+        "max_cart_center_excursion": 3.786962486996837,
+        "required_rail_half_length": 3.966962486996837,
+        "required_rail_ratio": 1.3223208289989457
+      },
+      "resets_inside_episode": 0,
+      "seed": 86226,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 26,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.141535778865111,
+        -0.042601684371147995,
+        0.05186148414877553
+      ],
+      "initial_qvel": [
+        -0.1193828536419251,
+        -0.009221191374813508,
+        0.09383333454770842,
+        0.0029647721463002745
+      ],
+      "max_cart_excursion": 3.9154357775977457,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9045642224022545,
+        "max_cart_center_excursion": 3.9154357775977457,
+        "required_rail_half_length": 4.0954357775977455,
+        "required_rail_ratio": 1.3651452591992486
+      },
+      "resets_inside_episode": 0,
+      "seed": 86227,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 27,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.2115735763148168,
+        -0.06364930749797679,
+        0.11865270770757118
+      ],
+      "initial_qvel": [
+        0.00325861706513558,
+        0.05148289951140698,
+        0.04798381460175278,
+        -0.04339132390637554
+      ],
+      "max_cart_excursion": 3.916353420988447,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9036465790115527,
+        "max_cart_center_excursion": 3.916353420988447,
+        "required_rail_half_length": 4.096353420988447,
+        "required_rail_ratio": 1.3654511403294824
+      },
+      "resets_inside_episode": 0,
+      "seed": 86228,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 28,
+      "evaluated_candidates": 6,
+      "initial_qpos": [
+        0.0,
+        3.216356146720678,
+        0.017127986789923652,
+        0.051113074010716734
+      ],
+      "initial_qvel": [
+        -0.003047195059757703,
+        0.018411070158319744,
+        0.04813798901354728,
+        0.09590642413166842
+      ],
+      "max_cart_excursion": 3.8352578640593293,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.984742135940671,
+        "max_cart_center_excursion": 3.8352578640593293,
+        "required_rail_half_length": 4.015257864059329,
+        "required_rail_ratio": 1.3384192880197763
+      },
+      "resets_inside_episode": 0,
+      "seed": 86229,
+      "selected_conditioning_seconds": 0.28,
+      "selected_conditioning_time_ratio": 0.5,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 29,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1948292023799563,
+        -0.033794644367066966,
+        0.04524563627366313
+      ],
+      "initial_qvel": [
+        0.005171520425466414,
+        0.025831404734552213,
+        0.03249330950530367,
+        0.07441390634082633
+      ],
+      "max_cart_excursion": 3.914483572541779,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9055164274582213,
+        "max_cart_center_excursion": 3.914483572541779,
+        "required_rail_half_length": 4.094483572541779,
+        "required_rail_ratio": 1.3648278575139263
+      },
+      "resets_inside_episode": 0,
+      "seed": 86230,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 30,
+      "evaluated_candidates": 10,
+      "initial_qpos": [
+        0.0,
+        3.016283399381826,
+        -0.014502567234497507,
+        0.055792296494922726
+      ],
+      "initial_qvel": [
+        0.028280186292141525,
+        0.09194147887529912,
+        -0.010224251767595532,
+        0.027164607922963352
+      ],
+      "max_cart_excursion": 3.9947074516496044,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8252925483503954,
+        "max_cart_center_excursion": 3.9947074516496044,
+        "required_rail_half_length": 4.1747074516496046,
+        "required_rail_ratio": 1.3915691505498682
+      },
+      "resets_inside_episode": 0,
+      "seed": 86231,
+      "selected_conditioning_seconds": 1.1,
+      "selected_conditioning_time_ratio": 2.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 31,
+      "evaluated_candidates": 8,
+      "initial_qpos": [
+        0.0,
+        3.142077469645702,
+        0.008052800962358112,
+        0.017990126368862377
+      ],
+      "initial_qvel": [
+        -0.040662778229181705,
+        0.02453753143819206,
+        -0.026385280058530143,
+        0.015223860322839684
+      ],
+      "max_cart_excursion": 3.951925739495829,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8680742605041711,
+        "max_cart_center_excursion": 3.951925739495829,
+        "required_rail_half_length": 4.131925739495829,
+        "required_rail_ratio": 1.3773085798319429
+      },
+      "resets_inside_episode": 0,
+      "seed": 86232,
+      "selected_conditioning_seconds": 0.56,
+      "selected_conditioning_time_ratio": 1.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 32,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1775233643006526,
+        -0.02998588120736803,
+        -0.0018860363281386194
+      ],
+      "initial_qvel": [
+        0.007953505617929048,
+        -0.030219301469091867,
+        -0.00529824557403465,
+        0.00981761069125392
+      ],
+      "max_cart_excursion": 3.92065792894413,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8993420710558704,
+        "max_cart_center_excursion": 3.92065792894413,
+        "required_rail_half_length": 4.10065792894413,
+        "required_rail_ratio": 1.3668859763147099
+      },
+      "resets_inside_episode": 0,
+      "seed": 86233,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 33,
+      "evaluated_candidates": 6,
+      "initial_qpos": [
+        0.0,
+        3.1710352015530496,
+        -0.0675634277608328,
+        -0.0363079069811202
+      ],
+      "initial_qvel": [
+        -0.06825217335527552,
+        0.01778237176283512,
+        0.014629315361765205,
+        0.05628769045733585
+      ],
+      "max_cart_excursion": 3.9048823258355725,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9151176741644278,
+        "max_cart_center_excursion": 3.9048823258355725,
+        "required_rail_half_length": 4.084882325835572,
+        "required_rail_ratio": 1.3616274419451908
+      },
+      "resets_inside_episode": 0,
+      "seed": 86234,
+      "selected_conditioning_seconds": 0.28,
+      "selected_conditioning_time_ratio": 0.5,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 34,
+      "evaluated_candidates": 8,
+      "initial_qpos": [
+        0.0,
+        3.221323687866309,
+        0.07921410081066108,
+        -0.00951298097418413
+      ],
+      "initial_qvel": [
+        0.09331425027617724,
+        0.055823065611461546,
+        0.05067028433408435,
+        0.061251514293646114
+      ],
+      "max_cart_excursion": 3.9278082951062405,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8921917048937598,
+        "max_cart_center_excursion": 3.9278082951062405,
+        "required_rail_half_length": 4.10780829510624,
+        "required_rail_ratio": 1.3692694317020802
+      },
+      "resets_inside_episode": 0,
+      "seed": 86235,
+      "selected_conditioning_seconds": 0.56,
+      "selected_conditioning_time_ratio": 1.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 35,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1289339350910788,
+        -0.05051609153873274,
+        -0.07486997718525294
+      ],
+      "initial_qvel": [
+        -0.015799380554639385,
+        0.025041190121777735,
+        -0.04223904592330959,
+        -0.06749421638009988
+      ],
+      "max_cart_excursion": 3.9071745060895964,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9128254939104039,
+        "max_cart_center_excursion": 3.9071745060895964,
+        "required_rail_half_length": 4.087174506089596,
+        "required_rail_ratio": 1.3623915020298654
+      },
+      "resets_inside_episode": 0,
+      "seed": 86236,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 36,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.171843676553672,
+        0.0642322805792954,
+        -0.030889515392502682
+      ],
+      "initial_qvel": [
+        0.015211274013755369,
+        -0.0019005641411366774,
+        -0.13013988514846872,
+        -0.11921804733998353
+      ],
+      "max_cart_excursion": 3.8867776415915802,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.93322235840842,
+        "max_cart_center_excursion": 3.8867776415915802,
+        "required_rail_half_length": 4.06677764159158,
+        "required_rail_ratio": 1.3555925471971932
+      },
+      "resets_inside_episode": 0,
+      "seed": 86237,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 37,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.0978280093549206,
+        -0.0661493544401674,
+        -0.10386923416896761
+      ],
+      "initial_qvel": [
+        0.036011875613325306,
+        0.06456080851694221,
+        -0.02054098472760027,
+        -0.08268367626475143
+      ],
+      "max_cart_excursion": 3.7422994676322436,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 1.0777005323677562,
+        "max_cart_center_excursion": 3.7422994676322436,
+        "required_rail_half_length": 3.922299467632244,
+        "required_rail_ratio": 1.3074331558774146
+      },
+      "resets_inside_episode": 0,
+      "seed": 86238,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 38,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.144944996775293,
+        0.023512394644394575,
+        -0.045532787967363285
+      ],
+      "initial_qvel": [
+        0.0805378333463181,
+        -0.010060845135482062,
+        0.03170819498981058,
+        -0.0356067027287091
+      ],
+      "max_cart_excursion": 3.920269722096345,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8997302779036547,
+        "max_cart_center_excursion": 3.920269722096345,
+        "required_rail_half_length": 4.100269722096345,
+        "required_rail_ratio": 1.366756574032115
+      },
+      "resets_inside_episode": 0,
+      "seed": 86239,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 39,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1654271880600624,
+        0.042522520904322854,
+        0.017706671058728696
+      ],
+      "initial_qvel": [
+        0.03442191032148225,
+        0.05637115661279223,
+        -0.04960630523189599,
+        0.03037652082495509
+      ],
+      "max_cart_excursion": 3.91250109515183,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9074989048481701,
+        "max_cart_center_excursion": 3.91250109515183,
+        "required_rail_half_length": 4.09250109515183,
+        "required_rail_ratio": 1.3641670317172767
+      },
+      "resets_inside_episode": 0,
+      "seed": 86240,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 40,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.0850982863166405,
+        0.04033110451443875,
+        0.08481658590943902
+      ],
+      "initial_qvel": [
+        -0.05180999084754944,
+        -0.010016872642948402,
+        -0.009067929130469363,
+        0.05680950094634729
+      ],
+      "max_cart_excursion": 3.9179262914174076,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9020737085825923,
+        "max_cart_center_excursion": 3.9179262914174076,
+        "required_rail_half_length": 4.097926291417408,
+        "required_rail_ratio": 1.3659754304724692
+      },
+      "resets_inside_episode": 0,
+      "seed": 86241,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 41,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.16326986600842,
+        -0.018891627252449587,
+        -0.007289609302914134
+      ],
+      "initial_qvel": [
+        -0.061676777147299335,
+        -0.08937345362441046,
+        -0.06162661170463404,
+        -0.04102157330059236
+      ],
+      "max_cart_excursion": 3.924481721821975,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8955182781780247,
+        "max_cart_center_excursion": 3.924481721821975,
+        "required_rail_half_length": 4.104481721821975,
+        "required_rail_ratio": 1.3681605739406584
+      },
+      "resets_inside_episode": 0,
+      "seed": 86242,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 42,
+      "evaluated_candidates": 12,
+      "initial_qpos": [
+        0.0,
+        3.120188090373891,
+        0.06664622105981592,
+        0.01947318960482566
+      ],
+      "initial_qvel": [
+        -0.04185450491512715,
+        0.02089018769182452,
+        -0.009809005487234223,
+        0.05241944620306319
+      ],
+      "max_cart_excursion": 5.093370894198609,
+      "max_upright_streak_seconds": 0.0,
+      "prediction_execution_agreement": true,
+      "prediction_success": false,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": -0.2733708941986084,
+        "max_cart_center_excursion": 5.093370894198609,
+        "required_rail_half_length": 5.273370894198608,
+        "required_rail_ratio": 1.7577902980662028
+      },
+      "resets_inside_episode": 0,
+      "seed": 86243,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": false,
+      "termination_reason": "rail_violation"
+    },
+    {
+      "episode": 43,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.045733637866344,
+        0.04943945222236726,
+        0.011874373089788117
+      ],
+      "initial_qvel": [
+        0.03269572429378611,
+        0.026606880492405695,
+        -0.02874924855865923,
+        0.06976724580477049
+      ],
+      "max_cart_excursion": 3.8213896887995125,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9986103112004878,
+        "max_cart_center_excursion": 3.8213896887995125,
+        "required_rail_half_length": 4.001389688799512,
+        "required_rail_ratio": 1.3337965629331707
+      },
+      "resets_inside_episode": 0,
+      "seed": 86244,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 44,
+      "evaluated_candidates": 6,
+      "initial_qpos": [
+        0.0,
+        3.0974715645590565,
+        0.04578995095953579,
+        0.018708803683876372
+      ],
+      "initial_qvel": [
+        0.022368553599418268,
+        -0.04103332131926665,
+        -0.07349504227147644,
+        0.03777755659892551
+      ],
+      "max_cart_excursion": 3.943857249641243,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8761427503587571,
+        "max_cart_center_excursion": 3.943857249641243,
+        "required_rail_half_length": 4.123857249641243,
+        "required_rail_ratio": 1.3746190832137477
+      },
+      "resets_inside_episode": 0,
+      "seed": 86245,
+      "selected_conditioning_seconds": 0.28,
+      "selected_conditioning_time_ratio": 0.5,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 45,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.181773686715681,
+        -0.04770826117842104,
+        0.09759890148790822
+      ],
+      "initial_qvel": [
+        -0.03373392209784225,
+        0.06463747073875208,
+        0.025918236206123768,
+        0.022934478302905764
+      ],
+      "max_cart_excursion": 3.941972281282251,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8780277187177488,
+        "max_cart_center_excursion": 3.941972281282251,
+        "required_rail_half_length": 4.121972281282251,
+        "required_rail_ratio": 1.373990760427417
+      },
+      "resets_inside_episode": 0,
+      "seed": 86246,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 46,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.07425022243072,
+        0.009926985156815924,
+        0.0567445909456468
+      ],
+      "initial_qvel": [
+        -0.08277352747353409,
+        -0.050192769056237235,
+        -0.03870045200215593,
+        -0.020133953569649535
+      ],
+      "max_cart_excursion": 3.8556684653882134,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9643315346117864,
+        "max_cart_center_excursion": 3.8556684653882134,
+        "required_rail_half_length": 4.0356684653882136,
+        "required_rail_ratio": 1.345222821796071
+      },
+      "resets_inside_episode": 0,
+      "seed": 86247,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 47,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.097422323749769,
+        0.04917777216468994,
+        -0.00549881727341307
+      ],
+      "initial_qvel": [
+        0.019885022126680182,
+        0.02495024729717705,
+        0.03686807127771651,
+        -0.029253466828830888
+      ],
+      "max_cart_excursion": 3.922858703401733,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8971412965982672,
+        "max_cart_center_excursion": 3.922858703401733,
+        "required_rail_half_length": 4.102858703401733,
+        "required_rail_ratio": 1.3676195678005776
+      },
+      "resets_inside_episode": 0,
+      "seed": 86248,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 48,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.080222905609181,
+        0.03140729270535967,
+        -0.00041166038337339537
+      ],
+      "initial_qvel": [
+        -0.016246745565870743,
+        -0.005467734554438567,
+        0.011968619571986637,
+        -0.008830157461028108
+      ],
+      "max_cart_excursion": 3.908626606400885,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9113733935991153,
+        "max_cart_center_excursion": 3.908626606400885,
+        "required_rail_half_length": 4.088626606400885,
+        "required_rail_ratio": 1.3628755354669615
+      },
+      "resets_inside_episode": 0,
+      "seed": 86249,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 49,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.140964496709882,
+        0.031036884886185404,
+        -0.05711687999611829
+      ],
+      "initial_qvel": [
+        -0.0005112041837945705,
+        0.0719662111026668,
+        0.048854779208696,
+        0.02420766318069889
+      ],
+      "max_cart_excursion": 3.9249942468535686,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8950057531464317,
+        "max_cart_center_excursion": 3.9249942468535686,
+        "required_rail_half_length": 4.104994246853568,
+        "required_rail_ratio": 1.368331415617856
+      },
+      "resets_inside_episode": 0,
+      "seed": 86250,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 50,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.100025005465821,
+        -0.044196172310499646,
+        -0.04123083450640638
+      ],
+      "initial_qvel": [
+        0.016725524586667415,
+        -0.06998534129302686,
+        0.029322390589797787,
+        -0.01957772039709914
+      ],
+      "max_cart_excursion": 3.89856687570842,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9214331242915801,
+        "max_cart_center_excursion": 3.89856687570842,
+        "required_rail_half_length": 4.07856687570842,
+        "required_rail_ratio": 1.3595222919028067
+      },
+      "resets_inside_episode": 0,
+      "seed": 86251,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 51,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.172347523710289,
+        0.010282981802283809,
+        -0.01193974955587603
+      ],
+      "initial_qvel": [
+        0.03854568219896262,
+        0.0054000633108636665,
+        0.12118856335438506,
+        -0.04184299894691455
+      ],
+      "max_cart_excursion": 3.9117121900116603,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.90828780998834,
+        "max_cart_center_excursion": 3.9117121900116603,
+        "required_rail_half_length": 4.09171219001166,
+        "required_rail_ratio": 1.36390406333722
+      },
+      "resets_inside_episode": 0,
+      "seed": 86252,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 52,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1130505852187644,
+        -0.042043351759220304,
+        -0.046156680457562375
+      ],
+      "initial_qvel": [
+        -0.03955496720640688,
+        -0.06968640166639123,
+        -0.09620823971071724,
+        -0.017786283998538994
+      ],
+      "max_cart_excursion": 3.903835484983166,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9161645150168338,
+        "max_cart_center_excursion": 3.903835484983166,
+        "required_rail_half_length": 4.083835484983166,
+        "required_rail_ratio": 1.3612784949943888
+      },
+      "resets_inside_episode": 0,
+      "seed": 86253,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 53,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.066014214409335,
+        -0.02159155835665423,
+        -0.07429229665416173
+      ],
+      "initial_qvel": [
+        0.07577652534922681,
+        0.06664922773281777,
+        -0.01448496527612827,
+        0.06008542684203212
+      ],
+      "max_cart_excursion": 3.6896228894824565,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 1.1303771105175433,
+        "max_cart_center_excursion": 3.6896228894824565,
+        "required_rail_half_length": 3.8696228894824567,
+        "required_rail_ratio": 1.2898742964941523
+      },
+      "resets_inside_episode": 0,
+      "seed": 86254,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 54,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1834495571540433,
+        0.0016363170000111744,
+        0.01556523168907517
+      ],
+      "initial_qvel": [
+        -0.041155944554506746,
+        -0.01598923665695385,
+        0.08709407032014281,
+        -0.00867724427627204
+      ],
+      "max_cart_excursion": 3.914178445561255,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9058215544387451,
+        "max_cart_center_excursion": 3.914178445561255,
+        "required_rail_half_length": 4.094178445561255,
+        "required_rail_ratio": 1.3647261485204183
+      },
+      "resets_inside_episode": 0,
+      "seed": 86255,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 55,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.04991337695819,
+        0.023825303724803196,
+        0.03837124383053935
+      ],
+      "initial_qvel": [
+        -0.009709720367496948,
+        0.007500338971296042,
+        -0.07667237981337846,
+        0.0355794989049186
+      ],
+      "max_cart_excursion": 3.7654446558315824,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 1.0545553441684175,
+        "max_cart_center_excursion": 3.7654446558315824,
+        "required_rail_half_length": 3.9454446558315825,
+        "required_rail_ratio": 1.3151482186105274
+      },
+      "resets_inside_episode": 0,
+      "seed": 86256,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 56,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1622666019859635,
+        0.10162952458302937,
+        -0.013639507267307636
+      ],
+      "initial_qvel": [
+        0.02295408353867838,
+        0.01760319002515098,
+        0.09559292919898592,
+        0.013132094165356498
+      ],
+      "max_cart_excursion": 3.753554303091571,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 1.066445696908429,
+        "max_cart_center_excursion": 3.753554303091571,
+        "required_rail_half_length": 3.933554303091571,
+        "required_rail_ratio": 1.3111847676971904
+      },
+      "resets_inside_episode": 0,
+      "seed": 86257,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 57,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1714557969801236,
+        -0.012541613440127712,
+        -0.05183941165695625
+      ],
+      "initial_qvel": [
+        0.02126833687271175,
+        0.05464453286638733,
+        -0.09531949112629517,
+        -0.005576848754614522
+      ],
+      "max_cart_excursion": 3.9233468361571284,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8966531638428714,
+        "max_cart_center_excursion": 3.9233468361571284,
+        "required_rail_half_length": 4.103346836157129,
+        "required_rail_ratio": 1.3677822787190428
+      },
+      "resets_inside_episode": 0,
+      "seed": 86258,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 58,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.182023163177713,
+        -0.042462091572514876,
+        0.07983022683787222
+      ],
+      "initial_qvel": [
+        -0.06838983802233722,
+        0.04907592666540971,
+        -0.0020930256678478973,
+        0.12379712243886754
+      ],
+      "max_cart_excursion": 3.9447010857572495,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8752989142427507,
+        "max_cart_center_excursion": 3.9447010857572495,
+        "required_rail_half_length": 4.124701085757249,
+        "required_rail_ratio": 1.3749003619190832
+      },
+      "resets_inside_episode": 0,
+      "seed": 86259,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 59,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.117070328460455,
+        -0.008637127017493527,
+        0.03230329408686402
+      ],
+      "initial_qvel": [
+        -0.10068170769959513,
+        -0.002506909656235732,
+        -0.039871917329208646,
+        -0.013611533908975843
+      ],
+      "max_cart_excursion": 3.9110463231187014,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9089536768812989,
+        "max_cart_center_excursion": 3.9110463231187014,
+        "required_rail_half_length": 4.091046323118701,
+        "required_rail_ratio": 1.3636821077062338
+      },
+      "resets_inside_episode": 0,
+      "seed": 86260,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 60,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1694079039629743,
+        -0.020613838614898787,
+        0.02868812989467679
+      ],
+      "initial_qvel": [
+        -0.045266760949730894,
+        0.021935310715537434,
+        -0.019505403084047246,
+        -0.034867416994348054
+      ],
+      "max_cart_excursion": 3.9286259824834566,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8913740175165437,
+        "max_cart_center_excursion": 3.9286259824834566,
+        "required_rail_half_length": 4.108625982483456,
+        "required_rail_ratio": 1.3695419941611522
+      },
+      "resets_inside_episode": 0,
+      "seed": 86261,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 61,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.113788992095267,
+        0.07899658751322497,
+        -0.04917930123049066
+      ],
+      "initial_qvel": [
+        0.06391978467966908,
+        -0.011785174370486757,
+        -0.007220971115625166,
+        0.03292751097755321
+      ],
+      "max_cart_excursion": 3.905359896456662,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9146401035433378,
+        "max_cart_center_excursion": 3.905359896456662,
+        "required_rail_half_length": 4.085359896456662,
+        "required_rail_ratio": 1.3617866321522207
+      },
+      "resets_inside_episode": 0,
+      "seed": 86262,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 62,
+      "evaluated_candidates": 12,
+      "initial_qpos": [
+        0.0,
+        3.1170010404446056,
+        0.07376738744600443,
+        0.04100028912575033
+      ],
+      "initial_qvel": [
+        -0.08102229134297839,
+        -0.03567715628669748,
+        0.005679365720293771,
+        0.06625333215308514
+      ],
+      "max_cart_excursion": 3.9427554959800597,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8772445040199406,
+        "max_cart_center_excursion": 3.9427554959800597,
+        "required_rail_half_length": 4.122755495980059,
+        "required_rail_ratio": 1.3742518319933532
+      },
+      "resets_inside_episode": 0,
+      "seed": 86263,
+      "selected_conditioning_seconds": 2.22,
+      "selected_conditioning_time_ratio": 4.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 63,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.0792701388302666,
+        0.0037057932455537793,
+        -0.025995301804672095
+      ],
+      "initial_qvel": [
+        0.03043893121835068,
+        -0.0021094937755850893,
+        0.009170618260441151,
+        0.014346372063407626
+      ],
+      "max_cart_excursion": 3.8776549014272965,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9423450985727033,
+        "max_cart_center_excursion": 3.8776549014272965,
+        "required_rail_half_length": 4.057654901427297,
+        "required_rail_ratio": 1.3525516338090988
+      },
+      "resets_inside_episode": 0,
+      "seed": 86264,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 64,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.1431478702453095,
+        -0.05158388148475599,
+        -0.0006464157657323124
+      ],
+      "initial_qvel": [
+        0.01207834245994778,
+        -0.009621264342271386,
+        0.013810061362106352,
+        -0.01415679758881365
+      ],
+      "max_cart_excursion": 3.9210640865332484,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8989359134667518,
+        "max_cart_center_excursion": 3.9210640865332484,
+        "required_rail_half_length": 4.101064086533248,
+        "required_rail_ratio": 1.3670213621777494
+      },
+      "resets_inside_episode": 0,
+      "seed": 86265,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 65,
+      "evaluated_candidates": 8,
+      "initial_qpos": [
+        0.0,
+        3.0033032270960955,
+        -0.045895871604637095,
+        -0.020642528459436874
+      ],
+      "initial_qvel": [
+        0.04232701596285001,
+        0.04560062314191131,
+        0.014942506389703162,
+        0.024776052608457735
+      ],
+      "max_cart_excursion": 3.9401600630005458,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8798399369994545,
+        "max_cart_center_excursion": 3.9401600630005458,
+        "required_rail_half_length": 4.1201600630005455,
+        "required_rail_ratio": 1.3733866876668486
+      },
+      "resets_inside_episode": 0,
+      "seed": 86266,
+      "selected_conditioning_seconds": 0.56,
+      "selected_conditioning_time_ratio": 1.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 66,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.143668414977669,
+        -0.16097688789607034,
+        -0.0774536161483517
+      ],
+      "initial_qvel": [
+        0.02392210300417937,
+        0.000702804242843135,
+        -0.026257171156006072,
+        -0.05763694047166243
+      ],
+      "max_cart_excursion": 3.888502917626806,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9314970823731938,
+        "max_cart_center_excursion": 3.888502917626806,
+        "required_rail_half_length": 4.068502917626806,
+        "required_rail_ratio": 1.3561676392089355
+      },
+      "resets_inside_episode": 0,
+      "seed": 86267,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 67,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.092142437943039,
+        0.05177818007977539,
+        -0.006868511444486161
+      ],
+      "initial_qvel": [
+        -0.026564622523861877,
+        0.0715918563970613,
+        -0.10069164412845635,
+        0.07601266717237971
+      ],
+      "max_cart_excursion": 3.9152051495724276,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9047948504275727,
+        "max_cart_center_excursion": 3.9152051495724276,
+        "required_rail_half_length": 4.095205149572427,
+        "required_rail_ratio": 1.365068383190809
+      },
+      "resets_inside_episode": 0,
+      "seed": 86268,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 68,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.1753123098257077,
+        -0.00819126443415173,
+        -0.10607543110466877
+      ],
+      "initial_qvel": [
+        0.05920426635879891,
+        0.010388461404586782,
+        -0.0012221716463508903,
+        0.010335360029224501
+      ],
+      "max_cart_excursion": 3.9204200436664896,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8995799563335103,
+        "max_cart_center_excursion": 3.9204200436664896,
+        "required_rail_half_length": 4.10042004366649,
+        "required_rail_ratio": 1.3668066812221633
+      },
+      "resets_inside_episode": 0,
+      "seed": 86269,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 69,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1959954553128243,
+        0.02364101216592934,
+        -0.0036113382512844242
+      ],
+      "initial_qvel": [
+        -0.0216858220158248,
+        -0.03658374652406953,
+        -0.03239038457024927,
+        -0.0851255444610703
+      ],
+      "max_cart_excursion": 3.8166975120592586,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 1.0033024879407413,
+        "max_cart_center_excursion": 3.8166975120592586,
+        "required_rail_half_length": 3.9966975120592587,
+        "required_rail_ratio": 1.332232504019753
+      },
+      "resets_inside_episode": 0,
+      "seed": 86270,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 70,
+      "evaluated_candidates": 6,
+      "initial_qpos": [
+        0.0,
+        3.0577745759337116,
+        0.013312936229042767,
+        -0.026891791961422714
+      ],
+      "initial_qvel": [
+        -0.004812235151008006,
+        0.0342171349748259,
+        -0.03482684227618914,
+        -0.03583855575197546
+      ],
+      "max_cart_excursion": 3.8409607257128053,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.979039274287195,
+        "max_cart_center_excursion": 3.8409607257128053,
+        "required_rail_half_length": 4.020960725712805,
+        "required_rail_ratio": 1.3403202419042684
+      },
+      "resets_inside_episode": 0,
+      "seed": 86271,
+      "selected_conditioning_seconds": 0.28,
+      "selected_conditioning_time_ratio": 0.5,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 71,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.124752058233464,
+        -0.04178101244658419,
+        -0.09390633860581883
+      ],
+      "initial_qvel": [
+        -0.03387220030322462,
+        -0.008430370956043366,
+        0.028383398017192637,
+        0.002338023657200084
+      ],
+      "max_cart_excursion": 3.909828371197688,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9101716288023125,
+        "max_cart_center_excursion": 3.909828371197688,
+        "required_rail_half_length": 4.0898283711976875,
+        "required_rail_ratio": 1.3632761237325626
+      },
+      "resets_inside_episode": 0,
+      "seed": 86272,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 72,
+      "evaluated_candidates": 10,
+      "initial_qpos": [
+        0.0,
+        3.156465319315952,
+        -0.06773292315098622,
+        -0.06557051808812868
+      ],
+      "initial_qvel": [
+        0.06083001015530858,
+        -0.12865433175584753,
+        0.06446075734743276,
+        0.011748043584065782
+      ],
+      "max_cart_excursion": 4.03219399224329,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.7878060077567106,
+        "max_cart_center_excursion": 4.03219399224329,
+        "required_rail_half_length": 4.212193992243289,
+        "required_rail_ratio": 1.4040646640810965
+      },
+      "resets_inside_episode": 0,
+      "seed": 86273,
+      "selected_conditioning_seconds": 1.1,
+      "selected_conditioning_time_ratio": 2.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 73,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.10602049446391,
+        -0.040957160877838676,
+        -0.0072748304970702395
+      ],
+      "initial_qvel": [
+        0.01125830529173235,
+        0.01903086657936231,
+        -0.041096232936523695,
+        0.024669195304383128
+      ],
+      "max_cart_excursion": 3.873594720190282,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.946405279809718,
+        "max_cart_center_excursion": 3.873594720190282,
+        "required_rail_half_length": 4.053594720190282,
+        "required_rail_ratio": 1.3511982400634273
+      },
+      "resets_inside_episode": 0,
+      "seed": 86274,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 74,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1221743596054807,
+        -0.0007885407644616757,
+        -0.042573430530362784
+      ],
+      "initial_qvel": [
+        0.007605428976182569,
+        0.0520134789425889,
+        -0.06646745474362234,
+        0.023214176156605416
+      ],
+      "max_cart_excursion": 3.9215065858028733,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8984934141971266,
+        "max_cart_center_excursion": 3.9215065858028733,
+        "required_rail_half_length": 4.101506585802873,
+        "required_rail_ratio": 1.3671688619342912
+      },
+      "resets_inside_episode": 0,
+      "seed": 86275,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 75,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1306080371341953,
+        -0.05450836042079879,
+        0.009065786746482235
+      ],
+      "initial_qvel": [
+        -0.05194621365215057,
+        0.000765611858388917,
+        0.04680019117389492,
+        0.05822929105743502
+      ],
+      "max_cart_excursion": 3.9108890858484577,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9091109141515421,
+        "max_cart_center_excursion": 3.9108890858484577,
+        "required_rail_half_length": 4.090889085848458,
+        "required_rail_ratio": 1.3636296952828193
+      },
+      "resets_inside_episode": 0,
+      "seed": 86276,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 76,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.0981994591933324,
+        0.025348922374643174,
+        -0.05819237422885909
+      ],
+      "initial_qvel": [
+        -0.049159194958720356,
+        0.02306663890917201,
+        -0.014250252597397754,
+        -0.00027021908568456294
+      ],
+      "max_cart_excursion": 3.912887005956362,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9071129940436382,
+        "max_cart_center_excursion": 3.912887005956362,
+        "required_rail_half_length": 4.092887005956362,
+        "required_rail_ratio": 1.3642956686521206
+      },
+      "resets_inside_episode": 0,
+      "seed": 86277,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 77,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.2225232029659843,
+        -0.022370258967538026,
+        0.02391140664658836
+      ],
+      "initial_qvel": [
+        0.01634887017789079,
+        0.024741447431334475,
+        -0.016163045975681266,
+        -0.04617533886970068
+      ],
+      "max_cart_excursion": 3.787997886034985,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 1.0320021139650146,
+        "max_cart_center_excursion": 3.787997886034985,
+        "required_rail_half_length": 3.9679978860349854,
+        "required_rail_ratio": 1.3226659620116619
+      },
+      "resets_inside_episode": 0,
+      "seed": 86278,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 78,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.1571573016753294,
+        -0.05839749403303937,
+        0.03326548609633557
+      ],
+      "initial_qvel": [
+        -0.035378592417922454,
+        0.02145861192000108,
+        -0.03204983635883869,
+        0.05189275325215233
+      ],
+      "max_cart_excursion": 3.9122511772911754,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9077488227088244,
+        "max_cart_center_excursion": 3.9122511772911754,
+        "required_rail_half_length": 4.092251177291176,
+        "required_rail_ratio": 1.3640837257637253
+      },
+      "resets_inside_episode": 0,
+      "seed": 86279,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 79,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.1305718618141882,
+        0.09094427116005763,
+        0.056575019618144366
+      ],
+      "initial_qvel": [
+        0.02056600327217321,
+        0.027216938870726622,
+        0.045825219499386304,
+        -0.04520851529008241
+      ],
+      "max_cart_excursion": 3.9090888329813342,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.910911167018666,
+        "max_cart_center_excursion": 3.9090888329813342,
+        "required_rail_half_length": 4.089088832981334,
+        "required_rail_ratio": 1.363029610993778
+      },
+      "resets_inside_episode": 0,
+      "seed": 86280,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 80,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1382655385870684,
+        -0.012940794376906695,
+        -0.017162579879929387
+      ],
+      "initial_qvel": [
+        0.00793309921420295,
+        0.0330927715505227,
+        -0.05483734092781947,
+        0.006479338947229384
+      ],
+      "max_cart_excursion": 3.9259680293031116,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8940319706968882,
+        "max_cart_center_excursion": 3.9259680293031116,
+        "required_rail_half_length": 4.105968029303112,
+        "required_rail_ratio": 1.3686560097677039
+      },
+      "resets_inside_episode": 0,
+      "seed": 86281,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 81,
+      "evaluated_candidates": 12,
+      "initial_qpos": [
+        0.0,
+        3.1665140972756323,
+        -0.05882466222366583,
+        -0.05368100566925656
+      ],
+      "initial_qvel": [
+        0.0752511069721883,
+        -0.040751736283786144,
+        -0.004777407669609473,
+        0.07674573049231455
+      ],
+      "max_cart_excursion": 5.078049416358663,
+      "max_upright_streak_seconds": 0.0,
+      "prediction_execution_agreement": true,
+      "prediction_success": false,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": -0.25804941635866285,
+        "max_cart_center_excursion": 5.078049416358663,
+        "required_rail_half_length": 5.258049416358663,
+        "required_rail_ratio": 1.752683138786221
+      },
+      "resets_inside_episode": 0,
+      "seed": 86282,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": false,
+      "termination_reason": "rail_violation"
+    },
+    {
+      "episode": 82,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.133579435153072,
+        -0.03331401913529455,
+        -0.0635020917201794
+      ],
+      "initial_qvel": [
+        0.059326141437148074,
+        0.04422270185079476,
+        -0.02319005169282539,
+        0.03267792703981457
+      ],
+      "max_cart_excursion": 3.923425154265234,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.896574845734766,
+        "max_cart_center_excursion": 3.923425154265234,
+        "required_rail_half_length": 4.103425154265234,
+        "required_rail_ratio": 1.367808384755078
+      },
+      "resets_inside_episode": 0,
+      "seed": 86283,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 83,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.076124800106447,
+        -0.0002339976221856063,
+        0.008054609850708393
+      ],
+      "initial_qvel": [
+        0.05760775356157863,
+        0.02244548462016613,
+        -0.054754033154863435,
+        -0.0532434244732806
+      ],
+      "max_cart_excursion": 3.8329130557547892,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9870869442452106,
+        "max_cart_center_excursion": 3.8329130557547892,
+        "required_rail_half_length": 4.012913055754789,
+        "required_rail_ratio": 1.3376376852515965
+      },
+      "resets_inside_episode": 0,
+      "seed": 86284,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 84,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.136927025014312,
+        -0.01227410061671185,
+        -0.026748011775673954
+      ],
+      "initial_qvel": [
+        -0.028558760917254074,
+        0.07350645396447829,
+        0.025889826097125947,
+        -0.03558317421764367
+      ],
+      "max_cart_excursion": 3.9190882613566713,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9009117386433285,
+        "max_cart_center_excursion": 3.9190882613566713,
+        "required_rail_half_length": 4.0990882613566715,
+        "required_rail_ratio": 1.3663627537855572
+      },
+      "resets_inside_episode": 0,
+      "seed": 86285,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 85,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.0792804085803316,
+        0.017356822164718837,
+        -0.028683984292272507
+      ],
+      "initial_qvel": [
+        0.01578850279017489,
+        0.02304485532755746,
+        -0.0880188179439857,
+        -0.026340181192917103
+      ],
+      "max_cart_excursion": 3.8663150163651028,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9536849836348971,
+        "max_cart_center_excursion": 3.8663150163651028,
+        "required_rail_half_length": 4.046315016365103,
+        "required_rail_ratio": 1.348771672121701
+      },
+      "resets_inside_episode": 0,
+      "seed": 86286,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 86,
+      "evaluated_candidates": 8,
+      "initial_qpos": [
+        0.0,
+        3.13129663485312,
+        0.04709502521852269,
+        -0.005194206618333869
+      ],
+      "initial_qvel": [
+        -0.003713677796043389,
+        -0.05502212068934429,
+        -0.022807353289653207,
+        0.029969870924230004
+      ],
+      "max_cart_excursion": 3.9402102734747695,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8797897265252308,
+        "max_cart_center_excursion": 3.9402102734747695,
+        "required_rail_half_length": 4.120210273474769,
+        "required_rail_ratio": 1.3734034244915898
+      },
+      "resets_inside_episode": 0,
+      "seed": 86287,
+      "selected_conditioning_seconds": 0.56,
+      "selected_conditioning_time_ratio": 1.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 87,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.1498094000718555,
+        -0.09226175811397835,
+        0.000742186191627567
+      ],
+      "initial_qvel": [
+        0.013552666146063997,
+        0.05085810696092702,
+        0.07579612066993364,
+        -0.004218058331068351
+      ],
+      "max_cart_excursion": 3.907040034150588,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9129599658494119,
+        "max_cart_center_excursion": 3.907040034150588,
+        "required_rail_half_length": 4.087040034150588,
+        "required_rail_ratio": 1.362346678050196
+      },
+      "resets_inside_episode": 0,
+      "seed": 86288,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 88,
+      "evaluated_candidates": 4,
+      "initial_qpos": [
+        0.0,
+        3.1346133890349277,
+        0.0404857810201097,
+        -0.028584226921365943
+      ],
+      "initial_qvel": [
+        -0.009404331120867478,
+        0.00504517042683672,
+        -0.02475518308664304,
+        0.041112942672334674
+      ],
+      "max_cart_excursion": 3.923836271341292,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8961637286587081,
+        "max_cart_center_excursion": 3.923836271341292,
+        "required_rail_half_length": 4.103836271341292,
+        "required_rail_ratio": 1.3679454237804307
+      },
+      "resets_inside_episode": 0,
+      "seed": 86289,
+      "selected_conditioning_seconds": 0.14,
+      "selected_conditioning_time_ratio": 0.25,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 89,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1228514570810715,
+        0.03685009112619873,
+        -0.041084574674988904
+      ],
+      "initial_qvel": [
+        -0.10952242974966811,
+        0.004666474565235744,
+        -0.04050775211692523,
+        -0.08668015504706142
+      ],
+      "max_cart_excursion": 3.921914780421168,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8980852195788325,
+        "max_cart_center_excursion": 3.921914780421168,
+        "required_rail_half_length": 4.1019147804211675,
+        "required_rail_ratio": 1.3673049268070558
+      },
+      "resets_inside_episode": 0,
+      "seed": 86290,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 90,
+      "evaluated_candidates": 8,
+      "initial_qpos": [
+        0.0,
+        3.1103719258757536,
+        0.07665652561783069,
+        0.0712915115177688
+      ],
+      "initial_qvel": [
+        0.022590944499570012,
+        0.0006387379169221376,
+        -0.1310870567598517,
+        0.07043465991548138
+      ],
+      "max_cart_excursion": 3.9287500722456246,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8912499277543757,
+        "max_cart_center_excursion": 3.9287500722456246,
+        "required_rail_half_length": 4.108750072245624,
+        "required_rail_ratio": 1.369583357415208
+      },
+      "resets_inside_episode": 0,
+      "seed": 86291,
+      "selected_conditioning_seconds": 0.56,
+      "selected_conditioning_time_ratio": 1.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 91,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.176850544767509,
+        0.020369038780376728,
+        -0.062152031451531226
+      ],
+      "initial_qvel": [
+        0.015321501651494835,
+        -0.015032747170442121,
+        0.03579120662928115,
+        0.11595014641651119
+      ],
+      "max_cart_excursion": 3.9059610380140066,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9140389619859937,
+        "max_cart_center_excursion": 3.9059610380140066,
+        "required_rail_half_length": 4.085961038014006,
+        "required_rail_ratio": 1.3619870126713354
+      },
+      "resets_inside_episode": 0,
+      "seed": 86292,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 92,
+      "evaluated_candidates": 8,
+      "initial_qpos": [
+        0.0,
+        3.245527509132219,
+        0.050817499203965,
+        -0.0015675876363917243
+      ],
+      "initial_qvel": [
+        0.0013570848276575477,
+        -0.023287651387077453,
+        -0.0308127064696214,
+        0.1096497137425979
+      ],
+      "max_cart_excursion": 3.9281509010038964,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8918490989961034,
+        "max_cart_center_excursion": 3.9281509010038964,
+        "required_rail_half_length": 4.108150901003897,
+        "required_rail_ratio": 1.3693836336679654
+      },
+      "resets_inside_episode": 0,
+      "seed": 86293,
+      "selected_conditioning_seconds": 0.56,
+      "selected_conditioning_time_ratio": 1.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 93,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1552538878565137,
+        -0.017896595413866914,
+        0.01080044388670837
+      ],
+      "initial_qvel": [
+        0.05004984038619642,
+        0.0461790421658726,
+        -0.020531532580495893,
+        0.03647884408765749
+      ],
+      "max_cart_excursion": 3.9268681512060803,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8931318487939199,
+        "max_cart_center_excursion": 3.9268681512060803,
+        "required_rail_half_length": 4.10686815120608,
+        "required_rail_ratio": 1.3689560504020266
+      },
+      "resets_inside_episode": 0,
+      "seed": 86294,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 94,
+      "evaluated_candidates": 6,
+      "initial_qpos": [
+        0.0,
+        3.135387692633914,
+        0.001205861047609331,
+        0.04657256129362166
+      ],
+      "initial_qvel": [
+        0.05605112173610959,
+        0.023212540467771933,
+        -0.009756059647093874,
+        -0.05862854258940569
+      ],
+      "max_cart_excursion": 3.9394697622744417,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8805302377255586,
+        "max_cart_center_excursion": 3.9394697622744417,
+        "required_rail_half_length": 4.119469762274441,
+        "required_rail_ratio": 1.3731565874248137
+      },
+      "resets_inside_episode": 0,
+      "seed": 86295,
+      "selected_conditioning_seconds": 0.28,
+      "selected_conditioning_time_ratio": 0.5,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 95,
+      "evaluated_candidates": 6,
+      "initial_qpos": [
+        0.0,
+        3.2169255703376756,
+        0.03649799291313742,
+        -0.04438010329538851
+      ],
+      "initial_qvel": [
+        0.053494671967203804,
+        -0.010689626982385998,
+        0.015229745129685541,
+        0.00751519609684887
+      ],
+      "max_cart_excursion": 3.790124698249818,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 1.0298753017501818,
+        "max_cart_center_excursion": 3.790124698249818,
+        "required_rail_half_length": 3.970124698249818,
+        "required_rail_ratio": 1.3233748994166061
+      },
+      "resets_inside_episode": 0,
+      "seed": 86296,
+      "selected_conditioning_seconds": 0.28,
+      "selected_conditioning_time_ratio": 0.5,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 96,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1899255192995994,
+        0.004150957499356801,
+        0.009485751157486785
+      ],
+      "initial_qvel": [
+        -0.024559897461282624,
+        0.05017019370124938,
+        -0.01264691815366325,
+        -0.045108861084162455
+      ],
+      "max_cart_excursion": 3.9138144078290185,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9061855921709814,
+        "max_cart_center_excursion": 3.9138144078290185,
+        "required_rail_half_length": 4.093814407829019,
+        "required_rail_ratio": 1.3646048026096729
+      },
+      "resets_inside_episode": 0,
+      "seed": 86297,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 0,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 97,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.094849483730287,
+        0.0008590042203582704,
+        -0.013061866218723923
+      ],
+      "initial_qvel": [
+        -0.11933474481411409,
+        -0.03517636157841438,
+        -0.04558768266911032,
+        0.05715427329006319
+      ],
+      "max_cart_excursion": 3.824144059680916,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9958559403190836,
+        "max_cart_center_excursion": 3.824144059680916,
+        "required_rail_half_length": 4.004144059680916,
+        "required_rail_ratio": 1.3347146865603055
+      },
+      "resets_inside_episode": 0,
+      "seed": 86298,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 98,
+      "evaluated_candidates": 8,
+      "initial_qpos": [
+        0.0,
+        3.1405866999930145,
+        0.016264574361185592,
+        -0.0757073789740569
+      ],
+      "initial_qvel": [
+        0.08948265792267861,
+        -0.011855382099981843,
+        -0.10220024648903724,
+        0.024263454075321097
+      ],
+      "max_cart_excursion": 3.972396893131082,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.8476031068689185,
+        "max_cart_center_excursion": 3.972396893131082,
+        "required_rail_half_length": 4.1523968931310815,
+        "required_rail_ratio": 1.3841322977103605
+      },
+      "resets_inside_episode": 0,
+      "seed": 86299,
+      "selected_conditioning_seconds": 0.56,
+      "selected_conditioning_time_ratio": 1.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    },
+    {
+      "episode": 99,
+      "evaluated_candidates": 2,
+      "initial_qpos": [
+        0.0,
+        3.1290578000560694,
+        -0.06922575747443435,
+        0.07726282014893636
+      ],
+      "initial_qvel": [
+        -0.032160570641158286,
+        0.0038844175060672712,
+        0.07896567671689123,
+        0.009655846692895601
+      ],
+      "max_cart_excursion": 3.9055388018194535,
+      "max_upright_streak_seconds": 18.78,
+      "prediction_execution_agreement": true,
+      "prediction_success": true,
+      "rail_requirement": {
+        "configured_rail_ratio": 1.6666666666666667,
+        "margin": 0.9144611981805468,
+        "max_cart_center_excursion": 3.9055388018194535,
+        "required_rail_half_length": 4.085538801819453,
+        "required_rail_ratio": 1.361846267273151
+      },
+      "resets_inside_episode": 0,
+      "seed": 86300,
+      "selected_conditioning_seconds": 0.0,
+      "selected_conditioning_time_ratio": 0.0,
+      "selected_route": 1,
+      "success": true,
+      "termination_reason": "time_limit"
+    }
+  ],
+  "episodes": 100,
+  "generated_at": "2026-09-13T18:30:35+00:00",
+  "git": {
+    "available": true,
+    "commit": "d91e5efc9b65ba6e281380e456115ef1001b52bb",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      " M README.md",
+      " M ROADMAP.md",
+      " M docs/eight_link_swingup_paper.md",
+      " M docs/generalized_solver.md",
+      " M docs/levers_and_pitfalls.md",
+      " M scripts/evaluate_fddp_two_expert.py",
+      " M scripts/evaluate_generalized_route_library.py",
+      " M scripts/render_fddp_parked_route_video.py",
+      " M scripts/run_generalized_homotopy.py",
+      " M scripts/search_swingup_tail_action_cem.py",
+      " M tests/test_generalized_homotopy.py",
+      "?? assets/eight-link-swingup.gif",
+      "?? configs/swingup9_mid_split_locked_continuation.yaml",
+      "?? configs/swingup9_split_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_302_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_continuation.yaml",
+      "?? configs/swingup9_uniform.yaml",
+      "?? scripts/convert_gn_endpoint_route.py",
+      "?? scripts/embed_locked_split_route.py",
+      "?? scripts/run_joint_morphology_rail_homotopy.py",
+      "?? scripts/stitch_route_tail_warm_start.py",
+      "?? scripts/translate_generalized_route.py",
+      "?? tests/test_joint_morphology_rail_homotopy.py"
+    ]
+  },
+  "max_required_rail_ratio": 1.7577902980662028,
+  "prediction_execution_agreements": 100,
+  "route_counts": {
+    "0": 42,
+    "1": 58
+  },
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "seed_start": 86201,
+  "success_rate": 0.96,
+  "summary": "Measured-start exact-model selection over analytic mirror routes and a bounded natural-time hanging-LQR conditioning grid.",
+  "termination_counts": {
+    "rail_violation": 4,
+    "time_limit": 96
+  }
+}

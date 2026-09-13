@@ -8,9 +8,11 @@ path should handle different link counts, link lengths, masses, damping, cart
 mass, force authority, control rate, and rail length. It does not mean that the
 same recorded force samples can be replayed unchanged on every plant.
 
-The existing seven-link release remains the only public record claim. The
-bottom-up ladder below is development evidence for a reusable solver recipe;
-it does not retroactively change the record controller. Files produced by
+The frozen seven-link release and the newer internal-canonical eight-link
+promotion remain benchmark-specific results, with external-record comparison
+explicitly open. The bottom-up ladder below is development evidence for a
+reusable solver recipe; it does not retroactively change either released
+controller. Files produced by
 `generalized_swingup_solver.py transfer` are warm starts, explicitly labelled
 `not_solution`, and are not evidence of success.
 
@@ -339,6 +341,35 @@ to `1.36641`. Trial 50 advanced the exact-only continuation to
 `p=0.036023373` noisy 20/100 checkpoint. Failed-route excursions are retained
 separately and are not interpreted as sufficient rail estimates.
 
+`run_joint_morphology_rail_homotopy.py` now makes the two-coordinate procedure
+explicit and resumable. It advances morphology at the current rail; only an
+exact replay whose termination is `rail_violation` may trigger a deterministic
+rail expansion based on the measured excursion plus dimensionless clearance.
+After morphology reaches `p=1`, it reverses direction on the rail coordinate
+and contracts toward the requested target, re-optimizing and replaying every
+proposal. Expanded-rail passes remain development evidence; only `p=1` at the
+target rail can be labeled `target_solved`.
+
+The first live proposal from the previous checkpoint advanced to
+`p=0.036054805242284965` without expanding the configured `rho=1.666667` rail.
+The packaged route's independent exact replay held upright for `18.78 s`, used
+at most `3.930247 m` of cart-center excursion, and measured the body-aware
+requirement `rho_required=1.370082`. This small but real advance shows that the
+previous cluster of rail-terminated proposals marked a narrow route branch,
+not a proven physical minimum. The
+[joint ledger](../runs/generalized_solver/n3_unequal_joint_homotopy/continuation.json),
+[exact replay](../runs/generalized_solver/n3_unequal_joint_homotopy/packaged_exact_replay.json),
+and [packaged route](../runs/generalized_solver/n3_unequal_p036055_route.json)
+are public development artifacts; the robust noisy checkpoint remains
+`p=0.036023373`. The newer analytic route pair passed a fresh `20/20` cohort
+but only `96/100` on a disjoint larger gate. All four misses were predicted by
+the exact selector and all terminated at the rail, with failed-route required
+ratios between `1.73415` and `1.75779`. Extending the same conditioning grid
+from `4 tau` through `8 tau` and `16 tau` did not change those failures. The
+[20-run](../runs/generalized_solver/n3_unequal_p036055_adaptive20.json) and
+[100-run negative control](../runs/generalized_solver/n3_unequal_p036055_adaptive100.json)
+therefore remain public, and this point is not promoted as the robust checkpoint.
+
 ## Verified bottom-up checkpoint
 
 All rows use uniform 3 m, 1 kg chains, a 1 kg cart, 80 N authority, 50 Hz
@@ -412,6 +443,15 @@ PYTHONPATH=src:scripts python \
 PYTHONPATH=src:scripts python scripts/summarize_generalized_homotopy.py \
   --continuation runs/generalized_solver/n3_unequal_waypoint_homotopy/continuation.json \
   --out runs/generalized_solver/n3_unequal_rail_frontier.json
+
+# Continue morphology and rail as independent deterministic coordinates.
+PYTHONPATH=src:scripts python scripts/run_joint_morphology_rail_homotopy.py \
+  --source-config runs/generalized_solver/n3_uniform_exact.yaml \
+  --target-config configs/generalized_n3_unequal.yaml \
+  --source-controller runs/generalized_solver/n3_unequal_p036055_route.json \
+  --output-dir runs/generalized_solver/n3_unequal_joint_homotopy \
+  --maximum-rail-ratio 2.0 --max-rail-rescues 3 \
+  --waypoint-segment-multipliers 1 2 4 --resume
 
 PYTHONPATH=src:scripts python scripts/evaluate_generalized_adaptive_library.py \
   --config configs/generalized_n3_unequal_p036023.yaml \

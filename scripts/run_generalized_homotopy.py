@@ -78,7 +78,14 @@ def fddp_command(
     regularization: float,
     tracking_gain: float,
     exact_initial_trajectory: bool = False,
+    rail_soft_margin: float | None = None,
 ) -> list[str]:
+    rail_limit = float(load_config(cfg)["env"]["rail_limit"])
+    rail_soft_limit = (
+        0.8333333333333333 * rail_limit
+        if rail_soft_margin is None
+        else max(1.0e-3, rail_limit - rail_soft_margin)
+    )
     command = [
         sys.executable,
         "scripts/search_fddp_capture.py",
@@ -97,7 +104,7 @@ def fddp_command(
         "--terminal-state-weight", "100000",
         "--terminal-cart-weight", "1000",
         "--terminal-cart-velocity-weight", "1000",
-        "--rail-soft-limit", str(0.8333333333333333 * float(load_config(cfg)["env"]["rail_limit"])),
+        "--rail-soft-limit", str(rail_soft_limit),
         "--rail-weight", "5000000",
         "--handoff-lyapunov", "1800",
         "--handoff-cart-abs", str(0.5 * float(load_config(cfg)["env"]["rail_limit"])),

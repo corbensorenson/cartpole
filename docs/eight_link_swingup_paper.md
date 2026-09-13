@@ -188,7 +188,7 @@ PY=gradient_cartpole_handoff/.conda-aligator/bin/python
 $PY scripts/evaluate_fddp_parked_route.py \
   --config configs/swingup8_uniform.yaml \
   --controller runs/generalized_solver/n8_capture_fddp_feedback120.json \
-  --episodes 20 --seed 80801 --park-seconds 14 --cart-target -0.15 \
+  --episodes 20 --seed 81801 --park-seconds 14 --cart-target -0.15 \
   --tracking-gain-scale 0.75 \
   --out runs/generalized_solver/n8_fddp_parked_target015_14s_noisy20.json
 
