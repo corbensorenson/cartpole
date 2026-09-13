@@ -152,7 +152,12 @@ frontier, not a success. Its lengths `[0.75, 1.0, 1.25] m` and masses
 fail, so the pipeline stops before promotion. See the
 [one-command n=3 frontier](runs/generalized_solver/n3_unequal_pipeline.json).
 This is the current boundary for arbitrary within-count morphology transfer;
-the uniform n=3 gate above remains valid.
+the uniform n=3 gate above remains valid. The deterministic continuation now
+repairs nearby routes through short exact-model waypoint solves before the
+full-horizon feedback pass. Its first curated n=3 checkpoint advanced the
+strong-morphology path from `p=0.02500` to `p=0.02525` and held upright for
+`18.80 s`; [the manifest](runs/generalized_solver/n3_unequal_waypoint_homotopy/continuation.json)
+labels this as partial continuation, not a solution of the `p=1` target.
 
 ## Current frontier: eight links
 

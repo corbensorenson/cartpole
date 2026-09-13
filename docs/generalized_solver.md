@@ -252,6 +252,25 @@ continuation or a more robust multiple-shooting/receding-horizon seed, followed
 by the same exact gate. The actuator adapter is intentionally not widened to
 hide this structural error.
 
+The first such deterministic repair is now implemented. Transformed-coordinate
+differences are evaluated on the wrapped angle manifold, so crossing `-pi/pi`
+cannot masquerade as a large discontinuity. The continuation driver divides a
+neighboring accepted route into 24-control (`0.48 s`) segments, uses bounded
+exact-target least squares to reach each neighboring waypoint from the previous
+*exact* target endpoint, and then gives the resulting feasible route to
+full-horizon Box-FDDP for time-varying feedback. This is a deterministic
+multiple-shooting-style bridge; it does not learn a route or relax the final
+gate.
+
+The [curated n=3 waypoint checkpoint](../runs/generalized_solver/n3_unequal_waypoint_homotopy/continuation.json)
+advances the strong-target homotopy from `p=0.02500` to `p=0.02525`. All 24
+waypoint endpoints remained within `0.02024` dimensionless norm of their
+reference, the largest normalized action correction was `0.21022`, and the
+exact feedback refinement held upright for `18.80 s` with `3.0441 m` maximum
+cart excursion. The manifest stops at its declared one-trial budget and records
+the next proposed step. This validates the repair mechanism at one incremental
+step; it is not evidence that the full `p=1` morphology is solved.
+
 ## Rail-length relationship
 
 There is no morphology-only constant guaranteeing swing-up: rail demand also

@@ -9,8 +9,14 @@ from pathlib import Path
 import numpy as np
 
 from gcartpole.config import apply_overrides, dump_json, load_config
-from gcartpole.evidence import data_sha256, file_metadata, git_metadata, runtime_metadata, utc_timestamp
 from gcartpole.env import NLinkCartPoleEnv
+from gcartpole.evidence import (
+    data_sha256,
+    file_metadata,
+    git_metadata,
+    runtime_metadata,
+    utc_timestamp,
+)
 from gcartpole.ilqr import (
     MujocoTransition,
     QuadraticTrajectoryCost,
@@ -22,7 +28,10 @@ from gcartpole.modal import (
     closed_loop_lyapunov_matrix,
     dimensionless_absolute_transform,
 )
-from gcartpole.multiple_shooting import optimize_direct_collocation, optimize_multiple_shooting
+from gcartpole.multiple_shooting import (
+    optimize_direct_collocation,
+    optimize_multiple_shooting,
+)
 
 try:
     from scripts.make_lqr_checkpoint import finite_difference_dynamics
@@ -34,6 +43,34 @@ except ModuleNotFoundError:
     from search_capture_sequence import fixed_state_cfg, load_state
     from search_ilqr_capture import execute_controller, load_initial_controls
     from search_swingup_capture import lqr_gain
+
+
+def saved_shooting_nodes(
+    payload: dict,
+    *,
+    horizon_steps: int,
+    segment_steps: int,
+    state_size: int,
+) -> np.ndarray | None:
+    """Project a saved exact/FDDP trajectory onto a shooting-node grid."""
+
+    segment_total = horizon_steps // segment_steps
+    expected = (segment_total, state_size)
+    search = payload.get("search", {})
+    saved_nodes = search.get("node_states")
+    if saved_nodes is not None:
+        candidate = np.asarray(saved_nodes, dtype=np.float64)
+        if candidate.shape == expected:
+            return candidate
+    for key in ("nominal_coordinate_states", "exact_coordinate_states"):
+        saved_states = search.get(key)
+        if saved_states is None:
+            continue
+        trajectory = np.asarray(saved_states, dtype=np.float64)
+        if trajectory.shape != (horizon_steps + 1, state_size):
+            continue
+        return trajectory[segment_steps::segment_steps].copy()
+    return None
 
 
 def main() -> None:
@@ -81,7 +118,7 @@ def main() -> None:
         raise ValueError("durations, counts, weights, and thresholds must be positive")
 
     base_cfg = apply_overrides(load_config(args.config), args.override)
-    base_cfg["env"]["action_lqr_residual"]["enabled"] = False
+    base_cfg["env"].setdefault("action_lqr_residual", {})["enabled"] = False
     selected_state, selected_index = load_state(args.state_json, args.state_index)
     cfg = fixed_state_cfg(base_cfg, selected_state, float(base_cfg["env"]["episode_seconds"]))
     gain = lqr_gain(cfg, progress=1.0, fd_eps=1e-7, control_cost=1000.0)
@@ -109,7 +146,7 @@ def main() -> None:
     transition = MujocoTransition(env, coordinate_transform=transform)
     initial_state = transition.to_coordinates(data_state(env.data))
     policy_dt = float(env.dt)
-    horizon_steps = max(2, int(round(args.horizon_seconds / policy_dt)))
+    horizon_steps = max(2, round(args.horizon_seconds / policy_dt))
     if horizon_steps % args.segment_steps != 0:
         raise ValueError("horizon must contain an integer number of shooting segments")
     initial_nodes = None
@@ -118,12 +155,12 @@ def main() -> None:
     else:
         controls = load_initial_controls(args.initial_controller, horizon_steps, policy_dt)
         initial_payload = json.loads(Path(args.initial_controller).read_text(encoding="utf-8"))
-        saved_nodes = initial_payload.get("search", {}).get("node_states")
-        if saved_nodes is not None:
-            candidate_nodes = np.asarray(saved_nodes, dtype=np.float64)
-            expected_shape = (horizon_steps // args.segment_steps, transform.shape[0])
-            if candidate_nodes.shape == expected_shape:
-                initial_nodes = candidate_nodes
+        initial_nodes = saved_shooting_nodes(
+            initial_payload,
+            horizon_steps=horizon_steps,
+            segment_steps=args.segment_steps,
+            state_size=transform.shape[0],
+        )
     started = time.time()
     if args.method == "equality":
         search = optimize_direct_collocation(

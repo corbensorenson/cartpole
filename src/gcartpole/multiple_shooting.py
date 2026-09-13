@@ -360,7 +360,10 @@ def optimize_direct_collocation(
             np.isfinite(candidate_defect)
             and np.isfinite(candidate_objective)
             and candidate_defect <= defect_tolerance
-            and candidate_objective < best_objective
+            and (
+                best_defect > defect_tolerance
+                or candidate_objective < best_objective
+            )
         ):
             best_decision = np.asarray(values, dtype=np.float64).copy()
             best_objective = float(candidate_objective)

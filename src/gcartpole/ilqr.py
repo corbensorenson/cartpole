@@ -1,13 +1,12 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable
 
 import mujoco
 import numpy as np
 
 from gcartpole.env import NLinkCartPoleEnv, wrap_angle
-
 
 Array = np.ndarray
 
@@ -159,7 +158,14 @@ class MujocoTransition:
     def difference(self, first: Array, second: Array) -> Array:
         if self.coordinate_transform is None:
             return state_difference(first, second, self.env.n)
-        return np.asarray(first, dtype=np.float64) - np.asarray(second, dtype=np.float64)
+        physical_first = self.to_physical(first)
+        physical_second = self.to_physical(second)
+        physical_delta = state_difference(
+            physical_first,
+            physical_second,
+            self.env.n,
+        )
+        return self.coordinate_transform @ physical_delta
 
     def __call__(self, state: Array, action: float) -> Array:
         state = self.to_physical(state)

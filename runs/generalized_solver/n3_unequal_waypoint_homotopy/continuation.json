@@ -1,0 +1,81 @@
+{
+  "claim_status": "development_continuation_not_record_evidence",
+  "current_controller": {
+    "bytes": 2304622,
+    "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0001_p0.025250000_waypoint_fddp.json",
+    "sha256": "2dc5d2cc92db2ab9b822a949c4119ac8c32387b0e87927109374e5981a5b6904"
+  },
+  "next_step": 0.0004,
+  "progress": 0.02525,
+  "schema_version": 1,
+  "source_config": {
+    "bytes": 2097,
+    "path": "runs/generalized_solver/n3_uniform_exact.yaml",
+    "sha256": "dcf1c0ba28da9cd295eaed4cf04eec014ad86310d1122a1c158e58fbd4bebbc0"
+  },
+  "status": "trial_budget_exhausted",
+  "target_links": 3,
+  "trials": [
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 1693,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/configs/trial_0001_p0.025250000.yaml",
+        "sha256": "fee9cc3aa3c5f69a38746143e55d2b1a199f4e7c6195f2ad0042883299009784"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0000000000000002,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015361146211370305,
+          0.00015361146211370305,
+          0.00015361146211370305
+        ],
+        "length_fractions": [
+          0.3312291666666667,
+          0.3333333333333333,
+          0.3354375
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.3299666666666667,
+          0.3324916666666667,
+          0.3375416666666667
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.025,
+      "proposed_progress": 0.02525,
+      "result": {
+        "bytes": 2304622,
+        "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0001_p0.025250000_waypoint_fddp.json",
+        "sha256": "2dc5d2cc92db2ab9b822a949c4119ac8c32387b0e87927109374e5981a5b6904"
+      },
+      "step": 0.0002500000000000002,
+      "trial": 1,
+      "waypoint": {
+        "artifact": {
+          "bytes": 367398,
+          "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0001_p0.025250000_waypoint.json",
+          "sha256": "a85a7a1e495fe0f62ec28dc78f3e9fc7bfeff27788b61d77ebb45af285c8353a"
+        },
+        "refinement": {
+          "bytes": 2304622,
+          "path": "runs/generalized_solver/n3_unequal_waypoint_homotopy/trials/trial_0001_p0.025250000_waypoint_fddp.json",
+          "sha256": "2dc5d2cc92db2ab9b822a949c4119ac8c32387b0e87927109374e5981a5b6904"
+        },
+        "search_passed": true
+      }
+    }
+  ],
+  "updated_at": "2026-09-13T15:36:56+00:00"
+}

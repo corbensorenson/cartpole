@@ -76,15 +76,15 @@ def fddp_command(
     iterations: int,
     regularization: float,
     tracking_gain: float,
+    exact_initial_trajectory: bool = False,
 ) -> list[str]:
-    return [
+    command = [
         sys.executable,
         "scripts/search_fddp_capture.py",
         "--config", str(cfg),
         "--state-json", str(state),
         "--state-index", "selected",
         "--initial-controller", str(controller),
-        "--rebuild-initial-feedback",
         "--iterations", str(iterations),
         "--initial-regularization", str(regularization),
         "--tracking-gain-scale", str(tracking_gain),
@@ -107,12 +107,50 @@ def fddp_command(
         "--allow-unstable-lyapunov",
         "--out", str(output),
     ]
+    warm_flag = "--initial-feasible" if exact_initial_trajectory else "--rebuild-initial-feedback"
+    command.insert(command.index("--iterations"), warm_flag)
+    return command
+
+
+def waypoint_command(
+    *,
+    cfg: Path,
+    controller: Path,
+    output: Path,
+    segment_steps: int,
+    max_evaluations: int,
+    endpoint_weight: float,
+    control_regularization: float,
+    rail_soft_margin: float,
+    rail_weight: float,
+    endpoint_tolerance: float,
+) -> list[str]:
+    rail_limit = float(load_config(cfg)["env"]["rail_limit"])
+    return [
+        sys.executable,
+        "scripts/adapt_generalized_route_waypoints.py",
+        "--config", str(cfg),
+        "--controller", str(controller),
+        "--segment-steps", str(segment_steps),
+        "--max-evaluations", str(max_evaluations),
+        "--endpoint-weight", str(endpoint_weight),
+        "--control-regularization", str(control_regularization),
+        "--rail-soft-limit", str(max(1.0e-3, rail_limit - rail_soft_margin)),
+        "--rail-weight", str(rail_weight),
+        "--endpoint-tolerance", str(endpoint_tolerance),
+        "--out", str(output),
+    ]
 
 
 def successful(path: Path) -> bool:
     payload = json.loads(path.read_text(encoding="utf-8"))
     result = payload.get("result", {})
     return bool(result.get("success")) and bool(result.get("latched"))
+
+
+def waypoint_successful(path: Path) -> bool:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    return bool(payload.get("search", {}).get("success"))
 
 
 def hanging_state(count: int, path: Path) -> None:
@@ -163,6 +201,14 @@ def main() -> None:
     parser.add_argument("--retry-iterations", type=int, default=100)
     parser.add_argument("--max-trials", type=int, default=200)
     parser.add_argument("--tracking-gain", type=float, default=1.0)
+    parser.add_argument("--disable-waypoint-repair", action="store_true")
+    parser.add_argument("--waypoint-segment-steps", type=int, default=24)
+    parser.add_argument("--waypoint-max-evaluations", type=int, default=120)
+    parser.add_argument("--waypoint-endpoint-weight", type=float, default=10_000.0)
+    parser.add_argument("--waypoint-control-regularization", type=float, default=1e-6)
+    parser.add_argument("--waypoint-rail-soft-margin", type=float, default=0.5)
+    parser.add_argument("--waypoint-rail-weight", type=float, default=1_000_000.0)
+    parser.add_argument("--waypoint-endpoint-tolerance", type=float, default=0.5)
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
 
@@ -241,20 +287,58 @@ def main() -> None:
         trial_cfg = explicit_config(target_cfg, lengths, masses, label)
         cfg_path = configs_dir / f"{label}.yaml"
         save_config(trial_cfg, cfg_path)
+        waypoint_path = trials_dir / f"{label}_waypoint.json"
+        waypoint_fddp_path = trials_dir / f"{label}_waypoint_fddp.json"
         first_path = trials_dir / f"{label}_pass1.json"
-        run(
-            fddp_command(
-                cfg=cfg_path,
-                state=state_path,
-                controller=current_controller,
-                output=first_path,
-                iterations=args.iterations,
-                regularization=1e-6,
-                tracking_gain=args.tracking_gain,
-            )
-        )
+        waypoint_attempted = not args.disable_waypoint_repair
+        waypoint_passed = False
+        passed = False
         accepted_path = first_path
-        passed = successful(first_path)
+        if waypoint_attempted:
+            run(
+                waypoint_command(
+                    cfg=cfg_path,
+                    controller=current_controller,
+                    output=waypoint_path,
+                    segment_steps=args.waypoint_segment_steps,
+                    max_evaluations=args.waypoint_max_evaluations,
+                    endpoint_weight=args.waypoint_endpoint_weight,
+                    control_regularization=args.waypoint_control_regularization,
+                    rail_soft_margin=args.waypoint_rail_soft_margin,
+                    rail_weight=args.waypoint_rail_weight,
+                    endpoint_tolerance=args.waypoint_endpoint_tolerance,
+                )
+            )
+            waypoint_passed = waypoint_successful(waypoint_path)
+            if waypoint_passed:
+                run(
+                    fddp_command(
+                        cfg=cfg_path,
+                        state=state_path,
+                        controller=waypoint_path,
+                        output=waypoint_fddp_path,
+                        iterations=args.iterations,
+                        regularization=1e-6,
+                        tracking_gain=args.tracking_gain,
+                        exact_initial_trajectory=True,
+                    )
+                )
+                accepted_path = waypoint_fddp_path
+                passed = successful(waypoint_fddp_path)
+        if not passed:
+            run(
+                fddp_command(
+                    cfg=cfg_path,
+                    state=state_path,
+                    controller=current_controller,
+                    output=first_path,
+                    iterations=args.iterations,
+                    regularization=1e-6,
+                    tracking_gain=args.tracking_gain,
+                )
+            )
+            accepted_path = first_path
+            passed = successful(first_path)
         if not passed:
             retry_path = trials_dir / f"{label}_pass2.json"
             run(
@@ -280,6 +364,16 @@ def main() -> None:
             "result": file_metadata(accepted_path),
             "dimensionless": dimensionless_setup(setup_from_config(trial_cfg)).to_dict(),
         }
+        if waypoint_attempted:
+            record["waypoint"] = {
+                "search_passed": waypoint_passed,
+                "artifact": file_metadata(waypoint_path),
+                "refinement": (
+                    file_metadata(waypoint_fddp_path)
+                    if waypoint_passed
+                    else None
+                ),
+            }
         trials.append(record)
         if passed:
             schedule.accept(proposed)
@@ -315,7 +409,12 @@ def main() -> None:
             write_manifest(manifest_path, args, schedule, current_controller, trials, "running")
             print(f"REJECT p={proposed:.9f}; bisected step={schedule.step:.9f}", flush=True)
     write_manifest(manifest_path, args, schedule, current_controller, trials, "trial_budget_exhausted")
-    raise RuntimeError("maximum homotopy trial count reached")
+    print(
+        f"Trial budget exhausted at p={schedule.progress:.9f}; "
+        f"frontier recorded in {manifest_path}",
+        flush=True,
+    )
+    raise SystemExit(5)
 
 
 if __name__ == "__main__":
