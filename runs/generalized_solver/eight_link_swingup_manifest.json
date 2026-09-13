@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "claim_status": "released_internal_canonical_eight_link",
+  "architecture": "parked_launch_box_fddp_feedback_and_upright_lqr",
+  "benchmark": {
+    "config": "configs/swingup8_uniform.yaml",
+    "config_sha256": "fed1654ee941436860c8671bc6bcb5bb648ca523adaf6a386e2286feeeb8e113",
+    "resolved_noisy_config_sha256": "163b61b6ab641482c329701b4706f1e75885c5c48908c7853e4d734aec6bd85d",
+    "resolved_exact_config_sha256": "4371b19d1505720cf1156bf4f8310d65f82d26029f3ca20ba87835b029d87566",
+    "generated_xml_sha256": "df04194fbe235591e2e69b804618d228e6b6eaff2b634f0d312f07bee2b8157d",
+    "n_links": 8,
+    "total_link_length_m": 3.0,
+    "total_link_mass_kg": 1.0,
+    "cart_mass_kg": 1.0,
+    "rail_limit_m": 3.0,
+    "force_limit_n": 80.0,
+    "policy_rate_hz": 50.0,
+    "episode_seconds": 30.0,
+    "upright_threshold_rad": 0.15,
+    "success_sustain_seconds": 5.0,
+    "initial_mode": "hanging",
+    "initial_angle_noise_std": 0.05,
+    "initial_velocity_noise_std": 0.05
+  },
+  "controller": {
+    "path": "runs/generalized_solver/n8_capture_fddp_feedback120.json",
+    "bytes": 3254351,
+    "sha256": "914bb86c24691e06abb6523e965a0a6aac95291f4bdfc4cc53f0515ac4d81653",
+    "route_steps": 197,
+    "route_seconds": 3.94,
+    "state_coordinates": "dimensionless_absolute_cart_and_link_coordinates",
+    "tracking_gain_scale": 0.75,
+    "lqr_scale": 1.0,
+    "lqr_control_cost": 1000.0
+  },
+  "experts": {
+    "conditioning": {
+      "type": "hanging_equilibrium_lqr_cart_park",
+      "duration_seconds": 14.0,
+      "cart_target_m": -0.15,
+      "control_cost": 1000.0,
+      "state_reset": false
+    },
+    "swing": {
+      "type": "box_fddp_time_varying_feedback",
+      "route_steps": 197,
+      "route_seconds": 3.94,
+      "tracking_gain_scale": 0.75,
+      "shift_nominal_cart_position_to_parked_x": true
+    },
+    "capture": {
+      "type": "upright_lqr",
+      "activation": "after_swing_route_horizon",
+      "scale": 1.0,
+      "control_cost": 1000.0,
+      "cart_target_m": -0.15
+    }
+  },
+  "switch": {
+    "state_reset_at_phase_boundaries": false,
+    "conditioning_to_swing": "after 14.0 seconds",
+    "swing_to_capture": "after 197 route steps",
+    "hysteresis": "not applicable; deterministic time-indexed boundaries"
+  },
+  "evaluation": {
+    "twenty_episode": {
+      "path": "runs/generalized_solver/n8_fddp_parked_target015_14s_noisy20.json",
+      "bytes": 107223,
+      "sha256": "7605474696838fe7c833138220a48a823da75202cf4e324c727e5bd222287889"
+    },
+    "twenty_seed_start": 81801,
+    "twenty_seed_end": 81820,
+    "hundred_episode": {
+      "path": "runs/generalized_solver/n8_fddp_parked_target015_14s_noisy100.json",
+      "bytes": 526490,
+      "sha256": "b043e4413d1c77210452a8866e63d769aafda62d6bff07cb023548426fb2026e"
+    },
+    "hundred_seed_start": 80801,
+    "hundred_seed_end": 80900,
+    "exact_twenty_episode": {
+      "path": "runs/generalized_solver/n8_fddp_parked_target015_14s_exact20.json",
+      "bytes": 107448,
+      "sha256": "8bfe5ffc1ad1056e90116a846a50edefef17c6b19535e2813e804bb4776c09fa"
+    },
+    "exact_twenty_seed_start": 80801,
+    "exact_twenty_seed_end": 80820,
+    "cohorts_are_pairwise_disjoint_for_noisy_gate": true,
+    "video": {
+      "path": "runs/generalized_solver/eight_link_swingup_success.mp4",
+      "bytes": 856438,
+      "sha256": "aafab809554c221852c29d90d179015f7bcc16d84c87325ada36dc030e505bee"
+    },
+    "video_metadata": {
+      "path": "runs/generalized_solver/eight_link_swingup_success.video.json",
+      "bytes": 5023,
+      "sha256": "1f1bf1700d24b7b9414cbbbaf999f3b207670e44399fc7eca7d46847ae2aa71f"
+    },
+    "video_seed": 90901,
+    "video_reset_count": 0,
+    "video_first_upright_time": 17.8,
+    "video_max_upright_streak_seconds": 12.22
+  },
+  "results": {
+    "noisy20_successes": 20,
+    "noisy20_success_rate": 1.0,
+    "noisy100_successes": 100,
+    "noisy100_success_rate": 1.0,
+    "exact20_successes": 20,
+    "exact20_success_rate": 1.0,
+    "noisy100_max_cart_excursion_m": 2.9300096354605296,
+    "noisy100_max_upright_streak_seconds": 12.22,
+    "episode_termination_counts": {
+      "time_limit": 100
+    },
+    "video_simulated_seconds": 30.0,
+    "video_max_cart_excursion_m": 2.907960685824333
+  },
+  "negative_controls": [
+    {
+      "artifact": "runs/generalized_solver/n8_parked_route_noisy20.json",
+      "result": "0/20 noisy success; open-loop route is not robust"
+    },
+    {
+      "artifact": "runs/generalized_solver/n8_parked_route_exact20.json",
+      "result": "20/20 exact only; no-noise replay is insufficient"
+    },
+    {
+      "artifact": "runs/generalized_solver/n8_fddp_parked_target020_12s_noisy100.json",
+      "result": "95/100; shorter aggressive park rejected"
+    },
+    {
+      "artifact": "runs/swingup8_prelude_probe_10s.json",
+      "result": "0/5 direct seven-to-eight transfer"
+    }
+  ],
+  "release": {
+    "source_commit": "f5208924dceb81fd3bba71a7260628dcf3144032",
+    "source_commit_short": "f520892",
+    "source_commit_is_clean_at_commit": true,
+    "evaluation_artifacts_generated_against_commit": "ab66a59dd43b79b239c4f92d61d75fa70e7ad007",
+    "verification_commands": [
+      "scripts/evaluate_fddp_parked_route.py --episodes 20 --seed 81801 ...",
+      "scripts/evaluate_fddp_parked_route.py --episodes 100 --seed 80801 ...",
+      "scripts/render_fddp_parked_route_video.py --seed 90901 --seconds 30 ..."
+    ],
+    "paper": "docs/eight_link_swingup_paper.md",
+    "ledger": "docs/levers_and_pitfalls.md"
+  },
+  "limitations": [
+    "Internal canonical benchmark result, not an external competition record claim.",
+    "Uniform eight-link plant and exact action timing only.",
+    "Model-based hybrid controller, not a single neural policy.",
+    "No claim of robustness to morphology variation, actuator delay, or sensor noise.",
+    "Route optimization used a diagnostic wide rail; promotion replay used the canonical rail."
+  ]
+}
