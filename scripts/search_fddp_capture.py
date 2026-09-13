@@ -199,6 +199,18 @@ def main() -> None:
         help="Maximum forward route steps considered by phase-adaptive replay.",
     )
     parser.add_argument(
+        "--prefix-control-scale",
+        type=float,
+        default=1.0,
+        help="multiply inherited feedforward controls during an initial prefix screen",
+    )
+    parser.add_argument(
+        "--prefix-control-seconds",
+        type=float,
+        default=0.0,
+        help="duration of the inherited-control prefix to scale; zero disables the screen",
+    )
+    parser.add_argument(
         "--allow-unstable-lyapunov",
         action="store_true",
         help="Use an identity terminal metric when the seven-link linear LQR is not asymptotically stable.",
@@ -246,6 +258,10 @@ def main() -> None:
         raise ValueError("lqr-progress must be in [0, 1]")
     if args.append_tail_seconds < 0.0:
         raise ValueError("append-tail-seconds must be nonnegative")
+    if args.prefix_control_seconds < 0.0:
+        raise ValueError("prefix-control-seconds must be nonnegative")
+    if args.prefix_control_seconds > 0.0 and args.initial_controller is None:
+        raise ValueError("prefix-control-seconds requires an initial controller")
     if args.append_tail_seconds > 0.0 and args.initial_controller is None:
         raise ValueError("append-tail-seconds requires an initial controller")
     if args.rebuild_initial_feedback and args.initial_controller is None:
@@ -345,6 +361,16 @@ def main() -> None:
                         np.zeros((tail_steps, transform.shape[0]), dtype=np.float64),
                     ]
                 )
+        if args.prefix_control_seconds > 0.0:
+            prefix_steps = min(
+                initial_controls.size,
+                max(1, int(round(args.prefix_control_seconds / env.dt))),
+            )
+            initial_controls[:prefix_steps] = np.clip(
+                initial_controls[:prefix_steps] * args.prefix_control_scale,
+                -1.0,
+                1.0,
+            )
     if initial_states.shape != (initial_controls.size + 1, transform.shape[0]):
         raise ValueError("initial controller state/control horizon is inconsistent")
     initial_states = initial_states.copy()
@@ -525,6 +551,8 @@ def main() -> None:
             "defer_handoff_until_horizon": bool(args.defer_handoff_until_horizon),
             "phase_adaptive": bool(args.phase_adaptive),
             "phase_window": int(args.phase_window),
+            "prefix_control_scale": float(args.prefix_control_scale),
+            "prefix_control_seconds": float(args.prefix_control_seconds),
             "allow_unstable_lyapunov": bool(args.allow_unstable_lyapunov),
             "progress": float(args.progress),
             "controls": controls.astype(float).tolist(),
