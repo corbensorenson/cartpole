@@ -4,7 +4,14 @@
 
 This is the authoritative completion contract for the project.
 
-The project advances one link at a time. The current frontier is a reproducible uniform **8-link** MuJoCo cart-pole because the 7-link controller has passed the project's canonical 20/100 control gate. Every frontier starts hanging below the cart, swings up, captures, and remains upright. The existing 6-link work is a required calibration and debugging gate because a public 6-link result already exists; it is not the endpoint.
+The project advances one link at a time. The current active frontier is a reproducible uniform **9-link** MuJoCo cart-pole because the 8-link controller has now passed the project's canonical 20/100 control gate. Every frontier starts hanging below the cart, swings up, captures, and remains upright. The existing 6-link work is a required calibration and debugging gate because a public 6-link result already exists; it is not the endpoint.
+
+Promotion update (2026-09-13): eight links passed `20/20` and `100/100` noisy
+episodes on the canonical `+/-3 m` rail, an exact `20/20` replay, and a
+reset-free 30-second held-out video. The promoted route uses the inherited
+settled-launch architecture with a measured cart park at `-0.15 m`, saved
+Box-FDDP feedback, and parked-target LQR capture. The next campaign is nine
+links and must begin by applying this same stack before broadening the search.
 
 The project goal can point directly at this file:
 
@@ -67,8 +74,9 @@ terminal state, rail outcome, and capture outcome in `docs/levers_and_pitfalls.m
 |---:|---|---|
 | 6 | Generalized development gate 20/20 at `+/-4 m`; canonical calibration remains | Complete the frozen `+/-3 m` 20/100 evidence bundle |
 | 7 | Canonical 20/100 control gate passed | Finish audit items, then retain as reference |
-| 8 | Active | Pass the full canonical evidence bundle |
-| 9+ | Queued | Start automatically after the preceding frontier passes |
+| 8 | Passed internal canonical bundle | Retain as the reference route and preserve all negative controls |
+| 9 | Active | Apply the eight-link parked-launch stack and pass the full canonical evidence bundle |
+| 10+ | Queued | Start automatically after the preceding frontier passes |
 
 ## Final Definition Of Done
 
@@ -453,6 +461,8 @@ After P7, turn the seven-link result into an arbitrary-`n` scaling experiment. T
 | P5 seven-link swing | Superseded by integrated pass | The settled-launch controller reaches capture in all 120 disjoint canonical release episodes; component-only gates were superseded by stronger end-to-end evidence. |
 | P6 integrated seven | Passed | Frozen settled-launch hybrid passes disjoint 20/20 and 100/100 cohorts with a reset-free, independently seeded 30-second video. |
 | P7 public reproduction | Passed for the canonical release | Public README, paper, commands, hashes, limitations, verifier, and fresh-clone audit are present. Independent third-party reproduction and external competition matching remain open. |
+| P8 eight-link promotion | Passed internal canonical bundle | `20/20` and `100/100` noisy parked-route gates, exact `20/20`, held-out reset-free video, and manifest are recorded. This is not an external record claim. |
+| P9 nine-link frontier | Active | Reuse the eight-link parked-launch, feedback-route, and capture contract; no nine-link result is claimed yet. |
 
 Latest P1 boundary update (2026-09-12): exact-state LQR sweeps across the
 first 64 frozen full-envelope test states produced `0/64` success and `64/64`
@@ -1394,3 +1404,47 @@ with a full-rank 18-state endpoint Jacobian and `3.9215 m` peak cart-center
 travel. A ten-step feedback-rollout objective reduced mean rollout value from
 `107642` to `46077`, but exact hold still failed. This is a substantially
 closer, better-characterized frontier, not an eight-link solution.
+
+## Eight-Link Promotion And Nine-Link Handoff (2026-09-13)
+
+The eight-link frontier now has the complete internal evidence bundle. The
+positive controller uses the inherited seven-link method with one geometry
+change that was measured rather than guessed:
+
+1. Park the noisy hanging chain with hanging-equilibrium LQR for `14.0 s` at
+   cart target `-0.15 m`.
+2. Replay the saved 197-step (`3.94 s`) eight-link Box-FDDP route with
+   time-varying feedback at scale `0.75`, translating only the nominal cart
+   coordinate by the measured parked position.
+3. Switch, without resetting simulator state, to upright LQR scale `1.0`
+   targeting the same parked cart position.
+
+The frozen canonical evidence is:
+
+| Artifact | Result |
+|---|---:|
+| `n8_fddp_parked_target015_14s_noisy20.json` | `20/20`, all time limits |
+| `n8_fddp_parked_target015_14s_noisy100.json` | `100/100`, all time limits |
+| `n8_fddp_parked_target015_14s_exact20.json` | `20/20` exact replay |
+| `eight_link_swingup_success.video.json` | 1,500 frames, 0 resets, success, held-out seed `90901` |
+| `eight_link_swingup_manifest.json` | Controller/config/XML/evidence hashes |
+
+The noisy 100-episode maximum cart excursion is `2.9300 m`, and the held-out
+video first reaches upright at `17.80 s` and remains upright through the end
+of the 30-second episode for `12.22 s`. The route's optimizer used a diagnostic
+wide rail, but every promotion gate above replays the complete controller on
+the canonical `+/-3 m` rail.
+
+The important negative control is the parked open-loop route: it passed exact
+replay but scored `0/20` with canonical reset noise. The positive result
+therefore depends on the inherited seven-link feedback technique, not merely
+on cart translation or an exact hand-picked endpoint. A shorter `12.0 s` park
+at `-0.20 m` also failed the larger check at `95/100`, so the promoted launch
+keeps the more conservative `14.0 s / -0.15 m` setting.
+
+The active frontier is now nine links. It must start from the eight-link
+artifacts and test the same settled-launch, saved-feedback, parked-target
+capture sequence before any new controller family is introduced. Earlier
+eight-link modal, online-MPC, wide-rail, morphology-gradient, and ghost-link
+experiments remain historical diagnostics and do not need to be repeated as
+the first nine-link step.

@@ -151,6 +151,9 @@ def endpoint_residual(
     absolute_velocity_scale: float,
     state_transform: np.ndarray | None = None,
     residual_transform: np.ndarray | None = None,
+    feedback_gain: np.ndarray | None = None,
+    feedback_scale: float = 1.0,
+    lqr_action_weight: float = 0.0,
 ) -> np.ndarray:
     if state_transform is not None or residual_transform is not None:
         if state_transform is None or residual_transform is None:
@@ -160,15 +163,29 @@ def endpoint_residual(
             np.asarray(env.data.qvel, dtype=np.float64),
             state_transform,
         )
-        return np.asarray(residual_transform @ state, dtype=np.float64)
-    absolute_angles = serial_absolute_angles(np.asarray(env.data.qpos[1:]))
-    absolute_velocity = np.cumsum(np.asarray(env.data.qvel[1:], dtype=np.float64))
-    return np.r_[
-        float(env.data.qpos[0]) / cart_position_scale,
-        absolute_angles / angle_scale,
-        float(env.data.qvel[0]) / cart_velocity_scale,
-        absolute_velocity / absolute_velocity_scale,
-    ].astype(np.float64)
+        residual = np.asarray(residual_transform @ state, dtype=np.float64)
+    else:
+        absolute_angles = serial_absolute_angles(np.asarray(env.data.qpos[1:]))
+        absolute_velocity = np.cumsum(np.asarray(env.data.qvel[1:], dtype=np.float64))
+        residual = np.r_[
+            float(env.data.qpos[0]) / cart_position_scale,
+            absolute_angles / angle_scale,
+            float(env.data.qvel[0]) / cart_velocity_scale,
+            absolute_velocity / absolute_velocity_scale,
+        ].astype(np.float64)
+    if lqr_action_weight > 0.0:
+        if feedback_gain is None:
+            raise ValueError("lqr action residual requires a feedback gain")
+        physical_state = np.r_[env.data.qpos, env.data.qvel].astype(np.float64)
+        physical_state[1 : env.n + 1] = (
+            physical_state[1 : env.n + 1] + np.pi
+        ) % (2.0 * np.pi) - np.pi
+        raw_action = float(feedback_scale * feedback_gain @ physical_state)
+        residual = np.r_[
+            residual,
+            np.sqrt(float(lqr_action_weight)) * raw_action,
+        ]
+    return residual
 
 
 def lqr_invariant_metric(
@@ -250,7 +267,9 @@ def replay(
     residual_transform: np.ndarray | None = None,
     feedback_gain: np.ndarray | None = None,
     feedback_scale: float = 1.0,
+    lqr_action_weight: float = 0.0,
     terminal_feedback_steps: int = 0,
+    rail_barrier_weight: float = 0.0,
 ) -> dict[str, Any]:
     env.reset(seed=0)
     max_cart = abs(float(env.data.qpos[0]))
@@ -289,13 +308,16 @@ def replay(
         absolute_velocity_scale=absolute_velocity_scale,
         state_transform=state_transform,
         residual_transform=residual_transform,
+        feedback_gain=feedback_gain,
+        feedback_scale=feedback_scale,
+        lqr_action_weight=lqr_action_weight,
     )
     residual_blocks = [endpoint]
     feedback_trace: list[dict[str, Any]] = []
     maximum_raw_feedback_action = 0.0
     if terminal_feedback_steps > 0 and route_complete:
-        if feedback_gain is None or state_transform is None or residual_transform is None:
-            raise ValueError("terminal feedback rollout requires an invariant LQR metric")
+        if feedback_gain is None:
+            raise ValueError("terminal feedback rollout requires an LQR gain")
         for step in range(terminal_feedback_steps):
             physical_state = np.r_[env.data.qpos, env.data.qvel].astype(np.float64)
             physical_state[1 : env.n + 1] = (
@@ -315,6 +337,9 @@ def replay(
                 absolute_velocity_scale=absolute_velocity_scale,
                 state_transform=state_transform,
                 residual_transform=residual_transform,
+                feedback_gain=feedback_gain,
+                feedback_scale=feedback_scale,
+                lqr_action_weight=lqr_action_weight,
             )
             residual_blocks.append(feedback_residual)
             feedback_trace.append(
@@ -339,6 +364,16 @@ def replay(
                 break
     feedback_complete = len(feedback_trace) == terminal_feedback_steps
     complete = route_complete and feedback_complete and termination_reason is None
+    if rail_barrier_weight > 0.0:
+        rail_positions = np.asarray(
+            [row["qpos"][0] for row in trace]
+            + [row["qpos"][0] for row in feedback_trace],
+            dtype=np.float64,
+        )
+        rail_excess = np.maximum(
+            0.0, np.abs(rail_positions) - float(rail_soft_limit)
+        )
+        residual_blocks.append(np.sqrt(float(rail_barrier_weight)) * rail_excess)
     # Average the exact feedback-rollout values so the objective scale does not
     # depend on the requested validation horizon.
     residual = np.concatenate(residual_blocks) / np.sqrt(len(residual_blocks))
@@ -399,6 +434,12 @@ def main() -> None:
     parser.add_argument("--lqr-control-cost", type=float, default=1000.0)
     parser.add_argument("--lqr-feedback-scale", type=float, default=1.0)
     parser.add_argument(
+        "--lqr-action-weight",
+        type=float,
+        default=0.0,
+        help="weight an unsaturated terminal LQR action residual in the endpoint objective",
+    )
+    parser.add_argument(
         "--invariant-action-limit",
         type=float,
         default=1.0,
@@ -409,6 +450,12 @@ def main() -> None:
         type=int,
         default=0,
         help="exact clipped-LQR steps included in the terminal objective",
+    )
+    parser.add_argument(
+        "--rail-barrier-weight",
+        type=float,
+        default=0.0,
+        help="per-step rail-excess residual weight in the endpoint objective",
     )
     parser.add_argument("--rail-soft-limit", type=float, default=5.0)
     parser.add_argument("--rail-weight", type=float, default=100.0)
@@ -443,16 +490,20 @@ def main() -> None:
         raise ValueError("knot count must be at least two")
     if args.terminal_feedback_steps < 0:
         raise ValueError("terminal feedback steps must be nonnegative")
-    if args.rail_weight < 0.0:
-        raise ValueError("rail weight must be nonnegative")
+    if args.lqr_action_weight < 0.0:
+        raise ValueError("lqr action weight must be nonnegative")
+    if min(args.rail_weight, args.rail_barrier_weight) < 0.0:
+        raise ValueError("rail weights must be nonnegative")
     if not 0.0 <= args.progress <= 1.0:
         raise ValueError("progress must be in [0, 1]")
     if not 0.0 <= args.blend_alpha <= 1.0:
         raise ValueError("blend alpha must be in [0, 1]")
     if args.blend_alpha > 0.0 and not args.secondary_controller:
         raise ValueError("positive blend alpha requires --secondary-controller")
-    if args.terminal_feedback_steps and args.terminal_metric != "lqr-invariant":
-        raise ValueError("terminal feedback rollout requires --terminal-metric lqr-invariant")
+    if args.terminal_feedback_steps and args.lqr_action_weight <= 0.0:
+        raise ValueError(
+            "terminal feedback rollout requires --lqr-action-weight so the gain is available"
+        )
 
     cfg = deterministic_config(apply_overrides(load_config(args.config), args.override))
     env = NLinkCartPoleEnv(cfg, progress=args.progress, seed=0)
@@ -498,6 +549,7 @@ def main() -> None:
         "absolute_velocity_scale": float(args.absolute_velocity_scale),
         "rail_soft_limit": float(args.rail_soft_limit),
         "rail_weight": float(args.rail_weight),
+        "rail_barrier_weight": float(args.rail_barrier_weight),
     }
     state_transform: np.ndarray | None = None
     residual_transform: np.ndarray | None = None
@@ -522,6 +574,9 @@ def main() -> None:
             feedback_scale=args.lqr_feedback_scale,
             action_limit=args.invariant_action_limit,
         )
+    elif args.lqr_action_weight > 0.0:
+        feedback_gain = upright_lqr_gain(env, control_cost=args.lqr_control_cost)
+        terminal_metric["lqr_action_residual_weight"] = float(args.lqr_action_weight)
 
     def evaluate(knots: np.ndarray) -> dict[str, Any]:
         actions = np.clip(base_actions + knots @ interpolation.T, -1.0, 1.0)
@@ -533,6 +588,7 @@ def main() -> None:
             residual_transform=residual_transform,
             feedback_gain=feedback_gain,
             feedback_scale=args.lqr_feedback_scale,
+            lqr_action_weight=args.lqr_action_weight,
             terminal_feedback_steps=args.terminal_feedback_steps,
         )
 

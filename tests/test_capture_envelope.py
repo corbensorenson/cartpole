@@ -662,6 +662,21 @@ class CaptureEnvelopeTests(unittest.TestCase):
         np.testing.assert_allclose(capture[2:8], [1.0, 0.0, 1.0, 0.0, 1.0, 0.0], atol=1e-5)
         np.testing.assert_allclose(capture[8:14], [1.0, -1.0, 1.0, -1.0, 1.0, -1.0], atol=1e-5)
 
+    def test_absolute_velocity_observation_exposes_serial_internal_modes(self) -> None:
+        cfg = load_config(ROOT / "configs/swingup6_capture_sac_boundary.yaml")
+        cfg["env"]["init_mode"] = "fixed_state"
+        cfg["env"]["init_qpos"] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        cfg["env"]["init_qvel"] = [0.0, 0.75, -0.75, 0.75, -0.75, 0.75, -0.75]
+        cfg["env"]["obs_include_absolute_velocity"] = True
+        cfg["env"]["obs_absolute_velocity_bound"] = 0.75
+        env = NLinkCartPoleEnv(cfg, progress=1.0, seed=17)
+        try:
+            obs, _ = env.reset()
+        finally:
+            env.close()
+        self.assertEqual(obs.shape[0], 65)
+        np.testing.assert_allclose(obs[26:32], [1.0, 0.0, 1.0, 0.0, 1.0, 0.0], atol=1e-5)
+
     def test_effective_funnel_state_matches_component_curriculum(self) -> None:
         qpos = np.asarray([1.0, 0.1, -0.2], dtype=np.float64)
         qvel = np.asarray([0.5, 0.3, -0.4], dtype=np.float64)

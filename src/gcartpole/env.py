@@ -67,6 +67,12 @@ class NLinkCartPoleEnv(gym.Env):
         self.obs_include_frictionloss = bool(self.env_cfg.get("obs_include_frictionloss", False))
         self.obs_include_time = bool(self.env_cfg.get("obs_include_time", False))
         self.obs_include_capture_features = bool(self.env_cfg.get("obs_include_capture_features", False))
+        # Relative joint rates do not expose the serial-link internal modes.  Keep
+        # cumulative absolute rates optional so existing policy checkpoints retain
+        # their observation contract while capture probes can request this signal.
+        self.obs_include_absolute_velocity = bool(
+            self.env_cfg.get("obs_include_absolute_velocity", False)
+        )
         self.step_count = 0
         self.last_action_norm = np.zeros(1, dtype=np.float32)
         self.last_policy_action_norm = np.zeros(1, dtype=np.float32)
@@ -562,6 +568,18 @@ class NLinkCartPoleEnv(gym.Env):
             rel,
             qvel[1 : 1 + self.n],
         ]
+        if self.obs_include_absolute_velocity:
+            velocity_bound = max(
+                1e-9,
+                float(
+                    self.env_cfg.get(
+                        "obs_absolute_velocity_bound",
+                        self.env_cfg.get("capture_feature_hinge_velocity_bound", 0.75),
+                    )
+                ),
+            )
+            absolute_velocity = self._absolute_angular_velocity() / velocity_bound
+            obs_parts.append(np.clip(absolute_velocity, -10.0, 10.0))
         if self.obs_include_morphology:
             obs_parts.append(self.morphology.fingerprint())
         if self.obs_include_frictionloss:

@@ -136,6 +136,8 @@ def benchmark_snapshot(cfg: dict[str, Any]) -> dict[str, Any]:
         obs_dim += 3 * int(env_cfg["n_links"])
     if bool(env_cfg.get("obs_include_frictionloss", False)):
         obs_dim += int(env_cfg["n_links"])
+    if bool(env_cfg.get("obs_include_absolute_velocity", False)):
+        obs_dim += int(env_cfg["n_links"])
     if bool(env_cfg.get("obs_include_time", False)):
         obs_dim += 1 + 2 * len(env_cfg.get("obs_time_frequencies", []))
     return {

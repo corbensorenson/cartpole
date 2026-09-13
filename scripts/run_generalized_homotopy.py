@@ -153,6 +153,29 @@ def waypoint_successful(path: Path) -> bool:
     return bool(payload.get("search", {}).get("success"))
 
 
+def waypoint_usable(path: Path) -> bool:
+    """Require an exact, finite, rail-safe trajectory before FDDP refinement."""
+
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    controller = payload.get("controller", {})
+    controls = np.asarray(controller.get("controls"), dtype=np.float64)
+    states = np.asarray(
+        controller.get("nominal_coordinate_states"), dtype=np.float64
+    )
+    search = payload.get("search", {})
+    maximum_cart = float(search.get("maximum_cart_excursion", float("inf")))
+    rail_soft_limit = float(search.get("rail_soft_limit", 0.0))
+    return bool(
+        controls.ndim == 1
+        and controls.size > 0
+        and states.ndim == 2
+        and states.shape[0] == controls.size + 1
+        and np.all(np.isfinite(controls))
+        and np.all(np.isfinite(states))
+        and maximum_cart <= rail_soft_limit
+    )
+
+
 def hanging_state(count: int, path: Path) -> None:
     qpos = [0.0, float(np.pi)] + [0.0] * (count - 1)
     dump_json(
@@ -292,6 +315,7 @@ def main() -> None:
         first_path = trials_dir / f"{label}_pass1.json"
         waypoint_attempted = not args.disable_waypoint_repair
         waypoint_passed = False
+        waypoint_refined = False
         passed = False
         accepted_path = first_path
         if waypoint_attempted:
@@ -310,7 +334,8 @@ def main() -> None:
                 )
             )
             waypoint_passed = waypoint_successful(waypoint_path)
-            if waypoint_passed:
+            waypoint_refined = waypoint_usable(waypoint_path)
+            if waypoint_refined:
                 run(
                     fddp_command(
                         cfg=cfg_path,
@@ -367,6 +392,7 @@ def main() -> None:
         if waypoint_attempted:
             record["waypoint"] = {
                 "search_passed": waypoint_passed,
+                "used_for_refinement": waypoint_refined,
                 "artifact": file_metadata(waypoint_path),
                 "refinement": (
                     file_metadata(waypoint_fddp_path)

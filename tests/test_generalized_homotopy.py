@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from scripts.run_generalized_homotopy import fddp_command, waypoint_command
+from scripts.run_generalized_homotopy import (
+    fddp_command,
+    waypoint_command,
+    waypoint_usable,
+)
 
 
 def test_fddp_warm_mode_distinguishes_feedback_and_exact_trajectory(
@@ -43,3 +47,24 @@ def test_waypoint_command_uses_target_rail_and_generic_parameters(
     assert command[command.index("--rail-soft-limit") + 1] == "4.5"
     assert command[command.index("--segment-steps") + 1] == "24"
     assert "adapt_generalized_route_waypoints.py" in command[1]
+
+
+def test_rail_safe_exact_waypoint_is_usable_even_if_reference_gate_failed(
+    tmp_path: Path,
+) -> None:
+    artifact = tmp_path / "waypoint.json"
+    artifact.write_text(
+        """{
+          "controller": {
+            "controls": [0.1, -0.1],
+            "nominal_coordinate_states": [[0, 0], [0.1, 0], [0, 0]]
+          },
+          "search": {
+            "success": false,
+            "maximum_cart_excursion": 1.2,
+            "rail_soft_limit": 1.5
+          }
+        }""",
+        encoding="utf-8",
+    )
+    assert waypoint_usable(artifact)

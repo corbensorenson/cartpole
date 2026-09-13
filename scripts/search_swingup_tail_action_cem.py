@@ -57,6 +57,17 @@ def load_controller(path: str, record_key: str | None = None) -> dict[str, Any]:
                     payload.get("search", {}).get("seconds", 0.0)
                 ),
             }
+        if "controls" in payload["best"] and "controller" not in payload["best"]:
+            return {
+                "type": "normalized_force_controls",
+                "controls": list(payload["best"]["controls"]),
+                "horizon_seconds": float(
+                    payload["best"].get(
+                        "horizon_seconds",
+                        payload.get("search", {}).get("horizon_seconds", 0.0),
+                    )
+                ),
+            }
         return dict(payload["best"]["controller"])
     if isinstance(payload.get("controller"), dict):
         return dict(payload["controller"])
@@ -184,7 +195,7 @@ def replay_to_tail(
                     f"source swing ended before tail start at step {step}: "
                     f"{info.get('termination_reason')} x={float(env.data.qpos[0]):.3f}"
                 )
-    elif "controls" in controller:
+    elif controller.get("type") == "normalized_force_controls" or "controls" in controller:
         source_controls = np.asarray(controller["controls"], dtype=np.float64)
         if source_controls.ndim != 1 or source_controls.size < 2:
             raise ValueError(

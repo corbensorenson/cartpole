@@ -1,4 +1,4 @@
-# Seven-Link Cart-Pole Swing-Up & Hold
+# Seven- and Eight-Link Cart-Pole Swing-Up & Hold
 
 > **7 links · noisy hanging start · 100/100 successful episodes · zero resets · ±3 m rail**
 
@@ -87,6 +87,39 @@ force, morphology, damping, sensor-noise, and control-delay perturbations. This
 is a strong benchmark result with a narrow plant-and-timing contract, not a
 claim of broad robustness.
 
+## The eight-link extension
+
+The same two-expert idea now reaches eight links on the repository's canonical
+uniform plant. This is an internal eight-link benchmark promotion, not a claim
+about an external competition record:
+
+| Benchmark property | Result |
+|---|---:|
+| Links | **8** |
+| 20-episode noisy gate | **20/20 (100%)** |
+| 100-episode noisy gate | **100/100 (100%)** |
+| Exact 20-episode check | **20/20 (100%)** |
+| Resets inside episodes | **0** |
+| Rail failures in the 100-episode gate | **0** |
+| First upright in held-out video | **17.80 s** |
+| Upright hold through video end | **12.22 s** |
+| Maximum cart excursion across 100 noisy episodes | **2.9300 m** |
+
+The eight-link launch parks the hanging cart at `-0.15 m` for `14.0 s`, runs a
+`3.94 s` Box-FDDP route with saved time-varying feedback, and hands off to an
+upright LQR around the parked cart target. Parking is a controller phase, not
+a reset or a changed initial state. See the [eight-link method paper](docs/eight_link_swingup_paper.md).
+
+| Artifact | What it establishes |
+|---|---|
+| [Zoomed-out 30-second video](runs/generalized_solver/eight_link_swingup_success.mp4) | Reset-free noisy hanging-start replay with all eight links visible |
+| [Video metadata](runs/generalized_solver/eight_link_swingup_success.video.json) | Held-out seed, zero resets, frame count, hashes, and final metrics |
+| [20-episode noisy gate](runs/generalized_solver/n8_fddp_parked_target015_14s_noisy20.json) | First eight-link acceptance gate: 20/20 |
+| [100-episode noisy gate](runs/generalized_solver/n8_fddp_parked_target015_14s_noisy100.json) | Eight-link final statistical gate: 100/100 |
+| [Exact 20-episode check](runs/generalized_solver/n8_fddp_parked_target015_14s_exact20.json) | Deterministic no-noise replay: 20/20 |
+| [Eight-link manifest](runs/generalized_solver/eight_link_swingup_manifest.json) | Frozen phase timings, controller hash, config hash, and evidence links |
+| [Eight-link method paper](docs/eight_link_swingup_paper.md) | Method, negative controls, limitations, and reproduction commands |
+
 ## Generalized solver ladder (development)
 
 Separate from the frozen seven-link record, the repository now includes a
@@ -120,7 +153,8 @@ full-rank endpoint Gauss--Newton correction, Box-FDDP feedback, Riccati
 capture, and exact planar mirror passed all 20 uninterrupted noisy episodes.
 The n=7 row reuses the frozen record controller through this shared evaluator;
 it does not claim that the new modal synthesis has independently regenerated
-the record route. Arbitrary unequal morphologies and n>=8 remain active work.
+the record route. The eight-link result is a separate parked-launch promotion;
+arbitrary unequal morphologies and n>=9 remain active work.
 
 The same bounded actuator adapter has also passed a paired development check at
 every rung. A hidden map `delivered = 1.18 * commanded + 0.06` broke all 21
@@ -159,38 +193,21 @@ strong-morphology path from `p=0.02500` to `p=0.02525` and held upright for
 `18.80 s`; [the manifest](runs/generalized_solver/n3_unequal_waypoint_homotopy/continuation.json)
 labels this as partial continuation, not a solution of the `p=1` target.
 
-## Current frontier: eight links
+## Next frontier: nine links
 
-Seven links is the established result; **eight links is active research and is
-not solved yet**. The current campaign explores direct uniform optimization,
-gradient morphology continuation, and ghost-link homotopy. Its configs and
-diagnostic artifacts are included so progress and failures remain auditable:
+Eight links has passed the repository's internal evidence bundle. The next
+active frontier is **nine links**, and it must use the same discipline: start
+hanging, apply the settled-cart launch, swing with saved feedback, capture in
+the same episode, and pass fresh 20/100 noisy gates on the canonical rail.
+The earlier eight-link modal, open-loop, online-MPC, and wide-rail artifacts
+remain preserved as negative controls in the experiment ledger.
 
 - [`configs/swingup8_uniform.yaml`](configs/swingup8_uniform.yaml)
-- [`configs/swingup8_gradient_discovery.yaml`](configs/swingup8_gradient_discovery.yaml)
-- [`configs/swingup8_ghost_continuation.yaml`](configs/swingup8_ghost_continuation.yaml)
-- [Direct modal/endpoint frontier](runs/generalized_solver/n8_gn_stage13.json)
+- [`runs/generalized_solver/n8_capture_fddp_feedback120.json`](runs/generalized_solver/n8_capture_fddp_feedback120.json)
 - [`ROADMAP.md`](ROADMAP.md)
 
-The direct morphology-derived branch now reaches a full-rank exact endpoint at
-`3.94 s` that passes the common capture limits: `0.1147 rad` maximum angle,
-`0.2433 rad/s` hinge-rate RMS, `0.6698 rad/s` absolute-rate RMS, `-1.0649 m`
-cart position, and `0.4605 m/s` cart velocity, with `3.7162 m` peak cart-center
-travel. This is a meaningful deterministic capture milestone, not an
-eight-link solution: the tested local LQR leaves the nonlinear basin after
-only `0.08-0.14 s` and then violates the diagnostic rail. The next step is a
-capture controller whose verified basin contains this endpoint; no eight-link
-hold or record claim is made.
-
-The generalized solver now also derives a saturation-aware Lyapunov terminal
-ellipsoid from each exact morphology instead of relying only on the shared
-componentwise box. On eight links, bounded route continuation reduced that
-linear invariant value from `1.21e8` to `16.30` and the raw LQR request from
-`-309.5` to `0.134`, while retaining a full-rank 18-state endpoint Jacobian.
-The [new diagnostic frontier](runs/generalized_solver/n8_invariant_frontier.json)
-still fails exact nonlinear hold, so it remains explicitly `not_solution`.
-
-The project advances one link only after the same evidence bundle passes.
+The project advances one link only after the same evidence bundle passes. No
+nine-link result is claimed yet.
 
 ## Reproduce the result
 
@@ -222,7 +239,7 @@ For individual replay commands and the evidence contract, follow the
 | [`scripts`](scripts) | Training, search, evaluation, replay, and rendering entry points |
 | [`tests`](tests) | Dynamics, optimizer, morphology, and evidence-contract tests |
 | [`docs`](docs) | Paper, roadmap support, experiment ledger, and reproduction notes |
-| [`runs/generalized_solver`](runs/generalized_solver) | Curated n=1..7 development gates, routes, and honest frontier records |
+| [`runs/generalized_solver`](runs/generalized_solver) | Curated n=1..8 gates, routes, videos, and honest frontier records |
 | [`runs/swingup7_uniform`](runs/swingup7_uniform) | Curated public seven-link evidence bundle |
 
 Research history is intentionally preserved, including negative results. Start

@@ -1768,3 +1768,60 @@ A short exact-feedback rollout was therefore added to the optimization
 residual; its first probe reduced mean rollout cost 57% but did not yet change
 the endpoint enough to hold. The practical lesson is to optimize the feedback
 trajectory, not merely a readable terminal box or a linear quadratic value.
+
+## Eight-Link Parked-Route Feedback Promotion (2026-09-13)
+
+The eight-link result was obtained by applying the seven-link stack in a more
+careful form, not by replacing the project with a broad search. The route uses
+the exact uniform eight-link plant and the canonical `+/-3 m` rail.
+
+### What was tried
+
+| Lever | Result | Interpretation |
+|---|---|---|
+| Seven-link route transfer with 10 s hanging LQR | `0/5`; no hold; rail exit | The eighth internal mode breaks direct transfer |
+| Open-loop eight-link endpoint route after cart parking | Exact replay passed; noisy replay `0/20` | Cart translation alone is not robust |
+| Box-FDDP route with saved time-varying feedback | Noisy `20/20` and `100/100`; exact `20/20` | Positive controller ingredient |
+| Parking at `-0.10 m` for `17.5 s` | Noisy `100/100`; max cart `2.9868 m` | Robust but wastes hold time |
+| Parking at `-0.15 m` for `12.0 s` | Noisy `19/20` | Too close to the rail on the larger cohort |
+| Parking at `-0.20 m` for `12.0 s` | Noisy `95/100` | More negative target does not replace settling time |
+| Parking at `-0.15 m` for `14.0 s` | Noisy `100/100`; max cart `2.9300 m` | Promoted launch contract |
+
+### Promoted controller
+
+The runtime sequence is:
+
+1. Hanging-equilibrium LQR parks the cart at `-0.15 m` for `14.0 s` while
+   damping the noisy hanging chain.
+2. A 197-step (`3.94 s`) saved Box-FDDP route applies dimensionless
+   time-varying feedback at scale `0.75`.
+3. The nominal cart coordinate is translated by the measured parked position.
+4. Upright LQR scale `1.0` captures and maintains the chain around the same
+   parked cart target, with no state reset.
+
+The positive evidence is in:
+
+- `runs/generalized_solver/n8_fddp_parked_target015_14s_noisy20.json`
+- `runs/generalized_solver/n8_fddp_parked_target015_14s_noisy100.json`
+- `runs/generalized_solver/n8_fddp_parked_target015_14s_exact20.json`
+- `runs/generalized_solver/eight_link_swingup_success.video.json`
+- `runs/generalized_solver/eight_link_swingup_manifest.json`
+
+The 100 noisy episodes all ended at the time limit with zero rail failures.
+The held-out video uses seed `90901`, reaches upright at `17.80 s`, holds for
+`12.22 s`, and reports zero resets. The zoomed-out renderer fits the complete
+chain in both hanging and upright poses so the visual evidence is inspectable.
+
+### Why this counts and what it does not count
+
+This is a canonical internal eight-link swing-up-and-hold promotion because
+the final gate uses the uniform plant, canonical rail, noisy hanging start,
+uninterrupted simulator state, and the same 20/100 evidence contract used for
+seven links. The optimizer's wide-rail setting is not used as final evidence;
+the full feedback controller is replayed on the canonical rail.
+
+It is not an external world-record claim. The result is model-specific,
+timing-specific, and not yet tested against link variation, actuator delay,
+sensor noise, or a competition's exact rules. The active frontier is nine
+links. Start there by reusing this parked-launch and feedback/capture contract,
+and record any departure as a new ledger entry.
