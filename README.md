@@ -144,6 +144,14 @@ only `0.08-0.14 s` and then violates the diagnostic rail. The next step is a
 capture controller whose verified basin contains this endpoint; no eight-link
 hold or record claim is made.
 
+The generalized solver now also derives a saturation-aware Lyapunov terminal
+ellipsoid from each exact morphology instead of relying only on the shared
+componentwise box. On eight links, bounded route continuation reduced that
+linear invariant value from `1.21e8` to `16.30` and the raw LQR request from
+`-309.5` to `0.134`, while retaining a full-rank 18-state endpoint Jacobian.
+The [new diagnostic frontier](runs/generalized_solver/n8_invariant_frontier.json)
+still fails exact nonlinear hold, so it remains explicitly `not_solution`.
+
 The project advances one link only after the same evidence bundle passes.
 
 ## Reproduce the result

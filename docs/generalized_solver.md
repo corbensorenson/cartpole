@@ -86,6 +86,42 @@ symmetry-derived library with the plant model; it is not an RL policy. The
 bounded actuator RLS adapter is narrower still: it can estimate force gain and
 bias, but structural mismatch must trigger replanning.
 
+### Morphology-conditioned terminal set
+
+A fixed componentwise handoff box does not scale with link count: it ignores
+weakly controllable directions in the exact upright plant and does not say
+whether feedback immediately saturates. The solver now constructs terminal
+geometry from each measured morphology. In dimensionless coordinates
+$z=Tx$, let the exact discrete upright linearization under feedback be
+
+\[
+A_c=TAT^{-1}-TB\,sKT^{-1}.
+\]
+
+For stable $A_c$, it solves
+
+\[
+A_c^\top P A_c-P=-I,
+\qquad
+\rho_{sat}=\frac{u_{max}^2}{K_zP^{-1}K_z^\top},
+\qquad K_z=sKT^{-1}.
+\]
+
+Thus $V(z)=z^\top Pz/\rho_{sat}\leq1$ is the largest sublevel of
+this Lyapunov function whose *linear* feedback never exceeds the normalized
+actuator limit. It is invariant for the unsaturated linearization. It is not,
+by itself, a nonlinear certificate: exact MuJoCo feedback rollout may only
+shrink the accepted set. The endpoint refiner can optimize either the readable
+componentwise residual or this invariant residual, and can append a short
+reset-free clipped-LQR rollout to its objective. Promotion still requires the
+full exact hold and noisy gates.
+
+The numerical implementation uses an SVD damped minimum-norm solve and scales
+the complete correction direction into its trust region. This avoids squaring
+the condition number of the increasingly ill-conditioned endpoint Jacobian
+and does not rotate the proposed descent direction by clipping coordinates
+independently.
+
 Absolute link orientation is treated as a field over normalized chain arc
 length. Transfers convert relative joints to that field, interpolate at the
 target link centers, and convert back. This lets unequal-length chains transfer
@@ -351,3 +387,19 @@ compute or approximate a link-count- and morphology-conditioned invariant
 terminal set, then drive the endpoint into that set with the same full-rank
 exact correction. Promotion still requires an uninterrupted noisy 20-episode
 gate and then the canonical evidence bundle.
+
+The morphology-conditioned metric has now been exercised on this same direct
+route. The common-box endpoint requested a raw normalized LQR action of
+`-309.54` and had linear invariant value `1.2138e8`, explaining why its
+componentwise success did not translate into capture. Three bounded exact
+continuations reduced that value to `16.30` and the raw handoff request to
+`0.134`, with all 18 endpoint directions retained in the numerical Jacobian
+and peak cart-center travel `3.9215 m`. The
+[invariant-set frontier](../runs/generalized_solver/n8_invariant_frontier.json)
+is also marked `not_solution`; its exact clipped-LQR replay still leaves the
+nonlinear basin. A ten-step exact-feedback terminal objective reduced its mean
+rollout value by 57% (`107642` to `46077`), as recorded in the
+[feedback-rollout probe](../runs/generalized_solver/n8_invariant_feedback10_stage1.json),
+but did not yet move the endpoint
+inside the empirically verified nonlinear set. This establishes the next
+optimization target without promoting an eight-link hold claim.

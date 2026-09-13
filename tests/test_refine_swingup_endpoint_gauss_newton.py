@@ -6,8 +6,10 @@ import numpy as np
 
 from scripts.refine_swingup_endpoint_gauss_newton import (
     blend_controls,
+    damped_minimum_norm_step,
     interpolation_matrix,
     load_controls,
+    scale_step_to_trust_region,
 )
 
 
@@ -44,3 +46,18 @@ def test_blend_controls_uses_requested_horizon() -> None:
         step_count=3,
     )
     np.testing.assert_allclose(blended, [0.25, 0.35, 0.45])
+
+
+def test_damped_minimum_norm_step_handles_underdetermined_system() -> None:
+    jacobian = np.asarray([[1.0, 0.0, 1.0], [0.0, 2.0, 0.0]])
+    residual = np.asarray([2.0, -4.0])
+    step = damped_minimum_norm_step(jacobian, residual, regularization=0.0)
+    np.testing.assert_allclose(step, [-1.0, 2.0, -1.0], atol=1e-12)
+    np.testing.assert_allclose(jacobian @ step, -residual, atol=1e-12)
+
+
+def test_trust_region_scaling_preserves_direction() -> None:
+    step = np.asarray([1.0, -4.0, 2.0])
+    scaled = scale_step_to_trust_region(step, 0.5)
+    np.testing.assert_allclose(scaled, step / 8.0)
+    assert np.max(np.abs(scaled)) == 0.5

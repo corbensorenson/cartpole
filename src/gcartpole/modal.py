@@ -253,7 +253,66 @@ def closed_loop_lyapunov_matrix(
         closed_loop.T,
         np.eye(closed_loop.shape[0], dtype=np.float64),
     )
+    # The high-link plants are extremely ill-conditioned.  LAPACK may return
+    # tiny relative antisymmetry that is nevertheless large in absolute terms;
+    # symmetrize before Cholesky factors or quadratic-form certificates use P.
+    lyapunov = 0.5 * (lyapunov + lyapunov.T)
+    if np.min(np.linalg.eigvalsh(lyapunov)) <= 0.0:
+        raise ValueError("closed-loop Lyapunov matrix is not positive definite")
     return lyapunov, spectral_radius
+
+
+def linear_saturation_invariant_radius(
+    lyapunov: np.ndarray,
+    dimensionless_gain: np.ndarray,
+    *,
+    action_limit: float = 1.0,
+) -> float:
+    """Return the largest linear Lyapunov sublevel with unsaturated feedback.
+
+    For ``V(z) = z.T @ P @ z`` and ``u = -K z``, the maximum action magnitude
+    on ``V(z) <= rho`` is ``sqrt(rho * K @ inv(P) @ K.T)``.  Choosing ``rho``
+    from that equality makes the full ellipsoid respect the normalized action
+    bound.  When ``P`` comes from :func:`closed_loop_lyapunov_matrix`, this is
+    an invariant set for the unsaturated linear closed loop.  Exact nonlinear
+    rollout validation may only shrink it; it must never enlarge it without
+    evidence.
+    """
+
+    matrix = np.asarray(lyapunov, dtype=np.float64)
+    gain = np.asarray(dimensionless_gain, dtype=np.float64).reshape(-1)
+    if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1]:
+        raise ValueError("lyapunov matrix must be square")
+    if gain.shape != (matrix.shape[0],):
+        raise ValueError("gain shape does not match lyapunov matrix")
+    if not np.all(np.isfinite(matrix)) or not np.all(np.isfinite(gain)):
+        raise ValueError("lyapunov matrix and gain must be finite")
+    if not np.isfinite(action_limit) or action_limit <= 0.0:
+        raise ValueError("action_limit must be finite and positive")
+    symmetric = 0.5 * (matrix + matrix.T)
+    if np.min(np.linalg.eigvalsh(symmetric)) <= 0.0:
+        raise ValueError("lyapunov matrix must be positive definite")
+    gain_dual_norm_squared = float(gain @ np.linalg.solve(symmetric, gain))
+    if gain_dual_norm_squared <= 0.0 or not np.isfinite(gain_dual_norm_squared):
+        raise ValueError("gain must have a finite positive Lyapunov dual norm")
+    return float(action_limit**2 / gain_dual_norm_squared)
+
+
+def normalized_invariant_value(
+    state: np.ndarray,
+    lyapunov: np.ndarray,
+    radius: float,
+) -> float:
+    """Evaluate a state against a certified Lyapunov sublevel radius."""
+
+    vector = np.asarray(state, dtype=np.float64)
+    matrix = np.asarray(lyapunov, dtype=np.float64)
+    if matrix.shape != (vector.size, vector.size):
+        raise ValueError("state and lyapunov matrix shapes do not match")
+    if not np.isfinite(radius) or radius <= 0.0:
+        raise ValueError("radius must be finite and positive")
+    value = float(vector @ (0.5 * (matrix + matrix.T)) @ vector / radius)
+    return float(max(0.0, value))
 
 
 def conjugate_mode_groups(eigenvalues: np.ndarray, tolerance: float = 1e-8) -> list[tuple[int, ...]]:

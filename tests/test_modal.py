@@ -12,7 +12,9 @@ from gcartpole.modal import (
     dimensionless_absolute_transform,
     dimensionless_wrapped_state,
     grouped_modal_amplitudes,
+    linear_saturation_invariant_radius,
     modal_decomposition,
+    normalized_invariant_value,
     real_schur_decomposition,
     scale_feedback_by_schur_group,
     transform_dynamics,
@@ -131,7 +133,34 @@ class ModalTests(unittest.TestCase):
         state = np.asarray([0.4, -0.2], dtype=np.float64)
         next_state = state_matrix @ state
         self.assertLess(radius, 1.0)
+        np.testing.assert_allclose(lyapunov, lyapunov.T, atol=0.0)
         self.assertLess(float(next_state @ lyapunov @ next_state), float(state @ lyapunov @ state))
+
+    def test_saturation_invariant_radius_is_tight(self) -> None:
+        lyapunov = np.diag([4.0, 1.0])
+        gain = np.asarray([2.0, 1.0], dtype=np.float64)
+        radius = linear_saturation_invariant_radius(
+            lyapunov,
+            gain,
+            action_limit=1.0,
+        )
+        self.assertAlmostEqual(radius, 0.5)
+
+        inverse_gain = np.linalg.solve(lyapunov, gain)
+        boundary_state = inverse_gain / float(gain @ inverse_gain)
+        self.assertAlmostEqual(abs(float(gain @ boundary_state)), 1.0)
+        self.assertAlmostEqual(
+            normalized_invariant_value(boundary_state, lyapunov, radius),
+            1.0,
+        )
+        self.assertAlmostEqual(
+            normalized_invariant_value(0.5 * boundary_state, lyapunov, radius),
+            0.25,
+        )
+
+    def test_saturation_invariant_radius_rejects_zero_gain(self) -> None:
+        with self.assertRaises(ValueError):
+            linear_saturation_invariant_radius(np.eye(2), np.zeros(2))
 
 
 if __name__ == "__main__":

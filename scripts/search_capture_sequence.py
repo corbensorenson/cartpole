@@ -9,8 +9,14 @@ from typing import Any
 import numpy as np
 
 from gcartpole.config import apply_overrides, dump_json, load_config
-from gcartpole.evidence import data_sha256, git_metadata, runtime_metadata, utc_timestamp
 from gcartpole.env import NLinkCartPoleEnv
+from gcartpole.evidence import (
+    data_sha256,
+    git_metadata,
+    runtime_metadata,
+    utc_timestamp,
+)
+
 try:
     from scripts.search_swingup_capture import lqr_action, lqr_gain
 except ModuleNotFoundError:
@@ -52,6 +58,15 @@ def load_state(path: str, state_index: str) -> tuple[dict[str, Any], int]:
         # Accepting that record lets the exact capture optimizer consume the
         # proposal without reconstructing or interpolating its dynamics.
         return dict(payload["best"]["best_state"]), -1
+    if (
+        isinstance(payload, dict)
+        and state_index in {"best", "endpoint", "best_endpoint"}
+        and isinstance(payload.get("best"), dict)
+        and isinstance(payload["best"].get("endpoint"), dict)
+    ):
+        # Exact endpoint refiners store the verified final state separately
+        # from their interval controls and full trace.
+        return dict(payload["best"]["endpoint"]), -1
     states = payload.get("states", payload) if isinstance(payload, dict) else payload
     if not isinstance(states, list) or not states:
         raise ValueError(f"{path} does not contain a non-empty states list")

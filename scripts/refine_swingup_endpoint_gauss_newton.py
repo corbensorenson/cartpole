@@ -29,6 +29,16 @@ from gcartpole.evidence import (
     runtime_metadata,
     utc_timestamp,
 )
+from gcartpole.generalized_energy import upright_lqr_gain
+from gcartpole.ilqr import MujocoTransition
+from gcartpole.modal import (
+    StateScales,
+    closed_loop_lyapunov_matrix,
+    dimensionless_absolute_transform,
+    dimensionless_wrapped_state,
+    linear_saturation_invariant_radius,
+    transform_feedback_gain,
+)
 
 
 def interpolation_matrix(knot_count: int, step_count: int) -> np.ndarray:
@@ -42,6 +52,36 @@ def interpolation_matrix(knot_count: int, step_count: int) -> np.ndarray:
     matrix[rows, left] = 1.0 - fraction
     matrix[rows, right] += fraction
     return matrix
+
+
+def damped_minimum_norm_step(
+    jacobian: np.ndarray,
+    residual: np.ndarray,
+    regularization: float,
+) -> np.ndarray:
+    """Solve damped Gauss--Newton without squaring the Jacobian condition."""
+
+    jacobian = np.asarray(jacobian, dtype=np.float64)
+    residual = np.asarray(residual, dtype=np.float64)
+    if jacobian.ndim != 2 or residual.shape != (jacobian.shape[0],):
+        raise ValueError("Jacobian and residual shapes do not match")
+    if not np.isfinite(regularization) or regularization < 0.0:
+        raise ValueError("regularization must be finite and nonnegative")
+    left, singular_values, right = np.linalg.svd(jacobian, full_matrices=False)
+    filter_factors = singular_values / (singular_values**2 + regularization)
+    return -(right.T @ (filter_factors * (left.T @ residual)))
+
+
+def scale_step_to_trust_region(step: np.ndarray, trust_radius: float) -> np.ndarray:
+    """Scale into an infinity-norm trust region without rotating the step."""
+
+    step = np.asarray(step, dtype=np.float64)
+    if not np.isfinite(trust_radius) or trust_radius <= 0.0:
+        raise ValueError("trust_radius must be finite and positive")
+    maximum = float(np.max(np.abs(step), initial=0.0))
+    if maximum <= trust_radius:
+        return step.copy()
+    return step * (trust_radius / maximum)
 
 
 def load_controls(path: Path, record_key: str) -> tuple[np.ndarray, float]:
@@ -109,7 +149,18 @@ def endpoint_residual(
     angle_scale: float,
     cart_velocity_scale: float,
     absolute_velocity_scale: float,
+    state_transform: np.ndarray | None = None,
+    residual_transform: np.ndarray | None = None,
 ) -> np.ndarray:
+    if state_transform is not None or residual_transform is not None:
+        if state_transform is None or residual_transform is None:
+            raise ValueError("both invariant-set transforms must be supplied")
+        state = dimensionless_wrapped_state(
+            np.asarray(env.data.qpos, dtype=np.float64),
+            np.asarray(env.data.qvel, dtype=np.float64),
+            state_transform,
+        )
+        return np.asarray(residual_transform @ state, dtype=np.float64)
     absolute_angles = serial_absolute_angles(np.asarray(env.data.qpos[1:]))
     absolute_velocity = np.cumsum(np.asarray(env.data.qvel[1:], dtype=np.float64))
     return np.r_[
@@ -118,6 +169,71 @@ def endpoint_residual(
         float(env.data.qvel[0]) / cart_velocity_scale,
         absolute_velocity / absolute_velocity_scale,
     ].astype(np.float64)
+
+
+def lqr_invariant_metric(
+    env: NLinkCartPoleEnv,
+    *,
+    cart_position_scale: float,
+    angle_scale: float,
+    cart_velocity_scale: float,
+    velocity_scale: float,
+    control_cost: float,
+    feedback_scale: float,
+    action_limit: float,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, dict[str, Any]]:
+    """Construct a saturation-safe terminal ellipsoid for the linear plant."""
+
+    state_transform = dimensionless_absolute_transform(
+        env.n,
+        StateScales(
+            cart_position=cart_position_scale,
+            absolute_angle=angle_scale,
+            cart_velocity=cart_velocity_scale,
+            hinge_velocity=velocity_scale,
+        ),
+    )
+    transition = MujocoTransition(env)
+    equilibrium = np.zeros(2 * (env.n + 1), dtype=np.float64)
+    state_matrix, input_matrix = transition.linearize(
+        equilibrium,
+        0.0,
+        state_epsilon=1.0e-7,
+        action_epsilon=1.0e-7,
+    )
+    physical_gain = upright_lqr_gain(env, control_cost=control_cost)
+    lyapunov, spectral_radius = closed_loop_lyapunov_matrix(
+        state_matrix,
+        input_matrix,
+        physical_gain,
+        state_transform,
+        feedback_scale,
+    )
+    dimensionless_gain = feedback_scale * transform_feedback_gain(
+        physical_gain,
+        state_transform,
+    )
+    radius = linear_saturation_invariant_radius(
+        lyapunov,
+        dimensionless_gain,
+        action_limit=action_limit,
+    )
+    # np.linalg.cholesky returns L with P=L L.T, so ||L.T z||^2=z.T P z.
+    residual_transform = np.linalg.cholesky(lyapunov).T / np.sqrt(radius)
+    metadata = {
+        "type": "linear_lqr_saturation_invariant",
+        "scope": "certified_for_unsaturated_linearization_requires_exact_nonlinear_validation",
+        "control_cost": float(control_cost),
+        "feedback_scale": float(feedback_scale),
+        "normalized_action_limit": float(action_limit),
+        "closed_loop_spectral_radius": float(spectral_radius),
+        "lyapunov_radius": float(radius),
+        "physical_feedback_gain": physical_gain.astype(float).tolist(),
+        "dimensionless_feedback_gain": dimensionless_gain.astype(float).tolist(),
+        "dimensionless_state_transform": state_transform.astype(float).tolist(),
+        "lyapunov_matrix": lyapunov.astype(float).tolist(),
+    }
+    return state_transform, residual_transform, physical_gain, metadata
 
 
 def replay(
@@ -130,6 +246,11 @@ def replay(
     absolute_velocity_scale: float,
     rail_soft_limit: float,
     rail_weight: float,
+    state_transform: np.ndarray | None = None,
+    residual_transform: np.ndarray | None = None,
+    feedback_gain: np.ndarray | None = None,
+    feedback_scale: float = 1.0,
+    terminal_feedback_steps: int = 0,
 ) -> dict[str, Any]:
     env.reset(seed=0)
     max_cart = abs(float(env.data.qpos[0]))
@@ -159,14 +280,68 @@ def replay(
         if terminated or truncated:
             termination_reason = str(info.get("termination_reason"))
             break
-    complete = len(trace) == len(actions) and termination_reason is None
-    residual = endpoint_residual(
+    route_complete = len(trace) == len(actions) and termination_reason is None
+    endpoint = endpoint_residual(
         env,
         cart_position_scale=cart_position_scale,
         angle_scale=angle_scale,
         cart_velocity_scale=cart_velocity_scale,
         absolute_velocity_scale=absolute_velocity_scale,
+        state_transform=state_transform,
+        residual_transform=residual_transform,
     )
+    residual_blocks = [endpoint]
+    feedback_trace: list[dict[str, Any]] = []
+    maximum_raw_feedback_action = 0.0
+    if terminal_feedback_steps > 0 and route_complete:
+        if feedback_gain is None or state_transform is None or residual_transform is None:
+            raise ValueError("terminal feedback rollout requires an invariant LQR metric")
+        for step in range(terminal_feedback_steps):
+            physical_state = np.r_[env.data.qpos, env.data.qvel].astype(np.float64)
+            physical_state[1 : env.n + 1] = (
+                physical_state[1 : env.n + 1] + np.pi
+            ) % (2.0 * np.pi) - np.pi
+            raw_action = float(-feedback_scale * feedback_gain @ physical_state)
+            maximum_raw_feedback_action = max(
+                maximum_raw_feedback_action,
+                abs(raw_action),
+            )
+            _, _, terminated, truncated, info = env.step([np.clip(raw_action, -1.0, 1.0)])
+            feedback_residual = endpoint_residual(
+                env,
+                cart_position_scale=cart_position_scale,
+                angle_scale=angle_scale,
+                cart_velocity_scale=cart_velocity_scale,
+                absolute_velocity_scale=absolute_velocity_scale,
+                state_transform=state_transform,
+                residual_transform=residual_transform,
+            )
+            residual_blocks.append(feedback_residual)
+            feedback_trace.append(
+                {
+                    "step": step + 1,
+                    "action": float(np.clip(raw_action, -1.0, 1.0)),
+                    "raw_action": raw_action,
+                    "invariant_value": float(
+                        feedback_residual @ feedback_residual
+                    ),
+                    "qpos": np.asarray(env.data.qpos, dtype=np.float64)
+                    .astype(float)
+                    .tolist(),
+                    "qvel": np.asarray(env.data.qvel, dtype=np.float64)
+                    .astype(float)
+                    .tolist(),
+                }
+            )
+            max_cart = max(max_cart, abs(float(env.data.qpos[0])))
+            if terminated or truncated:
+                termination_reason = str(info.get("termination_reason"))
+                break
+    feedback_complete = len(feedback_trace) == terminal_feedback_steps
+    complete = route_complete and feedback_complete and termination_reason is None
+    # Average the exact feedback-rollout values so the objective scale does not
+    # depend on the requested validation horizon.
+    residual = np.concatenate(residual_blocks) / np.sqrt(len(residual_blocks))
     rail_violation = max(0.0, max_cart / rail_soft_limit - 1.0)
     cost = float(residual @ residual + rail_weight * rail_violation**2)
     if not complete or not np.isfinite(cost):
@@ -174,9 +349,15 @@ def replay(
     return {
         "cost": cost,
         "complete": bool(complete),
+        "route_complete": bool(route_complete),
+        "feedback_complete": bool(feedback_complete),
         "termination_reason": termination_reason,
         "residual": residual,
         "residual_norm": float(np.linalg.norm(residual)),
+        "terminal_metric_value": float(residual @ residual),
+        "endpoint_metric_value": float(endpoint @ endpoint),
+        "maximum_raw_feedback_action": float(maximum_raw_feedback_action),
+        "terminal_feedback_trace": feedback_trace,
         "max_cart_excursion": float(max_cart),
         "trace": trace,
     }
@@ -209,6 +390,26 @@ def main() -> None:
     parser.add_argument("--angle-scale", type=float, default=0.15)
     parser.add_argument("--cart-velocity-scale", type=float, default=0.50)
     parser.add_argument("--absolute-velocity-scale", type=float, default=0.75)
+    parser.add_argument(
+        "--terminal-metric",
+        choices=("componentwise", "lqr-invariant"),
+        default="componentwise",
+        help="terminal residual geometry used by Gauss-Newton",
+    )
+    parser.add_argument("--lqr-control-cost", type=float, default=1000.0)
+    parser.add_argument("--lqr-feedback-scale", type=float, default=1.0)
+    parser.add_argument(
+        "--invariant-action-limit",
+        type=float,
+        default=1.0,
+        help="normalized action bound used for the linear invariant ellipsoid",
+    )
+    parser.add_argument(
+        "--terminal-feedback-steps",
+        type=int,
+        default=0,
+        help="exact clipped-LQR steps included in the terminal objective",
+    )
     parser.add_argument("--rail-soft-limit", type=float, default=5.0)
     parser.add_argument("--rail-weight", type=float, default=100.0)
     parser.add_argument("--progress", type=float, default=1.0)
@@ -228,6 +429,9 @@ def main() -> None:
             args.angle_scale,
             args.cart_velocity_scale,
             args.absolute_velocity_scale,
+            args.lqr_control_cost,
+            args.lqr_feedback_scale,
+            args.invariant_action_limit,
             args.rail_soft_limit,
         )
         <= 0.0
@@ -237,6 +441,8 @@ def main() -> None:
         )
     if args.knot_count < 2:
         raise ValueError("knot count must be at least two")
+    if args.terminal_feedback_steps < 0:
+        raise ValueError("terminal feedback steps must be nonnegative")
     if args.rail_weight < 0.0:
         raise ValueError("rail weight must be nonnegative")
     if not 0.0 <= args.progress <= 1.0:
@@ -245,6 +451,8 @@ def main() -> None:
         raise ValueError("blend alpha must be in [0, 1]")
     if args.blend_alpha > 0.0 and not args.secondary_controller:
         raise ValueError("positive blend alpha requires --secondary-controller")
+    if args.terminal_feedback_steps and args.terminal_metric != "lqr-invariant":
+        raise ValueError("terminal feedback rollout requires --terminal-metric lqr-invariant")
 
     cfg = deterministic_config(apply_overrides(load_config(args.config), args.override))
     env = NLinkCartPoleEnv(cfg, progress=args.progress, seed=0)
@@ -291,10 +499,42 @@ def main() -> None:
         "rail_soft_limit": float(args.rail_soft_limit),
         "rail_weight": float(args.rail_weight),
     }
+    state_transform: np.ndarray | None = None
+    residual_transform: np.ndarray | None = None
+    feedback_gain: np.ndarray | None = None
+    terminal_metric: dict[str, Any] = {
+        "type": "componentwise_scaled_endpoint",
+        "scope": "optimization_metric_not_an_invariant_set_certificate",
+    }
+    if args.terminal_metric == "lqr-invariant":
+        (
+            state_transform,
+            residual_transform,
+            feedback_gain,
+            terminal_metric,
+        ) = lqr_invariant_metric(
+            env,
+            cart_position_scale=args.cart_position_scale,
+            angle_scale=args.angle_scale,
+            cart_velocity_scale=args.cart_velocity_scale,
+            velocity_scale=args.absolute_velocity_scale,
+            control_cost=args.lqr_control_cost,
+            feedback_scale=args.lqr_feedback_scale,
+            action_limit=args.invariant_action_limit,
+        )
 
     def evaluate(knots: np.ndarray) -> dict[str, Any]:
         actions = np.clip(base_actions + knots @ interpolation.T, -1.0, 1.0)
-        return replay(env, actions, **scales)
+        return replay(
+            env,
+            actions,
+            **scales,
+            state_transform=state_transform,
+            residual_transform=residual_transform,
+            feedback_gain=feedback_gain,
+            feedback_scale=args.lqr_feedback_scale,
+            terminal_feedback_steps=args.terminal_feedback_steps,
+        )
 
     current = evaluate(correction)
     best = current
@@ -318,10 +558,8 @@ def main() -> None:
                     np.asarray(plus_result["residual"])
                     - np.asarray(minus_result["residual"])
                 ) / (2.0 * args.fd_epsilon)
-        system = jacobian.T @ jacobian + regularization * np.eye(args.knot_count)
-        gradient = jacobian.T @ residual
-        step = -np.linalg.solve(system, gradient)
-        step = np.clip(step, -args.trust_radius, args.trust_radius)
+        step = damped_minimum_norm_step(jacobian, residual, regularization)
+        step = scale_step_to_trust_region(step, args.trust_radius)
         accepted = False
         step_scale = 1.0
         trial = current
@@ -368,6 +606,26 @@ def main() -> None:
         base_actions + best_correction @ interpolation.T, -1.0, 1.0
     ).astype(np.float32)
     endpoint = best["trace"][-1]
+    if feedback_gain is not None:
+        endpoint_state = np.r_[endpoint["qpos"], endpoint["qvel"]].astype(np.float64)
+        endpoint_state[1 : env.n + 1] = (
+            endpoint_state[1 : env.n + 1] + np.pi
+        ) % (2.0 * np.pi) - np.pi
+        terminal_metric["endpoint_raw_normalized_action"] = float(
+            -args.lqr_feedback_scale * feedback_gain @ endpoint_state
+        )
+        terminal_metric["endpoint_normalized_invariant_value"] = float(
+            best["endpoint_metric_value"]
+        )
+        terminal_metric["feedback_rollout_steps"] = int(
+            args.terminal_feedback_steps
+        )
+        terminal_metric["feedback_rollout_mean_invariant_value"] = float(
+            best["terminal_metric_value"]
+        )
+        terminal_metric["feedback_rollout_maximum_raw_action"] = float(
+            best["maximum_raw_feedback_action"]
+        )
     output = {
         "schema_version": 1,
         "generated_at": utc_timestamp(),
@@ -392,6 +650,7 @@ def main() -> None:
             "trust_radius": float(args.trust_radius),
             "minimum_step": float(args.minimum_step),
             "scales": scales,
+            "terminal_metric": terminal_metric,
             "initial_cost": float(evaluate(np.zeros_like(correction))["cost"]),
             "final_cost": float(best["cost"]),
             "final_residual_norm": float(best["residual_norm"]),
@@ -406,6 +665,7 @@ def main() -> None:
             "maximum_knot_correction": float(np.max(np.abs(best_correction))),
             "endpoint": endpoint,
             "trace": best["trace"],
+            "terminal_feedback_trace": best["terminal_feedback_trace"],
         },
         "config_sha256": data_sha256(cfg),
         "runtime": runtime_metadata(),

@@ -27,8 +27,14 @@ from mujoco import rollout as mujoco_rollout
 
 from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.env import NLinkCartPoleEnv, serial_absolute_angles
-from gcartpole.evidence import data_sha256, git_metadata, runtime_metadata, utc_timestamp
+from gcartpole.evidence import (
+    data_sha256,
+    git_metadata,
+    runtime_metadata,
+    utc_timestamp,
+)
 from gcartpole.predictive_sampling import shift_action_knots
+
 try:
     from scripts.search_capture_sequence import fixed_state_cfg as exact_fixed_state_cfg
 except ModuleNotFoundError:
@@ -37,6 +43,13 @@ except ModuleNotFoundError:
 
 def load_state(path: str, index: str) -> dict[str, Any]:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if (
+        isinstance(payload, dict)
+        and index in {"best", "endpoint", "best_endpoint"}
+        and isinstance(payload.get("best"), dict)
+        and isinstance(payload["best"].get("endpoint"), dict)
+    ):
+        return dict(payload["best"]["endpoint"])
     if (
         isinstance(payload, dict)
         and index in {"terminal", "terminal_state"}

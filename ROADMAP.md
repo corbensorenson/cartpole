@@ -1315,3 +1315,82 @@ terminal invariant set and capture controller, not another energy-only swing
 search. The endpoint refiner now supports reproducible convex blending between
 exact routes so competing terminal objectives can be continued without manual
 artifact editing.
+
+### Exact Endpoint Feedback-Teacher Probe (2026-09-13)
+
+The existing receding-horizon feedback-MPC teacher was tested at the actual
+uniform six-link endpoint rather than at the easier curriculum amplitude. The
+cohort used eight training states that had already been difficult at the
+`p=0.07` stage, then reset those same states at `progress=1.0` with the
+canonical rail and terminal LQR fallback. The planner used 75-step horizons,
+5-step replanning, four CEM iterations, and a 128-member population.
+
+The result was `0/8` successful teachers. Every rollout reached only
+`0.02--0.06 s` of upright streak before a canonical rail violation; no
+successful action labels were produced. The evidence is
+`runs/p1_capture_feedback_mpc/train_teachers_endpoint8.json` and is training
+diagnostic only. This closes the current feedback-MPC teacher path at the
+endpoint: distillation cannot fix a teacher that has no endpoint successes.
+The next P1 attempt must change the capture policy or its reachable-set
+objective, not simply increase the number of labels or continue the same PPO
+curriculum.
+
+### Eight-Link Online-MPC Endpoint Probe (2026-09-13)
+
+The new reset-free online-MPC controller was tested from the exact endpoint of
+the morphology-native eight-link route. It replanned every three policy steps
+with a 1.2-second horizon, 128 candidates, and three CEM iterations while
+applying each selected action through the ordinary serial `env.step` path.
+The best planned intermediate state reached `0.08297 rad` angle, but still had
+`3.1467 rad/s` absolute-rate RMS. The live six-second replay achieved only
+`0.04 s` maximum upright streak and ended without capture; maximum cart
+excursion was `2.7935 m`.
+
+The diagnostic artifact is `runs/swingup8_online_mpc_endpoint_probe.json`.
+This is a stronger negative result than a static LQR retry: state feedback
+can find the neighborhood but does not keep the internal modes inside the
+nonlinear invariant set. The 8-link method therefore still needs a capture
+controller trained or synthesized against a terminal invariant-set objective,
+not only an endpoint-distance cost.
+
+A stricter online-MPC run on a `+/-12 m` diagnostic rail used a 2.0-second
+horizon, 256 candidates, five CEM iterations, and two-step replanning. It
+avoided rail termination but reached only `0.10 s` of upright streak before
+drifting to `x=-4.451 m`, with final absolute-rate RMS `1.904 rad/s`. An
+upright discrete-LQR terminal-value iLQR continuation was also rejected after
+ending at `0.251 rad` angle, `3.426 rad/s` hinge RMS, and `4.562 m/s` cart
+speed. These are diagnostic failures, not canonical evidence.
+
+### Six-Link Wide-Rail Capture Curriculum Probe (2026-09-13)
+
+To separate rail starvation from policy failure, a gated PPO curriculum was
+run with the canonical six-link plant and a rail scheduled from `+/-12 m` at
+the initial stage to the canonical `+/-3 m` at the endpoint. The state
+envelope, LQR residual, observation contract, and strict evaluation gates were
+otherwise unchanged. The learner passed `p=0.025` at `128/128` and `p=0.05`
+at `127/128` (`99.22%`), then advanced to `p=0.075`.
+
+At `p=0.075`, where the scheduled rail was still `+/-11.325 m`, the first
+evaluation scored `95/128` (`74.22%`), and later evaluations stabilized at
+`94/128` (`73.44%`) through update 175. The curriculum never advanced. This
+shows that the known capture boundary is not caused solely by the canonical
+rail; the missing behavior is reusable internal-mode recovery. The complete
+training log and checkpoints are in
+`runs/swingup6_capture_rail_curriculum_probe/`; this is diagnostic evidence,
+not P1 gate evidence.
+
+### Saturation-aware invariant-set continuation (2026-09-13)
+
+The generalized endpoint refiner now derives a dimensionless Lyapunov terminal
+ellipsoid from the exact morphology and actuator limit. It also supports a
+short, reset-free exact clipped-LQR rollout in the terminal residual. The
+linear invariant boundary is explicit and morphology-conditioned; exact
+nonlinear replay is required to shrink and validate it before promotion.
+
+For the public eight-link common-box endpoint, the invariant value was
+`1.2138e8` and the raw LQR request was `-309.54`, explaining its immediate
+saturation. Bounded exact continuation reduced these to `16.30` and `0.134`
+with a full-rank 18-state endpoint Jacobian and `3.9215 m` peak cart-center
+travel. A ten-step feedback-rollout objective reduced mean rollout value from
+`107642` to `46077`, but exact hold still failed. This is a substantially
+closer, better-characterized frontier, not an eight-link solution.

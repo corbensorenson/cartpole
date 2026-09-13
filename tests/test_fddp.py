@@ -152,6 +152,15 @@ class FDDPContinuationTests(unittest.TestCase):
         self.assertEqual(index, -1)
         self.assertEqual(loaded, state)
 
+    def test_load_state_accepts_endpoint_refiner_state(self) -> None:
+        state = {"qpos": [0.0, 0.1], "qvel": [0.0, -0.2]}
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "endpoint.json"
+            path.write_text(json.dumps({"best": {"endpoint": state}}), encoding="utf-8")
+            loaded, index = load_state(str(path), "endpoint")
+        self.assertEqual(index, -1)
+        self.assertEqual(loaded, state)
+
     def test_artifact_requires_feasibility_and_strict_replay_success(self) -> None:
         payload = {
             "search": {"is_feasible": True},

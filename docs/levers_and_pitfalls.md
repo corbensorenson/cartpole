@@ -1692,3 +1692,79 @@ componentwise handoff box does not approximate the shrinking nonlinear
 invariant set closely enough at eight links. Future promotion should target a
 morphology-conditioned terminal invariant-set metric, while retaining the
 componentwise values as readable diagnostics.
+
+## Exact Endpoint Feedback-Teacher Probe (2026-09-13)
+
+The existing receding-horizon feedback-MPC teacher was moved to the actual
+uniform six-link endpoint. Eight training states that had already failed at the
+`p=0.07` curriculum stage were reset at `progress=1.0` and evaluated with the
+canonical rail and terminal LQR fallback. The planner used 75-step horizons,
+5-step replanning, four CEM iterations, and 128 candidates per iteration.
+
+It produced `0/8` successful teachers. Each state reached only `0.02--0.06 s`
+of upright streak before a rail violation, so the run yielded zero successful
+feedback-MPC labels. The artifact is
+`runs/p1_capture_feedback_mpc/train_teachers_endpoint8.json`; it is training
+diagnostic evidence, not P1 evidence. This path cannot be rescued by larger
+distillation cohorts: there are no exact-endpoint successes to imitate. The
+next controller must change the reachable-set objective or feedback structure,
+then be checked on held-out endpoint states.
+
+## Eight-Link Online-MPC Endpoint Probe (2026-09-13)
+
+The new reset-free online-MPC controller was tested from the exact endpoint of
+the morphology-native eight-link route. It replanned every three policy steps
+with a 1.2-second horizon, 128 candidates, and three CEM iterations, applying
+each selected action through the ordinary serial `env.step` path. Its best
+planned intermediate state reached `0.08297 rad` angle but retained
+`3.1467 rad/s` absolute-rate RMS. The six-second live replay achieved only
+`0.04 s` maximum upright streak, with no capture and `2.7935 m` maximum cart
+excursion.
+
+Artifact: `runs/swingup8_online_mpc_endpoint_probe.json`. This is stronger
+negative evidence than a static LQR retry: feedback can rank a near endpoint,
+but it does not keep the internal modes inside the nonlinear invariant set.
+The next 8-link capture controller must optimize a terminal invariant-set
+condition, not only endpoint distance.
+
+A stricter online-MPC run on a `+/-12 m` diagnostic rail used a 2.0-second
+horizon, 256 candidates, five CEM iterations, and two-step replanning. It
+avoided rail termination but reached only `0.10 s` of upright streak before
+drifting to `x=-4.451 m`, with final absolute-rate RMS `1.904 rad/s`. A
+continuation using the upright discrete-LQR value matrix as the iLQR terminal
+cost was worse: `0.251 rad` terminal angle, `3.426 rad/s` hinge RMS, and
+`4.562 m/s` cart speed. Both branches remain diagnostics and do not count as
+canonical evidence.
+
+## Six-Link Wide-Rail Capture Curriculum Probe (2026-09-13)
+
+To separate rail starvation from policy failure, a gated PPO curriculum used a
+rail scheduled from `+/-12 m` at the initial stage to the canonical `+/-3 m` at
+the endpoint. The state envelope, LQR residual, observation contract, and
+strict evaluation gates were unchanged. It passed `p=0.025` at `128/128` and
+`p=0.05` at `127/128` (`99.22%`), then advanced to `p=0.075`.
+
+At `p=0.075`, with the rail still `+/-11.325 m`, the first evaluation scored
+`95/128` (`74.22%`), and later evaluations stabilized at `94/128` (`73.44%`)
+through update 175. It never advanced. The wide rail removes early rail
+termination as the dominant explanation; the remaining failure is reusable
+internal-mode recovery. The training log and checkpoints are in
+`runs/swingup6_capture_rail_curriculum_probe/`; this run is diagnostic only
+and does not satisfy P1.
+
+## Saturation-Aware Terminal Geometry (2026-09-13)
+
+The shared componentwise handoff box hid a severe link-count effect: the
+eight-link endpoint inside that box still requested `-309.54` normalized
+action from the exact LQR. The solver now constructs a dimensionless discrete
+Lyapunov matrix and computes the largest sublevel whose linear feedback stays
+inside the actuator limit. This set is certified only for the linearization;
+exact nonlinear replay may shrink it and remains mandatory.
+
+Direct endpoint continuation reduced the normalized invariant value from
+`1.2138e8` to `16.30` and the raw handoff action to `0.134`, while retaining
+rank 18 endpoint sensitivity. The exact nonlinear controller still diverged.
+A short exact-feedback rollout was therefore added to the optimization
+residual; its first probe reduced mean rollout cost 57% but did not yet change
+the endpoint enough to hold. The practical lesson is to optimize the feedback
+trajectory, not merely a readable terminal box or a linear quadratic value.
