@@ -133,6 +133,16 @@ This is a deliberately small, fully compensable actuator diagnostic—not proof
 of arbitrary morphology robustness. Lost force authority at saturation and
 residuals outside the modeled action direction still require replanning.
 
+The first unequal-morphology promotion now exercises that replan path. For a
+two-link chain with lengths `[1.2, 1.8] m` and masses `[0.35, 0.65] kg`, direct
+arc-length transfer scored **0/5**. Refining the transferred route on the exact
+measured plant with the same Box-FDDP, Riccati-capture, and mirror architecture
+then passed **20/20** noisy uninterrupted episodes, with prediction matching
+execution on all 20. Its maximum body-aware required rail ratio was `1.193` on
+the declared `1.5` configured ratio. The [verified unequal-morphology artifact](runs/generalized_solver/n2_unequal_frontier.json)
+keeps this result separate from the uniform ladder and explicitly limits the
+claim to this one plant.
+
 ## Current frontier: eight links
 
 Seven links is the established result; **eight links is active research and is

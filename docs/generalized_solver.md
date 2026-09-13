@@ -194,6 +194,31 @@ underactuation probes identified the gain accurately but still failed swing-up;
 that is a feasibility boundary, not an estimator failure and not something an
 RL residual should conceal.
 
+### First unequal-morphology promotion
+
+The first target outside the uniform-chain ladder has two links with physical
+lengths `[1.2, 1.8] m` and masses `[0.35, 0.65] kg`; total chain length and mass
+remain 3 m and 1 kg. This changes both the dimensionless length fractions from
+`[0.5, 0.5]` to `[0.4, 0.6]` and the mass fractions from `[0.5, 0.5]` to
+`[0.35, 0.65]`.
+
+The experiment preserves the intended division of labor. Arc-length state and
+feedback transfer plus natural-time/force scaling supplies the starting route,
+but exact replay of that route fails `0/5` noisy trials. One target-morphology
+Box-FDDP refinement makes the trajectory dynamically feasible and reaches a
+`20.54 s` exact upright hold. Packaging that route with its analytic mirror and
+running the unchanged exact-model selector then passes `20/20` independent
+noisy, uninterrupted episodes; prediction agrees with execution in all 20.
+
+The [verified frontier record](../runs/generalized_solver/n2_unequal_frontier.json)
+binds the configuration, failed warm-start control, optimizer output, packaged
+routes, and gate by hash. The 4.5 m half-rail is intentionally generous for
+this first morphology promotion: the observed maximum body-aware requirement
+is `rho=1.19289`, versus the configured `rho=1.5`. This proves the recipe on one
+nonuniform plant. It does not establish an arbitrary-morphology success rate or
+the minimum rail for this plant; systematic morphology and rail continuation
+remain required.
+
 ## Rail-length relationship
 
 There is no morphology-only constant guaranteeing swing-up: rail demand also
@@ -250,6 +275,7 @@ records the new full-rank endpoint correction and accepted gate.
 ```bash
 make generalized-gates
 make generalized-adaptation-gates
+make generalized-unequal-n2
 
 PYTHONPATH=src python scripts/generalized_swingup_solver.py analyze \
   --config configs/swingup7_uniform.yaml --min-links 1 --max-links 20 \
