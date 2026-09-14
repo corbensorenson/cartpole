@@ -118,9 +118,9 @@ terminal LQR capture and upright hold
 The latest ten-link release uses a 16-second hanging-equilibrium park at `-0.05 m`,
 an 8-second Box-FDDP route with saved time-varying feedback, and a terminal LQR
 around the same parked target. It is a two-expert controller with no state reset
-between phases. See the [ten-link method paper](docs/ten_link_swingup_paper.md)
-for the exact contract and the [seven-link paper](docs/seven_link_swingup_paper.md)
-for the original release.
+between phases. See the [ten-link experiment appendix](docs/ten_link_swingup_paper.md)
+for its exact contract and the [consolidated 7-10 link report](docs/seven_link_swingup_paper.md)
+for the common method, comparative results, and claim boundary.
 
 ## Evidence
 
@@ -149,9 +149,8 @@ claim of broad robustness.
 ## The nine-link record extension
 
 The same parked-launch, feedback-route, and delayed-capture architecture now
-reaches nine links on the repository's canonical uniform plant. This is the
-repository's highest verified internal benchmark, not a claim about an
-external competition record:
+reaches nine links on the repository's canonical uniform plant. It is the
+second-highest frozen result in the 7-10 link progression:
 
 | Benchmark property | Result |
 |---|---:|
@@ -277,8 +276,9 @@ the swing trajectory.
 | 9 links | Separate parked-launch release is **100/100** | 1.053 |
 | 10 links | Separate parked-launch release is **100/100** | 0.726 |
 
-These are development results, not additions to the public seven-link record
-claim. See the [generalized solver design and honest frontier](docs/generalized_solver.md),
+The shared-evaluator rows are development results and remain separate from the
+four frozen record releases above. See the
+[generalized solver design and honest frontier](docs/generalized_solver.md),
 including why total chain energy and one aggregate phase variable stop being
 sufficient as internal modes appear. Rail length is solved jointly with the
 route: n=5 needed a 4.5 m half-rail for its tested controller, while the new
@@ -481,7 +481,8 @@ experiment ledger.
 
 The project advances one link only after the same evidence bundle passes. Ten
 links is the highest verified internal benchmark; eleven links is now the
-active frontier. No external world-record claim is made here.
+active frontier. The provisional public record claim remains scoped to the
+frozen ten-link benchmark; no broader universal record is claimed.
 
 ## Reproduce the result
 
@@ -503,6 +504,10 @@ make verify-swingup7
 # Verify the released internal ten-link controller, gates, video, and manifest.
 make verify-ten-link-release
 sha256sum -c runs/generalized_solver/n10_release_SHA256SUMS
+
+# Rebuild the consolidated 7-10 link PDF.
+make setup-paper
+make render-record-paper
 ```
 
 `release-swingup7` regenerates the original seven-link release and intentionally
@@ -511,7 +516,7 @@ audits the frozen internal bundle without regenerating it; the manifest records
 that its source tree was dirty at generation, so the exact artifact hashes are
 the authority for this release.
 For individual replay commands and the evidence contract, follow the
-[seven-link paper's reproduction section](docs/seven_link_swingup_paper.md#6-reproduction).
+[consolidated paper's reproduction section](docs/seven_link_swingup_paper.md#9-reproduction-and-artifact-map).
 The [eight-link reproduction section](docs/eight_link_swingup_paper.md#6-reproduction)
 contains the exact parked-launch evaluation and rendering commands.
 The [nine-link reproduction section](docs/nine_link_swingup_paper.md#6-reproduction)
