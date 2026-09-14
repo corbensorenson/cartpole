@@ -206,6 +206,7 @@ def main() -> None:
             progress=1.0,
             fd_eps=1e-7,
             control_cost=float(controller["lqr_control_cost"]),
+            q_weights=controller["lqr_weights"],
         )
         for controller in controllers
     ]

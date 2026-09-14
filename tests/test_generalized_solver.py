@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from gcartpole.generalized_solver import (
     AdaptiveHomotopy,
@@ -14,12 +15,17 @@ from gcartpole.generalized_solver import (
     rail_requirement,
     recover_homotopy_failed_upper_bounds,
     resample_controls,
+    similarity_scaled_config,
+    similarity_scaled_lqr_weights,
+    similarity_scaled_setup,
     split_absolute_coordinate_lift_matrix,
     split_embedding,
     split_joint_profile,
     split_state_lift_matrix,
     split_state_projection,
     state_transfer_matrix,
+    transfer_coordinate_feedback_gains,
+    transfer_coordinate_states,
     transfer_state,
 )
 
@@ -59,19 +65,10 @@ def test_dimensionless_groups_are_invariant_under_dynamic_similarity():
     base = setup()
     length_scale = 3.0
     mass_scale = 2.5
-    time_scale = np.sqrt(length_scale)
-    scaled = setup(
-        lengths=tuple(length_scale * base.lengths),
-        masses=tuple(mass_scale * base.masses),
-        cart_mass=mass_scale * base.cart_mass,
-        rail=length_scale * base.rail_half_length,
-        force=mass_scale * base.force_limit,
-        damping=tuple(mass_scale * length_scale**2 / time_scale * base.joint_damping),
-        cart_damping=mass_scale / time_scale * base.cart_damping,
-        armature=mass_scale * length_scale**2 * base.joint_armature,
-        cart_half_length=length_scale * base.cart_half_length,
-        radius=length_scale * base.link_radius,
-        dt=time_scale * base.timestep,
+    scaled = similarity_scaled_setup(
+        base,
+        length_scale=length_scale,
+        mass_scale=mass_scale,
     )
     first = dimensionless_setup(base)
     second = dimensionless_setup(scaled)
@@ -90,6 +87,63 @@ def test_dimensionless_groups_are_invariant_under_dynamic_similarity():
     np.testing.assert_allclose(first.length_fractions, second.length_fractions)
     np.testing.assert_allclose(first.mass_fractions, second.mass_fractions)
     np.testing.assert_allclose(first.joint_damping_ratios, second.joint_damping_ratios)
+
+
+def test_similarity_scaled_config_preserves_all_dimensionless_groups():
+    cfg = {
+        "experiment": {"name": "similarity-test"},
+        "env": {
+            "n_links": 2,
+            "total_length": 3.0,
+            "total_mass": 1.0,
+            "cart_mass": 1.0,
+            "rail_limit": 3.0,
+            "force_limit": 80.0,
+            "timestep": 0.005,
+            "frame_skip": 4,
+            "episode_seconds": 30.0,
+            "success_sustain_seconds": 5.0,
+            "cart_damping": 0.02,
+            "joint_armature": 0.0005,
+            "link_radius": 0.025,
+        },
+        "morphology": {
+            "schedule_mode": "all_linear",
+            "start": {"total_damping": 0.015, "total_frictionloss": 0.0},
+            "end": {"total_damping": 0.015, "total_frictionloss": 0.0},
+        },
+    }
+    scaled = similarity_scaled_config(cfg, length_scale=2.0, mass_scale=0.5)
+    assert scaled["env"]["total_length"] == 6.0
+    assert scaled["env"]["total_mass"] == 0.5
+    assert scaled["env"]["cart_mass"] == 0.5
+    assert scaled["env"]["force_limit"] == 40.0
+    assert scaled["env"]["rail_limit"] == 6.0
+    assert scaled["env"]["episode_seconds"] == pytest.approx(30.0 * np.sqrt(2.0))
+    assert scaled["env"]["success_sustain_seconds"] == pytest.approx(
+        5.0 * np.sqrt(2.0)
+    )
+    assert scaled["env"]["cart_half_length"] == 0.36
+    assert scaled["env"]["link_radius"] == 0.05
+
+
+def test_similarity_scaling_rejects_nonpositive_scales():
+    with pytest.raises(ValueError, match="positive"):
+        similarity_scaled_setup(setup(), length_scale=0.0, mass_scale=1.0)
+
+
+def test_similarity_scaled_lqr_weights_preserve_dimensionless_state_cost():
+    scaled = similarity_scaled_lqr_weights(None, length_scale=4.0)
+    assert scaled == {
+        "cart_position": pytest.approx(0.1 / 16.0),
+        "absolute_angle": 100.0,
+        "cart_velocity": pytest.approx(0.1 / 4.0),
+        "absolute_angular_velocity": 4.0,
+        "relative_angle": 1.0,
+        "relative_angular_velocity": 0.04,
+    }
+    with pytest.raises(ValueError, match="unknown"):
+        similarity_scaled_lqr_weights({"mystery": 1.0}, length_scale=1.0)
 
 
 def test_state_transfer_is_identity_for_same_setup():
@@ -121,6 +175,38 @@ def test_force_and_time_resampling_preserve_dimensionless_command():
     transferred = resample_controls(controls, source, target)
     np.testing.assert_allclose(transferred, 0.4)
     assert transferred.size == controls.size
+
+
+def test_coordinate_transfer_preserves_feedback_law() -> None:
+    source = setup()
+    target = similarity_scaled_setup(source, length_scale=2.0, mass_scale=0.5)
+    source_transform = np.diag([0.4, 2.0, 3.0, 0.7, 4.0, 5.0])
+    target_transform = np.diag([0.2, 1.5, 2.5, 0.3, 6.0, 7.0])
+    source_states = np.arange(18, dtype=np.float64).reshape(3, 6) / 10.0
+    source_gains = np.arange(12, dtype=np.float64).reshape(2, 6) / 20.0
+
+    target_states = transfer_coordinate_states(
+        source_states,
+        source,
+        target,
+        source_transform,
+        target_transform,
+    )
+    target_gains = transfer_coordinate_feedback_gains(
+        source_gains,
+        source,
+        target,
+        source_transform,
+        target_transform,
+    )
+
+    action_scale = force_action_scale(source, target)
+    for index in range(2):
+        np.testing.assert_allclose(
+            target_gains[index] @ target_states[index],
+            action_scale * source_gains[index] @ source_states[index],
+            atol=1e-12,
+        )
 
 
 def test_rail_requirement_includes_cart_body_and_clearance():

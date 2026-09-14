@@ -45,6 +45,74 @@ Plants with matching groups are dynamically similar. Length scaling therefore
 changes trajectory duration by \(\sqrt{L}\), cart position by \(L\), cart speed
 by \(\sqrt{L}\), angular speed by \(1/\sqrt{L}\), and physical force by mass.
 
+### Exact physical-scale back-check
+
+The public `similarity` command now materializes that relationship rather than
+leaving it as documentation. Given length scale \(\lambda>0\) and mass scale
+\(\mu>0\), it scales all longitudinal geometry and rail limits by \(\lambda\),
+all masses and force limits by \(\mu\), simulation and policy time by
+\(\sqrt{\lambda}\), cart damping by \(\mu/\sqrt{\lambda}\), joint damping by
+\(\mu\lambda^{3/2}\), and armature by \(\mu\lambda^2\). Initial cart position
+and velocity noise scale by \(\lambda\) and \(\sqrt{\lambda}\); angular velocity
+noise scales by \(1/\sqrt{\lambda}\). The command rejects nonpositive scales and
+emits the before/after dimensionless groups plus their numerical error.
+
+The upright cost is transformed in the same coordinates. Cart-position weights
+scale by \(1/\lambda^2\), cart-velocity weights by \(1/\lambda\), angular-rate
+weights by \(\lambda\), angle weights remain unchanged, and normalized-action
+cost remains unchanged. The route-transfer command now preserves the source
+LQR scale and control cost and writes these target-coordinate weights, so a
+warm start cannot silently fall back to unrelated capture tuning.
+
+Route feedback needs one more exact transformation. If saved coordinates are
+\(z_s=T_sx_s\), target coordinates are \(z_t=T_tx_t\), and \(P\) projects a
+target physical state onto the source morphology, the target gain is
+\(K_t=s_FK_sT_sPT_t^{-1}\). The transfer code now applies that full expression
+and preserves the analytically transformed source reference trajectory.
+Previously it silently paired the transferred gain with a newly rolled-out
+open-loop reference; on a chaotic swing this could discard the very feedback
+basin the transfer was meant to preserve. The exact target open-loop rollout
+is still stored as a diagnostic, but it no longer replaces the feedback
+reference.
+
+This scaling was exercised as a closed-loop test, not only an algebra check.
+One unchanged dimensionless energy/PFL controller plus exact-linearization LQR
+was run on the full `2 x 2` grid
+\(\lambda\in\{0.5,2\}\), \(\mu\in\{0.5,2\}\). All dimensionless plant errors
+were exactly zero in the serialized artifacts, and all **80/80** independent
+noisy hanging-start episodes completed without interruption or parameter
+retuning. The largest body-aware required rail ratios in the four 20-episode
+gates were `0.981`, `0.973`, `0.959`, and `0.959`; the capture switch remained
+at the same dimensionless time.
+
+The same transformation was then applied to the proven two-link feedback route
+at doubled length and half mass. Its uncontrolled target replay was not rail
+feasible, making it a useful negative control; the algebraically transferred
+feedback law had maximum invariance error `1.14e-13` and the unchanged shared
+route selector passed **20/20** new noisy episodes. Prediction matched execution
+in all 20, and the body-aware rail ratio remained `1.013`. Together the current
+similarity certificate covers **100/100** episodes across link counts one and
+two. Pilot transfers at higher counts confirm that some routes remain too
+numerically fragile for blind replay, so exact-target refinement is still part
+of the general recipe.
+
+The [hash-bound similarity certificate](../runs/generalized_solver/similarity_ladder_n1_n2.json)
+checks generated config hashes, pi groups, physical scale ratios, controller
+parameters, dimensionless conditioning and switch times, seed uniqueness,
+uninterrupted outcomes, and body-aware rail calculation. Reproduce it with:
+
+```bash
+make generalized-similarity
+```
+
+This closes physical unit scaling for the declared one-link family and one
+two-link feedback transfer. It does **not** close arbitrary link count or
+unequal length/mass fractions. A
+frozen open-loop route can amplify numerical or launch perturbations even when
+the plant equations are similar, so transferred routes remain `not_solution`
+warm starts. The general recipe must regenerate exact-target feedback or run a
+bounded target-model refinement before promotion.
+
 ## Solver architecture
 
 ```text

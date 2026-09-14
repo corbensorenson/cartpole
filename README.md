@@ -240,6 +240,21 @@ and [n=1 shared-evaluator gate](runs/generalized_solver/n1_gate_20_shared.json).
 This verifies one execution architecture, not one unchanged force trace or one
 route-synthesis primitive for every morphology.
 
+Physical scale is now executable too. The same dimensionless one-link
+energy/PFL controller and exact LQR capture passed **80/80** noisy episodes on
+the full half/double-length x half/double-mass grid with no controller retuning.
+An analytically transformed two-link feedback route then passed another
+**20/20** episodes at double length and half mass, for **100/100** verified
+similarity episodes across links one and two.
+The generator preserves force authority, natural-time/control-rate, damping,
+armature, cart/rail geometry, and initial-noise groups exactly; the verifier
+also checks body-aware rail demand and normalized capture timing. See the
+[dynamic-similarity certificate](runs/generalized_solver/similarity_ladder_n1_n2.json)
+and [derivation and limits](docs/generalized_solver.md). This proves the
+declared cases, not arbitrary unequal morphologies or
+unchanged open-loop replay: target-model feedback/refinement is still required
+before any transferred route is promoted.
+
 The count-agnostic locked-split continuation has also crossed its deliberately
 hard n=2 to unequal-n=3 topology boundary. Direct equality relaxation reached
 `p=0.99954875` but rejected the discontinuous endpoint. A deterministic

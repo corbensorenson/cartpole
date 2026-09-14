@@ -12,12 +12,21 @@ for closing the remaining gap after a transfer.
 
 from __future__ import annotations
 
+import copy
 from dataclasses import asdict, dataclass
 from typing import Any
 
 import numpy as np
 
 GRAVITY = 9.81
+DEFAULT_UPRIGHT_LQR_WEIGHTS = {
+    "cart_position": 0.1,
+    "absolute_angle": 100.0,
+    "cart_velocity": 0.1,
+    "absolute_angular_velocity": 1.0,
+    "relative_angle": 1.0,
+    "relative_angular_velocity": 0.01,
+}
 
 
 def _positive_vector(name: str, values: np.ndarray | list[float]) -> np.ndarray:
@@ -166,6 +175,208 @@ def dimensionless_setup(setup: PhysicalSetup) -> DimensionlessSetup:
     )
 
 
+def similarity_scaled_setup(
+    setup: PhysicalSetup,
+    *,
+    length_scale: float,
+    mass_scale: float,
+) -> PhysicalSetup:
+    """Construct a dynamically similar physical plant.
+
+    ``length_scale`` is lambda and ``mass_scale`` is mu.  With gravity fixed,
+    natural time scales by ``sqrt(lambda)``.  Every dimensional parameter is
+    transformed so :func:`dimensionless_setup` is invariant, including the
+    damping and armature terms that are easy to scale incorrectly.
+    """
+
+    if not all(
+        np.isfinite(value) and float(value) > 0.0
+        for value in (length_scale, mass_scale)
+    ):
+        raise ValueError("similarity length and mass scales must be positive")
+    length = float(length_scale)
+    mass = float(mass_scale)
+    time = float(np.sqrt(length))
+    return PhysicalSetup(
+        lengths=length * setup.lengths,
+        masses=mass * setup.masses,
+        cart_mass=mass * setup.cart_mass,
+        rail_half_length=length * setup.rail_half_length,
+        force_limit=mass * setup.force_limit,
+        joint_damping=mass * length**2 / time * setup.joint_damping,
+        cart_damping=mass / time * setup.cart_damping,
+        joint_armature=mass * length**2 * setup.joint_armature,
+        cart_half_length=length * setup.cart_half_length,
+        link_radius=length * setup.link_radius,
+        timestep=time * setup.timestep,
+        frame_skip=setup.frame_skip,
+        gravity=setup.gravity,
+    )
+
+
+def similarity_scaled_config(
+    cfg: dict[str, Any],
+    *,
+    length_scale: float,
+    mass_scale: float,
+) -> dict[str, Any]:
+    """Scale a repository configuration while preserving its dimensionless plant.
+
+    Controller and reward coefficients are intentionally left unchanged.  The
+    returned configuration changes only dimensional plant, initialization,
+    and clock quantities.  Explicit morphology profiles are scaled as well as
+    uniform ``total_length``/``total_mass`` configurations.
+    """
+
+    source = setup_from_config(cfg)
+    target = similarity_scaled_setup(
+        source,
+        length_scale=length_scale,
+        mass_scale=mass_scale,
+    )
+    length = float(length_scale)
+    mass = float(mass_scale)
+    time = float(np.sqrt(length))
+    result = copy.deepcopy(cfg)
+    env = result["env"]
+
+    scalar_scales = {
+        "total_length": length,
+        "total_mass": mass,
+        "cart_mass": mass,
+        "rail_limit": length,
+        "rail_limit_start": length,
+        "rail_limit_end": length,
+        "force_limit": mass,
+        "timestep": time,
+        "episode_seconds": time,
+        "success_sustain_seconds": time,
+        "cart_damping": mass / time,
+        "cart_frictionloss": mass,
+        "joint_armature": mass * length**2,
+        "link_radius": length,
+        "cart_half_length": length,
+        "init_cart_noise": length,
+        "init_cart_vel_noise": length / time,
+        "init_vel_noise": 1.0 / time,
+    }
+    defaults = {
+        "cart_half_length": source.cart_half_length,
+        "link_radius": source.link_radius,
+    }
+    for key, scale in scalar_scales.items():
+        if key in env:
+            env[key] = float(env[key]) * scale
+        elif key in defaults:
+            env[key] = float(defaults[key]) * scale
+
+    if isinstance(env.get("init_qpos"), list):
+        env["init_qpos"] = [
+            length * float(env["init_qpos"][0]),
+            *[float(value) for value in env["init_qpos"][1:]],
+        ]
+    if isinstance(env.get("init_qvel"), list):
+        env["init_qvel"] = [
+            length / time * float(env["init_qvel"][0]),
+            *[float(value) / time for value in env["init_qvel"][1:]],
+        ]
+
+    morphology = result["morphology"]
+    profile_scales = {
+        "lengths": length,
+        "masses": mass,
+        "damping": mass * length**2 / time,
+        "frictionloss": mass * length,
+        "joint_stiffness": mass * length,
+    }
+    for name, scale in profile_scales.items():
+        for endpoint in ("start", "end"):
+            key = f"{name}_{endpoint}"
+            if isinstance(morphology.get(key), list):
+                morphology[key] = [scale * float(value) for value in morphology[key]]
+    for endpoint in ("start", "end"):
+        values = morphology.get(endpoint)
+        if not isinstance(values, dict):
+            continue
+        if "total_damping" in values:
+            values["total_damping"] = (
+                float(values["total_damping"]) * mass * length**2 / time
+            )
+        if "total_frictionloss" in values:
+            values["total_frictionloss"] = (
+                float(values["total_frictionloss"]) * mass * length
+            )
+
+    experiment = result.setdefault("experiment", {})
+    experiment["name"] = (
+        f"{experiment.get('name', 'cartpole')}_similar_"
+        f"l{length_scale:g}_m{mass_scale:g}"
+    )
+    # Assert the public contract at construction time rather than silently
+    # emitting a partially scaled plant when a new dimensional field is added.
+    source_pi = dimensionless_setup(source)
+    target_pi = dimensionless_setup(setup_from_config(result))
+    scalar_names = (
+        "cart_to_link_mass",
+        "force_authority",
+        "rail_ratio",
+        "usable_rail_ratio",
+        "cart_half_length_ratio",
+        "link_radius_ratio",
+        "policy_dt_ratio",
+        "cart_damping_ratio",
+        "joint_armature_ratio",
+    )
+    if not all(
+        np.isclose(getattr(source_pi, name), getattr(target_pi, name), atol=1e-12)
+        for name in scalar_names
+    ) or not all(
+        np.allclose(first, second, atol=1e-12)
+        for first, second in (
+            (source_pi.length_fractions, target_pi.length_fractions),
+            (source_pi.mass_fractions, target_pi.mass_fractions),
+            (source_pi.joint_damping_ratios, target_pi.joint_damping_ratios),
+        )
+    ):
+        raise RuntimeError("similarity-scaled configuration changed dimensionless plant")
+    # Keep the setup computation above live in optimized builds and make the
+    # expected target explicit for callers inspecting this helper.
+    if not np.isclose(target.chain_length, target_pi.chain_length):
+        raise RuntimeError("similarity-scaled configuration changed target length")
+    return result
+
+
+def similarity_scaled_lqr_weights(
+    weights: dict[str, float] | None,
+    *,
+    length_scale: float,
+) -> dict[str, float]:
+    """Preserve an upright LQR state cost under gravitational similarity.
+
+    Physical state scales are ``x -> lambda*x``, ``xdot -> sqrt(lambda)*xdot``,
+    ``theta -> theta``, and ``omega -> omega/sqrt(lambda)``.  The returned
+    weights therefore induce the same dimensionless quadratic cost.  The
+    normalized-action control cost is already dimensionless and is unchanged.
+    """
+
+    if not np.isfinite(length_scale) or float(length_scale) <= 0.0:
+        raise ValueError("similarity length scale must be positive")
+    result = dict(DEFAULT_UPRIGHT_LQR_WEIGHTS)
+    if weights is not None:
+        unknown = set(weights) - set(result)
+        if unknown:
+            raise ValueError(f"unknown upright LQR weights: {sorted(unknown)}")
+        result.update({key: float(value) for key, value in weights.items()})
+    if not all(np.isfinite(value) and value >= 0.0 for value in result.values()):
+        raise ValueError("upright LQR weights must be finite and nonnegative")
+    length = float(length_scale)
+    result["cart_position"] /= length**2
+    result["cart_velocity"] /= length
+    result["absolute_angular_velocity"] *= length
+    result["relative_angular_velocity"] *= length
+    return result
+
+
 def setup_from_config(cfg: dict[str, Any], *, progress: float = 1.0) -> PhysicalSetup:
     """Construct a physical setup using the repository's morphology builder."""
 
@@ -300,6 +511,68 @@ def transfer_feedback_gains(
         raise ValueError(f"source gains must have {expected} columns")
     project_target_to_source = state_transfer_matrix(target, source)
     transferred = force_action_scale(source, target) * gains @ project_target_to_source
+    return transferred.reshape(-1) if was_vector else transferred
+
+
+def transfer_coordinate_states(
+    states: np.ndarray,
+    source: PhysicalSetup,
+    target: PhysicalSetup,
+    source_transform: np.ndarray,
+    target_transform: np.ndarray,
+) -> np.ndarray:
+    """Transfer a trajectory expressed in arbitrary linear state coordinates."""
+
+    states = np.asarray(states, dtype=np.float64)
+    source_transform = np.asarray(source_transform, dtype=np.float64)
+    target_transform = np.asarray(target_transform, dtype=np.float64)
+    source_size = 2 * (source.n_links + 1)
+    target_size = 2 * (target.n_links + 1)
+    if states.ndim != 2 or states.shape[1] != source_size:
+        raise ValueError(f"source states must have {source_size} columns")
+    if source_transform.shape != (source_size, source_size):
+        raise ValueError("source coordinate transform has the wrong shape")
+    if target_transform.shape != (target_size, target_size):
+        raise ValueError("target coordinate transform has the wrong shape")
+    source_physical = np.linalg.solve(source_transform, states.T)
+    target_physical = state_transfer_matrix(source, target) @ source_physical
+    return (target_transform @ target_physical).T
+
+
+def transfer_coordinate_feedback_gains(
+    gains: np.ndarray,
+    source: PhysicalSetup,
+    target: PhysicalSetup,
+    source_transform: np.ndarray,
+    target_transform: np.ndarray,
+) -> np.ndarray:
+    """Transfer feedback gains between arbitrary linear state coordinates.
+
+    If ``z_s=T_s x_s`` and ``z_t=T_t x_t``, the target error is projected as
+    ``z_s=T_s P T_t^-1 z_t`` before the source law is applied.  Keeping these
+    transforms explicit avoids treating normalized absolute-angle gains as if
+    they acted directly on MuJoCo's relative-joint state.
+    """
+
+    gains = np.asarray(gains, dtype=np.float64)
+    was_vector = gains.ndim == 1
+    if was_vector:
+        gains = gains[None, :]
+    source_size = 2 * (source.n_links + 1)
+    target_size = 2 * (target.n_links + 1)
+    source_transform = np.asarray(source_transform, dtype=np.float64)
+    target_transform = np.asarray(target_transform, dtype=np.float64)
+    if gains.ndim != 2 or gains.shape[1] != source_size:
+        raise ValueError(f"source gains must have {source_size} columns")
+    if source_transform.shape != (source_size, source_size):
+        raise ValueError("source coordinate transform has the wrong shape")
+    if target_transform.shape != (target_size, target_size):
+        raise ValueError("target coordinate transform has the wrong shape")
+    physical_projection = state_transfer_matrix(target, source)
+    coordinate_projection = (
+        source_transform @ physical_projection @ np.linalg.inv(target_transform)
+    )
+    transferred = force_action_scale(source, target) * gains @ coordinate_projection
     return transferred.reshape(-1) if was_vector else transferred
 
 

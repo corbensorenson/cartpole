@@ -1,0 +1,86 @@
+experiment:
+  name: swingup7_uniform_similar_l2_m0.5
+  seed: 107
+  out_dir: runs/swingup7_uniform
+env:
+  n_links: 2
+  total_length: 6.0
+  total_mass: 0.5
+  cart_mass: 0.5
+  rail_limit: 6.0
+  force_limit: 40.0
+  timestep: 0.007071067811865476
+  frame_skip: 4
+  episode_seconds: 42.42640687119285
+  init_mode: hanging
+  init_cart_noise: 0.0
+  init_cart_vel_noise: 0.07071067811865475
+  init_angle_noise: 0.05
+  init_vel_noise: 0.035355339059327376
+  terminate_abs_angle: null
+  success_upright_threshold: 0.15
+  success_sustain_seconds: 7.0710678118654755
+  cart_damping: 0.0070710678118654745
+  cart_frictionloss: 0.0
+  joint_armature: 0.001
+  link_radius: 0.05
+  obs_include_morphology: true
+  obs_include_frictionloss: false
+  obs_include_time: false
+  reward:
+    alive: 0.0
+    terminal_penalty: -200.0
+    angle_cos: 3.0
+    upright_bonus: 45.0
+    sustained_upright_bonus: 10.0
+    upright_streak: 12.0
+    capture_quality: 8.0
+    angle_abs: 1.0
+    angle_rel: 0.02
+    tip: 0.5
+    cart_pos: 1.0
+    cart_vel: 0.002
+    hinge_vel: 0.0005
+    control: 0.001
+    upright_threshold: 0.15
+    upright_streak_cap_seconds: 5.0
+  cart_half_length: 0.36
+morphology:
+  schedule_mode: all_linear
+  start:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    alpha_frictionloss: 0.0
+    total_damping: 0.021213203435596423
+    total_frictionloss: 0.0
+  end:
+    alpha_length: 0.0
+    alpha_mass: 0.0
+    alpha_damping: 0.0
+    alpha_frictionloss: 0.0
+    total_damping: 0.021213203435596423
+    total_frictionloss: 0.0
+ppo:
+  backend: mlx
+  vec_backend: subprocess
+  num_envs: 48
+  rollout_steps: 256
+  total_updates: 10000
+  minibatches: 8
+  epochs: 4
+  gamma: 0.995
+  gae_lambda: 0.95
+  learning_rate: 0.00025
+  clip_coef: 0.2
+  entropy_coef: 0.015
+  value_coef: 0.5
+  max_grad_norm: 0.5
+  hidden_sizes:
+  - 256
+  - 256
+  action_std_init: 0.45
+  normalize_advantages: true
+  checkpoint_every: 50
+  eval_every: 50
+  eval_episodes: 8
