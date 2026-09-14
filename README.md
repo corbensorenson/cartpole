@@ -1,16 +1,34 @@
-# Ten-, Nine-, Eight-, and Seven-Link Cart-Pole Swing-Up & Hold
+# 10-Link Cart-Pole Record: Reset-Free Swing-Up and Hold
 
-> **Highest verified internal benchmark: 10 links · noisy hanging start · 100/100 successful episodes · zero resets · ±3 m rail**
+> **A single bounded cart force swings up and holds 7, 8, 9, and 10 passive serial links from noisy hanging starts on a finite rail.**
+
+<p align="center">
+  <strong><a href="output/pdf/seven_to_ten_link_swingup_paper.pdf">Read the consolidated 7-10 link technical paper (PDF)</a></strong>
+  · <a href="docs/seven_link_swingup_paper.md">Markdown</a>
+  · <a href="#reproduce-the-result">Reproduce the results</a>
+</p>
+
+<p align="center">
+  <a href="runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4">
+    <img src="assets/ten-link-swingup.gif" alt="Ten-link cart-pole swinging from a noisy hanging start and holding upright" width="760">
+  </a>
+</p>
 
 <p align="center">
   <strong><a href="runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4">Watch the full ten-link run</a></strong>
-  · <a href="docs/ten_link_swingup_paper.md">Read the ten-link paper</a>
+  · <a href="docs/ten_link_swingup_paper.md">Ten-link experiment appendix</a>
   · <a href="runs/generalized_solver/ten_link_swingup_manifest.json">Inspect the ten-link manifest</a>
 </p>
 
 <p align="center">
+  <a href="runs/generalized_solver/nine_link_swingup_success.mp4">
+    <img src="assets/nine-link-swingup.gif" alt="Nine-link cart-pole swinging from a noisy hanging start and holding upright" width="760">
+  </a>
+</p>
+
+<p align="center">
   <strong><a href="runs/generalized_solver/nine_link_swingup_success.mp4">Watch the full nine-link run</a></strong>
-  · <a href="docs/nine_link_swingup_paper.md">Read the nine-link paper</a>
+  · <a href="docs/nine_link_swingup_paper.md">Nine-link experiment appendix</a>
   · <a href="runs/generalized_solver/nine_link_swingup_manifest.json">Inspect the nine-link manifest</a>
 </p>
 
@@ -22,11 +40,9 @@
 
 <p align="center">
   <strong><a href="runs/generalized_solver/eight_link_swingup_success.mp4">Watch the full eight-link run</a></strong>
-  · <a href="docs/eight_link_swingup_paper.md">Read the eight-link paper</a>
+  · <a href="docs/eight_link_swingup_paper.md">Eight-link experiment appendix</a>
   · <a href="runs/generalized_solver/eight_link_swingup_manifest.json">Inspect the eight-link manifest</a>
 </p>
-
-> **Frozen seven-link release: noisy hanging start · 100/100 successful episodes · zero resets · ±3 m rail**
 
 <p align="center">
   <a href="runs/swingup7_uniform/seven_link_swingup_success.mp4">
@@ -36,27 +52,32 @@
 
 <p align="center">
   <strong><a href="runs/swingup7_uniform/seven_link_swingup_success.mp4">Watch the full seven-link run</a></strong>
-  · <a href="docs/seven_link_swingup_paper.md">Read the seven-link paper</a>
+  · <a href="docs/seven_link_swingup_paper.md">Read the consolidated paper</a>
   · <a href="runs/swingup7_uniform/seven_link_swingup_manifest.json">Inspect the seven-link manifest</a>
 </p>
 
 This repository demonstrates reset-free swing-up and sustained hold of uniform
 seven-, eight-, nine-, and ten-link cart-poles in MuJoCo. Each frozen hybrid controller passed
-disjoint `20/20` and `100/100` noisy hanging-start gates on its declared plant.
-The videos above are held-out, uninterrupted 30-second replays; click either
-animated preview for the source MP4. Controllers, hashes, negative controls,
-method papers, and reproduction commands are public.
+disjoint `20/20` and `100/100` noisy hanging-start gates on its declared plant:
+`480/480` noisy episodes in total, with zero rail failures and zero mid-episode
+state resets. The four videos above are held-out, uninterrupted 30-second
+replays; click any animated preview for its source MP4. Controllers, hashes,
+negative controls, manifests, and reproduction commands are public.
 
 | Result | Noisy 20-episode gate | Disjoint noisy 100-episode gate | Held-out video | Method |
 |---|---:|---:|---|---|
-| **10 links — latest internal benchmark** | **20/20** | **100/100** | [MP4](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4) | [paper](docs/ten_link_swingup_paper.md) |
-| **9 links — latest internal benchmark** | **20/20** | **100/100** | [MP4](runs/generalized_solver/nine_link_swingup_success.mp4) | [paper](docs/nine_link_swingup_paper.md) |
-| **8 links — latest internal benchmark** | **20/20** | **100/100** | [MP4](runs/generalized_solver/eight_link_swingup_success.mp4) | [paper](docs/eight_link_swingup_paper.md) |
-| **7 links — frozen release** | **20/20** | **100/100** | [MP4](runs/swingup7_uniform/seven_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |
+| **10 links — highest released count** | **20/20** | **100/100** | [MP4](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4) | [paper](docs/seven_link_swingup_paper.md) |
+| **9 links** | **20/20** | **100/100** | [MP4](runs/generalized_solver/nine_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |
+| **8 links** | **20/20** | **100/100** | [MP4](runs/generalized_solver/eight_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |
+| **7 links** | **20/20** | **100/100** | [MP4](runs/swingup7_uniform/seven_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |
 
-These are repository benchmark records, not universal world-record claims.
-An external record claim requires a matched plant, force convention, rail
-geometry, timing, initialization distribution, and independent judging rules.
+As of 2026-09-14, we claim a **provisional public link-count record** for the
+precisely frozen simulated benchmark documented here. To our knowledge, no
+public result shows as many passive serial links under a directly comparable
+bounded-force, bounded-rail, noisy-start, sustained-hold, reset-free protocol.
+There is no recognized registry for this problem, so the claim is deliberately
+falsifiable and does not extend across unmatched plants or rules. See the
+[claim boundary and literature search](docs/seven_link_swingup_paper.md#8-public-record-claim-and-literature-boundary).
 
 ## The seven-link frozen record
 
