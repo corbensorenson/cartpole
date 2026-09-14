@@ -75,6 +75,17 @@ basin the transfer was meant to preserve. The exact target open-loop rollout
 is still stored as a diagnostic, but it no longer replaces the feedback
 reference.
 
+Serial-joint feedback also has a topology issue that ordinary subtraction
+misses: two relative angles separated by a full revolution describe the same
+physical configuration. Packaged development routes can now opt into nearest-
+branch coordinate errors with `--periodic-coordinate-errors`; the executor
+maps the error back to physical joint coordinates, wraps every revolute-joint
+difference, then returns it to the saved dimensionless absolute-angle basis.
+The transfer artifact also carries the source capture envelope forward, scaling
+cart position by \(\lambda\), cart velocity by \(\sqrt{\lambda}\), and hinge
+velocity by \(1/\sqrt{\lambda}\). Frozen release controllers retain their
+original subtraction behavior unless this option is explicitly recorded.
+
 This scaling was exercised as a closed-loop test, not only an algebra check.
 One unchanged dimensionless energy/PFL controller plus exact-linearization LQR
 was run on the full `2 x 2` grid

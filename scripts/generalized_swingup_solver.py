@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import math
 from pathlib import Path
 from typing import Any
 
@@ -504,6 +505,7 @@ def transfer_command(args: argparse.Namespace) -> None:
         controller.get("lqr_weights"),
         length_scale=target_setup.chain_length / source_setup.chain_length,
     )
+    length_scale = target_setup.chain_length / source_setup.chain_length
 
     source_initial_physical = np.linalg.solve(
         source_transform, source_coordinate_states[0]
@@ -600,6 +602,32 @@ def transfer_command(args: argparse.Namespace) -> None:
             "lqr_scale": float(controller.get("lqr_scale", 1.0)),
             "lqr_control_cost": float(controller.get("lqr_control_cost", 1000.0)),
             "lqr_weights": lqr_weights,
+            "defer_handoff_until_horizon": bool(
+                controller.get("defer_handoff_until_horizon", True)
+            ),
+            "handoff_angle_abs": float(
+                controller.get("handoff_angle_abs", 0.15)
+            ),
+            "handoff_cart_abs": float(
+                controller.get("handoff_cart_abs", 0.5 * source_setup.rail_half_length)
+            )
+            * length_scale,
+            "handoff_cart_velocity_abs": float(
+                controller.get("handoff_cart_velocity_abs", 0.5)
+            )
+            * math.sqrt(length_scale),
+            "handoff_hinge_velocity_rms": float(
+                controller.get("handoff_hinge_velocity_rms", 0.75)
+            )
+            / math.sqrt(length_scale),
+            "handoff_lyapunov": float(
+                controller.get(
+                    "handoff_lyapunov", controller.get("switch_lyapunov", math.inf)
+                )
+            ),
+            "periodic_coordinate_errors": bool(
+                controller.get("periodic_coordinate_errors", False)
+            ),
         },
         "search": {
             "nominal_coordinate_states": transferred_nominal_states.tolist(),

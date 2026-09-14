@@ -30,6 +30,7 @@ from gcartpole.evidence import (
     text_sha256,
     utc_timestamp,
 )
+from gcartpole.generalized_solver import periodic_coordinate_error
 from gcartpole.modal import (
     StateScales,
     dimensionless_absolute_transform,
@@ -89,7 +90,31 @@ def load_controller(path: Path, n_links: int, spec: dict[str, Any]) -> dict[str,
         "horizon_steps": int(controls.size),
         "horizon_seconds": float(controls.size * 0.02),
         "payload_summary": payload.get("summary"),
+        "periodic_coordinate_errors": bool(
+            controller.get("periodic_coordinate_errors", False)
+        ),
     }
+
+
+def coordinate_feedback_error(
+    current: np.ndarray,
+    reference: np.ndarray,
+    transform: np.ndarray,
+    *,
+    periodic: bool,
+) -> np.ndarray:
+    """Return current-reference, optionally on the nearest joint-angle branch."""
+
+    current_array = np.asarray(current, dtype=np.float64)
+    reference_array = np.asarray(reference, dtype=np.float64)
+    transform_array = np.asarray(transform, dtype=np.float64)
+    error = current_array - reference_array
+    if not periodic:
+        return error
+    state_dim = int(transform_array.shape[0])
+    if transform_array.shape != (state_dim, state_dim) or state_dim % 2 != 0:
+        raise ValueError("coordinate transform must be even-dimensional and square")
+    return periodic_coordinate_error(current_array, reference_array, transform_array)
 
 
 def validate_release_identity(
@@ -287,7 +312,12 @@ def run_episode(
                 min(controls.size, phase_cursor + phase_window + 1),
                 dtype=np.int64,
             )
-            errors = route_nominal_states[candidates] - coordinate_state
+            errors = coordinate_feedback_error(
+                route_nominal_states[candidates],
+                coordinate_state,
+                transform,
+                periodic=controller["periodic_coordinate_errors"],
+            )
             route_step = int(candidates[int(np.argmin(np.einsum("ij,ij->i", errors, errors)))])
             phase_cursor = route_step + 1
             action = float(
@@ -295,7 +325,12 @@ def run_episode(
                     controls[route_step]
                     + tracking_gain_scale
                     * feedback_gains[route_step]
-                    @ (coordinate_state - route_nominal_states[route_step]),
+                    @ coordinate_feedback_error(
+                        coordinate_state,
+                        route_nominal_states[route_step],
+                        transform,
+                        periodic=controller["periodic_coordinate_errors"],
+                    ),
                     -1.0,
                     1.0,
                 )
@@ -311,7 +346,12 @@ def run_episode(
                     controls[route_step]
                     + tracking_gain_scale
                     * feedback_gains[route_step]
-                    @ (coordinate_state - route_nominal_states[route_step]),
+                    @ coordinate_feedback_error(
+                        coordinate_state,
+                        route_nominal_states[route_step],
+                        transform,
+                        periodic=controller["periodic_coordinate_errors"],
+                    ),
                     -1.0,
                     1.0,
                 )

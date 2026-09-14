@@ -24,6 +24,7 @@ from gcartpole.modal import dimensionless_wrapped_state
 
 try:
     from scripts.evaluate_fddp_two_expert import (
+        coordinate_feedback_error,
         hanging_lqr_action_from_state,
         hanging_lqr_gain,
         load_controller,
@@ -33,6 +34,7 @@ try:
     from scripts.search_swingup_capture import lqr_gain
 except ModuleNotFoundError:
     from evaluate_fddp_two_expert import (
+        coordinate_feedback_error,
         hanging_lqr_action_from_state,
         hanging_lqr_gain,
         load_controller,
@@ -117,7 +119,12 @@ def execute_route(
                 min(controls.size, phase_cursor + phase_window + 1),
                 dtype=np.int64,
             )
-            errors = nominal[candidates] - coordinates
+            errors = coordinate_feedback_error(
+                nominal[candidates],
+                coordinates,
+                transform,
+                periodic=controller["periodic_coordinate_errors"],
+            )
             route_step = int(
                 candidates[int(np.argmin(np.einsum("ij,ij->i", errors, errors)))]
             )
@@ -127,7 +134,12 @@ def execute_route(
                     controls[route_step]
                     + tracking_gain_scale
                     * feedback[route_step]
-                    @ (coordinates - nominal[route_step]),
+                    @ coordinate_feedback_error(
+                        coordinates,
+                        nominal[route_step],
+                        transform,
+                        periodic=controller["periodic_coordinate_errors"],
+                    ),
                     -1.0,
                     1.0,
                 )

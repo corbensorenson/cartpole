@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import numpy as np
+
+from scripts.evaluate_fddp_two_expert import coordinate_feedback_error
 from scripts.solve_generalized_morphology import (
     PipelinePaths,
     command_steps,
@@ -113,3 +116,26 @@ def test_pipeline_accepts_only_complete_promotion_stages(tmp_path: Path) -> None
     gate.write_text('{"success_rate":1.0}', encoding="utf-8")
     assert stage_failure_status("optimize", optimizer) is None
     assert stage_failure_status("gate", gate) is None
+
+
+def test_periodic_coordinate_error_uses_nearest_joint_branch() -> None:
+    transform = np.asarray(
+        [
+            [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 2.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, 2.0, 2.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+        ]
+    )
+    physical_reference = np.asarray([0.0, 2.0 * np.pi - 0.1, 0.2, 0.0, 0.0, 0.0])
+    physical_current = np.asarray([0.0, 0.1, 0.2, 0.0, 0.0, 0.0])
+    error = coordinate_feedback_error(
+        transform @ physical_current,
+        transform @ physical_reference,
+        transform,
+        periodic=True,
+    )
+    expected_physical = np.asarray([0.0, 0.2, 0.0, 0.0, 0.0, 0.0])
+    np.testing.assert_allclose(error, transform @ expected_physical, atol=1e-12)

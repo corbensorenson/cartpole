@@ -44,6 +44,14 @@ def main() -> None:
             "after exact target-plant refinement."
         ),
     )
+    parser.add_argument(
+        "--periodic-coordinate-errors",
+        action="store_true",
+        help=(
+            "Evaluate trajectory feedback on the nearest equivalent revolute-joint "
+            "branch. This prevents full-turn angle offsets from saturating feedback."
+        ),
+    )
     args = parser.parse_args()
     if args.feedback_gain_scale is not None and args.feedback_gain_scale < 0.0:
         raise ValueError("--feedback-gain-scale must be nonnegative")
@@ -110,6 +118,8 @@ def main() -> None:
     if reference_metadata is not None:
         controller["feedback_rms_reference"] = reference_metadata
         controller["feedback_rms_reference_value"] = float(reference_gain_rms)
+    if args.periodic_coordinate_errors:
+        controller["periodic_coordinate_errors"] = True
     controller.pop("solver_feedback_gains", None)
     if args.mirror:
         search = packaged["search"]

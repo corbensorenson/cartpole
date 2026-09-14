@@ -29,6 +29,29 @@ DEFAULT_UPRIGHT_LQR_WEIGHTS = {
 }
 
 
+def periodic_coordinate_error(
+    current: np.ndarray,
+    reference: np.ndarray,
+    transform: np.ndarray,
+) -> np.ndarray:
+    """Return current-reference on the nearest revolute-joint branch."""
+
+    current_array = np.asarray(current, dtype=np.float64)
+    reference_array = np.asarray(reference, dtype=np.float64)
+    transform_array = np.asarray(transform, dtype=np.float64)
+    error = current_array - reference_array
+    state_dim = int(transform_array.shape[0])
+    if transform_array.shape != (state_dim, state_dim) or state_dim % 2 != 0:
+        raise ValueError("coordinate transform must be even-dimensional and square")
+    physical_error = error @ np.linalg.inv(transform_array).T
+    configuration_dim = state_dim // 2
+    angles = physical_error[..., 1:configuration_dim]
+    physical_error[..., 1:configuration_dim] = (
+        angles + np.pi
+    ) % (2.0 * np.pi) - np.pi
+    return physical_error @ transform_array.T
+
+
 def _positive_vector(name: str, values: np.ndarray | list[float]) -> np.ndarray:
     vector = np.asarray(values, dtype=np.float64)
     if vector.ndim != 1 or vector.size == 0:
