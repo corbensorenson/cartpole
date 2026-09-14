@@ -260,7 +260,10 @@ capture set rather than merely shrinking the LQR gain. An exact logarithmic
 ray scan now quantifies that target: this particular arrival direction first
 fails at `1.91994e-5` of its current error, so its origin-connected five-second
 capture interval is roughly `52,085x` smaller than the proposed error vector.
-This is a directional basin measurement, not a global basin certificate. See the
+This is a directional basin measurement, not a global basin certificate. The
+same audit now emits an optimizer-ready linear-feedback residual over one
+natural time: it predicts zero saturated steps for n=7 through n=9, but all
+`28/28` steps saturated for this n=10 arrival. See the
 [n=7 audit](runs/generalized_solver/n7_release_actual_handoff_capture_geometry.json),
 [n=8 audit](runs/generalized_solver/n8_release_actual_handoff_capture_geometry.json),
 [n=9 audit](runs/generalized_solver/n9_release_actual_handoff_capture_geometry.json),

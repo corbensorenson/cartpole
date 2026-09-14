@@ -19,6 +19,7 @@ import mujoco
 import numpy as np
 from scipy.linalg import solve_discrete_are
 
+from gcartpole.capture_terminal import feedback_horizon_metric
 from gcartpole.config import dump_json, load_config
 from gcartpole.env import NLinkCartPoleEnv, serial_absolute_angles, wrap_angle
 from gcartpole.evidence import (
@@ -555,6 +556,7 @@ def diagnose(
     capture_ray_minimum_scale: float = 1.0e-8,
     capture_ray_grid_points: int = 33,
     capture_ray_bisection_steps: int = 20,
+    linear_feedback_horizon_natural_times: float = 1.0,
 ) -> dict[str, Any]:
     n_links = int(cfg["env"]["n_links"])
     expected = n_links + 1
@@ -582,6 +584,37 @@ def diagnose(
     schur = real_schur_decomposition(scaled_a, scaled_b)
     schur_amplitudes = schur.grouped_amplitudes(dimensionless_state)
     raw_action = float(-feedback_scale * gain @ state)
+    policy_dt = float(cfg["env"]["timestep"]) * int(
+        cfg["env"].get("frame_skip", 1)
+    )
+    feedback_horizon_steps = max(
+        1,
+        int(
+            np.ceil(
+                float(linear_feedback_horizon_natural_times)
+                * natural_time
+                / policy_dt
+            )
+        ),
+    )
+    feedback_metric = feedback_horizon_metric(
+        a,
+        b,
+        gain,
+        transform,
+        horizon_steps=feedback_horizon_steps,
+        feedback_scale=feedback_scale,
+    )
+    feedback_metric_record = feedback_metric.to_dict()
+    feedback_metric_record.update(
+        {
+            "horizon_natural_times": float(
+                feedback_horizon_steps * policy_dt / natural_time
+            ),
+            "policy_dt": policy_dt,
+            "proposed_state": feedback_metric.evaluate(state),
+        }
+    )
     result = {
         "schema_version": 1,
         "claim_status": "capture_diagnostic_not_certificate",
@@ -610,6 +643,7 @@ def diagnose(
             "actuator_feasible_gain_line": gain_line_feasibility(
                 a, b, gain, state
             ),
+            "feedback_horizon_terminal_metric": feedback_metric_record,
         },
         "proposed_state": {
             "qpos": qpos.astype(float).tolist(),
@@ -680,6 +714,12 @@ def main() -> None:
     parser.add_argument("--capture-ray-minimum-scale", type=float, default=1.0e-8)
     parser.add_argument("--capture-ray-grid-points", type=int, default=33)
     parser.add_argument("--capture-ray-bisection-steps", type=int, default=20)
+    parser.add_argument(
+        "--linear-feedback-horizon-natural-times",
+        type=float,
+        default=1.0,
+        help="natural-time duration used to derive the optimizer-facing feedback metric",
+    )
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
     if not 0.0 <= args.progress <= 1.0:
@@ -689,6 +729,7 @@ def main() -> None:
         args.control_cost,
         args.feedback_scale,
         args.rollout_seconds,
+        args.linear_feedback_horizon_natural_times,
     ) <= 0.0:
         parser.error("diagnostic scales and rollout duration must be positive")
     if not 0.0 < args.capture_ray_minimum_scale < 1.0:
@@ -751,6 +792,9 @@ def main() -> None:
         capture_ray_minimum_scale=args.capture_ray_minimum_scale,
         capture_ray_grid_points=args.capture_ray_grid_points,
         capture_ray_bisection_steps=args.capture_ray_bisection_steps,
+        linear_feedback_horizon_natural_times=(
+            args.linear_feedback_horizon_natural_times
+        ),
     )
     result.update(
         {

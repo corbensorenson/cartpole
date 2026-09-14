@@ -328,6 +328,28 @@ PYTHONPATH=.:src:scripts python scripts/diagnose_capture_geometry.py \
   --rollout-seconds 5 --out CAPTURE_GEOMETRY.json
 ```
 
+The optimizer-facing counterpart is a rectangular feedback-horizon residual.
+Let `A_c = A - BK`, let `T` be the morphology-derived dimensionless state
+transform, and choose `H = ceil(t0 / dt)`. The audit constructs
+
+```text
+r_H(x) = [Kx/u_max, K A_c x/u_max, ..., K A_c^(H-1) x/u_max,
+          T A_c^H x]
+```
+
+and publishes both this factor and the positive-semidefinite terminal matrix
+`r_H.T r_H`. Exact trajectory optimizers should differentiate the rectangular
+factor directly, avoiding the condition-number squaring of normal equations.
+The horizon is one gravitational natural time for every morphology rather than
+a per-count step constant. On the current evidence states it predicts no
+saturated feedback samples for n=7 through n=9. For n=10 it predicts saturation
+on all `28/28` samples, a maximum normalized request of `3,178.85`, and a final
+dimensionless norm of `7,640.84`. This gives Box-FDDP, iLQR, or Gauss--Newton a
+single deterministic terminal geometry tied directly to actuator demand.
+If an optimizer uses normalized coordinates `z = Cx`, the reusable core emits
+the exactly equivalent factor `r_H C^-1` and matrix `C^-T r_H.T r_H C^-1`;
+there is no hand-derived, link-count-specific conversion.
+
 See the [audit tool](../scripts/diagnose_capture_geometry.py),
 [n=7](../runs/generalized_solver/n7_release_actual_handoff_capture_geometry.json),
 [n=8](../runs/generalized_solver/n8_release_actual_handoff_capture_geometry.json),
