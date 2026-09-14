@@ -349,6 +349,9 @@ single deterministic terminal geometry tied directly to actuator demand.
 If an optimizer uses normalized coordinates `z = Cx`, the reusable core emits
 the exactly equivalent factor `r_H C^-1` and matrix `C^-T r_H.T r_H C^-1`;
 there is no hand-derived, link-count-specific conversion.
+The generic exact-MuJoCo iLQR capture search consumes that matrix with
+`--feedback-horizon-terminal-weight W`; its horizon is specified by
+`--feedback-horizon-natural-times`, so neither option depends on link count.
 
 See the [audit tool](../scripts/diagnose_capture_geometry.py),
 [n=7](../runs/generalized_solver/n7_release_actual_handoff_capture_geometry.json),

@@ -9,6 +9,7 @@ from typing import Any
 
 import numpy as np
 
+from gcartpole.capture_terminal import feedback_horizon_metric
 from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.evidence import (
     data_sha256,
@@ -315,6 +316,21 @@ def main() -> None:
     parser.add_argument("--stage-weight", type=float, default=0.1)
     parser.add_argument("--terminal-weight", type=float, default=1.0)
     parser.add_argument("--terminal-state-weight", type=float, default=0.0)
+    parser.add_argument(
+        "--feedback-horizon-terminal-weight",
+        type=float,
+        default=0.0,
+        help=(
+            "weight on the morphology-derived actuator-aware terminal metric; "
+            "zero preserves the historical Lyapunov-only search"
+        ),
+    )
+    parser.add_argument(
+        "--feedback-horizon-natural-times",
+        type=float,
+        default=1.0,
+        help="closed-loop horizon measured in gravitational natural times",
+    )
     parser.add_argument("--terminal-cart-weight", type=float, default=0.0)
     parser.add_argument("--terminal-cart-velocity-weight", type=float, default=0.0)
     parser.add_argument("--rail-soft-limit", type=float, default=2.4)
@@ -341,6 +357,7 @@ def main() -> None:
         <= 0.0
         or min(
             args.terminal_state_weight,
+            args.feedback_horizon_terminal_weight,
             args.terminal_cart_weight,
             args.terminal_cart_velocity_weight,
         )
@@ -352,6 +369,8 @@ def main() -> None:
         )
     if args.switch_lyapunov is not None and args.switch_lyapunov <= 0.0:
         raise ValueError("switch Lyapunov threshold must be positive")
+    if args.feedback_horizon_natural_times <= 0.0:
+        raise ValueError("feedback horizon natural times must be positive")
     if any(
         value is not None and value <= 0.0
         for value in (
@@ -397,6 +416,27 @@ def main() -> None:
     env.reset(seed=args.seed)
     transition = MujocoTransition(env, coordinate_transform=transform)
     policy_dt = float(env.dt)
+    natural_time = float(np.sqrt(np.sum(env.morphology.lengths) / 9.81))
+    feedback_horizon_steps = max(
+        1,
+        int(
+            np.ceil(
+                args.feedback_horizon_natural_times * natural_time / policy_dt
+            )
+        ),
+    )
+    feedback_metric = feedback_horizon_metric(
+        state_matrix,
+        input_matrix,
+        gain,
+        transform,
+        horizon_steps=feedback_horizon_steps,
+        feedback_scale=args.lqr_scale,
+    )
+    feedback_optimizer_residual = feedback_metric.residual_map_in_coordinates(
+        transform
+    )
+    feedback_optimizer_matrix = feedback_metric.matrix_in_coordinates(transform)
     horizon_steps = max(2, int(round(args.horizon_seconds / policy_dt)))
     start_state = transition.to_coordinates(data_state(env.data))
     if args.initial_controller is None:
@@ -415,6 +455,7 @@ def main() -> None:
     terminal_metric = (
         args.terminal_weight * lyapunov / args.handoff_lyapunov
         + args.terminal_state_weight * np.eye(transform.shape[0], dtype=np.float64)
+        + args.feedback_horizon_terminal_weight * feedback_optimizer_matrix
     )
     terminal_metric = add_terminal_cart_weights(
         terminal_metric,
@@ -491,6 +532,26 @@ def main() -> None:
             "stage_weight": float(args.stage_weight),
             "terminal_weight": float(args.terminal_weight),
             "terminal_state_weight": float(args.terminal_state_weight),
+            "feedback_horizon_terminal": {
+                "enabled": bool(args.feedback_horizon_terminal_weight > 0.0),
+                "weight": float(args.feedback_horizon_terminal_weight),
+                "horizon_steps": int(feedback_horizon_steps),
+                "requested_natural_times": float(
+                    args.feedback_horizon_natural_times
+                ),
+                "realized_natural_times": float(
+                    feedback_horizon_steps * policy_dt / natural_time
+                ),
+                "residual_map_sha256": data_sha256(
+                    feedback_optimizer_residual.astype(float).tolist()
+                ),
+                "matrix_sha256": data_sha256(
+                    feedback_optimizer_matrix.astype(float).tolist()
+                ),
+                "closed_loop_spectral_radius": float(
+                    np.max(np.abs(np.linalg.eigvals(feedback_metric.closed_loop)))
+                ),
+            },
             "terminal_cart_weight": float(args.terminal_cart_weight),
             "terminal_cart_velocity_weight": float(args.terminal_cart_velocity_weight),
             "rail_soft_limit": float(args.rail_soft_limit),
