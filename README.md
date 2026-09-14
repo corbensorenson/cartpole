@@ -228,29 +228,40 @@ same parked-launch promotion with a `1.053` body-aware ratio from the noisy
 100-episode maximum. Neither is an independent modal-synthesis regeneration.
 Arbitrary unequal morphologies and n>=10 remain active work.
 
-The count-agnostic locked-split continuation has also advanced its deliberately
-hard n=2 to unequal-n=3 back-check to `p=0.99954875`: the last accepted exact
-replay held for `20.58 s` with body-aware required rail ratio `1.560017`. The
-fully unlocked `p=1` plant is still rejected and is not counted as solved. That
-endpoint removes a simulator equality constraint, so it is a topology change
-rather than an ordinary infinitesimal parameter step. The resumable scheduler
-now preserves nested failed boundaries, survives rank-deficient waypoint solves
-with a deterministic LSMR fallback, and records the exact-unlock failure for the
-next supported-unlock stage. See the
-[count-release ledger](runs/generalized_solver/n2_to_n3_split_logcompliance_homotopy/continuation.json)
-and [support-ramp ledger](runs/generalized_solver/n2_to_n3_supported_unlock_ramp/continuation.json),
-which has now completed at dimensionless support `kappa=1`, `d=0.01`; its exact
-endpoint held for `20.70 s` with `4.500170 m` peak cart travel. Equality-release
-back-checks reached `p=0.99628` at `kappa=0.54256` and `p=0.925` at `kappa=1`,
-but the discontinuous fully unlocked endpoint still failed both gates and is
-not counted as a solution. The generic builder can now resume a verified route
-from nonzero support and search a dimensionless support ladder. The current
-`kappa=1` to `kappa=10` ladder has exact passes through `p=0.195`
-(`kappa=2.755`, `d=0.02755`), holding for `20.68 s` with `4.505337 m` peak cart
-travel. These are development results; the unlocked release, support relaxation,
-mirror, and noisy gates remain. See the
-[generalized solver notes](docs/generalized_solver.md) for the remaining
-release and relaxation gates.
+The count-agnostic locked-split continuation has also crossed its deliberately
+hard n=2 to unequal-n=3 topology boundary. Direct equality relaxation reached
+`p=0.99954875` but rejected the discontinuous endpoint. A deterministic
+dimensionless support ladder then completed from `kappa=1`, `d=0.01` to
+`kappa=10`, `d=0.1`; at that support the equality was removed completely and
+the exact nonlinear replay held upright for `19.38 s` with `4.507433 m` peak
+cart travel. This is a fully unlocked three-link topology, but it is still a
+physically supported plant—not the unsupported target.
+
+Support removal is now measured on two declared paths. Coupled spring/damping
+relaxation has an exact-pass frontier at `p=0.966604614` (hold `20.52 s`), while
+the more stable axis-separated schedule removed `99.375%` of spring stiffness
+at fixed damping and held for `19.96 s` with `3.917783 m` peak cart travel.
+The zero-stiffness endpoint remains rejected, so damping removal and the final
+unsupported noisy gate have not started. Here `p` is only a homotopy coordinate,
+not percent completion of the general-solver task. See the
+[compact hash-bound support frontier](runs/generalized_solver/supported_unlock_frontier.json),
+which publishes the final accepted and nearest rejected checkpoints without
+shipping hundreds of megabytes of optimizer scratch history.
+
+The capture gate is also now actuator-aware. On freshly replayed handoffs from
+the proven n=7, n=8, and n=9 routes, the same exact five-second saturated-LQR
+audit used zero saturated steps and completed the requested hold. The current
+n=10 terminal-arrival proposal is a useful negative control: its raw feedback
+demand is `738.673` for an actuator limited to `1`, and the minimum stabilizing
+gain scale is about `699.4x` larger than the maximum initially nonsaturating
+scale. It saturates continuously and hits the rail after `1.04 s`. This tells
+the next deterministic optimizer to reshape the arrival into the feasible
+capture set rather than merely shrinking the LQR gain. See the
+[n=7 audit](runs/generalized_solver/n7_release_actual_handoff_capture_geometry.json),
+[n=8 audit](runs/generalized_solver/n8_release_actual_handoff_capture_geometry.json),
+[n=9 audit](runs/generalized_solver/n9_release_actual_handoff_capture_geometry.json),
+[n=10 negative control](runs/generalized_solver/n10_centered_terminal8_capture_geometry.json), and
+[generalized solver notes](docs/generalized_solver.md).
 
 The same bounded actuator adapter has also passed a paired development check at
 every rung. A hidden map `delivered = 1.18 * commanded + 0.06` broke all 21

@@ -65,22 +65,22 @@
   "evaluation": {
     "twenty_episode": {
       "path": "runs/generalized_solver/n8_fddp_parked_target015_14s_noisy20.json",
-      "bytes": 107223,
-      "sha256": "7605474696838fe7c833138220a48a823da75202cf4e324c727e5bd222287889"
+      "bytes": 124539,
+      "sha256": "2572c860eeaa1732796623e2881a6d9923eff501ac0719aedfcc446c83eb72c7"
     },
     "twenty_seed_start": 81801,
     "twenty_seed_end": 81820,
     "hundred_episode": {
       "path": "runs/generalized_solver/n8_fddp_parked_target015_14s_noisy100.json",
-      "bytes": 526490,
-      "sha256": "b043e4413d1c77210452a8866e63d769aafda62d6bff07cb023548426fb2026e"
+      "bytes": 596701,
+      "sha256": "fc923f4bea89730b2cfc5e54a74726fa324cde36e94da36aee12cdf20b264d82"
     },
     "hundred_seed_start": 80801,
     "hundred_seed_end": 80900,
     "exact_twenty_episode": {
       "path": "runs/generalized_solver/n8_fddp_parked_target015_14s_exact20.json",
-      "bytes": 107448,
-      "sha256": "8bfe5ffc1ad1056e90116a846a50edefef17c6b19535e2813e804bb4776c09fa"
+      "bytes": 124787,
+      "sha256": "aefac25b8ed3aadcfb34737c8e62e2a6df6638a461bfc069ad6a255a929c1ecf"
     },
     "exact_twenty_seed_start": 80801,
     "exact_twenty_seed_end": 80820,
@@ -137,11 +137,13 @@
     "source_commit": "811122acb37a0481880829826ba3e02ac2d05525",
     "source_commit_short": "811122a",
     "source_commit_is_clean_at_commit": true,
-    "evaluation_artifacts_generated_against_commit": "ab66a59dd43b79b239c4f92d61d75fa70e7ad007",
+    "evaluation_artifacts_generated_against_commit": "e8b30ffe7948b91dd61a5fd8ccfb6728c03f44fa",
+    "evaluation_artifacts_generated_with_dirty_worktree": true,
     "verification_commands": [
-      "scripts/evaluate_fddp_parked_route.py --episodes 20 --seed 81801 ...",
-      "scripts/evaluate_fddp_parked_route.py --episodes 100 --seed 80801 ...",
-      "scripts/render_fddp_parked_route_video.py --seed 90901 --seconds 30 ..."
+      "scripts/evaluate_fddp_parked_route.py --config configs/swingup8_uniform.yaml --controller runs/generalized_solver/n8_capture_fddp_feedback120.json --episodes 20 --seed 81801 --park-seconds 14 --cart-target -0.15 --tracking-gain-scale 0.75 --release-evidence --out runs/generalized_solver/n8_fddp_parked_target015_14s_noisy20.json",
+      "scripts/evaluate_fddp_parked_route.py --config configs/swingup8_uniform.yaml --controller runs/generalized_solver/n8_capture_fddp_feedback120.json --episodes 100 --seed 80801 --park-seconds 14 --cart-target -0.15 --tracking-gain-scale 0.75 --release-evidence --out runs/generalized_solver/n8_fddp_parked_target015_14s_noisy100.json",
+      "scripts/evaluate_fddp_parked_route.py --config configs/swingup8_uniform.yaml --controller runs/generalized_solver/n8_capture_fddp_feedback120.json --episodes 20 --seed 80801 --park-seconds 14 --cart-target -0.15 --tracking-gain-scale 0.75 --zero-noise --release-evidence --out runs/generalized_solver/n8_fddp_parked_target015_14s_exact20.json",
+      "scripts/render_fddp_parked_route_video.py --config configs/swingup8_uniform.yaml --controller runs/generalized_solver/n8_capture_fddp_feedback120.json --out runs/generalized_solver/eight_link_swingup_success.mp4 --metadata-out runs/generalized_solver/eight_link_swingup_success.video.json --seed 90901 --park-seconds 14 --cart-target -0.15 --tracking-gain-scale 0.75 --seconds 30 --fail-on-failure"
     ],
     "paper": "docs/eight_link_swingup_paper.md",
     "ledger": "docs/levers_and_pitfalls.md"

@@ -16,8 +16,8 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 import mujoco
+import numpy as np
 from scipy.linalg import solve_discrete_are
 
 from gcartpole.config import dump_json, load_config
@@ -30,8 +30,11 @@ from gcartpole.evidence import (
     text_sha256,
     utc_timestamp,
 )
-from gcartpole.ilqr import data_state
-from gcartpole.modal import StateScales, dimensionless_absolute_transform, dimensionless_wrapped_state
+from gcartpole.modal import (
+    StateScales,
+    dimensionless_absolute_transform,
+    dimensionless_wrapped_state,
+)
 
 try:
     from scripts.make_lqr_checkpoint import absolute_angle_cost
@@ -49,7 +52,7 @@ def load_controller(path: Path, n_links: int, spec: dict[str, Any]) -> dict[str,
     controller = payload.get("controller")
     search = payload.get("search")
     if not isinstance(controller, dict) or not isinstance(search, dict):
-        raise ValueError("controller artifact must contain controller and search objects")
+        raise TypeError("controller artifact must contain controller and search objects")
     controls = np.asarray(controller.get("controls"), dtype=np.float64)
     feedback_gains = np.asarray(controller.get("feedback_gains"), dtype=np.float64)
     nominal_states = np.asarray(search.get("nominal_coordinate_states"), dtype=np.float64)
@@ -244,6 +247,7 @@ def run_episode(
     route_nominal_states = nominal_states.copy()
     cart_nominal_shift: float | None = None
     trajectory: list[dict[str, Any]] = []
+    route_state: dict[str, Any] | None = None
     final_info: dict[str, Any] = {}
     max_cart = abs(float(reset_info.get("x", env.data.qpos[0])))
     first_upright: float | None = None
@@ -333,6 +337,24 @@ def run_episode(
         if first_upright is None and bool(info.get("is_upright", False)):
             first_upright = float((step + 1) * env.dt)
         max_cart = max(max_cart, abs(float(info.get("x", env.data.qpos[0]))))
+        if mode in {"swing_feedback", "phase_adaptive_feedback"} and (
+            route_step == controls.size - 1
+        ):
+            route_state = {
+                "step": int(step + 1),
+                "time_seconds": float((step + 1) * env.dt),
+                "qpos": np.asarray(env.data.qpos, dtype=np.float64)
+                .astype(float)
+                .tolist(),
+                "qvel": np.asarray(env.data.qvel, dtype=np.float64)
+                .astype(float)
+                .tolist(),
+                "qacc_warmstart": np.asarray(
+                    env.data.qacc_warmstart, dtype=np.float64
+                )
+                .astype(float)
+                .tolist(),
+            }
         if include_trajectory:
             trajectory.append(
                 {
@@ -347,6 +369,11 @@ def run_episode(
                     "is_upright": bool(info["is_upright"]),
                     "qpos": np.asarray(env.data.qpos, dtype=np.float64).astype(float).tolist(),
                     "qvel": np.asarray(env.data.qvel, dtype=np.float64).astype(float).tolist(),
+                    "qacc_warmstart": np.asarray(
+                        env.data.qacc_warmstart, dtype=np.float64
+                    )
+                    .astype(float)
+                    .tolist(),
                 }
             )
         if terminated or truncated:
@@ -373,6 +400,7 @@ def run_episode(
         "max_cart_excursion": float(max_cart),
         "length": int(completed_steps),
         "final_info": final_info,
+        "route_state": route_state,
     }
     if include_trajectory:
         result["trajectory"] = trajectory
@@ -458,11 +486,9 @@ def main() -> None:
         if args.settle_mode == "hanging_lqr"
         else None
     )
-    prelude_steps = int(
-        round(
-            args.prelude_seconds
-            / float(cfg["env"]["timestep"] * cfg["env"]["frame_skip"])
-        )
+    prelude_steps = round(
+        args.prelude_seconds
+        / float(cfg["env"]["timestep"] * cfg["env"]["frame_skip"])
     )
     episodes = [
         run_episode(

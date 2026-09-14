@@ -176,13 +176,19 @@ PYTHONPATH=src:. python scripts/build_supported_unlock_continuations.py \
   --initial-stiffness-ratio 1 --initial-damping-ratio 0.01 \
   --stiffness-ratio 10 --damping-ratio 0.1 \
   --ramp-out SUPPORT_1_TO_10.yaml --release-out RELEASE_AT_10.yaml \
-  --relaxation-out RELAX_FROM_10.yaml
+  --relaxation-out RELAX_FROM_10.yaml \
+  --stiffness-relaxation-out RELAX_STIFFNESS_FROM_10.yaml \
+  --damping-relaxation-out RELAX_DAMPING_FROM_10.yaml
 ```
 
 Thus support strength is a measured homotopy coordinate, not a link-count
 constant. The ratios continue to scale stiffness by `M g L` and damping by
 `M L^2 / t0`; the smallest exact-verified support that crosses the topology
 boundary is retained, then annealed away on the fully unlocked plant.
+The optional axis-separated files remove stiffness at fixed damping first and
+then remove damping at zero support stiffness. This deterministic two-axis path
+avoids forcing the controller through a resonance that can make a coupled
+linear anneal arbitrarily step-sensitive.
 
 The artifact records the assignment, locks, lift and projection matrices,
 dimensionless compatibility errors, and numerical feedback-invariance error.
@@ -215,36 +221,41 @@ only the unchanged replay gate can accept it. A rank-deficient dense waypoint
 SVD retries deterministically with LSMR, and a failed child process no longer
 prevents the remaining declared horizons from running.
 
-The exact `p=1` proposal remains rejected. Its final replay reached `5.014187 m`
-and never entered the upright hold; a separate 12-step waypoint probe also
-failed. This boundary is qualitatively different from an ordinary small
-morphology step: every positive lock value emits a MuJoCo equality constraint,
-whereas `p=1` removes that constraint. Further bisection improves the warm start
-but cannot make the plant topology continuous. The next deterministic stage is
-therefore a supported unlock: add dimensionless spring/damping while the joint
-is constrained, remove the equality with that physical support active, then
-anneal the support to the measured target on the fully unlocked plant. The
-generic builder now emits those three resumable configurations. The first live
-support ramp completed at dimensionless `kappa=1`, `d=0.01`; its exact endpoint
-held upright for `20.70 s`, used `4.500170 m` peak cart-center travel, and had
-body-aware rail demand `rho=1.560057`. A provisional `kappa=0.54256` equality
-release advanced to `p=0.99628`, and the `kappa=1` release advanced to `p=0.925`,
-but both exact `p=1` topology-removal proposals failed. The builder now accepts
-nonzero initial support ratios so this failure drives a resumable support search
-rather than another arbitrary restart. Its `kappa=1` to `kappa=10` ladder has
-passed through `p=0.195`, corresponding to `kappa=2.755`, `d=0.02755`; that
-exact replay held for `20.68 s` with `4.505337 m` peak cart travel. These stages
+The direct `p=1` equality-removal proposal remains rejected. Its final replay
+reached `5.014187 m` and never entered the upright hold; a separate 12-step
+waypoint probe also failed. This boundary is qualitatively different from an
+ordinary small morphology step: every positive lock value emits a MuJoCo
+equality constraint, whereas `p=1` removes that constraint.
+
+The deterministic supported-unlock construction has now crossed that topology
+boundary. After the dimensionless support ladder completed from `kappa=1`,
+`d=0.01` to `kappa=10`, `d=0.1`, the equality release reached exact `p=1`.
+Its unchanged nonlinear replay has zero remaining lock strength, held upright
+for `19.38 s`, and used `4.507433 m` peak cart-center travel. This establishes
+an exact free three-link topology at the declared support; it does **not**
+establish the ordinary unsupported target plant.
+
+The coupled support-removal path has exact passes through `p=0.966604614`, where
+the controller held for `20.52 s` with `4.507392 m` peak cart travel. Because
+spring and damping removal together became micro-step sensitive, the generic
+builder now emits an axis-separated schedule. Its first axis removed `99.375%`
+of the added spring stiffness at fixed `d=0.1`; the accepted replay held for
+`19.96 s`, used `3.917783 m` peak cart travel, and required body-aware rail ratio
+`1.365928`. The zero-stiffness endpoint remains rejected, with the next solve
+also exposing severe capture/Riccati conditioning. The second axis—damping
+removal at zero stiffness—therefore has not begun. These `p` values are
+homotopy coordinates, not estimates of percent task completion. These stages
 remain development evidence. The
 [current resumable ledger](../runs/generalized_solver/n2_to_n3_split_logcompliance_homotopy/continuation.json),
 [support-ramp ledger](../runs/generalized_solver/n2_to_n3_supported_unlock_ramp/continuation.json),
 [first release ledger](../runs/generalized_solver/n2_to_n3_supported_unlock_k054256_release/continuation.json),
 [unit-support release ledger](../runs/generalized_solver/n2_to_n3_supported_unlock_k1_release/continuation.json),
-[support-search ledger](../runs/generalized_solver/n2_to_n3_supported_unlock_k1_to_k10_ramp/continuation.json),
+[compact hash-bound support frontier](../runs/generalized_solver/supported_unlock_frontier.json),
 [generated continuation](../configs/generalized_n2_to_n3_split_logcompliance.yaml),
 and [historical ledger](../runs/generalized_solver/n2_to_n3_split_homotopy/continuation.json)
-are development evidence. The ledgers are explicitly `not_solution`; the
-supported `p=1` handoff and independent noisy gate remain unsolved for this
-count-plus-morphology path.
+are development evidence. The ledgers are explicitly `not_solution`; the exact
+unsupported target, its mirror, and its independent noisy gate remain unsolved
+for this count-plus-morphology path.
 
 ### Morphology-conditioned terminal set
 
@@ -275,6 +286,33 @@ shrink the accepted set. The endpoint refiner can optimize either the readable
 componentwise residual or this invariant residual, and can append a short
 reset-free clipped-LQR rollout to its objective. Promotion still requires the
 full exact hold and noisy gates.
+
+The standalone capture audit now makes the actuator boundary directly
+falsifiable. It computes the smallest scalar multiplier on the fixed LQR gain
+direction that stabilizes the exact discrete linearization, the largest
+multiplier that does not saturate at the proposed state, and then runs clipped
+feedback on exact MuJoCo dynamics. Fresh held-out route replays provide the
+handoff state—including MuJoCo's acceleration warm start—so this is not a
+nominal optimizer-state comparison.
+
+| Handoff | Gain norm | Initial raw action | Stable/action scale gap | Saturation in 5 s | Exact result |
+|---|---:|---:|---:|---:|---|
+| proven n=7 route | `1,974.29` | `0.00443` | `0.00374` | `0%` | requested hold completed |
+| proven n=8 route | `9,183.37` | `-0.17890` | `0.15900` | `0%` | requested hold completed |
+| proven n=9 route | `47,126.1` | `-0.06487` | `0.05985` | `0%` | requested hold completed |
+| current n=10 arrival proposal | `265,135` | `738.673` | `699.44` | `100%` | rail violation at `1.04 s` |
+
+A gap below one means some scale on that fixed gain direction is both linearly
+stabilizing and initially within the actuator bound; it is not by itself a
+nonlinear proof. The exact rollouts supply that second check. The n=10 result
+shows why gain shrinkage is not the remedy: its minimum stabilizing scale is
+`0.946884`, while initial nonsaturation requires at most `0.00135378`. The
+arrival trajectory must instead be optimized into the much smaller
+actuator-feasible capture set. See the [audit tool](../scripts/diagnose_capture_geometry.py),
+[n=7](../runs/generalized_solver/n7_release_actual_handoff_capture_geometry.json),
+[n=8](../runs/generalized_solver/n8_release_actual_handoff_capture_geometry.json),
+[n=9](../runs/generalized_solver/n9_release_actual_handoff_capture_geometry.json),
+and [n=10 negative control](../runs/generalized_solver/n10_centered_terminal8_capture_geometry.json).
 
 The numerical implementation uses an SVD damped minimum-norm solve and scales
 the complete correction direction into its trust region. This avoids squaring

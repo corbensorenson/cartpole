@@ -1,0 +1,351 @@
+{
+  "claim_status": "canonical_noisy_gate_evidence",
+  "config": {
+    "path": "configs/swingup7_uniform.yaml",
+    "resolved_sha256": "89350e6b305c8da5679de73576421843edc6cf61d7f3e22a01350fa6bd720918"
+  },
+  "controller": {
+    "bytes": 206061,
+    "path": "runs/swingup7_uniform/seven_link_release_controller.json",
+    "sha256": "0e70e1de5547c41569401ccf246b30b9650c369d81cc7846d02523ab72f7b01f"
+  },
+  "controller_summary": "Settled-launch hybrid: hanging LQR, Box-FDDP trajectory feedback, then upright LQR.",
+  "episode_results": [
+    {
+      "episode": 0,
+      "final_info": {
+        "absolute_angular_velocity_rms": 1.879734628604641e-06,
+        "action_bias_norm": 0.0,
+        "alpha_damping": 0.0,
+        "alpha_frictionloss": 0.0,
+        "alpha_length": 0.0,
+        "alpha_mass": 0.0,
+        "applied_action_norm": 1.7072709397325525e-06,
+        "capture_quality": 0.9999999805620327,
+        "capture_start_time": 14.540000000000001,
+        "centered_upright_streak_seconds": 15.48,
+        "controller_mode": "policy",
+        "damping": [
+          0.002142857142857143,
+          0.002142857142857143,
+          0.002142857142857143,
+          0.002142857142857143,
+          0.002142857142857143,
+          0.002142857142857143,
+          0.002142857142857143
+        ],
+        "energy_fraction": 0.999999999987407,
+        "frictionloss": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "hinge_velocity_rms": 7.150525691689777e-07,
+        "init_qvel_scale": 1.0,
+        "init_state_index": null,
+        "is_upright": true,
+        "lengths": [
+          0.42857142857142855,
+          0.42857142857142855,
+          0.42857142857142855,
+          0.42857142857142855,
+          0.42857142857142855,
+          0.42857142857142855,
+          0.42857142857142855
+        ],
+        "low_momentum_upright_streak_seconds": 15.46,
+        "lqr_cart_target": 0.0,
+        "lqr_switch_active": false,
+        "lqr_switch_entry_count": 0,
+        "lqr_switch_exit_count": 0,
+        "lqr_switch_first_entry_step": null,
+        "lqr_switch_first_entry_time": null,
+        "lqr_switch_lqr_steps": 0,
+        "lqr_switch_lyapunov_value": null,
+        "lqr_switch_policy_steps": 0,
+        "masses": [
+          0.14285714285714285,
+          0.14285714285714285,
+          0.14285714285714285,
+          0.14285714285714285,
+          0.14285714285714285,
+          0.14285714285714285,
+          0.14285714285714285
+        ],
+        "max_abs_angle": 7.108708667047381e-06,
+        "max_absolute_angular_velocity": 1.8918277879140489e-06,
+        "max_cart_excursion": 2.3700835021938635,
+        "max_centered_upright_streak_seconds": 15.48,
+        "max_low_momentum_upright_streak_seconds": 15.46,
+        "max_upright_streak_seconds": 15.48,
+        "mean_abs_angle": 7.100534949344706e-06,
+        "plant_progress": 1.0,
+        "policy_action_norm": 1.7072709397325525e-06,
+        "potential_energy": 15.401700029746092,
+        "progress": 1.0,
+        "rail_limit": 3.0,
+        "residual_scale": 1.0,
+        "success": true,
+        "termination_reason": "time_limit",
+        "time_to_capture": 19.52,
+        "time_to_first_upright": 14.540000000000001,
+        "upright_streak_seconds": 15.48,
+        "x": -1.716078649468097e-05
+      },
+      "final_upright_streak_seconds": 15.48,
+      "first_upright_time": 14.540000000000001,
+      "initial_qpos": [
+        0.0,
+        3.0750189211748373,
+        -0.038269830698173725,
+        0.04755463840234736,
+        0.02610448626468429,
+        0.008525558509315,
+        -0.029630971090962178,
+        -0.021061366961502345
+      ],
+      "initial_qvel": [
+        -0.03187157906587965,
+        -0.08240246492963021,
+        0.003133264249246261,
+        -0.06856431860239648,
+        -0.007904842982982482,
+        -0.06438913763103193,
+        0.005364696599576394,
+        0.007481061514861789
+      ],
+      "length": 1500,
+      "max_cart_excursion": 2.3700835021938635,
+      "max_low_momentum_upright_streak_seconds": 15.46,
+      "max_upright_streak_seconds": 15.48,
+      "return": 71480.48572926129,
+      "route_state": {
+        "qacc_warmstart": [
+          -75.89961403343601,
+          197.66862501690318,
+          -215.9343075225007,
+          15.261328294659698,
+          3.71475613701816,
+          -0.7047443914875873,
+          -0.02294553743829469,
+          0.018763578178338434
+        ],
+        "qpos": [
+          0.00024351365485923815,
+          -12.566378907158759,
+          9.737386276770791e-06,
+          2.3691445943565552e-06,
+          -7.766582183370207e-06,
+          8.121816598860305e-07,
+          2.115175133513853e-06,
+          1.1350569462125795e-06
+        ],
+        "qvel": [
+          1.9741862678627077e-05,
+          -5.8635711434288844e-05,
+          -5.047931647321793e-05,
+          -6.1492584036793235e-06,
+          4.662722802720274e-06,
+          -3.2518652883735098e-06,
+          1.3027980774421022e-06,
+          2.3095611424295945e-06
+        ],
+        "step": 728,
+        "time_seconds": 14.56
+      },
+      "seed": 30732,
+      "success": true,
+      "terminated": false,
+      "termination_reason": "time_limit",
+      "time_to_capture": 19.52,
+      "time_to_first_upright": 14.540000000000001,
+      "truncated": true
+    }
+  ],
+  "episodes": 1,
+  "ever_upright_rate": 1.0,
+  "evidence": {
+    "config": {
+      "overrides": [],
+      "path": "configs/swingup7_uniform.yaml",
+      "resolved_sha256": "89350e6b305c8da5679de73576421843edc6cf61d7f3e22a01350fa6bd720918"
+    },
+    "controller": {
+      "bytes": 206061,
+      "path": "runs/swingup7_uniform/seven_link_release_controller.json",
+      "sha256": "0e70e1de5547c41569401ccf246b30b9650c369d81cc7846d02523ab72f7b01f"
+    },
+    "deterministic_policy": true,
+    "environment": {
+      "action_dim": 1,
+      "action_frequency_hz": 50.0,
+      "episode_seconds": 30.0,
+      "force_limit": 80.0,
+      "init_angle_noise": 0.05,
+      "init_mode": "hanging",
+      "init_velocity_noise": 0.05,
+      "n_links": 7,
+      "observation_dim": 51,
+      "rail_limit": 3.0
+    },
+    "generated_xml_sha256": "3d662d6887a3e17469eb03b99ebde378f3ca20c1fb67253f649d43211b16343c",
+    "git": {
+      "available": true,
+      "commit": "e8b30ffe7948b91dd61a5fd8ccfb6728c03f44fa",
+      "dirty": true,
+      "includes_untracked_files": false,
+      "status_short": [
+        " M docs/generalized_solver.md",
+        " M docs/levers_and_pitfalls.md",
+        " M runs/generalized_solver/n2_to_n3_supported_unlock_k1_to_k10_ramp/continuation.json",
+        " M scripts/build_supported_unlock_continuations.py",
+        " M scripts/evaluate_fddp_parked_route.py",
+        " M scripts/evaluate_fddp_two_expert.py",
+        " M scripts/evaluate_generalized_route_library.py",
+        " M scripts/extract_search_handoff_state.py",
+        " M scripts/extract_trajectory_states.py",
+        " M scripts/force_proposal_to_fddp.py",
+        " M scripts/refine_swingup_endpoint_gauss_newton.py",
+        " M scripts/search_capture_online_mpc.py",
+        " M scripts/search_capture_recovery.py",
+        " M scripts/search_fddp_capture.py",
+        " M scripts/search_swingup_action_sequence.py",
+        " M scripts/search_swingup_global_exact_cem.py",
+        " M scripts/search_swingup_ilqr_terminal.py",
+        " M scripts/search_swingup_tail_action_cem.py",
+        " M scripts/search_swingup_tail_ilqr.py",
+        " M src/gcartpole/mjxml.py",
+        " M tests/test_roadmap_verifier.py",
+        " M tests/test_supported_unlock_continuations.py"
+      ]
+    },
+    "plant_progress": 1.0,
+    "policy_manifest": {
+      "bytes": 3802,
+      "path": "runs/swingup7_uniform/seven_link_swingup_manifest.json",
+      "sha256": "b6033a9b91372b938dc2161be553d4a137d264c00c686ccef465ba01066c84ac"
+    },
+    "progress": 1.0,
+    "runtime": {
+      "machine": "arm64",
+      "packages": {
+        "gymnasium": "1.3.0",
+        "mlx": "0.32.2",
+        "mujoco": "3.3.5",
+        "numpy": "2.5.3"
+      },
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "processor": "arm",
+      "python": "3.12.14"
+    }
+  },
+  "generated_at": "2026-09-14T04:02:11+00:00",
+  "git": {
+    "available": true,
+    "commit": "e8b30ffe7948b91dd61a5fd8ccfb6728c03f44fa",
+    "dirty": true,
+    "includes_untracked_files": false,
+    "status_short": [
+      " M docs/generalized_solver.md",
+      " M docs/levers_and_pitfalls.md",
+      " M runs/generalized_solver/n2_to_n3_supported_unlock_k1_to_k10_ramp/continuation.json",
+      " M scripts/build_supported_unlock_continuations.py",
+      " M scripts/evaluate_fddp_parked_route.py",
+      " M scripts/evaluate_fddp_two_expert.py",
+      " M scripts/evaluate_generalized_route_library.py",
+      " M scripts/extract_search_handoff_state.py",
+      " M scripts/extract_trajectory_states.py",
+      " M scripts/force_proposal_to_fddp.py",
+      " M scripts/refine_swingup_endpoint_gauss_newton.py",
+      " M scripts/search_capture_online_mpc.py",
+      " M scripts/search_capture_recovery.py",
+      " M scripts/search_fddp_capture.py",
+      " M scripts/search_swingup_action_sequence.py",
+      " M scripts/search_swingup_global_exact_cem.py",
+      " M scripts/search_swingup_ilqr_terminal.py",
+      " M scripts/search_swingup_tail_action_cem.py",
+      " M scripts/search_swingup_tail_ilqr.py",
+      " M src/gcartpole/mjxml.py",
+      " M tests/test_roadmap_verifier.py",
+      " M tests/test_supported_unlock_continuations.py"
+    ]
+  },
+  "max_cart_excursion_max": 2.3700835021938635,
+  "max_upright_streak_max": 15.48,
+  "max_upright_streak_mean": 15.48,
+  "phase_adaptive": false,
+  "phase_window": 12,
+  "policy_manifest": {
+    "bytes": 3802,
+    "path": "runs/swingup7_uniform/seven_link_swingup_manifest.json",
+    "sha256": "b6033a9b91372b938dc2161be553d4a137d264c00c686ccef465ba01066c84ac"
+  },
+  "prelude_seconds": 10.0,
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 2,
+  "seed_start": 30732,
+  "settle_control_cost": 1000.0,
+  "settle_controller": {
+    "control_cost": 1000.0,
+    "fd_eps": 1e-07,
+    "gain": [
+      0.06329273601790862,
+      0.6464648999701309,
+      -1.7529346539249389,
+      -0.8363924945455309,
+      -0.38652778185600734,
+      -0.06530986607899934,
+      0.06851255163906604,
+      0.036444895258172016,
+      0.11598470202212673,
+      0.2732628738414504,
+      0.13013771242577835,
+      0.023946025288803956,
+      -0.025191222371187358,
+      -0.034898793246506486,
+      -0.019543666146757763,
+      -0.002484000232284059
+    ],
+    "gain_sha256": "48b0b5d607587774891f5d8b806924a43701a9127b5fe5487c80405a957ff083",
+    "reference_qpos": [
+      0.0,
+      3.141592653589793,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "type": "hanging_equilibrium_lqr"
+  },
+  "settle_mode": "hanging_lqr",
+  "settle_scale": 1.0,
+  "shift_cart_nominal": true,
+  "spec": {
+    "bytes": 1033,
+    "path": "benchmarks/p1_capture_envelope.yaml",
+    "sha256": "4143070757cef38976d064febed34964ee27dcc6678ab8ce5dc0103cdaafdd00"
+  },
+  "success_rate": 1.0,
+  "summary": "Released canonical noisy hanging-start evaluation of the settled-launch hybrid controller.",
+  "termination_counts": {
+    "time_limit": 1
+  },
+  "tracking_gain_scale": 2.0
+}

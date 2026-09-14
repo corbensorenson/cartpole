@@ -69,22 +69,22 @@
   "evaluation": {
     "twenty_episode": {
       "path": "runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_20.json",
-      "bytes": 119803,
-      "sha256": "14e2e0ab19985e13952491227fbead9c702f6e38d0e9a5c1a75f5923d8e91d76"
+      "bytes": 136872,
+      "sha256": "a28046798c9ea307f60f478e3a6669b97d50e7414b7969c9b01d7e9784fda9b5"
     },
     "twenty_seed_start": 91021,
     "twenty_seed_end": 91040,
     "hundred_episode": {
       "path": "runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_100.json",
-      "bytes": 584780,
-      "sha256": "83fe044ebfc6a3b9aecd9214266cc33799f2aa70a6db92e420405134aff32cbe"
+      "bytes": 659641,
+      "sha256": "ae79ebbd219d16b6023b35dbf5c235966af5bee8ff130df638c4a2483ba912fe"
     },
     "hundred_seed_start": 91041,
     "hundred_seed_end": 91140,
     "exact_twenty_episode": {
       "path": "runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_exact20.json",
-      "bytes": 120325,
-      "sha256": "b0f075db8f54aa130eaa0232746d47513c7accb85114e7bd449d25bffefad320"
+      "bytes": 137134,
+      "sha256": "c9dd1425bb69b55ad4ac55e3f0e562181e3e058007fd3dc9227bb21bae22999b"
     },
     "exact_twenty_seed_start": 91061,
     "exact_twenty_seed_end": 91080,
@@ -145,10 +145,13 @@
   "release": {
     "source_commit": "3fb125b7b9f22ccdefb8488ebc687b9db17d2e77",
     "source_commit_is_clean_at_generation": false,
+    "evaluation_artifacts_generated_against_commit": "e8b30ffe7948b91dd61a5fd8ccfb6728c03f44fa",
+    "evaluation_artifacts_generated_with_dirty_worktree": true,
     "verification_commands": [
-      "scripts/evaluate_fddp_parked_route.py --config configs/swingup9_uniform.yaml --controller runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json --episodes 20 --seed 91021 --park-seconds 14 --cart-target -0.05 --tracking-gain-scale 1.0",
-      "scripts/evaluate_fddp_parked_route.py --config configs/swingup9_uniform.yaml --controller runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json --episodes 100 --seed 91041 --park-seconds 14 --cart-target -0.05 --tracking-gain-scale 1.0",
-      "scripts/render_fddp_parked_route_video.py --config configs/swingup9_uniform.yaml --controller runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json --seed 91141 --park-seconds 14 --cart-target -0.05 --tracking-gain-scale 1.0 --seconds 30 --fail-on-failure"
+      "scripts/evaluate_fddp_parked_route.py --config configs/swingup9_uniform.yaml --controller runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json --episodes 20 --seed 91021 --park-seconds 14 --cart-target -0.05 --tracking-gain-scale 1.0 --release-evidence --out runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_20.json",
+      "scripts/evaluate_fddp_parked_route.py --config configs/swingup9_uniform.yaml --controller runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json --episodes 100 --seed 91041 --park-seconds 14 --cart-target -0.05 --tracking-gain-scale 1.0 --release-evidence --out runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_100.json",
+      "scripts/evaluate_fddp_parked_route.py --config configs/swingup9_uniform.yaml --controller runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json --episodes 20 --seed 91061 --park-seconds 14 --cart-target -0.05 --tracking-gain-scale 1.0 --zero-noise --release-evidence --out runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_exact20.json",
+      "scripts/render_fddp_parked_route_video.py --config configs/swingup9_uniform.yaml --controller runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json --out runs/generalized_solver/nine_link_swingup_success.mp4 --metadata-out runs/generalized_solver/nine_link_swingup_success.video.json --seed 91141 --park-seconds 14 --cart-target -0.05 --tracking-gain-scale 1.0 --seconds 30 --fail-on-failure"
     ],
     "paper": "docs/nine_link_swingup_paper.md",
     "ledger": "docs/levers_and_pitfalls.md"

@@ -164,6 +164,49 @@ def build_supported_unlock_continuations(
     return ramp, release, relaxation
 
 
+def build_axis_separated_relaxations(
+    relaxation_cfg: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Split coupled support removal into stiffness-first and damping-second stages.
+
+    Removing spring and damper strength along one linear coordinate can cross a
+    narrow resonance even when a nearby two-coordinate path remains regular.
+    Keeping the support damper fixed while the spring is removed avoids that
+    forced coupling.  The second stage then removes only the excess damping.
+    """
+
+    supported = build_morphology(
+        relaxation_cfg["env"], relaxation_cfg["morphology"], progress=0.0
+    )
+    target = build_morphology(
+        relaxation_cfg["env"], relaxation_cfg["morphology"], progress=1.0
+    )
+    damped_target = replace(
+        target,
+        damping=supported.damping.copy(),
+        total_damping=float(np.sum(supported.damping)),
+    )
+
+    stiffness_relaxation = copy.deepcopy(relaxation_cfg)
+    stiffness_relaxation["experiment"]["name"] = (
+        "supported_unlock_stiffness_relaxation"
+    )
+    _set_profiles(stiffness_relaxation, supported, damped_target)
+    stiffness_relaxation.setdefault("supported_unlock", {})["stage"] = (
+        "relax_stiffness_at_fixed_damping"
+    )
+
+    damping_relaxation = copy.deepcopy(relaxation_cfg)
+    damping_relaxation["experiment"]["name"] = (
+        "supported_unlock_damping_relaxation"
+    )
+    _set_profiles(damping_relaxation, damped_target, target)
+    damping_relaxation.setdefault("supported_unlock", {})["stage"] = (
+        "relax_damping_after_stiffness"
+    )
+    return stiffness_relaxation, damping_relaxation
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--locked-config", required=True)
@@ -175,6 +218,8 @@ def main() -> None:
     parser.add_argument("--ramp-out", required=True)
     parser.add_argument("--release-out", required=True)
     parser.add_argument("--relaxation-out", required=True)
+    parser.add_argument("--stiffness-relaxation-out")
+    parser.add_argument("--damping-relaxation-out")
     args = parser.parse_args()
     ramp, release, relaxation = build_supported_unlock_continuations(
         load_config(args.locked_config),
@@ -187,9 +232,22 @@ def main() -> None:
     save_config(ramp, Path(args.ramp_out))
     save_config(release, Path(args.release_out))
     save_config(relaxation, Path(args.relaxation_out))
+    if bool(args.stiffness_relaxation_out) != bool(args.damping_relaxation_out):
+        parser.error(
+            "--stiffness-relaxation-out and --damping-relaxation-out must be used together"
+        )
+    if args.stiffness_relaxation_out:
+        stiffness_relaxation, damping_relaxation = (
+            build_axis_separated_relaxations(relaxation)
+        )
+        save_config(stiffness_relaxation, Path(args.stiffness_relaxation_out))
+        save_config(damping_relaxation, Path(args.damping_relaxation_out))
     print(f"wrote {args.ramp_out}")
     print(f"wrote {args.release_out}")
     print(f"wrote {args.relaxation_out}")
+    if args.stiffness_relaxation_out:
+        print(f"wrote {args.stiffness_relaxation_out}")
+        print(f"wrote {args.damping_relaxation_out}")
 
 
 if __name__ == "__main__":

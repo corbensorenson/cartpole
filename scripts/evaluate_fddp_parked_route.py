@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-"""Evaluate a feedback swing route after parking the hanging cart.
+"""Evaluate an arbitrary-link feedback swing route after parking the cart.
 
-This is the generalized eight-link development evaluator.  It keeps the
-three phases explicit: settle the hanging chain at a translated cart target,
+This count-agnostic development evaluator keeps three phases explicit: settle
+the hanging chain at a translated cart target,
 run the saved Box-FDDP route with state feedback, and hand off to the exact
 upright LQR around that same cart target.
 
@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import argparse
 import copy
-import json
 from collections import Counter
 from pathlib import Path
 from typing import Any
@@ -189,6 +188,11 @@ def run_episode(
             ),
             "qpos": np.asarray(env.data.qpos, dtype=np.float64).astype(float).tolist(),
             "qvel": np.asarray(env.data.qvel, dtype=np.float64).astype(float).tolist(),
+            "qacc_warmstart": np.asarray(
+                env.data.qacc_warmstart, dtype=np.float64
+            )
+            .astype(float)
+            .tolist(),
         }
         if step == park_steps - 1:
             park_state = dict(row)
@@ -238,6 +242,11 @@ def main() -> None:
     parser.add_argument("--phase-window", type=int, default=12)
     parser.add_argument("--zero-noise", action="store_true")
     parser.add_argument("--include-traces", action="store_true")
+    parser.add_argument(
+        "--release-evidence",
+        action="store_true",
+        help="emit promotable gate evidence and fail unless every episode passes",
+    )
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
     if args.episodes < 1 or args.park_seconds < 0.0:
@@ -290,6 +299,10 @@ def main() -> None:
         for index in range(args.episodes)
     ]
     successes = sum(bool(row["success"]) for row in episodes)
+    if args.release_evidence and successes != args.episodes:
+        raise RuntimeError(
+            "release evidence requires every requested episode to pass"
+        )
     source_git = {
         key: value
         for key, value in git_metadata(Path(__file__).resolve().parents[1]).items()
@@ -298,11 +311,15 @@ def main() -> None:
     output = {
         "schema_version": 1,
         "generated_at": utc_timestamp(),
-        "claim_status": "development_eight_link_fddp_parked_route",
-        "not_solution": True,
+        "claim_status": (
+            "canonical_parked_route_gate_evidence"
+            if args.release_evidence
+            else "development_fddp_parked_route"
+        ),
+        "not_solution": not args.release_evidence,
         "summary": (
-            "Eight-link parked-cart launch with Box-FDDP feedback and "
-            "parked-target upright LQR capture."
+            f"{int(cfg['env']['n_links'])}-link parked-cart launch with "
+            "Box-FDDP feedback and parked-target upright LQR capture."
         ),
         "config": file_metadata(Path(args.config)),
         "spec": file_metadata(Path(args.spec)),
@@ -314,6 +331,7 @@ def main() -> None:
         "episodes": int(args.episodes),
         "seed_start": int(args.seed),
         "zero_noise": bool(args.zero_noise),
+        "release_evidence": bool(args.release_evidence),
         "park_seconds": float(args.park_seconds),
         "cart_target": float(args.cart_target),
         "tracking_gain_scale": float(args.tracking_gain_scale),

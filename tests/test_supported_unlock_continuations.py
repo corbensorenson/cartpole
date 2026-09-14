@@ -6,6 +6,7 @@ from gcartpole.config import load_config
 from gcartpole.generalized_solver import setup_from_config
 from gcartpole.morphology import build_morphology
 from scripts.build_supported_unlock_continuations import (
+    build_axis_separated_relaxations,
     build_supported_unlock_continuations,
 )
 
@@ -85,3 +86,49 @@ def test_supported_unlock_can_continue_from_existing_support() -> None:
     )
     np.testing.assert_allclose(end.joint_stiffness, release_start.joint_stiffness)
     assert ramp["supported_unlock"]["initial_stiffness_ratio"] == 1.0
+
+
+def test_supported_unlock_can_relax_stiffness_and_damping_separately() -> None:
+    locked_cfg = load_config(
+        "runs/generalized_solver/n2_to_n3_split_logcompliance_homotopy/"
+        "configs/trial_0050_p0.999548750.yaml"
+    )
+    target_cfg = load_config("configs/generalized_n3_unequal.yaml")
+    _, _, coupled = build_supported_unlock_continuations(
+        locked_cfg,
+        target_cfg,
+        stiffness_ratio=10.0,
+        damping_ratio=0.1,
+    )
+    stiffness_stage, damping_stage = build_axis_separated_relaxations(coupled)
+    coupled_start = build_morphology(coupled["env"], coupled["morphology"], 0.0)
+    coupled_end = build_morphology(coupled["env"], coupled["morphology"], 1.0)
+    stiffness_start = build_morphology(
+        stiffness_stage["env"], stiffness_stage["morphology"], 0.0
+    )
+    stiffness_end = build_morphology(
+        stiffness_stage["env"], stiffness_stage["morphology"], 1.0
+    )
+    damping_start = build_morphology(
+        damping_stage["env"], damping_stage["morphology"], 0.0
+    )
+    damping_end = build_morphology(
+        damping_stage["env"], damping_stage["morphology"], 1.0
+    )
+
+    np.testing.assert_allclose(stiffness_start.joint_stiffness, coupled_start.joint_stiffness)
+    np.testing.assert_allclose(stiffness_start.damping, coupled_start.damping)
+    np.testing.assert_allclose(stiffness_end.joint_stiffness, coupled_end.joint_stiffness)
+    np.testing.assert_allclose(stiffness_end.damping, coupled_start.damping)
+    np.testing.assert_allclose(damping_start.joint_stiffness, coupled_end.joint_stiffness)
+    np.testing.assert_allclose(damping_start.damping, coupled_start.damping)
+    np.testing.assert_allclose(damping_end.joint_stiffness, coupled_end.joint_stiffness)
+    np.testing.assert_allclose(damping_end.damping, coupled_end.damping)
+    assert (
+        stiffness_stage["supported_unlock"]["stage"]
+        == "relax_stiffness_at_fixed_damping"
+    )
+    assert (
+        damping_stage["supported_unlock"]["stage"]
+        == "relax_damping_after_stiffness"
+    )
