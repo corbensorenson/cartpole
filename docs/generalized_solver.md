@@ -308,7 +308,27 @@ nonlinear proof. The exact rollouts supply that second check. The n=10 result
 shows why gain shrinkage is not the remedy: its minimum stabilizing scale is
 `0.946884`, while initial nonsaturation requires at most `0.00135378`. The
 arrival trajectory must instead be optimized into the much smaller
-actuator-feasible capture set. See the [audit tool](../scripts/diagnose_capture_geometry.py),
+actuator-feasible capture set.
+
+The audit can now measure that missing scale without choosing a link-count
+constant. `--scan-capture-ray` wraps the supplied joint state onto the upright
+branch, scales the complete position/velocity error along its own ray, and
+runs the same five-second exact clipped-feedback gate on a logarithmic grid.
+It refines the first origin-connected pass/fail boundary by bisection and
+retains later samples so a non-monotonic pass cannot be hidden. The n=7, n=8,
+and n=9 handoffs pass at full scale. The current n=10 direction passes through
+`1.9199386e-5` and first fails at `1.9199399e-5`, a required radial contraction
+of about `52,085x`. This is a directional empirical basin boundary, not a
+global certificate, but it gives endpoint optimization a quantitative target
+that the old componentwise angle box missed by five orders of magnitude.
+
+```bash
+PYTHONPATH=.:src:scripts python scripts/diagnose_capture_geometry.py \
+  --config CONFIG.yaml --state-json HANDOFF.json --scan-capture-ray \
+  --rollout-seconds 5 --out CAPTURE_GEOMETRY.json
+```
+
+See the [audit tool](../scripts/diagnose_capture_geometry.py),
 [n=7](../runs/generalized_solver/n7_release_actual_handoff_capture_geometry.json),
 [n=8](../runs/generalized_solver/n8_release_actual_handoff_capture_geometry.json),
 [n=9](../runs/generalized_solver/n9_release_actual_handoff_capture_geometry.json),

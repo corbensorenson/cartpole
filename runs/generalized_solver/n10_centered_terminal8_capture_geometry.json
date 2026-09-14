@@ -18,26 +18,527 @@
     "hinge_velocity": 1.8083141320025125,
     "natural_time": 0.553001263609331
   },
-  "generated_at": "2026-09-14T04:06:17+00:00",
+  "empirical_capture_ray": {
+    "bisection_steps": 20,
+    "boundary_is_lower_bound": false,
+    "first_failing_scale": 1.9199398754604986e-05,
+    "full_state_passed": false,
+    "grid_minimum_scale": 1e-08,
+    "grid_points": 33,
+    "maximum_origin_connected_pass_scale": 1.9199385555769132e-05,
+    "nonmonotonic_pass_detected": false,
+    "required_radial_contraction_factor": 52085.000173326625,
+    "rollout_seconds": 5.0,
+    "samples": [
+      {
+        "max_cart_excursion": 0.0,
+        "max_raw_normalized_action": 0.0,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 0.0,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 5.6204319637319555e-05,
+        "max_raw_normalized_action": 3.178853709567058e-05,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 1e-08,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 9.994350896015466e-05,
+        "max_raw_normalized_action": 5.652855523740132e-05,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 1.7782794100389228e-08,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.00017772630500945507,
+        "max_raw_normalized_action": 0.00010052379403384235,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 3.162277660168379e-08,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.00031605648616268823,
+        "max_raw_normalized_action": 0.000178759859177918,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 5.6234132519034905e-08,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.0005620298556770563,
+        "max_raw_normalized_action": 0.00031788456086721123,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 1e-07,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.000999450249954847,
+        "max_raw_normalized_action": 0.0005652875168360477,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 1.7782794100389227e-07,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.0017773101958853566,
+        "max_raw_normalized_action": 0.0010052388073799694,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 3.162277660168379e-07,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.003160618423410918,
+        "max_raw_normalized_action": 0.0017875960836443226,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 5.62341325190349e-07,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.005620832459799018,
+        "max_raw_normalized_action": 0.003178844881634254,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 1e-06,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.009997742083430525,
+        "max_raw_normalized_action": 0.005652871389941572,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 1.778279410038923e-06,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.017796629286165003,
+        "max_raw_normalized_action": 0.010052367890763447,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 3.162277660168379e-06,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.03183270992374275,
+        "max_raw_normalized_action": 0.017875826202170597,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 5.623413251903491e-06,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.05913113138143738,
+        "max_raw_normalized_action": 0.03178768979304364,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 1e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.12462809993447568,
+        "max_raw_normalized_action": 0.056524455740660465,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 1.778279410038923e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.12438927048680552,
+        "max_raw_normalized_action": 0.059273491591023,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 1.8647793006720138e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.1332097485116001,
+        "max_raw_normalized_action": 0.060647985786231096,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 1.9080292459885594e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.14302623822362281,
+        "max_raw_normalized_action": 0.060991609416964146,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 1.9188417323176958e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.14401126160224595,
+        "max_raw_normalized_action": 0.2179668799313793,
+        "max_upright_streak_seconds": 5.0200000000000005,
+        "passed": true,
+        "saturation_fraction": 0.0,
+        "scale": 1.9195175127132666e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.19165535020313348,
+        "max_raw_normalized_action": 19.88107254435147,
+        "max_upright_streak_seconds": 5.0,
+        "passed": true,
+        "saturation_fraction": 0.012,
+        "scale": 1.919855402911052e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.17368144303160546,
+        "max_raw_normalized_action": 40.70689314726512,
+        "max_upright_streak_seconds": 5.0,
+        "passed": true,
+        "saturation_fraction": 0.012,
+        "scale": 1.9198976391857755e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.16577583836835288,
+        "max_raw_normalized_action": 63.22102522841374,
+        "max_upright_streak_seconds": 5.0,
+        "passed": true,
+        "saturation_fraction": 0.012,
+        "scale": 1.9199187573231372e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.16283215395291337,
+        "max_raw_normalized_action": 76.67586230062939,
+        "max_upright_streak_seconds": 5.0,
+        "passed": true,
+        "saturation_fraction": 0.012,
+        "scale": 1.919929316391818e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.1617858093574414,
+        "max_raw_normalized_action": 83.24967450859789,
+        "max_upright_streak_seconds": 5.0,
+        "passed": true,
+        "saturation_fraction": 0.012,
+        "scale": 1.919934595926158e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.16134155032111702,
+        "max_raw_normalized_action": 86.66897286300015,
+        "max_upright_streak_seconds": 5.0,
+        "passed": true,
+        "saturation_fraction": 0.012,
+        "scale": 1.919937235693328e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.16115005698572327,
+        "max_raw_normalized_action": 88.33217580399476,
+        "max_upright_streak_seconds": 5.0,
+        "passed": true,
+        "saturation_fraction": 0.012,
+        "scale": 1.9199385555769132e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.16094277470536952,
+        "max_raw_normalized_action": 90.32083466682349,
+        "max_upright_streak_seconds": 4.94,
+        "passed": false,
+        "saturation_fraction": 0.012,
+        "scale": 1.9199398754604986e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.19159737517728187,
+        "max_raw_normalized_action": 99.49004987719174,
+        "max_upright_streak_seconds": 4.94,
+        "passed": false,
+        "saturation_fraction": 0.016,
+        "scale": 1.920024348009945e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 0.3716183259265853,
+        "max_raw_normalized_action": 84.68666738932811,
+        "max_upright_streak_seconds": 4.96,
+        "passed": false,
+        "saturation_fraction": 0.02,
+        "scale": 1.9201932931088378e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 1.0141201485620264,
+        "max_raw_normalized_action": 24627.500335768058,
+        "max_upright_streak_seconds": 4.5600000000000005,
+        "passed": false,
+        "saturation_fraction": 0.096,
+        "scale": 1.9215448538999797e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 1.9476349271740008,
+        "max_raw_normalized_action": 487385.0289931289,
+        "max_upright_streak_seconds": 4.16,
+        "passed": false,
+        "saturation_fraction": 0.18,
+        "scale": 1.924247975482264e-05,
+        "termination_reason": null
+      },
+      {
+        "max_cart_excursion": 3.0293320111885813,
+        "max_raw_normalized_action": 1121783.9131307802,
+        "max_upright_streak_seconds": 3.88,
+        "passed": false,
+        "saturation_fraction": 0.20416666666666666,
+        "scale": 1.9296542186468322e-05,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.03145837603246,
+        "max_raw_normalized_action": 1888114.6480290678,
+        "max_upright_streak_seconds": 3.2,
+        "passed": false,
+        "saturation_fraction": 0.28888888888888886,
+        "scale": 1.951279191305105e-05,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0196377322370607,
+        "max_raw_normalized_action": 562853.6352519677,
+        "max_upright_streak_seconds": 1.8800000000000001,
+        "passed": false,
+        "saturation_fraction": 0.4090909090909091,
+        "scale": 2.1242789725712868e-05,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0430452656455715,
+        "max_raw_normalized_action": 2929863.21687268,
+        "max_upright_streak_seconds": 1.22,
+        "passed": false,
+        "saturation_fraction": 0.5572519083969466,
+        "scale": 2.470278535103651e-05,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.061205965230941,
+        "max_raw_normalized_action": 870158.1419698097,
+        "max_upright_streak_seconds": 0.84,
+        "passed": false,
+        "saturation_fraction": 0.5,
+        "scale": 3.1622776601683795e-05,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0156857863434623,
+        "max_raw_normalized_action": 54910.08369265777,
+        "max_upright_streak_seconds": 0.46,
+        "passed": false,
+        "saturation_fraction": 0.52,
+        "scale": 5.623413251903491e-05,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0305763585652863,
+        "max_raw_normalized_action": 1478609.9728887437,
+        "max_upright_streak_seconds": 0.3,
+        "passed": false,
+        "saturation_fraction": 0.7796610169491526,
+        "scale": 0.0001,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0204932311646107,
+        "max_raw_normalized_action": 1852560.3380922298,
+        "max_upright_streak_seconds": 0.16,
+        "passed": false,
+        "saturation_fraction": 0.9664429530201343,
+        "scale": 0.00017782794100389227,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0297529195466053,
+        "max_raw_normalized_action": 28221.173937173982,
+        "max_upright_streak_seconds": 0.12,
+        "passed": false,
+        "saturation_fraction": 0.9,
+        "scale": 0.00031622776601683794,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.094820214954477,
+        "max_raw_normalized_action": 1989485.577611931,
+        "max_upright_streak_seconds": 0.08,
+        "passed": false,
+        "saturation_fraction": 0.9928571428571429,
+        "scale": 0.0005623413251903491,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.042450057889939,
+        "max_raw_normalized_action": 1250674.185116541,
+        "max_upright_streak_seconds": 0.08,
+        "passed": false,
+        "saturation_fraction": 0.9821428571428571,
+        "scale": 0.001,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0584519156472454,
+        "max_raw_normalized_action": 1643205.013963337,
+        "max_upright_streak_seconds": 0.1,
+        "passed": false,
+        "saturation_fraction": 1.0,
+        "scale": 0.0017782794100389228,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0081558347105024,
+        "max_raw_normalized_action": 82228.81901306524,
+        "max_upright_streak_seconds": 0.12,
+        "passed": false,
+        "saturation_fraction": 0.9696969696969697,
+        "scale": 0.0031622776601683794,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.03431922329425,
+        "max_raw_normalized_action": 45874.578169441775,
+        "max_upright_streak_seconds": 0.04,
+        "passed": false,
+        "saturation_fraction": 1.0,
+        "scale": 0.005623413251903491,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0343181114566837,
+        "max_raw_normalized_action": 45860.99619980596,
+        "max_upright_streak_seconds": 0.04,
+        "passed": false,
+        "saturation_fraction": 1.0,
+        "scale": 0.01,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0343161346170437,
+        "max_raw_normalized_action": 45836.82689584327,
+        "max_upright_streak_seconds": 0.04,
+        "passed": false,
+        "saturation_fraction": 1.0,
+        "scale": 0.01778279410038923,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.04928633232172,
+        "max_raw_normalized_action": 938419.0584027284,
+        "max_upright_streak_seconds": 0.04,
+        "passed": false,
+        "saturation_fraction": 1.0,
+        "scale": 0.03162277660168379,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.011631613287719,
+        "max_raw_normalized_action": 712800.8338561484,
+        "max_upright_streak_seconds": 0.04,
+        "passed": false,
+        "saturation_fraction": 1.0,
+        "scale": 0.05623413251903491,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0775868035016427,
+        "max_raw_normalized_action": 1538558.4029874657,
+        "max_upright_streak_seconds": 0.04,
+        "passed": false,
+        "saturation_fraction": 1.0,
+        "scale": 0.1,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0140749072815236,
+        "max_raw_normalized_action": 150994.2789556118,
+        "max_upright_streak_seconds": 0.04,
+        "passed": false,
+        "saturation_fraction": 1.0,
+        "scale": 0.1778279410038923,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0427384512452273,
+        "max_raw_normalized_action": 55826.61700251079,
+        "max_upright_streak_seconds": 0.04,
+        "passed": false,
+        "saturation_fraction": 1.0,
+        "scale": 0.31622776601683794,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0426875483398836,
+        "max_raw_normalized_action": 54983.09608452102,
+        "max_upright_streak_seconds": 0.04,
+        "passed": false,
+        "saturation_fraction": 1.0,
+        "scale": 0.5623413251903491,
+        "termination_reason": "rail_violation"
+      },
+      {
+        "max_cart_excursion": 3.0694625140138703,
+        "max_raw_normalized_action": 834017.0363591079,
+        "max_upright_streak_seconds": 0.04,
+        "passed": false,
+        "saturation_fraction": 1.0,
+        "scale": 1.0,
+        "termination_reason": "rail_violation"
+      }
+    ],
+    "scope": "origin-connected radial diagnostic, not a global basin certificate"
+  },
+  "generated_at": "2026-09-14T04:29:37+00:00",
   "git": {
     "available": true,
-    "commit": "e8b30ffe7948b91dd61a5fd8ccfb6728c03f44fa",
+    "commit": "10c9e41cb552d6bb0d5e566c61a1734f8700bdaf",
     "dirty": true,
     "includes_untracked_files": true,
     "root": "/Users/corbensorenson/Documents/cartpole",
     "status_short": [
-      " M README.md",
-      " M docs/generalized_solver.md",
       " M docs/levers_and_pitfalls.md",
       " M runs/generalized_solver/n2_to_n3_supported_unlock_k1_to_k10_ramp/continuation.json",
-      " M scripts/build_supported_unlock_continuations.py",
-      " M scripts/evaluate_fddp_parked_route.py",
-      " M scripts/evaluate_fddp_two_expert.py",
+      " M runs/generalized_solver/n7_release_actual_handoff_capture_geometry.json",
+      " M runs/generalized_solver/n8_release_actual_handoff_capture_geometry.json",
+      " M runs/generalized_solver/n9_release_actual_handoff_capture_geometry.json",
+      " M scripts/diagnose_capture_geometry.py",
       " M scripts/evaluate_generalized_route_library.py",
       " M scripts/extract_search_handoff_state.py",
       " M scripts/extract_trajectory_states.py",
       " M scripts/force_proposal_to_fddp.py",
       " M scripts/refine_swingup_endpoint_gauss_newton.py",
+      " M scripts/run_joint_morphology_rail_homotopy.py",
       " M scripts/search_capture_online_mpc.py",
       " M scripts/search_capture_recovery.py",
       " M scripts/search_fddp_capture.py",
@@ -47,10 +548,8 @@
       " M scripts/search_swingup_tail_action_cem.py",
       " M scripts/search_swingup_tail_ilqr.py",
       " M src/gcartpole/mjxml.py",
+      " M tests/test_capture_geometry_diagnostics.py",
       " M tests/test_roadmap_verifier.py",
-      " M tests/test_supported_unlock_continuations.py",
-      "?? configs/generalized_n2_to_n3_supported_unlock_k10_damping_relaxation.yaml",
-      "?? configs/generalized_n2_to_n3_supported_unlock_k10_stiffness_relaxation.yaml",
       "?? configs/swingup10_capture_endpoint.yaml",
       "?? configs/swingup10_ghost_continuation.yaml",
       "?? configs/swingup10_ghost_continuation_rail6.yaml",
@@ -71,7 +570,6 @@
       "?? configs/swingup10_split_stiff100.yaml",
       "?? configs/swingup10_support_release_p040539.yaml",
       "?? configs/swingup10_tip_light_rail6.yaml",
-      "?? configs/swingup10_uniform.yaml",
       "?? configs/swingup10_uniform_rail12.yaml",
       "?? configs/swingup8_split_compatible.yaml",
       "?? configs/swingup9_mid_split_locked_continuation.yaml",
@@ -81,14 +579,12 @@
       "?? configs/swingup9_tip_dummy_locked_fixed.yaml",
       "?? scripts/build_ghost_count_continuation.py",
       "?? scripts/convert_gn_endpoint_route.py",
-      "?? scripts/diagnose_capture_geometry.py",
       "?? scripts/embed_locked_split_route.py",
       "?? scripts/evaluate_embedded_source_lqr_tail.py",
       "?? scripts/search_capture_prefix_lqr.py",
       "?? scripts/search_maintenance_actor_cem.py",
       "?? scripts/stitch_route_tail_warm_start.py",
       "?? scripts/translate_generalized_route.py",
-      "?? tests/test_capture_geometry_diagnostics.py",
       "?? tests/test_embed_locked_split_route.py"
     ]
   },

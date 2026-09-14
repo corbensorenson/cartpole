@@ -256,7 +256,11 @@ demand is `738.673` for an actuator limited to `1`, and the minimum stabilizing
 gain scale is about `699.4x` larger than the maximum initially nonsaturating
 scale. It saturates continuously and hits the rail after `1.04 s`. This tells
 the next deterministic optimizer to reshape the arrival into the feasible
-capture set rather than merely shrinking the LQR gain. See the
+capture set rather than merely shrinking the LQR gain. An exact logarithmic
+ray scan now quantifies that target: this particular arrival direction first
+fails at `1.91994e-5` of its current error, so its origin-connected five-second
+capture interval is roughly `52,085x` smaller than the proposed error vector.
+This is a directional basin measurement, not a global basin certificate. See the
 [n=7 audit](runs/generalized_solver/n7_release_actual_handoff_capture_geometry.json),
 [n=8 audit](runs/generalized_solver/n8_release_actual_handoff_capture_geometry.json),
 [n=9 audit](runs/generalized_solver/n9_release_actual_handoff_capture_geometry.json),

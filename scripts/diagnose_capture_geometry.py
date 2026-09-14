@@ -385,6 +385,160 @@ def saturated_feedback_rollout(
     return result
 
 
+def scaled_capture_state(
+    qpos: np.ndarray,
+    qvel: np.ndarray,
+    scale: float,
+    *,
+    cart_target: float = 0.0,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Scale one physical error-state ray toward the upright equilibrium.
+
+    Joint positions are wrapped before scaling so an equivalent ``2*pi``
+    branch does not create a fictitious large error. This is a directional
+    diagnostic, not an estimate of the complete nonlinear capture basin.
+    """
+
+    if not np.isfinite(scale) or not 0.0 <= scale <= 1.0:
+        raise ValueError("capture-ray scale must be finite and in [0, 1]")
+    position_error = np.asarray(qpos, dtype=np.float64).copy()
+    velocity_error = np.asarray(qvel, dtype=np.float64)
+    if position_error.ndim != 1 or velocity_error.shape != position_error.shape:
+        raise ValueError("qpos and qvel must be equal-length vectors")
+    position_error[0] -= float(cart_target)
+    position_error[1:] = wrap_angle(position_error[1:])
+    scaled_qpos = float(scale) * position_error
+    scaled_qpos[0] += float(cart_target)
+    return scaled_qpos, float(scale) * velocity_error
+
+
+def capture_ray_boundary(
+    cfg: dict[str, Any],
+    *,
+    progress: float,
+    qpos: np.ndarray,
+    qvel: np.ndarray,
+    gain: np.ndarray,
+    feedback_scale: float,
+    seconds: float,
+    cart_target: float,
+    minimum_scale: float = 1.0e-8,
+    grid_points: int = 33,
+    bisection_steps: int = 20,
+) -> dict[str, Any]:
+    """Bracket the origin-connected exact capture interval on one state ray."""
+
+    if not np.isfinite(minimum_scale) or not 0.0 < minimum_scale < 1.0:
+        raise ValueError("minimum capture-ray scale must be in (0, 1)")
+    if grid_points < 2 or bisection_steps < 0:
+        raise ValueError(
+            "capture-ray grid must have two points and nonnegative refinement"
+        )
+
+    cache: dict[float, dict[str, Any]] = {}
+
+    def evaluate(scale: float) -> dict[str, Any]:
+        key = float(scale)
+        if key not in cache:
+            scaled_qpos, scaled_qvel = scaled_capture_state(
+                qpos,
+                qvel,
+                key,
+                cart_target=cart_target,
+            )
+            rollout = saturated_feedback_rollout(
+                cfg,
+                progress=progress,
+                qpos=scaled_qpos,
+                qvel=scaled_qvel,
+                gain=gain,
+                feedback_scale=feedback_scale,
+                seconds=seconds,
+                cart_target=cart_target,
+                # A warm-start acceleration belongs only to the original
+                # state. Recomputing it keeps scaled points comparable.
+                qacc_warmstart=None,
+            )
+            cache[key] = {
+                "scale": key,
+                "passed": bool(rollout["requested_upright_hold_completed"]),
+                "termination_reason": rollout["termination_reason"],
+                "max_upright_streak_seconds": float(
+                    rollout["max_upright_streak_seconds"]
+                ),
+                "max_raw_normalized_action": float(
+                    rollout["max_raw_normalized_action"]
+                ),
+                "saturation_fraction": float(rollout["saturation_fraction"]),
+                "max_cart_excursion": float(rollout["max_cart_excursion"]),
+            }
+        return cache[key]
+
+    full = evaluate(1.0)
+    if full["passed"]:
+        return {
+            "scope": "origin-connected radial lower bound, not a global basin certificate",
+            "rollout_seconds": float(seconds),
+            "full_state_passed": True,
+            "maximum_origin_connected_pass_scale": 1.0,
+            "required_radial_contraction_factor": 1.0,
+            "boundary_is_lower_bound": True,
+            "nonmonotonic_pass_detected": False,
+            "grid_minimum_scale": float(minimum_scale),
+            "grid_points": int(grid_points),
+            "bisection_steps": int(bisection_steps),
+            "samples": [full],
+        }
+
+    scales = np.r_[0.0, np.geomspace(minimum_scale, 1.0, grid_points)]
+    rows = [evaluate(float(scale)) for scale in scales]
+    if not rows[0]["passed"]:
+        return {
+            "scope": "origin-connected radial diagnostic, not a global basin certificate",
+            "rollout_seconds": float(seconds),
+            "full_state_passed": False,
+            "maximum_origin_connected_pass_scale": None,
+            "required_radial_contraction_factor": None,
+            "boundary_is_lower_bound": False,
+            "nonmonotonic_pass_detected": any(row["passed"] for row in rows[1:]),
+            "grid_minimum_scale": float(minimum_scale),
+            "grid_points": int(grid_points),
+            "bisection_steps": int(bisection_steps),
+            "samples": rows,
+            "error": "upright equilibrium did not complete the requested rollout",
+        }
+
+    first_failure = next(
+        index for index, row in enumerate(rows[1:], start=1) if not row["passed"]
+    )
+    lower = float(rows[first_failure - 1]["scale"])
+    upper = float(rows[first_failure]["scale"])
+    for _ in range(bisection_steps):
+        midpoint = 0.5 * (lower + upper)
+        if evaluate(midpoint)["passed"]:
+            lower = midpoint
+        else:
+            upper = midpoint
+    later_pass = any(row["passed"] for row in rows[first_failure + 1 :])
+    ordered_samples = [cache[key] for key in sorted(cache)]
+    return {
+        "scope": "origin-connected radial diagnostic, not a global basin certificate",
+        "rollout_seconds": float(seconds),
+        "full_state_passed": False,
+        "maximum_origin_connected_pass_scale": lower,
+        "first_failing_scale": upper,
+        "required_radial_contraction_factor": (
+            float(1.0 / lower) if lower > 0.0 else None
+        ),
+        "boundary_is_lower_bound": False,
+        "nonmonotonic_pass_detected": bool(later_pass),
+        "grid_minimum_scale": float(minimum_scale),
+        "grid_points": int(grid_points),
+        "bisection_steps": int(bisection_steps),
+        "samples": ordered_samples,
+    }
+
+
 def diagnose(
     cfg: dict[str, Any],
     *,
@@ -397,6 +551,10 @@ def diagnose(
     rollout_seconds: float,
     cart_target: float,
     qacc_warmstart: np.ndarray | None = None,
+    scan_capture_ray: bool = False,
+    capture_ray_minimum_scale: float = 1.0e-8,
+    capture_ray_grid_points: int = 33,
+    capture_ray_bisection_steps: int = 20,
 ) -> dict[str, Any]:
     n_links = int(cfg["env"]["n_links"])
     expected = n_links + 1
@@ -424,7 +582,7 @@ def diagnose(
     schur = real_schur_decomposition(scaled_a, scaled_b)
     schur_amplitudes = schur.grouped_amplitudes(dimensionless_state)
     raw_action = float(-feedback_scale * gain @ state)
-    return {
+    result = {
         "schema_version": 1,
         "claim_status": "capture_diagnostic_not_certificate",
         "n_links": n_links,
@@ -482,6 +640,21 @@ def diagnose(
             qacc_warmstart=qacc_warmstart,
         ),
     }
+    if scan_capture_ray:
+        result["empirical_capture_ray"] = capture_ray_boundary(
+            cfg,
+            progress=progress,
+            qpos=qpos,
+            qvel=qvel,
+            gain=gain,
+            feedback_scale=feedback_scale,
+            seconds=rollout_seconds,
+            cart_target=cart_target,
+            minimum_scale=capture_ray_minimum_scale,
+            grid_points=capture_ray_grid_points,
+            bisection_steps=capture_ray_bisection_steps,
+        )
+    return result
 
 
 def main() -> None:
@@ -499,6 +672,14 @@ def main() -> None:
         help="capture-envelope spec defining saved route coordinate scales",
     )
     parser.add_argument("--rollout-seconds", type=float, default=5.0)
+    parser.add_argument(
+        "--scan-capture-ray",
+        action="store_true",
+        help="measure the exact origin-connected capture boundary along the supplied state ray",
+    )
+    parser.add_argument("--capture-ray-minimum-scale", type=float, default=1.0e-8)
+    parser.add_argument("--capture-ray-grid-points", type=int, default=33)
+    parser.add_argument("--capture-ray-bisection-steps", type=int, default=20)
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
     if not 0.0 <= args.progress <= 1.0:
@@ -510,6 +691,10 @@ def main() -> None:
         args.rollout_seconds,
     ) <= 0.0:
         parser.error("diagnostic scales and rollout duration must be positive")
+    if not 0.0 < args.capture_ray_minimum_scale < 1.0:
+        parser.error("--capture-ray-minimum-scale must be in (0, 1)")
+    if args.capture_ray_grid_points < 2 or args.capture_ray_bisection_steps < 0:
+        parser.error("capture-ray grid points must be >=2 and bisection steps >=0")
     config_path = Path(args.config)
     state_path = Path(args.state_json)
     cfg = load_config(config_path)
@@ -562,6 +747,10 @@ def main() -> None:
         rollout_seconds=args.rollout_seconds,
         cart_target=args.cart_target,
         qacc_warmstart=qacc_warmstart,
+        scan_capture_ray=args.scan_capture_ray,
+        capture_ray_minimum_scale=args.capture_ray_minimum_scale,
+        capture_ray_grid_points=args.capture_ray_grid_points,
+        capture_ray_bisection_steps=args.capture_ray_bisection_steps,
     )
     result.update(
         {
