@@ -65,9 +65,32 @@ def test_pipeline_builds_complete_target_parameterized_stage_sequence(
     optimize = by_label["optimize"]
     assert optimize[optimize.index("--rail-soft-limit") + 1] == "4.0"
     assert str(paths.optimizer) in optimize
+    assert "--initial-feedback-scale" in optimize
     assert str(paths.mirror) in by_label["package_mirror"]
     assert "--mirror" in by_label["package_mirror"]
+    assert by_label["package"][by_label["package"].index("--match-feedback-rms") + 1] == str(paths.transfer)
+    assert by_label["gate"][by_label["gate"].index("--tracking-gain-scale") + 1] == "1.0"
     assert "--require-warm-failure" in by_label["verify"]
+
+
+def test_pipeline_can_preserve_transferred_nominal_for_exact_refinement(
+    tmp_path: Path,
+) -> None:
+    args = pipeline_args(
+        ["--optimizer-warm-start", "transferred-nominal", "--rebuild-initial-feedback"]
+    )
+    _source, target, source_links = validate_args(args)
+    paths = PipelinePaths(tmp_path, "similarity")
+    steps = command_steps(
+        args,
+        paths,
+        source_links=source_links,
+        target_links=target.n_links,
+        rail_half_length=target.rail_half_length,
+    )
+    by_label = {label: command for label, command, _output in steps}
+    assert "scripts/package_generalized_route.py" in by_label["make_fddp_warm"]
+    assert "--rebuild-initial-feedback" in by_label["optimize"]
 
 
 def test_pipeline_stops_on_unlatched_optimizer_and_failed_gate(tmp_path: Path) -> None:

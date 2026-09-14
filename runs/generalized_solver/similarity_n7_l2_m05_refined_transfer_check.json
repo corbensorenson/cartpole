@@ -1,0 +1,273 @@
+{
+  "claim_status": "development_deterministic_model_predictive_library",
+  "config": {
+    "bytes": 1946,
+    "path": "configs/generalized_n7_similar_l2_m05.yaml",
+    "sha256": "71dd82e631cfd0df7c55cff4255baad69bd2c3571caa952469d3f735f5b9e279"
+  },
+  "controllers": [
+    {
+      "bytes": 323921,
+      "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_transfer_warm.json",
+      "sha256": "ee93868fcf863bc919b7f7025711aba21d27e606f8771324dee9f28b1ade25b5"
+    },
+    {
+      "bytes": 323953,
+      "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_transfer_warm_mirror.json",
+      "sha256": "06711b0a220c8dc92970af26472f062939fe43791ad985e159583367a78d032f"
+    }
+  ],
+  "episode_results": [
+    {
+      "episode": 0,
+      "max_cart_excursion": 6.025831724212257,
+      "max_upright_streak_seconds": 0.028284271247461905,
+      "predictions": [
+        {
+          "max_cart_excursion": 6.032440839153315,
+          "max_upright_streak_seconds": 0.028284271247461905,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 6.025831724212257,
+          "max_upright_streak_seconds": 0.028284271247461905,
+          "success": false
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.0000000000000002,
+        "margin": -0.38583172421225775,
+        "max_cart_center_excursion": 6.025831724212257,
+        "required_rail_half_length": 6.385831724212258,
+        "required_rail_ratio": 1.0643052873687098
+      },
+      "seed": 73901,
+      "selected_route": 1,
+      "success": false,
+      "termination_reason": "rail_violation"
+    },
+    {
+      "episode": 1,
+      "max_cart_excursion": 6.050329555100567,
+      "max_upright_streak_seconds": 0.028284271247461905,
+      "predictions": [
+        {
+          "max_cart_excursion": 6.050329555100567,
+          "max_upright_streak_seconds": 0.028284271247461905,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 6.144611495936067,
+          "max_upright_streak_seconds": 0.028284271247461905,
+          "success": false
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.0000000000000002,
+        "margin": -0.41032955510056723,
+        "max_cart_center_excursion": 6.050329555100567,
+        "required_rail_half_length": 6.410329555100567,
+        "required_rail_ratio": 1.068388259183428
+      },
+      "seed": 73902,
+      "selected_route": 0,
+      "success": false,
+      "termination_reason": "rail_violation"
+    },
+    {
+      "episode": 2,
+      "max_cart_excursion": 6.1223330485174925,
+      "max_upright_streak_seconds": 0.028284271247461905,
+      "predictions": [
+        {
+          "max_cart_excursion": 6.1223330485174925,
+          "max_upright_streak_seconds": 0.028284271247461905,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 6.130505841080108,
+          "max_upright_streak_seconds": 0.028284271247461905,
+          "success": false
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.0000000000000002,
+        "margin": -0.4823330485174928,
+        "max_cart_center_excursion": 6.1223330485174925,
+        "required_rail_half_length": 6.482333048517493,
+        "required_rail_ratio": 1.0803888414195824
+      },
+      "seed": 73903,
+      "selected_route": 0,
+      "success": false,
+      "termination_reason": "rail_violation"
+    },
+    {
+      "episode": 3,
+      "max_cart_excursion": 6.057314955649417,
+      "max_upright_streak_seconds": 0.028284271247461905,
+      "predictions": [
+        {
+          "max_cart_excursion": 6.057314955649417,
+          "max_upright_streak_seconds": 0.028284271247461905,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 6.10463072487284,
+          "max_upright_streak_seconds": 0.028284271247461905,
+          "success": false
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.0000000000000002,
+        "margin": -0.41731495564941756,
+        "max_cart_center_excursion": 6.057314955649417,
+        "required_rail_half_length": 6.417314955649418,
+        "required_rail_ratio": 1.0695524926082365
+      },
+      "seed": 73904,
+      "selected_route": 0,
+      "success": false,
+      "termination_reason": "rail_violation"
+    },
+    {
+      "episode": 4,
+      "max_cart_excursion": 6.042378758794498,
+      "max_upright_streak_seconds": 0.028284271247461905,
+      "predictions": [
+        {
+          "max_cart_excursion": 6.123937921697547,
+          "max_upright_streak_seconds": 0.028284271247461905,
+          "success": false
+        },
+        {
+          "max_cart_excursion": 6.042378758794498,
+          "max_upright_streak_seconds": 0.028284271247461905,
+          "success": false
+        }
+      ],
+      "rail_requirement": {
+        "configured_rail_ratio": 1.0000000000000002,
+        "margin": -0.402378758794498,
+        "max_cart_center_excursion": 6.042378758794498,
+        "required_rail_half_length": 6.402378758794498,
+        "required_rail_ratio": 1.0670631264657497
+      },
+      "seed": 73905,
+      "selected_route": 1,
+      "success": false,
+      "termination_reason": "rail_violation"
+    }
+  ],
+  "episodes": 5,
+  "generated_at": "2026-09-14T05:27:21+00:00",
+  "git": {
+    "available": true,
+    "commit": "6d4ca76e141e61335511b1a7852a241e9492f876",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      " M Makefile",
+      " M docs/levers_and_pitfalls.md",
+      " M runs/generalized_solver/n2_to_n3_supported_unlock_k1_to_k10_ramp/continuation.json",
+      " M scripts/diagnose_capture_geometry.py",
+      " M scripts/extract_search_handoff_state.py",
+      " M scripts/extract_trajectory_states.py",
+      " M scripts/force_proposal_to_fddp.py",
+      " M scripts/package_generalized_route.py",
+      " M scripts/refine_swingup_endpoint_gauss_newton.py",
+      " M scripts/run_joint_morphology_rail_homotopy.py",
+      " M scripts/search_capture_online_mpc.py",
+      " M scripts/search_capture_recovery.py",
+      " M scripts/search_fddp_capture.py",
+      " M scripts/search_swingup_action_sequence.py",
+      " M scripts/search_swingup_global_exact_cem.py",
+      " M scripts/search_swingup_ilqr_terminal.py",
+      " M scripts/search_swingup_tail_action_cem.py",
+      " M scripts/search_swingup_tail_ilqr.py",
+      " M scripts/solve_generalized_morphology.py",
+      " M scripts/verify_generalized_morphology_gate.py",
+      " M src/gcartpole/mjxml.py",
+      " M tests/test_generalized_pipeline.py",
+      " M tests/test_roadmap_verifier.py",
+      "?? configs/generalized_n7_similar_l2_m05.yaml",
+      "?? configs/swingup10_capture_endpoint.yaml",
+      "?? configs/swingup10_capture_exact_curriculum.yaml",
+      "?? configs/swingup10_ghost_continuation.yaml",
+      "?? configs/swingup10_ghost_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l010m010d01k1_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l010m010d05k2_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l015m010d05k5_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_supported_d10k100_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_supported_rail6.yaml",
+      "?? configs/swingup10_ghost_light_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_tiny_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d005k05_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d01k1_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d05k5_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d1k10_hold_support_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d1k10_rail6.yaml",
+      "?? configs/swingup10_split_locked.yaml",
+      "?? configs/swingup10_split_stiff100.yaml",
+      "?? configs/swingup10_support_release_p040539.yaml",
+      "?? configs/swingup10_tip_light_rail6.yaml",
+      "?? configs/swingup10_uniform_rail12.yaml",
+      "?? configs/swingup8_split_compatible.yaml",
+      "?? configs/swingup9_mid_split_locked_continuation.yaml",
+      "?? configs/swingup9_split_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_302_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_fixed.yaml",
+      "?? scripts/build_ghost_count_continuation.py",
+      "?? scripts/convert_gn_endpoint_route.py",
+      "?? scripts/embed_locked_split_route.py",
+      "?? scripts/evaluate_embedded_source_lqr_tail.py",
+      "?? scripts/search_capture_prefix_lqr.py",
+      "?? scripts/search_maintenance_actor_cem.py",
+      "?? scripts/stitch_route_tail_warm_start.py",
+      "?? scripts/translate_generalized_route.py",
+      "?? tests/test_embed_locked_split_route.py",
+      "?? tests/test_package_generalized_route.py"
+    ]
+  },
+  "max_required_rail_ratio": 1.0803888414195824,
+  "route_counts": {
+    "0": 3,
+    "1": 2
+  },
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "seed_start": 73901,
+  "selection": {
+    "cart_target": 0.0,
+    "conditioning_seconds": 14.142135623730951,
+    "conditioning_target": 0.0,
+    "park_seconds": 0.0,
+    "phase_window": 0,
+    "route_lqr_control_costs": [
+      1000.0,
+      1000.0
+    ],
+    "route_target_mode": "fixed",
+    "tracking_gain_scale": 2.0,
+    "type": "exact_forward_model_argmin"
+  },
+  "success_rate": 0.0,
+  "summary": "Uninterrupted noisy evaluation with exact forward selection over mirror-symmetric deterministic routes.",
+  "termination_counts": {
+    "rail_violation": 5
+  }
+}

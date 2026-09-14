@@ -244,16 +244,24 @@ Physical scale is now executable too. The same dimensionless one-link
 energy/PFL controller and exact LQR capture passed **80/80** noisy episodes on
 the full half/double-length x half/double-mass grid with no controller retuning.
 An analytically transformed two-link feedback route then passed another
-**20/20** episodes at double length and half mass, for **100/100** verified
-similarity episodes across links one and two.
+**20/20** episodes at double length and half mass. The deliberately harder
+seven-link version initially failed **0/5** after blind transfer; the same
+count-independent exact-target refinement, analytic mirror, and automatically
+RMS-normalized feedback pipeline then passed **20/20** fresh noisy starts. The
+refined route held for `36.034 s`, prediction matched execution in all 20, and
+its maximum body-aware rail requirement was `0.8584` times total chain length.
+That brings the scale-family certificate to **120/120** across links one, two,
+and seven.
 The generator preserves force authority, natural-time/control-rate, damping,
 armature, cart/rail geometry, and initial-noise groups exactly; the verifier
-also checks body-aware rail demand and normalized capture timing. See the
-[dynamic-similarity certificate](runs/generalized_solver/similarity_ladder_n1_n2.json)
+also checks body-aware rail demand, normalized capture timing, and the
+transferred-feedback authority envelope. See the
+[dynamic-similarity certificate](runs/generalized_solver/similarity_ladder_n1_n2_n7.json),
+[seven-link pipeline manifest](runs/generalized_solver/similarity_n7_l2_m05_refined_pipeline.json),
 and [derivation and limits](docs/generalized_solver.md). This proves the
-declared cases, not arbitrary unequal morphologies or
-unchanged open-loop replay: target-model feedback/refinement is still required
-before any transferred route is promoted.
+declared cases, not arbitrary unequal morphologies or arbitrary link count;
+target-model feedback/refinement and noisy gating remain mandatory before a
+transferred route is promoted.
 
 The count-agnostic locked-split continuation has also crossed its deliberately
 hard n=2 to unequal-n=3 topology boundary. Direct equality relaxation reached

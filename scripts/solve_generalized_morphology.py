@@ -152,22 +152,32 @@ def command_steps(
         "--out",
         str(paths.negative),
     ]
-    make_warm = [
-        python,
-        "scripts/force_proposal_to_fddp.py",
-        "--config",
-        str(args.target_config),
-        "--spec",
-        str(args.spec),
-        "--proposal",
-        str(paths.transfer),
-        "--record-key",
-        "controller",
-        "--progress",
-        "1.0",
-        "--out",
-        str(paths.fddp_warm),
-    ]
+    if args.optimizer_warm_start == "exact-replay":
+        make_warm = [
+            python,
+            "scripts/force_proposal_to_fddp.py",
+            "--config",
+            str(args.target_config),
+            "--spec",
+            str(args.spec),
+            "--proposal",
+            str(paths.transfer),
+            "--record-key",
+            "controller",
+            "--progress",
+            "1.0",
+            "--out",
+            str(paths.fddp_warm),
+        ]
+    else:
+        make_warm = [
+            python,
+            "scripts/package_generalized_route.py",
+            "--controller",
+            str(paths.transfer),
+            "--out",
+            str(paths.fddp_warm),
+        ]
     optimize = [
         python,
         "scripts/search_fddp_capture.py",
@@ -182,6 +192,8 @@ def command_steps(
         "--initial-controller",
         str(paths.fddp_warm),
         "--initial-feasible",
+        "--initial-feedback-scale",
+        str(args.initial_feedback_scale),
         "--iterations",
         str(args.iterations),
         "--initial-regularization",
@@ -192,6 +204,18 @@ def command_steps(
         str(args.lqr_scale),
         "--lqr-control-cost",
         str(args.lqr_control_cost),
+        "--lqr-cart-position-cost",
+        str(args.lqr_cart_position_cost),
+        "--lqr-absolute-angle-cost",
+        str(args.lqr_absolute_angle_cost),
+        "--lqr-cart-velocity-cost",
+        str(args.lqr_cart_velocity_cost),
+        "--lqr-absolute-angular-velocity-cost",
+        str(args.lqr_absolute_angular_velocity_cost),
+        "--lqr-relative-angle-cost",
+        str(args.lqr_relative_angle_cost),
+        "--lqr-relative-angular-velocity-cost",
+        str(args.lqr_relative_angular_velocity_cost),
         "--control-cost",
         str(args.control_cost),
         "--stage-weight",
@@ -222,6 +246,8 @@ def command_steps(
         "--out",
         str(paths.optimizer),
     ]
+    if args.rebuild_initial_feedback:
+        optimize.insert(optimize.index("--initial-feedback-scale"), "--rebuild-initial-feedback")
     if args.allow_unstable_lyapunov:
         optimize.insert(-2, "--allow-unstable-lyapunov")
     package = [
@@ -231,8 +257,20 @@ def command_steps(
         str(paths.optimizer),
         "--out",
         str(paths.route),
+        "--match-feedback-rms",
+        str(paths.transfer),
     ]
-    package_mirror = [*package[:-1], str(paths.mirror), "--mirror"]
+    package_mirror = [
+        python,
+        "scripts/package_generalized_route.py",
+        "--controller",
+        str(paths.optimizer),
+        "--out",
+        str(paths.mirror),
+        "--match-feedback-rms",
+        str(paths.transfer),
+        "--mirror",
+    ]
     gate = [
         python,
         "scripts/evaluate_generalized_route_library.py",
@@ -249,7 +287,7 @@ def command_steps(
         "--conditioning-seconds",
         str(args.conditioning_seconds),
         "--tracking-gain-scale",
-        str(args.tracking_gain),
+        "1.0",
         "--phase-window",
         str(args.phase_window),
         "--out",
@@ -332,11 +370,29 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("--transfer-tracking-gain", type=float, default=1.5)
     result.add_argument("--transfer-phase-window", type=int, default=6)
     result.add_argument("--tracking-gain", type=float, default=1.0)
+    result.add_argument("--initial-feedback-scale", type=float, default=1.0)
+    result.add_argument("--rebuild-initial-feedback", action="store_true")
+    result.add_argument(
+        "--optimizer-warm-start",
+        choices=("exact-replay", "transferred-nominal"),
+        default="exact-replay",
+        help=(
+            "Use exact target replay or the transformed nominal coordinate route as "
+            "the optimizer seed. The latter preserves a dynamically similar nominal "
+            "when an unstable target replay leaves its local capture basin."
+        ),
+    )
     result.add_argument("--phase-window", type=int, default=0)
     result.add_argument("--iterations", type=int, default=60)
     result.add_argument("--initial-regularization", type=float, default=1e-4)
     result.add_argument("--lqr-scale", type=float, default=1.0)
     result.add_argument("--lqr-control-cost", type=float, default=1000.0)
+    result.add_argument("--lqr-cart-position-cost", type=float, default=0.1)
+    result.add_argument("--lqr-absolute-angle-cost", type=float, default=100.0)
+    result.add_argument("--lqr-cart-velocity-cost", type=float, default=0.1)
+    result.add_argument("--lqr-absolute-angular-velocity-cost", type=float, default=1.0)
+    result.add_argument("--lqr-relative-angle-cost", type=float, default=1.0)
+    result.add_argument("--lqr-relative-angular-velocity-cost", type=float, default=0.01)
     result.add_argument("--control-cost", type=float, default=0.1)
     result.add_argument("--stage-weight", type=float, default=0.01)
     result.add_argument("--terminal-weight", type=float, default=1000.0)
@@ -410,11 +466,18 @@ def validate_args(args: argparse.Namespace) -> tuple[Any, Any, int]:
     if min(
         args.transfer_tracking_gain,
         args.tracking_gain,
+        args.initial_feedback_scale,
         args.phase_window,
         args.transfer_phase_window,
         args.terminal_cart_weight,
         args.terminal_cart_velocity_weight,
         args.terminal_hinge_velocity_factor,
+        args.lqr_cart_position_cost,
+        args.lqr_absolute_angle_cost,
+        args.lqr_cart_velocity_cost,
+        args.lqr_absolute_angular_velocity_cost,
+        args.lqr_relative_angle_cost,
+        args.lqr_relative_angular_velocity_cost,
     ) < 0.0:
         raise ValueError("tracking, phase, and optional terminal weights must be nonnegative")
     inferred_source_links = source_link_count(Path(args.source_controller))

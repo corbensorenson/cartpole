@@ -90,28 +90,41 @@ at doubled length and half mass. Its uncontrolled target replay was not rail
 feasible, making it a useful negative control; the algebraically transferred
 feedback law had maximum invariance error `1.14e-13` and the unchanged shared
 route selector passed **20/20** new noisy episodes. Prediction matched execution
-in all 20, and the body-aware rail ratio remained `1.013`. Together the current
-similarity certificate covers **100/100** episodes across link counts one and
-two. Pilot transfers at higher counts confirm that some routes remain too
-numerically fragile for blind replay, so exact-target refinement is still part
-of the general recipe.
+in all 20, and the body-aware rail ratio remained `1.013`.
 
-The [hash-bound similarity certificate](../runs/generalized_solver/similarity_ladder_n1_n2.json)
+The seven-link route then exercised the complete repair path on a plant with
+every length doubled and every mass halved. Blind transferred feedback failed
+**0/5**, while the same count-independent pipeline rebuilt feedback on the exact
+target plant, ran bounded Box-FDDP refinement, mirrored the result analytically,
+and normalized the refined feedback RMS to the transferred controller's
+dimensionless authority envelope. That normalization was computed from the
+controllers (`0.476261`), not selected as a seven-link constant. Exact replay
+held upright for `36.034 s`; the final pair passed **20/20** fresh noisy starts
+with prediction matching execution every time. Maximum body-aware rail demand
+was `0.8584 L` on the configured `R/L = 1.0` plant. See the
+[one-command pipeline manifest](../runs/generalized_solver/similarity_n7_l2_m05_refined_pipeline.json)
+and [hash-bound seven-link frontier](../runs/generalized_solver/similarity_n7_l2_m05_refined_frontier.json).
+
+Together the current similarity certificate covers **120/120** episodes across
+link counts one, two, and seven, including both blind transfer and generic
+exact-target repair.
+
+The [hash-bound similarity certificate](../runs/generalized_solver/similarity_ladder_n1_n2_n7.json)
 checks generated config hashes, pi groups, physical scale ratios, controller
 parameters, dimensionless conditioning and switch times, seed uniqueness,
-uninterrupted outcomes, and body-aware rail calculation. Reproduce it with:
+uninterrupted outcomes, feedback-envelope normalization, and body-aware rail
+calculation. Reproduce it with:
 
 ```bash
 make generalized-similarity
 ```
 
-This closes physical unit scaling for the declared one-link family and one
-two-link feedback transfer. It does **not** close arbitrary link count or
-unequal length/mass fractions. A
-frozen open-loop route can amplify numerical or launch perturbations even when
-the plant equations are similar, so transferred routes remain `not_solution`
-warm starts. The general recipe must regenerate exact-target feedback or run a
-bounded target-model refinement before promotion.
+This closes physical unit scaling for the declared one-link family, one
+two-link feedback transfer, and one repaired seven-link target. It does **not**
+close arbitrary link count or unequal length/mass fractions. A frozen open-loop
+route can amplify numerical or launch perturbations even when the plant
+equations are similar, so transferred routes remain `not_solution` warm starts
+until exact-target replay and noisy gating pass.
 
 ## Solver architecture
 

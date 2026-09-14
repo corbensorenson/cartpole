@@ -68,6 +68,18 @@ DEFAULT_ROUTE_CASES = {
         Path("runs/generalized_solver/similarity_n2_l2_m05_gate20.json"),
     )
 }
+DEFAULT_REFINED_ROUTE_CASES = {
+    "n7_l2_m05_refined": (
+        7,
+        2.0,
+        0.5,
+        Path("runs/generalized_solver/similarity_n7_l2_m05.json"),
+        Path("configs/generalized_n7_similar_l2_m05.yaml"),
+        Path("runs/generalized_solver/similarity_n7_l2_m05_refined_route.json"),
+        Path("runs/generalized_solver/similarity_n7_l2_m05_refined_frontier.json"),
+        Path("runs/generalized_solver/similarity_n7_l2_m05_refined_pipeline.json"),
+    )
+}
 
 INVARIANT_SCALARS = (
     "cart_damping_ratio",
@@ -416,19 +428,142 @@ def verify_route_similarity_cases(
     return rows
 
 
+def verify_refined_similarity_cases(
+    minimum_episodes: int = 20,
+) -> list[dict[str, Any]]:
+    """Verify similarity cases that needed the generic exact-target repair stage."""
+
+    rows: list[dict[str, Any]] = []
+    for label, (
+        n_links,
+        length_scale,
+        mass_scale,
+        similarity_path,
+        config_path,
+        route_path,
+        frontier_path,
+        pipeline_path,
+    ) in DEFAULT_REFINED_ROUTE_CASES.items():
+        similarity = load(similarity_path)
+        route = load(route_path)
+        frontier = load(frontier_path)
+        pipeline = load(pipeline_path)
+        errors: list[str] = []
+        scales = similarity.get("scales", {})
+        _check_close(
+            errors,
+            "length scale",
+            float(scales.get("length", math.nan)),
+            length_scale,
+            1e-12,
+        )
+        _check_close(
+            errors,
+            "mass scale",
+            float(scales.get("mass", math.nan)),
+            mass_scale,
+            1e-12,
+        )
+        if (
+            float(
+                similarity.get("dimensionless_errors", {}).get(
+                    "maximum_abs", math.inf
+                )
+            )
+            > 1e-12
+        ):
+            errors.append("emitted maximum dimensionless error exceeds tolerance")
+        if frontier.get("passed") is not True:
+            errors.append("exact-target refinement frontier did not pass")
+        if pipeline.get("passed") is not True:
+            errors.append("one-command exact-target pipeline did not pass")
+        target_pi = similarity.get("target_dimensionless", {})
+        morphology = frontier.get("morphology", {})
+        if int(morphology.get("n_links", -1)) != n_links:
+            errors.append("refined frontier has the wrong link count")
+        if morphology.get("dimensionless") != target_pi:
+            errors.append("refined frontier plant differs from similarity target")
+        config_metadata = file_metadata(config_path)
+        if (
+            frontier.get("evidence", {}).get("config", {}).get("sha256")
+            != config_metadata["sha256"]
+        ):
+            errors.append("refined frontier config hash differs from target config")
+        results = frontier.get("results", {})
+        episodes = int(results.get("noisy_gate_episodes", 0))
+        successes = round(
+            episodes * float(results.get("noisy_gate_success_rate", 0.0))
+        )
+        if episodes < minimum_episodes or successes != episodes:
+            errors.append("refined noisy gate is incomplete")
+        if int(results.get("prediction_execution_agreements", -1)) != episodes:
+            errors.append("refined route prediction and execution disagree")
+        if results.get("optimizer_feasible") is not True:
+            errors.append("exact target optimizer did not report feasibility")
+        if results.get("optimizer_exact_replay_success") is not True:
+            errors.append("exact target optimizer replay failed")
+        controller = route.get("controller", {})
+        packaged_rms = float(controller.get("packaged_feedback_gain_rms", math.nan))
+        reference_rms = float(
+            controller.get("feedback_rms_reference_value", math.nan)
+        )
+        _check_close(
+            errors,
+            "normalized feedback RMS",
+            packaged_rms,
+            reference_rms,
+            1e-12,
+        )
+        scale = float(controller.get("packaged_feedback_gain_scale", math.nan))
+        if not math.isfinite(scale) or scale <= 0.0:
+            errors.append("feedback RMS normalization scale is invalid")
+        rail = frontier.get("rail_relationship", {})
+        required_ratio = float(
+            rail.get("maximum_body_aware_required_ratio", math.inf)
+        )
+        configured_ratio = float(rail.get("configured_ratio", -math.inf))
+        if required_ratio >= configured_ratio:
+            errors.append("body-aware required rail ratio exceeds configured ratio")
+        rows.append(
+            {
+                "label": label,
+                "passed": not errors,
+                "errors": errors,
+                "scales": {"length": length_scale, "mass": mass_scale},
+                "similarity": file_metadata(similarity_path),
+                "config": config_metadata,
+                "route": file_metadata(route_path),
+                "frontier": file_metadata(frontier_path),
+                "pipeline": file_metadata(pipeline_path),
+                "episodes": episodes,
+                "successes": successes,
+                "prediction_execution_agreements": int(
+                    results.get("prediction_execution_agreements", -1)
+                ),
+                "unrefined_transfer_success_rate": float(
+                    results.get("unrefined_transfer_success_rate", math.nan)
+                ),
+                "feedback_rms_normalization_scale": scale,
+                "maximum_body_aware_required_rail_ratio": required_ratio,
+            }
+        )
+    return rows
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--minimum-episodes", type=int, default=20)
     parser.add_argument(
         "--out",
-        default="runs/generalized_solver/similarity_ladder_n1_n2.json",
+        default="runs/generalized_solver/similarity_ladder_n1_n2_n7.json",
     )
     args = parser.parse_args()
     if args.minimum_episodes < 1:
         raise ValueError("minimum episodes must be positive")
     rows = verify_similarity_grid(args.minimum_episodes)
     route_rows = verify_route_similarity_cases(args.minimum_episodes)
-    all_rows = [*rows, *route_rows]
+    refined_rows = verify_refined_similarity_cases(args.minimum_episodes)
+    all_rows = [*rows, *route_rows, *refined_rows]
     passed = all(row["passed"] for row in all_rows)
     total_episodes = sum(int(row["episodes"]) for row in all_rows)
     total_successes = sum(int(row["successes"]) for row in all_rows)
@@ -439,12 +574,13 @@ def main() -> None:
         "passed": passed,
         "summary": (
             "One dimensionless energy/PFL/exact-LQR controller passed the exact "
-            "one-link 2x2 length/mass grid, and one transformed two-link "
-            "feedback route passed its doubled-length/half-mass gate."
+            "one-link 2x2 length/mass grid, one transformed two-link feedback "
+            "route passed directly, and the same architecture repaired and gated "
+            "the doubled-length/half-mass seven-link target."
         ),
         "source_gate": file_metadata(DEFAULT_SOURCE_GATE),
         "scope": {
-            "link_counts": [1, 2],
+            "link_counts": [1, 2, 7],
             "length_scales": [0.5, 2.0],
             "mass_scales": [0.5, 2.0],
             "minimum_episodes_per_case": args.minimum_episodes,
@@ -457,16 +593,19 @@ def main() -> None:
             "force, damping, armature, rail, and body-geometry scaling",
             "unchanged dimensionless energy/PFL controller parameters",
             "exact-linearization LQR capture",
+            "generic exact-target Box-FDDP repair",
+            "automatic transferred-envelope feedback RMS normalization",
             "uninterrupted noisy hanging-start gates",
             "body-aware rail-ratio measurement",
         ],
         "rows": rows,
         "route_transfer_rows": route_rows,
+        "refined_route_rows": refined_rows,
         "boundary": (
-            "This verifies the declared one-link family and one two-link feedback "
-            "transfer. It does not prove arbitrary unequal length or mass fractions, "
-            "arbitrary link count, or robust replay of one frozen open-loop force trace; "
-            "higher-count fragile routes can still require exact-target refinement."
+            "This verifies the declared one-link family, one two-link feedback "
+            "transfer, and one exact-refined seven-link similarity target. It does "
+            "not prove arbitrary unequal length or mass fractions, arbitrary link "
+            "count, or robust replay of one frozen open-loop force trace."
         ),
         "runtime": runtime_metadata(),
         "git": git_metadata(Path(__file__).resolve().parents[1]),

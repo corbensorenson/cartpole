@@ -419,10 +419,15 @@ generalized-similarity:
 	PYTHONPATH=src:scripts $(PYTHON) scripts/generalized_swingup_solver.py transfer --source-config configs/swingup7_uniform.yaml --target-config configs/generalized_n2_similar_l2_m05.yaml --source-links 2 --target-links 2 --controller runs/generalized_solver/n2_route.json --out runs/generalized_solver/similarity_n2_l2_m05_route.json
 	PYTHONPATH=src:scripts $(PYTHON) scripts/mirror_generalized_route.py --controller runs/generalized_solver/similarity_n2_l2_m05_route.json --out runs/generalized_solver/similarity_n2_l2_m05_route_mirror.json
 	PYTHONPATH=src:scripts $(PYTHON) scripts/evaluate_generalized_route_library.py --config configs/generalized_n2_similar_l2_m05.yaml --n-links 2 --controller runs/generalized_solver/similarity_n2_l2_m05_route.json --controller runs/generalized_solver/similarity_n2_l2_m05_route_mirror.json --episodes 20 --seed 71901 --conditioning-seconds 21.213203435596427 --tracking-gain-scale 1.5 --phase-window 6 --out runs/generalized_solver/similarity_n2_l2_m05_gate20.json
+	$(MAKE) generalized-similarity-n7 PYTHON=$(PYTHON)
 	$(MAKE) verify-generalized-similarity PYTHON=$(PYTHON)
 
+generalized-similarity-n7:
+	PYTHONPATH=src:scripts $(PYTHON) scripts/generalized_swingup_solver.py similarity --config configs/swingup7_uniform.yaml --override env.n_links=7 --length-scale 2 --mass-scale 0.5 --out-config configs/generalized_n7_similar_l2_m05.yaml --out runs/generalized_solver/similarity_n7_l2_m05.json
+	PYTHONPATH=.:src:scripts $(PYTHON) scripts/solve_generalized_morphology.py --source-config configs/swingup7_uniform.yaml --source-controller runs/swingup7_uniform/seven_link_release_controller.json --target-config configs/generalized_n7_similar_l2_m05.yaml --output-dir runs/generalized_solver --name similarity_n7_l2_m05_refined --optimizer-warm-start transferred-nominal --rebuild-initial-feedback --initial-feedback-scale 2 --iterations 40 --initial-regularization 1e-4 --tracking-gain 2 --lqr-scale 1 --lqr-control-cost 1000 --lqr-cart-position-cost .025 --lqr-absolute-angle-cost 100 --lqr-cart-velocity-cost .05 --lqr-absolute-angular-velocity-cost 2 --lqr-relative-angle-cost 1 --lqr-relative-angular-velocity-cost .02 --control-cost .1 --stage-weight .01 --terminal-weight 1000 --terminal-state-weight 10000 --terminal-cart-weight 100 --terminal-cart-velocity-weight 100 --terminal-hinge-velocity-factor 2 --rail-soft-margin .5 --rail-weight 1000000 --handoff-angle-abs .15 --handoff-cart-abs 2.5 --handoff-cart-velocity-abs .7071067811865476 --handoff-hinge-velocity-rms .5303300858899106 --allow-unstable-lyapunov --require-transfer-failure --transfer-check-episodes 5 --transfer-check-seed 73901 --conditioning-seconds 14.142135623730951 --transfer-tracking-gain 2 --transfer-phase-window 0 --gate-episodes 20 --gate-seed 73921
+
 verify-generalized-similarity:
-	PYTHONPATH=src:scripts $(PYTHON) scripts/verify_generalized_similarity.py --out runs/generalized_solver/similarity_ladder_n1_n2.json
+	PYTHONPATH=src:scripts $(PYTHON) scripts/verify_generalized_similarity.py --out runs/generalized_solver/similarity_ladder_n1_n2_n7.json
 
 generalized-adaptation-gates:
 	PYTHONPATH=src:scripts $(PYTHON) scripts/evaluate_generalized_force_adaptation.py --config configs/swingup7_uniform.yaml --n-links 1 --episodes 3 --seed 82101 --conditioning-seconds 10 --calibration-seconds 4 --calibration-amplitude 0.25 --actuator-gain 1.18 --actuator-bias 0.06 --out runs/generalized_solver/adaptation_n1_paired3.json
@@ -449,7 +454,7 @@ generalized-unequal-n2:
 	$(MAKE) verify-generalized-unequal-n2 PYTHON=$(PYTHON)
 
 verify-generalized-unequal-n2:
-	PYTHONPATH=src:scripts $(PYTHON) scripts/verify_generalized_morphology_gate.py --config configs/generalized_n2_unequal.yaml --warm runs/generalized_solver/n2_unequal_transfer_warm.json --negative runs/generalized_solver/n2_unequal_transfer_negative5.json --optimizer runs/generalized_solver/n2_unequal_fddp.json --route runs/generalized_solver/n2_unequal_route.json --mirror runs/generalized_solver/n2_unequal_route_mirror.json --gate runs/generalized_solver/n2_unequal_gate20.json --require-warm-failure --out runs/generalized_solver/n2_unequal_frontier.json
+	PYTHONPATH=src:scripts $(PYTHON) scripts/verify_generalized_morphology_gate.py --config configs/generalized_n2_unequal.yaml --warm runs/generalized_solver/n2_unequal_transfer_warm.json --negative runs/generalized_solver/n2_unequal_transfer_negative5.json --optimizer runs/generalized_solver/n2_unequal_fddp.json --route runs/generalized_solver/n2_unequal_route.json --mirror runs/generalized_solver/n2_unequal_route_mirror.json --gate runs/generalized_solver/n2_unequal_gate20.json --require-warm-failure --require-nonuniform-lengths --require-nonuniform-masses --out runs/generalized_solver/n2_unequal_frontier.json
 
 generalized-modal-seed6:
 	PYTHONPATH=src:scripts $(PYTHON) scripts/materialize_modal_phase_seed.py --config configs/swingup7_uniform.yaml --n-links 6 --seconds 3.9 --override env.rail_limit=12.0 --out runs/generalized_solver/n6_analytic_modal_seed_h3p9.json

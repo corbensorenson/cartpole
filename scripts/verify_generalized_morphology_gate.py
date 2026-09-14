@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Verify one transferred-and-refined unequal-morphology development gate."""
+"""Verify one transferred-and-refined target-morphology development gate."""
 
 from __future__ import annotations
 
@@ -38,6 +38,8 @@ def main() -> None:
     parser.add_argument("--gate", required=True)
     parser.add_argument("--minimum-episodes", type=int, default=20)
     parser.add_argument("--require-warm-failure", action="store_true")
+    parser.add_argument("--require-nonuniform-lengths", action="store_true")
+    parser.add_argument("--require-nonuniform-masses", action="store_true")
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
 
@@ -66,9 +68,11 @@ def main() -> None:
 
     uniform_lengths = np.full(setup.n_links, 1.0 / setup.n_links)
     uniform_masses = np.full(setup.n_links, 1.0 / setup.n_links)
-    if np.allclose(pi.length_fractions, uniform_lengths):
+    if args.require_nonuniform_lengths and np.allclose(
+        pi.length_fractions, uniform_lengths
+    ):
         errors.append("length fractions are uniform")
-    if np.allclose(pi.mass_fractions, uniform_masses):
+    if args.require_nonuniform_masses and np.allclose(pi.mass_fractions, uniform_masses):
         errors.append("mass fractions are uniform")
     target = warm.get("target", {}).get("dimensionless", {})
     if not np.allclose(target.get("length_fractions", []), pi.length_fractions):
@@ -122,7 +126,7 @@ def main() -> None:
         summary_text = (
             "Arc-length transfer supplied the deterministic start, then the same "
             "exact target-plant Box-FDDP/Riccati/mirror architecture passed the "
-            "declared unequal-morphology noisy gate. This verifies one morphology, "
+            "declared target-morphology noisy gate. This verifies one morphology, "
             "not arbitrary setups."
         )
     else:
@@ -134,7 +138,7 @@ def main() -> None:
     output = {
         "schema_version": 1,
         "generated_at": utc_timestamp(),
-        "claim_status": "verified_development_unequal_morphology_gate",
+        "claim_status": "verified_development_generalized_morphology_gate",
         "passed": passed,
         "summary": summary_text,
         "errors": errors,
@@ -170,9 +174,10 @@ def main() -> None:
             "ratio_margin": pi.rail_ratio - required_ratio,
         },
         "boundary": (
-            "This proves the architecture on the declared [1.2, 1.8] m / "
-            "[0.35, 0.65] kg plant only. Broader unequal-morphology coverage "
-            "and automatic rail minimization remain active work."
+            f"This verifies the architecture on this declared {setup.n_links}-link "
+            f"plant with lengths {setup.lengths.tolist()} and masses "
+            f"{setup.masses.tolist()} only. Broader morphology coverage and "
+            "automatic rail minimization remain active work."
         ),
         "runtime": runtime_metadata(),
         "git": git_metadata(Path(__file__).resolve().parents[1]),

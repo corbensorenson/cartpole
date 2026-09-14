@@ -1,0 +1,283 @@
+{
+  "claim_status": "verified_development_generalized_morphology_pipeline",
+  "frontier": {
+    "bytes": 8648,
+    "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_frontier.json",
+    "sha256": "5edcc469099af4dcc7fe391efcafb437f91522ad42920d278a7d128c952cac24"
+  },
+  "generated_at": "2026-09-14T05:28:07+00:00",
+  "git": {
+    "available": true,
+    "commit": "6d4ca76e141e61335511b1a7852a241e9492f876",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      " M Makefile",
+      " M docs/levers_and_pitfalls.md",
+      " M runs/generalized_solver/n2_to_n3_supported_unlock_k1_to_k10_ramp/continuation.json",
+      " M scripts/diagnose_capture_geometry.py",
+      " M scripts/extract_search_handoff_state.py",
+      " M scripts/extract_trajectory_states.py",
+      " M scripts/force_proposal_to_fddp.py",
+      " M scripts/package_generalized_route.py",
+      " M scripts/refine_swingup_endpoint_gauss_newton.py",
+      " M scripts/run_joint_morphology_rail_homotopy.py",
+      " M scripts/search_capture_online_mpc.py",
+      " M scripts/search_capture_recovery.py",
+      " M scripts/search_fddp_capture.py",
+      " M scripts/search_swingup_action_sequence.py",
+      " M scripts/search_swingup_global_exact_cem.py",
+      " M scripts/search_swingup_ilqr_terminal.py",
+      " M scripts/search_swingup_tail_action_cem.py",
+      " M scripts/search_swingup_tail_ilqr.py",
+      " M scripts/solve_generalized_morphology.py",
+      " M scripts/verify_generalized_morphology_gate.py",
+      " M src/gcartpole/mjxml.py",
+      " M tests/test_generalized_pipeline.py",
+      " M tests/test_roadmap_verifier.py",
+      "?? configs/generalized_n7_similar_l2_m05.yaml",
+      "?? configs/swingup10_capture_endpoint.yaml",
+      "?? configs/swingup10_capture_exact_curriculum.yaml",
+      "?? configs/swingup10_ghost_continuation.yaml",
+      "?? configs/swingup10_ghost_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l010m010d01k1_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l010m010d05k2_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l015m010d05k5_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_supported_d10k100_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_supported_rail6.yaml",
+      "?? configs/swingup10_ghost_light_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_tiny_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d005k05_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d01k1_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d05k5_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d1k10_hold_support_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d1k10_rail6.yaml",
+      "?? configs/swingup10_split_locked.yaml",
+      "?? configs/swingup10_split_stiff100.yaml",
+      "?? configs/swingup10_support_release_p040539.yaml",
+      "?? configs/swingup10_tip_light_rail6.yaml",
+      "?? configs/swingup10_uniform_rail12.yaml",
+      "?? configs/swingup8_split_compatible.yaml",
+      "?? configs/swingup9_mid_split_locked_continuation.yaml",
+      "?? configs/swingup9_split_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_302_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_fixed.yaml",
+      "?? scripts/build_ghost_count_continuation.py",
+      "?? scripts/convert_gn_endpoint_route.py",
+      "?? scripts/embed_locked_split_route.py",
+      "?? scripts/evaluate_embedded_source_lqr_tail.py",
+      "?? scripts/search_capture_prefix_lqr.py",
+      "?? scripts/search_maintenance_actor_cem.py",
+      "?? scripts/stitch_route_tail_warm_start.py",
+      "?? scripts/translate_generalized_route.py",
+      "?? tests/test_embed_locked_split_route.py",
+      "?? tests/test_package_generalized_route.py"
+    ]
+  },
+  "next_action": null,
+  "passed": true,
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "source": {
+    "config": {
+      "bytes": 1790,
+      "path": "configs/swingup7_uniform.yaml",
+      "sha256": "1e92bc4621428f2fe343b7483b2c32d7804a82762159483db280e71a526b6c04"
+    },
+    "controller": {
+      "bytes": 206061,
+      "path": "runs/swingup7_uniform/seven_link_release_controller.json",
+      "sha256": "0e70e1de5547c41569401ccf246b30b9650c369d81cc7846d02523ab72f7b01f"
+    },
+    "dimensionless": {
+      "cart_damping_ratio": 0.005530012636093311,
+      "cart_half_length_ratio": 0.060000000000000005,
+      "cart_to_link_mass": 1.0000000000000002,
+      "chain_length": 2.9999999999999996,
+      "force_authority": 4.077471967380225,
+      "joint_armature_ratio": 2.777777777777779e-05,
+      "joint_damping_ratios": [
+        6.583348376301563e-05,
+        6.583348376301563e-05,
+        6.583348376301563e-05,
+        6.583348376301563e-05,
+        6.583348376301563e-05,
+        6.583348376301563e-05,
+        6.583348376301563e-05
+      ],
+      "length_fractions": [
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288
+      ],
+      "link_radius_ratio": 0.008333333333333335,
+      "mass_fractions": [
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288
+      ],
+      "n_links": 7,
+      "natural_time": 0.553001263609331,
+      "policy_dt_ratio": 0.03616628264005025,
+      "rail_ratio": 1.0000000000000002,
+      "system_mass": 1.9999999999999998,
+      "usable_rail_ratio": 0.9400000000000001
+    }
+  },
+  "stages": [
+    {
+      "artifact": {
+        "bytes": 323921,
+        "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_transfer_warm.json",
+        "sha256": "ee93868fcf863bc919b7f7025711aba21d27e606f8771324dee9f28b1ade25b5"
+      },
+      "stage": "transfer",
+      "status": "executed"
+    },
+    {
+      "artifact": {
+        "bytes": 323953,
+        "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_transfer_warm_mirror.json",
+        "sha256": "06711b0a220c8dc92970af26472f062939fe43791ad985e159583367a78d032f"
+      },
+      "stage": "mirror_transfer",
+      "status": "executed"
+    },
+    {
+      "artifact": {
+        "bytes": 9898,
+        "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_transfer_check.json",
+        "sha256": "de2f7a9f3a14c3ad0fb09562b40aa26a3e29a3d36b99ced75d27b6209e87e252"
+      },
+      "stage": "transfer_check",
+      "status": "executed"
+    },
+    {
+      "artifact": {
+        "bytes": 317045,
+        "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_fddp_warm.json",
+        "sha256": "82197d3221c3076c90b3b0c8bceb449151a2ac119f4bf81bfdf56a6643d9bb1f"
+      },
+      "stage": "make_fddp_warm",
+      "status": "executed"
+    },
+    {
+      "artifact": {
+        "bytes": 3098222,
+        "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_fddp.json",
+        "sha256": "5b71d88e0cd9c44c0789d512565e264af561377898f2e237f04ad50c3ea7e4db"
+      },
+      "stage": "optimize",
+      "status": "executed"
+    },
+    {
+      "artifact": {
+        "bytes": 219886,
+        "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_route.json",
+        "sha256": "ed9b59d71d66e42359cfdc40cc571763a90a1ed7c0e905402e753cde18e7a6aa"
+      },
+      "stage": "package",
+      "status": "executed"
+    },
+    {
+      "artifact": {
+        "bytes": 219697,
+        "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_route_mirror.json",
+        "sha256": "cd1d0247d89bdb6365c107d51417990f9a597fd9bc971fc9c7b8abd95a48db83"
+      },
+      "stage": "package_mirror",
+      "status": "executed"
+    },
+    {
+      "artifact": {
+        "bytes": 23091,
+        "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_gate.json",
+        "sha256": "104c7423958f48952dde15f46dfeb5c0f9a0ecdaae3625134cc590ac4a08a8ae"
+      },
+      "stage": "gate",
+      "status": "executed"
+    },
+    {
+      "artifact": {
+        "bytes": 8648,
+        "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_frontier.json",
+        "sha256": "5edcc469099af4dcc7fe391efcafb437f91522ad42920d278a7d128c952cac24"
+      },
+      "stage": "verify",
+      "status": "executed"
+    }
+  ],
+  "status": "verified_gate_passed",
+  "summary": "One parameterized command executed deterministic transfer, exact target-plant refinement, mirror construction, noisy gating, and verification.",
+  "target": {
+    "config": {
+      "bytes": 1946,
+      "path": "configs/generalized_n7_similar_l2_m05.yaml",
+      "sha256": "71dd82e631cfd0df7c55cff4255baad69bd2c3571caa952469d3f735f5b9e279"
+    },
+    "dimensionless": {
+      "cart_damping_ratio": 0.00553001263609331,
+      "cart_half_length_ratio": 0.060000000000000005,
+      "cart_to_link_mass": 1.0000000000000002,
+      "chain_length": 5.999999999999999,
+      "force_authority": 4.077471967380225,
+      "joint_armature_ratio": 2.777777777777779e-05,
+      "joint_damping_ratios": [
+        6.583348376301561e-05,
+        6.583348376301561e-05,
+        6.583348376301561e-05,
+        6.583348376301561e-05,
+        6.583348376301561e-05,
+        6.583348376301561e-05,
+        6.583348376301561e-05
+      ],
+      "length_fractions": [
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288
+      ],
+      "link_radius_ratio": 0.008333333333333335,
+      "mass_fractions": [
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288,
+        0.14285714285714288
+      ],
+      "n_links": 7,
+      "natural_time": 0.782061887005775,
+      "policy_dt_ratio": 0.03616628264005026,
+      "rail_ratio": 1.0000000000000002,
+      "system_mass": 0.9999999999999999,
+      "usable_rail_ratio": 0.9400000000000001
+    }
+  }
+}

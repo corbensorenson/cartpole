@@ -1,0 +1,347 @@
+{
+  "boundary": "This verifies the declared one-link family, one two-link feedback transfer, and one exact-refined seven-link similarity target. It does not prove arbitrary unequal length or mass fractions, arbitrary link count, or robust replay of one frozen open-loop force trace.",
+  "claim_status": "verified_dynamic_similarity_closed_loop_seed",
+  "generated_at": "2026-09-14T05:29:23+00:00",
+  "git": {
+    "available": true,
+    "commit": "6d4ca76e141e61335511b1a7852a241e9492f876",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      " M Makefile",
+      " M docs/levers_and_pitfalls.md",
+      " M runs/generalized_solver/n2_to_n3_supported_unlock_k1_to_k10_ramp/continuation.json",
+      " M scripts/diagnose_capture_geometry.py",
+      " M scripts/extract_search_handoff_state.py",
+      " M scripts/extract_trajectory_states.py",
+      " M scripts/force_proposal_to_fddp.py",
+      " M scripts/package_generalized_route.py",
+      " M scripts/refine_swingup_endpoint_gauss_newton.py",
+      " M scripts/run_joint_morphology_rail_homotopy.py",
+      " M scripts/search_capture_online_mpc.py",
+      " M scripts/search_capture_recovery.py",
+      " M scripts/search_fddp_capture.py",
+      " M scripts/search_swingup_action_sequence.py",
+      " M scripts/search_swingup_global_exact_cem.py",
+      " M scripts/search_swingup_ilqr_terminal.py",
+      " M scripts/search_swingup_tail_action_cem.py",
+      " M scripts/search_swingup_tail_ilqr.py",
+      " M scripts/solve_generalized_morphology.py",
+      " M scripts/verify_generalized_morphology_gate.py",
+      " M scripts/verify_generalized_similarity.py",
+      " M src/gcartpole/mjxml.py",
+      " M tests/test_generalized_pipeline.py",
+      " M tests/test_roadmap_verifier.py",
+      " M tests/test_verify_generalized_similarity.py",
+      "?? configs/generalized_n7_similar_l2_m05.yaml",
+      "?? configs/swingup10_capture_endpoint.yaml",
+      "?? configs/swingup10_capture_exact_curriculum.yaml",
+      "?? configs/swingup10_ghost_continuation.yaml",
+      "?? configs/swingup10_ghost_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l010m010d01k1_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l010m010d05k2_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l015m010d05k5_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_supported_d10k100_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_supported_rail6.yaml",
+      "?? configs/swingup10_ghost_light_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_tiny_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d005k05_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d01k1_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d05k5_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d1k10_hold_support_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d1k10_rail6.yaml",
+      "?? configs/swingup10_split_locked.yaml",
+      "?? configs/swingup10_split_stiff100.yaml",
+      "?? configs/swingup10_support_release_p040539.yaml",
+      "?? configs/swingup10_tip_light_rail6.yaml",
+      "?? configs/swingup10_uniform_rail12.yaml",
+      "?? configs/swingup8_split_compatible.yaml",
+      "?? configs/swingup9_mid_split_locked_continuation.yaml",
+      "?? configs/swingup9_split_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_302_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_fixed.yaml",
+      "?? scripts/build_ghost_count_continuation.py",
+      "?? scripts/convert_gn_endpoint_route.py",
+      "?? scripts/embed_locked_split_route.py",
+      "?? scripts/evaluate_embedded_source_lqr_tail.py",
+      "?? scripts/search_capture_prefix_lqr.py",
+      "?? scripts/search_maintenance_actor_cem.py",
+      "?? scripts/stitch_route_tail_warm_start.py",
+      "?? scripts/translate_generalized_route.py",
+      "?? tests/test_embed_locked_split_route.py",
+      "?? tests/test_package_generalized_route.py"
+    ]
+  },
+  "passed": true,
+  "refined_route_rows": [
+    {
+      "config": {
+        "bytes": 1946,
+        "path": "configs/generalized_n7_similar_l2_m05.yaml",
+        "sha256": "71dd82e631cfd0df7c55cff4255baad69bd2c3571caa952469d3f735f5b9e279"
+      },
+      "episodes": 20,
+      "errors": [],
+      "feedback_rms_normalization_scale": 0.47626091699027895,
+      "frontier": {
+        "bytes": 8648,
+        "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_frontier.json",
+        "sha256": "5edcc469099af4dcc7fe391efcafb437f91522ad42920d278a7d128c952cac24"
+      },
+      "label": "n7_l2_m05_refined",
+      "maximum_body_aware_required_rail_ratio": 0.858405266902099,
+      "passed": true,
+      "pipeline": {
+        "bytes": 10459,
+        "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_pipeline.json",
+        "sha256": "42e8c7c3bad52b982ebcd3f52c6cf42d2e8778a221b26679bf57bf4e0d2a277f"
+      },
+      "prediction_execution_agreements": 20,
+      "route": {
+        "bytes": 219886,
+        "path": "runs/generalized_solver/similarity_n7_l2_m05_refined_route.json",
+        "sha256": "ed9b59d71d66e42359cfdc40cc571763a90a1ed7c0e905402e753cde18e7a6aa"
+      },
+      "scales": {
+        "length": 2.0,
+        "mass": 0.5
+      },
+      "similarity": {
+        "bytes": 3711,
+        "path": "runs/generalized_solver/similarity_n7_l2_m05.json",
+        "sha256": "9883786e74b7e6d98e83ee0c9d220e6d2c93495330e3881fc03bb5bf2222415d"
+      },
+      "successes": 20,
+      "unrefined_transfer_success_rate": 0.0
+    }
+  ],
+  "route_transfer_rows": [
+    {
+      "config": {
+        "bytes": 1946,
+        "path": "configs/generalized_n2_similar_l2_m05.yaml",
+        "sha256": "48ca17e34935aeadd7c27111f877eec0e427941f254aba46dd56968f653d900a"
+      },
+      "controller_types": [
+        "generalized_morphology_transfer_then_lqr_warm_start"
+      ],
+      "coordinate_feedback_invariance_max_abs_error": 1.1368683772161603e-13,
+      "episodes": 20,
+      "errors": [],
+      "exact_open_loop_warm_start_feasible": false,
+      "gate": {
+        "bytes": 23146,
+        "path": "runs/generalized_solver/similarity_n2_l2_m05_gate20.json",
+        "sha256": "dca755258df72b7d81fed304bf8313677d2c9405415f7ae9b4c4b64eb13dae2a"
+      },
+      "label": "n2_l2_m05",
+      "maximum_body_aware_required_rail_ratio": 1.0127480220490404,
+      "n_links": 2,
+      "passed": true,
+      "prediction_execution_agreements": 20,
+      "route_selection_counts": {
+        "0": 7,
+        "1": 13
+      },
+      "routes": [
+        {
+          "bytes": 271766,
+          "path": "runs/generalized_solver/similarity_n2_l2_m05_route.json",
+          "sha256": "938fc9d70148f502c25446d34f0f983eaa69de272b1afca44f39f52e7d635c73"
+        },
+        {
+          "bytes": 272369,
+          "path": "runs/generalized_solver/similarity_n2_l2_m05_route_mirror.json",
+          "sha256": "c245368fffc3308315c592fdea85c31fbdb8bc0f8a7511a02575c8f05cea6705"
+        }
+      ],
+      "scales": {
+        "length": 2.0,
+        "mass": 0.5
+      },
+      "similarity": {
+        "bytes": 2504,
+        "path": "runs/generalized_solver/similarity_n2_l2_m05.json",
+        "sha256": "affd2e84e78eee325e48cb4e136c1490b480d6fdfbccbbcd810b7da416c6e8db"
+      },
+      "successes": 20
+    }
+  ],
+  "rows": [
+    {
+      "config": {
+        "bytes": 1953,
+        "path": "configs/generalized_n1_similar_l05_m05.yaml",
+        "sha256": "ff6226a7f7efac9600201c6946c05751c7dfef35cb77413581232034b8d79044"
+      },
+      "dimensionless_switch_time_range": [
+        10.596720813534724,
+        10.632887096174773
+      ],
+      "episodes": 20,
+      "errors": [],
+      "gate": {
+        "bytes": 61714,
+        "path": "runs/generalized_solver/similarity_n1_l05_m05_gate20.json",
+        "sha256": "62468fd4cc5c56e9d770a8baf2a9a3afbe787f74302a10afcfb55bed95f5c2af"
+      },
+      "label": "l05_m05",
+      "maximum_body_aware_required_rail_ratio": 0.9807693421580078,
+      "passed": true,
+      "scales": {
+        "length": 0.5,
+        "mass": 0.5
+      },
+      "similarity": {
+        "bytes": 2402,
+        "path": "runs/generalized_solver/similarity_n1_l05_m05.json",
+        "sha256": "b9452a20ce934567f4accbb018fb779b67291f2581f4acfc34ff57d88821956c"
+      },
+      "successes": 20
+    },
+    {
+      "config": {
+        "bytes": 1951,
+        "path": "configs/generalized_n1_similar_l05_m2.yaml",
+        "sha256": "18eebfc0be4836b905de912400f6a0aebd3e94a6c71eb5afae9cc75f1876e52d"
+      },
+      "dimensionless_switch_time_range": [
+        10.596720813534724,
+        10.596720813534724
+      ],
+      "episodes": 20,
+      "errors": [],
+      "gate": {
+        "bytes": 61752,
+        "path": "runs/generalized_solver/similarity_n1_l05_m2_gate20.json",
+        "sha256": "32a3df551fb07c27c675769d8dbb7125d8c091c5664152424d06443b25d1b3c2"
+      },
+      "label": "l05_m2",
+      "maximum_body_aware_required_rail_ratio": 0.9732439547468349,
+      "passed": true,
+      "scales": {
+        "length": 0.5,
+        "mass": 2.0
+      },
+      "similarity": {
+        "bytes": 2401,
+        "path": "runs/generalized_solver/similarity_n1_l05_m2.json",
+        "sha256": "109a9592ebc5b0d80cb83fbf54b27df92d9f1cf9a6dc0053b4f38f109b5fe2c9"
+      },
+      "successes": 20
+    },
+    {
+      "config": {
+        "bytes": 1946,
+        "path": "configs/generalized_n1_similar_l2_m05.yaml",
+        "sha256": "5fdb035c7e982e719c35fb1d6442ce17da69488b57d71654a8ab23e94ed32e86"
+      },
+      "dimensionless_switch_time_range": [
+        10.596720813534724,
+        10.596720813534724
+      ],
+      "episodes": 20,
+      "errors": [],
+      "gate": {
+        "bytes": 61643,
+        "path": "runs/generalized_solver/similarity_n1_l2_m05_gate20.json",
+        "sha256": "77f47cfae257de6bb62c70f723a15baf49d31b1340e4ea85f30431d05f5a9b99"
+      },
+      "label": "l2_m05",
+      "maximum_body_aware_required_rail_ratio": 0.9593689162314939,
+      "passed": true,
+      "scales": {
+        "length": 2.0,
+        "mass": 0.5
+      },
+      "similarity": {
+        "bytes": 2400,
+        "path": "runs/generalized_solver/similarity_n1_l2_m05.json",
+        "sha256": "2bc196e117715465a8cbbee40ee72d3bbab8352e861f5ba8b0f8f71963bfd9d8"
+      },
+      "successes": 20
+    },
+    {
+      "config": {
+        "bytes": 1940,
+        "path": "configs/generalized_n1_similar_l2_m2.yaml",
+        "sha256": "1b8ced83c2aeddcd34c5835fdd75263035f318b2254352cd5667f9eb275f9d9c"
+      },
+      "dimensionless_switch_time_range": [
+        10.596720813534724,
+        10.596720813534724
+      ],
+      "episodes": 20,
+      "errors": [],
+      "gate": {
+        "bytes": 61629,
+        "path": "runs/generalized_solver/similarity_n1_l2_m2_gate20.json",
+        "sha256": "0010cde17f1adf518b6980f1cc9e270b288d03473b92542a8c25f6b2fc77d686"
+      },
+      "label": "l2_m2",
+      "maximum_body_aware_required_rail_ratio": 0.959374421820422,
+      "passed": true,
+      "scales": {
+        "length": 2.0,
+        "mass": 2.0
+      },
+      "similarity": {
+        "bytes": 2399,
+        "path": "runs/generalized_solver/similarity_n1_l2_m2.json",
+        "sha256": "179121a1ab2ff66484299d82c57dcf0572aefaba498a09ab8c75020aa8b8e482"
+      },
+      "successes": 20
+    }
+  ],
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "scope": {
+    "length_scales": [
+      0.5,
+      2.0
+    ],
+    "link_counts": [
+      1,
+      2,
+      7
+    ],
+    "mass_scales": [
+      0.5,
+      2.0
+    ],
+    "minimum_episodes_per_case": 20,
+    "total_episodes": 120,
+    "total_successes": 120
+  },
+  "source_gate": {
+    "bytes": 56684,
+    "path": "runs/generalized_solver/energy_n1_noisy20_v2.json",
+    "sha256": "d20968cbb412461ced2235e7d2beaa9673fca2121bc279197dac32b22aef6854"
+  },
+  "summary": "One dimensionless energy/PFL/exact-LQR controller passed the exact one-link 2x2 length/mass grid, one transformed two-link feedback route passed directly, and the same architecture repaired and gated the doubled-length/half-mass seven-link target.",
+  "verified_contract": [
+    "exact Buckingham-pi plant invariance",
+    "gravity-natural-time scaling",
+    "force, damping, armature, rail, and body-geometry scaling",
+    "unchanged dimensionless energy/PFL controller parameters",
+    "exact-linearization LQR capture",
+    "generic exact-target Box-FDDP repair",
+    "automatic transferred-envelope feedback RMS normalization",
+    "uninterrupted noisy hanging-start gates",
+    "body-aware rail-ratio measurement"
+  ]
+}
