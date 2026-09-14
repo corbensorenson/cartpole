@@ -2094,6 +2094,19 @@ eleven-link route seed whose inserted mode is shaped before the final target
 plant, or a longer target-plant route optimization; simply padding or
 interpolating the ten-link controller is insufficient.
 
+The follow-up audit used the released ten-link controller itself rather than
+the older n10 development route. Exact target-plant transfer replay still
+exited the canonical `3 m` rail before capture (`3.0449 m`), and a 220-iteration
+Box-FDDP refinement reduced its nominal terminal Lyapunov value to about
+`1,391` but replay still exited at `3.058 m`. A locked split continuation was
+then tested as a training wheel: target-plant Box-FDDP reached a short `0.62 s`
+upright interval, but the LQR tail left both the `+/-3 m` and temporary `+/-6 m`
+rails. Direct FDDP stabilization from an extracted quiet upright state also
+failed on the wider rail. These are route/capture failures, not evidence
+against the ten-link release or a proof that eleven links is impossible.
+The next experiment must shape the newly inserted mode before it reaches the
+capture phase, then remove every lock and wider-rail allowance before a claim.
+
 ## Independent Ten-Link Release Audit (2026-09-14)
 
 The frozen ten-link release was replayed in a fresh process using the recorded
