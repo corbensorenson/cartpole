@@ -166,6 +166,24 @@ Each emitted file runs through the same adaptive driver and exact replay gate;
 the ramp stage explicitly uses `--allow-locked-target` because retaining the
 constraint is the intended intermediate contract.
 
+If the first supported release still rejects the exact topology switch, the
+same builder continues from an already verified support level without returning
+to zero:
+
+```bash
+PYTHONPATH=src:. python scripts/build_supported_unlock_continuations.py \
+  --locked-config LAST_ACCEPTED.yaml --target-config TARGET.yaml \
+  --initial-stiffness-ratio 1 --initial-damping-ratio 0.01 \
+  --stiffness-ratio 10 --damping-ratio 0.1 \
+  --ramp-out SUPPORT_1_TO_10.yaml --release-out RELEASE_AT_10.yaml \
+  --relaxation-out RELAX_FROM_10.yaml
+```
+
+Thus support strength is a measured homotopy coordinate, not a link-count
+constant. The ratios continue to scale stiffness by `M g L` and damping by
+`M L^2 / t0`; the smallest exact-verified support that crosses the topology
+boundary is retained, then annealed away on the fully unlocked plant.
+
 The artifact records the assignment, locks, lift and projection matrices,
 dimensionless compatibility errors, and numerical feedback-invariance error.
 It is always marked `not_solution`. Constraint tolerances and chaotic divergence
@@ -206,15 +224,25 @@ but cannot make the plant topology continuous. The next deterministic stage is
 therefore a supported unlock: add dimensionless spring/damping while the joint
 is constrained, remove the equality with that physical support active, then
 anneal the support to the measured target on the fully unlocked plant. The
-generic builder now emits those three resumable configurations. Its first live
-support-ramp back-check accepted all eight proposals through `p=0.29256`; the
-latest exact replay held for `20.58 s` with `4.500030 m` peak cart travel. This
-is only the first of the three stages and remains development evidence. The
+generic builder now emits those three resumable configurations. The first live
+support ramp completed at dimensionless `kappa=1`, `d=0.01`; its exact endpoint
+held upright for `20.70 s`, used `4.500170 m` peak cart-center travel, and had
+body-aware rail demand `rho=1.560057`. A provisional `kappa=0.54256` equality
+release advanced to `p=0.99628`, and the `kappa=1` release advanced to `p=0.925`,
+but both exact `p=1` topology-removal proposals failed. The builder now accepts
+nonzero initial support ratios so this failure drives a resumable support search
+rather than another arbitrary restart. Its `kappa=1` to `kappa=10` ladder has
+passed through `p=0.195`, corresponding to `kappa=2.755`, `d=0.02755`; that
+exact replay held for `20.68 s` with `4.505337 m` peak cart travel. These stages
+remain development evidence. The
 [current resumable ledger](../runs/generalized_solver/n2_to_n3_split_logcompliance_homotopy/continuation.json),
 [support-ramp ledger](../runs/generalized_solver/n2_to_n3_supported_unlock_ramp/continuation.json),
+[first release ledger](../runs/generalized_solver/n2_to_n3_supported_unlock_k054256_release/continuation.json),
+[unit-support release ledger](../runs/generalized_solver/n2_to_n3_supported_unlock_k1_release/continuation.json),
+[support-search ledger](../runs/generalized_solver/n2_to_n3_supported_unlock_k1_to_k10_ramp/continuation.json),
 [generated continuation](../configs/generalized_n2_to_n3_split_logcompliance.yaml),
 and [historical ledger](../runs/generalized_solver/n2_to_n3_split_homotopy/continuation.json)
-are development evidence. Both ledgers are explicitly `not_solution`; the
+are development evidence. The ledgers are explicitly `not_solution`; the
 supported `p=1` handoff and independent noisy gate remain unsolved for this
 count-plus-morphology path.
 

@@ -78,11 +78,23 @@ def build_supported_unlock_continuations(
     *,
     stiffness_ratio: float,
     damping_ratio: float,
+    initial_stiffness_ratio: float = 0.0,
+    initial_damping_ratio: float = 0.0,
 ) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     """Return support-ramp, equality-release, and support-relaxation configs."""
 
     if stiffness_ratio <= 0.0 or damping_ratio <= 0.0:
         raise ValueError("support ratios must be positive")
+    if initial_stiffness_ratio < 0.0 or initial_damping_ratio < 0.0:
+        raise ValueError("initial support ratios must be nonnegative")
+    if initial_stiffness_ratio > stiffness_ratio:
+        raise ValueError("initial stiffness ratio must not exceed the final ratio")
+    if initial_damping_ratio > damping_ratio:
+        raise ValueError("initial damping ratio must not exceed the final ratio")
+    if np.isclose(initial_stiffness_ratio, stiffness_ratio) and np.isclose(
+        initial_damping_ratio, damping_ratio
+    ):
+        raise ValueError("at least one support ratio must increase")
     locked = build_morphology(
         locked_cfg["env"], locked_cfg["morphology"], progress=1.0
     )
@@ -100,11 +112,21 @@ def build_supported_unlock_continuations(
     damping_scale = (
         setup.system_mass * setup.chain_length**2 / setup.natural_time
     )
+    initial_stiffness = locked.joint_stiffness.copy()
+    initial_damping = locked.damping.copy()
+    initial_stiffness[releasing] += initial_stiffness_ratio * stiffness_scale
+    initial_damping[releasing] += initial_damping_ratio * damping_scale
     support_stiffness = locked.joint_stiffness.copy()
     support_damping = locked.damping.copy()
     support_stiffness[releasing] += stiffness_ratio * stiffness_scale
     support_damping[releasing] += damping_ratio * damping_scale
 
+    initially_supported_locked = _replace_profiles(
+        locked,
+        damping=initial_damping,
+        stiffness=initial_stiffness,
+        locks=locked.joint_lock,
+    )
     supported_locked = _replace_profiles(
         locked,
         damping=support_damping,
@@ -120,7 +142,7 @@ def build_supported_unlock_continuations(
 
     ramp = copy.deepcopy(target_cfg)
     ramp["experiment"]["name"] = "supported_unlock_ramp"
-    _set_profiles(ramp, locked, supported_locked)
+    _set_profiles(ramp, initially_supported_locked, supported_locked)
     release = copy.deepcopy(target_cfg)
     release["experiment"]["name"] = "supported_unlock_release"
     _set_profiles(release, supported_locked, supported_unlocked)
@@ -129,6 +151,8 @@ def build_supported_unlock_continuations(
     _set_profiles(relaxation, supported_unlocked, target)
     metadata = {
         "releasing_joint_indices": np.flatnonzero(releasing).astype(int).tolist(),
+        "initial_stiffness_ratio": float(initial_stiffness_ratio),
+        "initial_damping_ratio": float(initial_damping_ratio),
         "stiffness_ratio": float(stiffness_ratio),
         "damping_ratio": float(damping_ratio),
         "stiffness_scale": float(stiffness_scale),
@@ -146,6 +170,8 @@ def main() -> None:
     parser.add_argument("--target-config", required=True)
     parser.add_argument("--stiffness-ratio", type=float, default=1.0)
     parser.add_argument("--damping-ratio", type=float, default=0.01)
+    parser.add_argument("--initial-stiffness-ratio", type=float, default=0.0)
+    parser.add_argument("--initial-damping-ratio", type=float, default=0.0)
     parser.add_argument("--ramp-out", required=True)
     parser.add_argument("--release-out", required=True)
     parser.add_argument("--relaxation-out", required=True)
@@ -155,6 +181,8 @@ def main() -> None:
         load_config(args.target_config),
         stiffness_ratio=args.stiffness_ratio,
         damping_ratio=args.damping_ratio,
+        initial_stiffness_ratio=args.initial_stiffness_ratio,
+        initial_damping_ratio=args.initial_damping_ratio,
     )
     save_config(ramp, Path(args.ramp_out))
     save_config(release, Path(args.release_out))

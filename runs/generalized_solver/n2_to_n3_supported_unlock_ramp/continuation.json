@@ -6,9 +6,9 @@
     "sha256": "748af32db60fb0f8ab14eb5cacf238a63fa9656dfdb1e66e344df448436ac9f0"
   },
   "current_controller": {
-    "bytes": 2223861,
-    "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0008_p0.292560000_waypoint_x4_fddp.json",
-    "sha256": "3de62a6375232caaefa095824ea3075d8480ea32cafd16d3746f8cd3cbacdb45"
+    "bytes": 2220395,
+    "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0023_p1.000000000_waypoint_x2_fddp.json",
+    "sha256": "ec91e6c6bd6789f583ddba928bbc63df26ea833b5eecd5c87eba787402299ac8"
   },
   "endpoint_dimensionless": {
     "locked_start": {
@@ -105,14 +105,14 @@
   },
   "next_step": 0.05,
   "not_solution": true,
-  "progress": 0.29256,
+  "progress": 1.0,
   "schema_version": 1,
   "source_controller": {
     "bytes": 2228872,
     "path": "runs/generalized_solver/n2_to_n3_split_logcompliance_homotopy/trials/trial_0050_p0.999548750_waypoint_x4_fddp.json",
     "sha256": "3ba76f7dc28690620b67bb3b13d80cde2c97ff12cbb1915ab3ad001f86ec8d05"
   },
-  "status": "trial_budget_exhausted",
+  "status": "target_exact_replay_passed",
   "trials": [
     {
       "accepted": true,
@@ -861,7 +861,1427 @@
         48,
         24
       ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2413,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0009_p0.342560000.yaml",
+        "sha256": "7de95bbf7ee931e6fe446895003076a288af4e96434be0de8142d9dd1e926e61"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.0035791421449414247,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.29256,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.5075428123526695,
+        "max_upright_streak_seconds": 20.580000000000002,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.31245718764733077,
+          "max_cart_center_excursion": 4.5075428123526695,
+          "required_rail_half_length": 4.687542812352669,
+          "required_rail_ratio": 1.562514270784223
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.34256,
+      "replay_only_attempt": null,
+      "result": {
+        "bytes": 2220195,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0009_p0.342560000_waypoint_x4_fddp.json",
+        "sha256": "5b467d935a0583aeb0fffa0b01dd1ff1f6c1462da541b3783af9cd4f9a59a604"
+      },
+      "step": 0.04999999999999999,
+      "trial": 9,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 307289,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0009_p0.342560000_waypoint_x4.json",
+            "sha256": "b491feeb93297d6ebb088182100ed5eff44aeada40abf2f080dc7e5813e67914"
+          },
+          "refinement": {
+            "bytes": 2220195,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0009_p0.342560000_waypoint_x4_fddp.json",
+            "sha256": "5b467d935a0583aeb0fffa0b01dd1ff1f6c1462da541b3783af9cd4f9a59a604"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 96,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        96,
+        48,
+        24
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2413,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0010_p0.392560000.yaml",
+        "sha256": "b1a4ed18526ad3efe3cbd5d6b8b42a61df58411e73a2d1863e090a61626c8a1f"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.004079142144941425,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.34256,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.5050165588576405,
+        "max_upright_streak_seconds": 20.580000000000002,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.31498344114235977,
+          "max_cart_center_excursion": 4.5050165588576405,
+          "required_rail_half_length": 4.68501655885764,
+          "required_rail_ratio": 1.56167218628588
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.39255999999999996,
+      "replay_only_attempt": null,
+      "result": {
+        "bytes": 2211098,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0010_p0.392560000_waypoint_x4_fddp.json",
+        "sha256": "74e08182f26608dcd501f6f652148d8103b9d0b30a0e0de2ea9cafb347026501"
+      },
+      "step": 0.04999999999999999,
+      "trial": 10,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 306696,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0010_p0.392560000_waypoint_x4.json",
+            "sha256": "a68ef94e901f9570d233a8c3584f6b01de6fb8d33c72833169ab3510f2a29358"
+          },
+          "refinement": {
+            "bytes": 2211098,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0010_p0.392560000_waypoint_x4_fddp.json",
+            "sha256": "74e08182f26608dcd501f6f652148d8103b9d0b30a0e0de2ea9cafb347026501"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 96,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        96,
+        48,
+        24
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2413,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0011_p0.442560000.yaml",
+        "sha256": "60e560bca0e5fbc6f4df87110ff5a1eec86a3b3eefff4ba3df61789bee6ca9d3"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.004579142144941424,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.39255999999999996,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.518738976171376,
+        "max_upright_streak_seconds": 20.580000000000002,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.30126102382862463,
+          "max_cart_center_excursion": 4.518738976171376,
+          "required_rail_half_length": 4.698738976171375,
+          "required_rail_ratio": 1.5662463253904584
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.44255999999999995,
+      "replay_only_attempt": null,
+      "result": {
+        "bytes": 2224812,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0011_p0.442560000_waypoint_x4_fddp.json",
+        "sha256": "1603d7f0ca058fe710bd4ae4fd1a290612d86378d41dc849af2d953dde78d3af"
+      },
+      "step": 0.04999999999999999,
+      "trial": 11,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 307043,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0011_p0.442560000_waypoint_x4.json",
+            "sha256": "f2df1a65eb1e369053fb0bb0c498ea442bd38df3eecf5157c8e2375b18a99e71"
+          },
+          "refinement": {
+            "bytes": 2224812,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0011_p0.442560000_waypoint_x4_fddp.json",
+            "sha256": "1603d7f0ca058fe710bd4ae4fd1a290612d86378d41dc849af2d953dde78d3af"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 96,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        96,
+        48,
+        24
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2413,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0012_p0.492560000.yaml",
+        "sha256": "f5eaa254339b2485c0a67928826beb583682f61dcf5e03fa57771d083520d640"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.005079142144941424,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.44255999999999995,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.506307817527325,
+        "max_upright_streak_seconds": 20.580000000000002,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.3136921824726757,
+          "max_cart_center_excursion": 4.506307817527325,
+          "required_rail_half_length": 4.686307817527324,
+          "required_rail_ratio": 1.5621026058424414
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.49255999999999994,
+      "replay_only_attempt": null,
+      "result": {
+        "bytes": 2219806,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0012_p0.492560000_waypoint_x4_fddp.json",
+        "sha256": "ab8bd7fb8414ebcaf0ddbf1b508a5cb7686ba55dc0b8d5471d72527dbf6db86b"
+      },
+      "step": 0.04999999999999999,
+      "trial": 12,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 306865,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0012_p0.492560000_waypoint_x4.json",
+            "sha256": "cf570fae8efbc6081b2a3f4588ce7a85714c29d6cbadadea981be61e76dbc01e"
+          },
+          "refinement": {
+            "bytes": 2219806,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0012_p0.492560000_waypoint_x4_fddp.json",
+            "sha256": "ab8bd7fb8414ebcaf0ddbf1b508a5cb7686ba55dc0b8d5471d72527dbf6db86b"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 96,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        96,
+        48,
+        24
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2409,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0013_p0.542560000.yaml",
+        "sha256": "ac529b3a85e025f1af28495cfafcec5f0b3e649f2cc00ed575781d07759ac7f1"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.005579142144941424,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.49255999999999994,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.507526660936795,
+        "max_upright_streak_seconds": 20.56,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.31247333906320485,
+          "max_cart_center_excursion": 4.507526660936795,
+          "required_rail_half_length": 4.687526660936795,
+          "required_rail_ratio": 1.5625088869789316
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.5425599999999999,
+      "replay_only_attempt": null,
+      "result": {
+        "bytes": 2220386,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0013_p0.542560000_waypoint_x4_fddp.json",
+        "sha256": "1a827e0b507a799b6c9f0d41aaa7fff66be3f75d86a68ee9f6ed378c13ee531b"
+      },
+      "step": 0.04999999999999999,
+      "trial": 13,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 307109,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0013_p0.542560000_waypoint_x4.json",
+            "sha256": "4e924807e729cdf48cd64af3851ec4d3b78e04aea30a4d7052f07a1253396873"
+          },
+          "refinement": {
+            "bytes": 2220386,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0013_p0.542560000_waypoint_x4_fddp.json",
+            "sha256": "1a827e0b507a799b6c9f0d41aaa7fff66be3f75d86a68ee9f6ed378c13ee531b"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 96,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        96,
+        48,
+        24
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2393,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0014_p0.592560000.yaml",
+        "sha256": "ed6f901d611508ac6bc1d221eff6f8233ae02f9834e8e67f311ee3c129b919e3"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.006079142144941424,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.5425599999999999,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.500120251061581,
+        "max_upright_streak_seconds": 20.56,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.3198797489384191,
+          "max_cart_center_excursion": 4.500120251061581,
+          "required_rail_half_length": 4.680120251061581,
+          "required_rail_ratio": 1.5600400836871937
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.59256,
+      "replay_only_attempt": null,
+      "result": {
+        "bytes": 2228716,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0014_p0.592560000_waypoint_x4_fddp.json",
+        "sha256": "330f1dac70806196a455548934b4f341a8f798e9d8986cc76748505a01c311d5"
+      },
+      "step": 0.050000000000000044,
+      "trial": 14,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 307446,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0014_p0.592560000_waypoint_x4.json",
+            "sha256": "44d1220a6aa93017855d0ba2ce9a6f8389627c8221a9ac39c66b01226f2ad725"
+          },
+          "refinement": {
+            "bytes": 2228716,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0014_p0.592560000_waypoint_x4_fddp.json",
+            "sha256": "330f1dac70806196a455548934b4f341a8f798e9d8986cc76748505a01c311d5"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 96,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        96,
+        48,
+        24
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2397,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0015_p0.642560000.yaml",
+        "sha256": "f8b31bc2084d5bb61e3d139940d4e18ee5bf0f3a117b9e56215848288058129d"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.006579142144941426,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.59256,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.510778290274762,
+        "max_upright_streak_seconds": 20.56,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.30922170972523855,
+          "max_cart_center_excursion": 4.510778290274762,
+          "required_rail_half_length": 4.6907782902747615,
+          "required_rail_ratio": 1.5635927634249205
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.64256,
+      "replay_only_attempt": {
+        "artifact": {
+          "bytes": 922913,
+          "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0015_p0.642560000_replay_only.json",
+          "sha256": "bb6afa2670ad9da855286c4e2320b4dea1b7be0eab549e96e90b59fa155edce3"
+        },
+        "passed": false
+      },
+      "result": {
+        "bytes": 2218967,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0015_p0.642560000_waypoint_fddp.json",
+        "sha256": "b66ab3f7cf2e75496563642a5bfb4ed574b6045e87b3bae2c804a539df4fc77e"
+      },
+      "step": 0.050000000000000044,
+      "trial": 15,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 313617,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0015_p0.642560000_waypoint.json",
+            "sha256": "28c41f5209941360fb751f2aa6491885ea9b8a2c41f3c4b743cd1ef57eaa7e01"
+          },
+          "refinement": {
+            "bytes": 2218967,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0015_p0.642560000_waypoint_fddp.json",
+            "sha256": "b66ab3f7cf2e75496563642a5bfb4ed574b6045e87b3bae2c804a539df4fc77e"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 24,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        24,
+        48
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2413,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0016_p0.692560000.yaml",
+        "sha256": "1ec0c97eefa08e3d3060d76be3f48c1eb912cf307de4d77bacbf90480c014040"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.007079142144941425,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.64256,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.508350065509701,
+        "max_upright_streak_seconds": 20.54,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.31164993449029943,
+          "max_cart_center_excursion": 4.508350065509701,
+          "required_rail_half_length": 4.688350065509701,
+          "required_rail_ratio": 1.5627833551699002
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.6925600000000001,
+      "replay_only_attempt": {
+        "artifact": {
+          "bytes": 912986,
+          "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0016_p0.692560000_replay_only.json",
+          "sha256": "6771bc8e54de02bdf8146f14505f44f7af7c76249bb473e3f4f308bc1c7fb77c"
+        },
+        "passed": false
+      },
+      "result": {
+        "bytes": 2238045,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0016_p0.692560000_waypoint_fddp.json",
+        "sha256": "c33dc10adaf7e1abe639aeeb0ff7ddfaa40e8e93a3f40518e8e75cabdc2924ed"
+      },
+      "step": 0.050000000000000044,
+      "trial": 16,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 313450,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0016_p0.692560000_waypoint.json",
+            "sha256": "9b226a1e320521cec03ac7a09db5dd8fd5f8b2d5d82f9039bf437e868a16652c"
+          },
+          "refinement": {
+            "bytes": 2238045,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0016_p0.692560000_waypoint_fddp.json",
+            "sha256": "c33dc10adaf7e1abe639aeeb0ff7ddfaa40e8e93a3f40518e8e75cabdc2924ed"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 24,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        24,
+        48
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2407,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0017_p0.742560000.yaml",
+        "sha256": "aa8a4c5b3eb8d164064333dbfce53d5139af4f5079eff3283e9f50024d7a11ee"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.0075791421449414266,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.6925600000000001,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.504707000394825,
+        "max_upright_streak_seconds": 20.54,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.315292999605175,
+          "max_cart_center_excursion": 4.504707000394825,
+          "required_rail_half_length": 4.684707000394825,
+          "required_rail_ratio": 1.5615690001316083
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.7425600000000001,
+      "replay_only_attempt": {
+        "artifact": {
+          "bytes": 934441,
+          "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0017_p0.742560000_replay_only.json",
+          "sha256": "ec618413712bd414b131dd7ca51f33f996ebe1a8c92700ce368a2f3c73a2b920"
+        },
+        "passed": false
+      },
+      "result": {
+        "bytes": 2233248,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0017_p0.742560000_waypoint_fddp.json",
+        "sha256": "2d6cab8ca9e4552d444ea1a5f9d9e38782bc0426de941810fd57c590213f94ba"
+      },
+      "step": 0.050000000000000044,
+      "trial": 17,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 313896,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0017_p0.742560000_waypoint.json",
+            "sha256": "72d5272eb2ef10f7105137e86ae7f9dab3019dc224c2249a33ea2bf72f2fec0f"
+          },
+          "refinement": {
+            "bytes": 2233248,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0017_p0.742560000_waypoint_fddp.json",
+            "sha256": "2d6cab8ca9e4552d444ea1a5f9d9e38782bc0426de941810fd57c590213f94ba"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 24,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        24,
+        48
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2409,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0018_p0.792560000.yaml",
+        "sha256": "f6fcccaede056be86c431a718a99588db5ab2a511920160b9c5966f05ddad005"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.008079142144941426,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.7425600000000001,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.519884758372101,
+        "max_upright_streak_seconds": 20.740000000000002,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.30011524162789893,
+          "max_cart_center_excursion": 4.519884758372101,
+          "required_rail_half_length": 4.699884758372101,
+          "required_rail_ratio": 1.5666282527907003
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.7925600000000002,
+      "replay_only_attempt": {
+        "artifact": {
+          "bytes": 983531,
+          "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0018_p0.792560000_replay_only.json",
+          "sha256": "42bc0e71c90071e0f7ee0b7219402c3029dede79d0b64c79107363ad964f3ec0"
+        },
+        "passed": false
+      },
+      "result": {
+        "bytes": 2216695,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0018_p0.792560000_waypoint_fddp.json",
+        "sha256": "7a59c2aef59e50962907e7b9b62e9afe0d56be5e838b88dcfad4b0fa104d6e12"
+      },
+      "step": 0.050000000000000044,
+      "trial": 18,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 313754,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0018_p0.792560000_waypoint.json",
+            "sha256": "e70d8b2a571af6945339bccc7108106e4ab899bae89f5cbf9a025b7c75bd2258"
+          },
+          "refinement": {
+            "bytes": 2216695,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0018_p0.792560000_waypoint_fddp.json",
+            "sha256": "7a59c2aef59e50962907e7b9b62e9afe0d56be5e838b88dcfad4b0fa104d6e12"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 24,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        24,
+        48
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2409,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0019_p0.842560000.yaml",
+        "sha256": "e8eb9fb81844c1e8a92339e6e8d968c5a5cbe5a4fe1d2403a60314aa92228c3b"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.008579142144941428,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.7925600000000002,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.50782939190454,
+        "max_upright_streak_seconds": 20.72,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.31217060809546027,
+          "max_cart_center_excursion": 4.50782939190454,
+          "required_rail_half_length": 4.68782939190454,
+          "required_rail_ratio": 1.5626097973015132
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.8425600000000002,
+      "replay_only_attempt": {
+        "artifact": {
+          "bytes": 964571,
+          "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0019_p0.842560000_replay_only.json",
+          "sha256": "d440c212b52c667bb770cf87c86d30d01831700aa12ae284a89d53775d934f5a"
+        },
+        "passed": false
+      },
+      "result": {
+        "bytes": 2203769,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0019_p0.842560000_waypoint_x2_fddp.json",
+        "sha256": "6ff175f815c784a30726bc3cafdb8e02e6b072d8d3ea1811e7b08cbd20d87cb3"
+      },
+      "step": 0.050000000000000044,
+      "trial": 19,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 313057,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0019_p0.842560000_waypoint.json",
+            "sha256": "34a9d8391af82401ae35966149f7c5388319ad0c6d989b792b7a528045f3cdfb"
+          },
+          "refinement": {
+            "bytes": 963107,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0019_p0.842560000_waypoint_fddp.json",
+            "sha256": "5d678268b1d5a7c531eb93264f438bb3dd1ae3fe2894deb86269d407e7547fec"
+          },
+          "refinement_passed": false,
+          "search_passed": false,
+          "segment_steps": 24,
+          "used_for_refinement": true
+        },
+        {
+          "artifact": {
+            "bytes": 308669,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0019_p0.842560000_waypoint_x2.json",
+            "sha256": "fe2b3505ed4e25e4bdfb45ad46bc568c2af154a46179393485dba02bf6151926"
+          },
+          "refinement": {
+            "bytes": 2203769,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0019_p0.842560000_waypoint_x2_fddp.json",
+            "sha256": "6ff175f815c784a30726bc3cafdb8e02e6b072d8d3ea1811e7b08cbd20d87cb3"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 48,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        24,
+        48
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2409,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0020_p0.892560000.yaml",
+        "sha256": "b820df8413f5c9f0b673d9a67b202bedf8b2d09c95b5562487a372ad59445486"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.009079142144941427,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.8425600000000002,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.507314761447737,
+        "max_upright_streak_seconds": 20.7,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.3126852385522634,
+          "max_cart_center_excursion": 4.507314761447737,
+          "required_rail_half_length": 4.687314761447737,
+          "required_rail_ratio": 1.5624382538159123
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.8925600000000002,
+      "replay_only_attempt": {
+        "artifact": {
+          "bytes": 905232,
+          "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0020_p0.892560000_replay_only.json",
+          "sha256": "4bac538ec53a96502136a801f0fbac259c274ffb635d19186cf6e89c6b13788f"
+        },
+        "passed": false
+      },
+      "result": {
+        "bytes": 2213653,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0020_p0.892560000_waypoint_x2_fddp.json",
+        "sha256": "a505b735d266d224bacc8bce1a6075d67fd6a0318edecf8ae7bfe4bdb3a6a96d"
+      },
+      "step": 0.050000000000000044,
+      "trial": 20,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 308633,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0020_p0.892560000_waypoint_x2.json",
+            "sha256": "0623199f93807d086248295896642e4651f85bd04755ae8751e47928192d45a5"
+          },
+          "refinement": {
+            "bytes": 2213653,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0020_p0.892560000_waypoint_x2_fddp.json",
+            "sha256": "a505b735d266d224bacc8bce1a6075d67fd6a0318edecf8ae7bfe4bdb3a6a96d"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 48,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        48,
+        24
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2409,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0021_p0.942560000.yaml",
+        "sha256": "e56dadcba47dc806a8e0073cea3c75fb9063e129b725b6e203b47e39b9a8342b"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.009579142144941427,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.8925600000000002,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.50190290038173,
+        "max_upright_streak_seconds": 20.7,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.31809709961826993,
+          "max_cart_center_excursion": 4.50190290038173,
+          "required_rail_half_length": 4.68190290038173,
+          "required_rail_ratio": 1.5606343001272434
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.9425600000000003,
+      "replay_only_attempt": {
+        "artifact": {
+          "bytes": 963360,
+          "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0021_p0.942560000_replay_only.json",
+          "sha256": "2c95bb1d9c5b5b9e35478a69e07cccbd1b47e7b35cb1ad7caed68cf2f7035cb1"
+        },
+        "passed": false
+      },
+      "result": {
+        "bytes": 2217729,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0021_p0.942560000_waypoint_x2_fddp.json",
+        "sha256": "5e47f9ee6a28d5f5edeec78ff5abe8daa1eeff34dec3ab5566f0db3b83377164"
+      },
+      "step": 0.050000000000000044,
+      "trial": 21,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 308957,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0021_p0.942560000_waypoint_x2.json",
+            "sha256": "74831f467bf7de4db71dab2d08fc2441b379c321e1e9aca6ab01ec0903e56ad2"
+          },
+          "refinement": {
+            "bytes": 2217729,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0021_p0.942560000_waypoint_x2_fddp.json",
+            "sha256": "5e47f9ee6a28d5f5edeec78ff5abe8daa1eeff34dec3ab5566f0db3b83377164"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 48,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        48,
+        24
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2409,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0022_p0.992560000.yaml",
+        "sha256": "a3e235bf163de3dd1bd577116c69dd16e77fdb9a7076aad8f87c2a96822bfc1a"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.01007914214494143,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.9425600000000003,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.501833206470929,
+        "max_upright_streak_seconds": 20.7,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.3181667935290715,
+          "max_cart_center_excursion": 4.501833206470929,
+          "required_rail_half_length": 4.6818332064709285,
+          "required_rail_ratio": 1.5606110688236428
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 0.9925600000000003,
+      "replay_only_attempt": {
+        "artifact": {
+          "bytes": 914490,
+          "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0022_p0.992560000_replay_only.json",
+          "sha256": "d7562cfc77556da8f2dfaea8e811d8fed602b5dcc479ffefc1fa604113efb5e4"
+        },
+        "passed": false
+      },
+      "result": {
+        "bytes": 2223050,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0022_p0.992560000_waypoint_x2_fddp.json",
+        "sha256": "ba369f1531bd6d5d49d6f051039af4060029d969655dc18d408e39c877ff7bf0"
+      },
+      "step": 0.050000000000000044,
+      "trial": 22,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 309135,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0022_p0.992560000_waypoint_x2.json",
+            "sha256": "8726a18023ec30e5c36743c6c33683dca118a937469c06d1e209b7553af31647"
+          },
+          "refinement": {
+            "bytes": 2223050,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0022_p0.992560000_waypoint_x2_fddp.json",
+            "sha256": "ba369f1531bd6d5d49d6f051039af4060029d969655dc18d408e39c877ff7bf0"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 48,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        48,
+        24
+      ]
+    },
+    {
+      "accepted": true,
+      "config": {
+        "bytes": 2385,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/configs/trial_0023_p1.000000000.yaml",
+        "sha256": "bdf4b8e878ffe49fedca07dbf608d3b91309057c373ab8a366f9367748a20171"
+      },
+      "dimensionless": {
+        "cart_damping_ratio": 0.00553001263609331,
+        "cart_half_length_ratio": 0.06,
+        "cart_to_link_mass": 1.0,
+        "chain_length": 3.0,
+        "force_authority": 4.077471967380224,
+        "joint_armature_ratio": 2.777777777777778e-05,
+        "joint_damping_ratios": [
+          0.00015364612069984247,
+          0.010153542144941425,
+          0.00015364612069984247
+        ],
+        "length_fractions": [
+          0.24998388392857143,
+          0.33331184523809526,
+          0.41670427083333333
+        ],
+        "link_radius_ratio": 0.008333333333333333,
+        "mass_fractions": [
+          0.20000644642857143,
+          0.29999355357142854,
+          0.5
+        ],
+        "n_links": 3,
+        "natural_time": 0.553001263609331,
+        "policy_dt_ratio": 0.03616628264005025,
+        "rail_ratio": 1.6666666666666667,
+        "system_mass": 2.0,
+        "usable_rail_ratio": 1.6066666666666667
+      },
+      "from_progress": 0.9925600000000003,
+      "lock_strengths": [
+        0.0,
+        0.00045125000000001414,
+        0.0
+      ],
+      "outcome": {
+        "latched": true,
+        "max_cart_excursion": 4.500169922103773,
+        "max_upright_streak_seconds": 20.7,
+        "rail_requirement": {
+          "configured_rail_ratio": 1.6666666666666667,
+          "margin": 0.31983007789622686,
+          "max_cart_center_excursion": 4.500169922103773,
+          "required_rail_half_length": 4.680169922103773,
+          "required_rail_ratio": 1.5600566407012577
+        },
+        "success": true,
+        "termination_reason": "time_limit"
+      },
+      "proposed_progress": 1.0,
+      "replay_only_attempt": {
+        "artifact": {
+          "bytes": 914568,
+          "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0023_p1.000000000_replay_only.json",
+          "sha256": "be30663ac36762a4575ede1160123ac01c793c97872c71336fcbbfd4a2d52a4b"
+        },
+        "passed": false
+      },
+      "result": {
+        "bytes": 2220395,
+        "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0023_p1.000000000_waypoint_x2_fddp.json",
+        "sha256": "ec91e6c6bd6789f583ddba928bbc63df26ea833b5eecd5c87eba787402299ac8"
+      },
+      "step": 0.007439999999999669,
+      "trial": 23,
+      "waypoint_attempts": [
+        {
+          "artifact": {
+            "bytes": 309232,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0023_p1.000000000_waypoint_x2.json",
+            "sha256": "c6f592d5d1bfc5cf25bc5b2262f6717dd3fa022807d9a35f775ac1db76bfefd3"
+          },
+          "refinement": {
+            "bytes": 2220395,
+            "path": "runs/generalized_solver/n2_to_n3_supported_unlock_ramp/trials/trial_0023_p1.000000000_waypoint_x2_fddp.json",
+            "sha256": "ec91e6c6bd6789f583ddba928bbc63df26ea833b5eecd5c87eba787402299ac8"
+          },
+          "refinement_passed": true,
+          "search_passed": false,
+          "segment_steps": 48,
+          "used_for_refinement": true
+        }
+      ],
+      "waypoint_priority": [
+        48,
+        24
+      ]
     }
   ],
-  "updated_at": "2026-09-13T23:50:15+00:00"
+  "updated_at": "2026-09-14T00:59:17+00:00"
 }

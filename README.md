@@ -239,8 +239,16 @@ with a deterministic LSMR fallback, and records the exact-unlock failure for the
 next supported-unlock stage. See the
 [count-release ledger](runs/generalized_solver/n2_to_n3_split_logcompliance_homotopy/continuation.json)
 and [support-ramp ledger](runs/generalized_solver/n2_to_n3_supported_unlock_ramp/continuation.json),
-which has accepted its first eight exact proposals through `p=0.29256`. This is
-stage one of three and is not an unlocked solution. See the
+which has now completed at dimensionless support `kappa=1`, `d=0.01`; its exact
+endpoint held for `20.70 s` with `4.500170 m` peak cart travel. Equality-release
+back-checks reached `p=0.99628` at `kappa=0.54256` and `p=0.925` at `kappa=1`,
+but the discontinuous fully unlocked endpoint still failed both gates and is
+not counted as a solution. The generic builder can now resume a verified route
+from nonzero support and search a dimensionless support ladder. The current
+`kappa=1` to `kappa=10` ladder has exact passes through `p=0.195`
+(`kappa=2.755`, `d=0.02755`), holding for `20.68 s` with `4.505337 m` peak cart
+travel. These are development results; the unlocked release, support relaxation,
+mirror, and noisy gates remain. See the
 [generalized solver notes](docs/generalized_solver.md) for the remaining
 release and relaxation gates.
 
