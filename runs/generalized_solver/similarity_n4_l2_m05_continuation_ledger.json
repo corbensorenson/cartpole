@@ -1,0 +1,2388 @@
+{
+  "accepted": {
+    "config": "/tmp/cartpole-sim-driver-n4-promote/trial_0022_p1.000000000/target.yaml",
+    "progress": 1.0,
+    "refined": false,
+    "route": "/tmp/cartpole-sim-driver-n4-promote/trial_0022_p1.000000000/route.json"
+  },
+  "claim_status": "development_similarity_continuation",
+  "final_gate": {
+    "bytes": 22842,
+    "path": "/tmp/cartpole-sim-driver-n4-promote/final_gate.json",
+    "sha256": "0148fafa13268fc188ce60a30617db28c98b41d8c51b459b6e4bd26372f0b45c"
+  },
+  "final_route": {
+    "bytes": 1386469,
+    "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0022_p1.000000000/route.json",
+    "sha256": "b164938297468a2fc3a4ed2f1d24c391c5dc3cc7a82a864851f3c4cf7b09db51"
+  },
+  "generated_at": "2026-09-14T06:26:14+00:00",
+  "git": {
+    "available": true,
+    "commit": "c5a0ea083c046062a74d8f2cf0348a57f6c0481a",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      " M ROADMAP.md",
+      " M docs/levers_and_pitfalls.md",
+      " M runs/generalized_solver/n2_to_n3_supported_unlock_k1_to_k10_ramp/continuation.json",
+      " M scripts/diagnose_capture_geometry.py",
+      " M scripts/extract_search_handoff_state.py",
+      " M scripts/extract_trajectory_states.py",
+      " M scripts/force_proposal_to_fddp.py",
+      " M scripts/generalized_swingup_solver.py",
+      " M scripts/refine_swingup_endpoint_gauss_newton.py",
+      " M scripts/run_joint_morphology_rail_homotopy.py",
+      " M scripts/search_capture_online_mpc.py",
+      " M scripts/search_capture_recovery.py",
+      " M scripts/search_fddp_capture.py",
+      " M scripts/search_swingup_action_sequence.py",
+      " M scripts/search_swingup_global_exact_cem.py",
+      " M scripts/search_swingup_ilqr_terminal.py",
+      " M scripts/search_swingup_tail_action_cem.py",
+      " M scripts/search_swingup_tail_ilqr.py",
+      " M src/gcartpole/mjxml.py",
+      " M tests/test_roadmap_verifier.py",
+      "?? configs/swingup10_capture_endpoint.yaml",
+      "?? configs/swingup10_capture_exact_curriculum.yaml",
+      "?? configs/swingup10_ghost_continuation.yaml",
+      "?? configs/swingup10_ghost_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l010m010d01k1_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l010m010d05k2_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l015m010d05k5_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_supported_d10k100_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_supported_rail6.yaml",
+      "?? configs/swingup10_ghost_light_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_tiny_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d005k05_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d01k1_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d05k5_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d1k10_hold_support_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d1k10_rail6.yaml",
+      "?? configs/swingup10_split_locked.yaml",
+      "?? configs/swingup10_split_stiff100.yaml",
+      "?? configs/swingup10_support_release_p040539.yaml",
+      "?? configs/swingup10_tip_light_rail6.yaml",
+      "?? configs/swingup10_uniform_rail12.yaml",
+      "?? configs/swingup8_split_compatible.yaml",
+      "?? configs/swingup9_mid_split_locked_continuation.yaml",
+      "?? configs/swingup9_split_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_302_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_fixed.yaml",
+      "?? scripts/build_ghost_count_continuation.py",
+      "?? scripts/convert_gn_endpoint_route.py",
+      "?? scripts/embed_locked_split_route.py",
+      "?? scripts/evaluate_embedded_source_lqr_tail.py",
+      "?? scripts/materialize_generalized_rollout.py",
+      "?? scripts/retune_generalized_route.py",
+      "?? scripts/run_similarity_continuation.py",
+      "?? scripts/search_capture_prefix_lqr.py",
+      "?? scripts/search_maintenance_actor_cem.py",
+      "?? scripts/stitch_route_tail_warm_start.py",
+      "?? scripts/translate_generalized_route.py",
+      "?? tests/test_embed_locked_split_route.py",
+      "?? tests/test_materialize_generalized_rollout.py",
+      "?? tests/test_retune_generalized_route.py",
+      "?? tests/test_similarity_continuation.py"
+    ]
+  },
+  "next_step": 0.0,
+  "passed": true,
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "source": {
+    "config": {
+      "bytes": 1790,
+      "path": "configs/swingup7_uniform.yaml",
+      "sha256": "1e92bc4621428f2fe343b7483b2c32d7804a82762159483db280e71a526b6c04"
+    },
+    "controller": {
+      "bytes": 719897,
+      "path": "runs/generalized_solver/n4_route_solver.json",
+      "sha256": "dd40d7b0650e1d259c389dcba3c5339e0ecb7e3fa43ab1b90f619ddb49241266"
+    },
+    "n_links": 4
+  },
+  "status": "verified_target_gate_passed",
+  "target": {
+    "length_scale": 2.0,
+    "mass_scale": 0.5,
+    "path": "linear"
+  },
+  "trials": [
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 2012,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0000_p0.100000000/target.yaml",
+          "sha256": "b6a12eda46dcb347922fa0b4b85f59c2c08d090149a6d6027ffc323f69b0a40f"
+        },
+        "exact_replay": {
+          "bytes": 3135686,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0000_p0.100000000/exact_replay.json",
+          "sha256": "28480f99df142b507244a38e28a0035a0175a440e4ef945e4dc7ec12c88edec0"
+        },
+        "route": {
+          "bytes": 1293620,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0000_p0.100000000/route.json",
+          "sha256": "696afd4fd67acf794217e57ace687e87dfa0dcbeef30fc9805df135da96c6aa2"
+        },
+        "route_gate": {
+          "bytes": 9806,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0000_p0.100000000/route_gate.json",
+          "sha256": "ab6fe69ad2fa68664bed81f2c395e37c22096aacf44ab8461509719f0172b760"
+        },
+        "route_mirror": {
+          "bytes": 1299864,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0000_p0.100000000/route_mirror.json",
+          "sha256": "4b7c0fddd87828ce358c8371c465ed92231b2e047566f59dee406c0ae66375e9"
+        },
+        "similarity": {
+          "bytes": 2825,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0000_p0.100000000/similarity.json",
+          "sha256": "73e911b7c2e5f75d01d6d82ba2818b6779787ca5c9b1aaa9493a654612d09cdd"
+        },
+        "transfer": {
+          "bytes": 1065742,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0000_p0.100000000/transfer.json",
+          "sha256": "3635dc530fba58dcf1324aff112be107be54c92110a446568d4e1ab8f0433774"
+        },
+        "transfer_gate": {
+          "bytes": 9751,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0000_p0.100000000/transfer_gate.json",
+          "sha256": "715938329802fd4106d06507a72e8b30ce0551bae9026b90919e122c287d7da2"
+        },
+        "transfer_mirror": {
+          "bytes": 1066417,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0000_p0.100000000/transfer_mirror.json",
+          "sha256": "cd4bda12f51fa5d76e9d0b7bb3c04050163dc8c9b98ca97fbb57aceaf9daae14"
+        }
+      },
+      "materialized_route_passed": true,
+      "proposed_progress": 0.1,
+      "scales": {
+        "length": 1.1,
+        "mass": 0.95
+      },
+      "step": 0.1,
+      "transfer_passed": true,
+      "trial": 0
+    },
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 1987,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0001_p0.250000000/target.yaml",
+          "sha256": "7be779cd2ffeb54df0be5831e7e818a72863ef967ced0f58694ba1177e009fa6"
+        },
+        "route": {
+          "bytes": 1386508,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0001_p0.250000000/route.json",
+          "sha256": "863a153ccee6a7d72d0eec3a2f7ea44db0a167db0ebe346318280190d167cb07"
+        },
+        "route_gate": {
+          "bytes": 9795,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0001_p0.250000000/route_gate.json",
+          "sha256": "bb1a456d0789852855e6ec1fedf1c643ff3dc812e4c8e35d5d225008f7fbacac"
+        },
+        "route_mirror": {
+          "bytes": 1392797,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0001_p0.250000000/route_mirror.json",
+          "sha256": "56cc85e84625a14dfdb5ccf043ba2b24d6d7170ab34b22bcb19ed2042361e46e"
+        },
+        "selected_transfer": {
+          "bytes": 1386499,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0001_p0.250000000/transfer_gain_0.75.json",
+          "sha256": "3c23e517cdfe80d44433618019ede4018986ff3214953672a1ed8cb500676824"
+        },
+        "selected_transfer_mirror": {
+          "bytes": 1392801,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0001_p0.250000000/transfer_gain_0.75_mirror.json",
+          "sha256": "b0ac8eeea3ce6545c4acb7aef9374dc460a7ff1963faa1ec2d6c0a00eee0d3be"
+        },
+        "similarity": {
+          "bytes": 2832,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0001_p0.250000000/similarity.json",
+          "sha256": "1687581e37ff684e85d276c3d9ca4a86209a0e72a89689768d876fe5722dceeb"
+        },
+        "transfer": {
+          "bytes": 1389386,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0001_p0.250000000/transfer.json",
+          "sha256": "65f3a37138fb762d0e240793b20dd56b98d1f057d6a4ab36bfb0b44529ab368c"
+        },
+        "transfer_gate": {
+          "bytes": 9880,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0001_p0.250000000/transfer_gate.json",
+          "sha256": "179fc6f4961d1e550d8508ab8396a1403fd10b448c555a2a2d814c92c59a88ce"
+        },
+        "transfer_mirror": {
+          "bytes": 1395679,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0001_p0.250000000/transfer_mirror.json",
+          "sha256": "71d1b6aec6d8849e3789783ce0d3368aa9b72f6f4ac4b33c5de7a75541ce3aca"
+        }
+      },
+      "feedback_gain_screen": [
+        {
+          "gain_scale": 0.75,
+          "gate": {
+            "bytes": 9828,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0001_p0.250000000/transfer_gain_0.75_gate.json",
+            "sha256": "f277b8cd048e2a02f745d93615e3fe5b286d6104da2fe5f624250e323b2fb8c7"
+          },
+          "mirror": {
+            "bytes": 1392801,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0001_p0.250000000/transfer_gain_0.75_mirror.json",
+            "sha256": "b0ac8eeea3ce6545c4acb7aef9374dc460a7ff1963faa1ec2d6c0a00eee0d3be"
+          },
+          "passed": true,
+          "route": {
+            "bytes": 1386499,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0001_p0.250000000/transfer_gain_0.75.json",
+            "sha256": "3c23e517cdfe80d44433618019ede4018986ff3214953672a1ed8cb500676824"
+          }
+        }
+      ],
+      "materialized_route_passed": true,
+      "proposed_progress": 0.25,
+      "scales": {
+        "length": 1.25,
+        "mass": 0.875
+      },
+      "selected_feedback_gain_scale": 0.75,
+      "step": 0.15000000000000002,
+      "transfer_passed": true,
+      "trial": 1
+    },
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 1965,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0002_p0.450000000/target.yaml",
+          "sha256": "78fd9f1aceb12dd1b8d82984b6cb4451f7cb1be77b9c401cb93be3d3e572dbea"
+        },
+        "route": {
+          "bytes": 1385459,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0002_p0.450000000/route.json",
+          "sha256": "06852b7ecbc09e05d9d5ade40745c9f1b179619d281e0a5cd2fd9e4a015c18a7"
+        },
+        "route_gate": {
+          "bytes": 9794,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0002_p0.450000000/route_gate.json",
+          "sha256": "380bd87e5d31e8de4f02ec9a07f7989ca198190b938c96543cb9150abe225c9f"
+        },
+        "route_mirror": {
+          "bytes": 1391748,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0002_p0.450000000/route_mirror.json",
+          "sha256": "b35a91c96787a51f414f3aa2d05ac7a2caba0e8c09e71fe9ba9d1a5e073c1cf2"
+        },
+        "similarity": {
+          "bytes": 2814,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0002_p0.450000000/similarity.json",
+          "sha256": "ed660d20d330f472b55f7a2a22d20e88c671407b4dd02e64dff4c8c7aef6a3f7"
+        },
+        "transfer": {
+          "bytes": 1389328,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0002_p0.450000000/transfer.json",
+          "sha256": "91e277fd23e646206ca7e43797a0fe136ccb97546c52d679991c85fad062f91c"
+        },
+        "transfer_gate": {
+          "bytes": 9801,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0002_p0.450000000/transfer_gate.json",
+          "sha256": "c4cbe9da49464c952f998ed58809ed75e8c946cd64e1d15ebb07d5147c489868"
+        },
+        "transfer_mirror": {
+          "bytes": 1395621,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0002_p0.450000000/transfer_mirror.json",
+          "sha256": "9c544b9d88807a9c519dc27d0fb92d8e448b26e5506ebfe34cd4503496ddc91b"
+        }
+      },
+      "materialized_route_passed": true,
+      "proposed_progress": 0.45,
+      "scales": {
+        "length": 1.45,
+        "mass": 0.775
+      },
+      "step": 0.2,
+      "transfer_passed": true,
+      "trial": 2
+    },
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 1992,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0003_p0.650000000/target.yaml",
+          "sha256": "167e5581ab9295d14625fdaccfd1b81f2fa75bbb1283e46769669d78e33508c3"
+        },
+        "route": {
+          "bytes": 1387135,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0003_p0.650000000/route.json",
+          "sha256": "fc15225b5a7b84b8ad29039d310395fc4abc6c24486c11b41ca3c3c7e95328f9"
+        },
+        "route_gate": {
+          "bytes": 9793,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0003_p0.650000000/route_gate.json",
+          "sha256": "0fddf8ecc6fe05f3a5a30c2db5cee93da80bfd89572af5110849ed2252260f6d"
+        },
+        "route_mirror": {
+          "bytes": 1393424,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0003_p0.650000000/route_mirror.json",
+          "sha256": "048cd1c665bd1854e16e3be9971804e55eafc657fc2fcb4433887657062aef9e"
+        },
+        "similarity": {
+          "bytes": 2935,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0003_p0.650000000/similarity.json",
+          "sha256": "4b7463b6657d3db5d6fbd16c297c433582256928e54557692090e87b56abdfd6"
+        },
+        "transfer": {
+          "bytes": 1391048,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0003_p0.650000000/transfer.json",
+          "sha256": "1da2c6c2baa823e1237ebfdcff403630215cff33cad5f69bf1c69793292c09e6"
+        },
+        "transfer_gate": {
+          "bytes": 9792,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0003_p0.650000000/transfer_gate.json",
+          "sha256": "37f430eb85bbf4c2dea1b7f09cff722af8d572ed8af27bafcfe484ab51ee6774"
+        },
+        "transfer_mirror": {
+          "bytes": 1397341,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0003_p0.650000000/transfer_mirror.json",
+          "sha256": "80567045fca801e11fbaf59a2284f999ae82ba8c84eea0c565d4294723da540e"
+        }
+      },
+      "materialized_route_passed": true,
+      "proposed_progress": 0.65,
+      "scales": {
+        "length": 1.65,
+        "mass": 0.675
+      },
+      "step": 0.2,
+      "transfer_passed": true,
+      "trial": 3
+    },
+    {
+      "accepted": false,
+      "anchor_refinement": {
+        "optimizer": {
+          "bytes": 1393311,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/refine_p0.650000000/optimizer.json",
+          "sha256": "7d19bd06136a396e8ed60b6da7bb1d5b74802e6018d26fc5905c696a122ef8c4"
+        },
+        "passed": false
+      },
+      "artifacts": {
+        "config": {
+          "bytes": 2004,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/target.yaml",
+          "sha256": "855a22522dc7a0ccc5da3a9655063b269e0955e374f7a57f69b497645ffb8a3b"
+        },
+        "similarity": {
+          "bytes": 2851,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/similarity.json",
+          "sha256": "541d190816c3819fa0fef091d11fe4666b8f9dfe35248a391a1be1a96bb7e412"
+        },
+        "transfer": {
+          "bytes": 1390208,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer.json",
+          "sha256": "5838efff0b0f3a63527ec8c28434a98d1d75d02837bb3c914875c6eb2ad3a0a8"
+        },
+        "transfer_gate": {
+          "bytes": 9850,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gate.json",
+          "sha256": "d99ce435e0c721b7146a5df6d3387cbe1fbcb0c127151edc1eac649c40ab3676"
+        },
+        "transfer_mirror": {
+          "bytes": 1396501,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_mirror.json",
+          "sha256": "3117bcc1a63d9f022af5c285b3d5fa415a0428a225dc2057cdcef54f0eed15f5"
+        }
+      },
+      "feedback_gain_screen": [
+        {
+          "gain_scale": 0.75,
+          "gate": {
+            "bytes": 9870,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_0.75_gate.json",
+            "sha256": "ebc9c2008ff1eb3a0971ad99e5c82fc0d7a57f053122f709f409b9f7c32c8bcf"
+          },
+          "mirror": {
+            "bytes": 1393783,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_0.75_mirror.json",
+            "sha256": "78d7886e29804b5f54b1fc4e0a5d67b746bb70357d3be70531c5c4efa3218ebc"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1387481,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_0.75.json",
+            "sha256": "5a82d715c2207da2ec2e7f73e72f8ed1ce523d9df140dc5ac4fe25a4d68f27cb"
+          }
+        },
+        {
+          "gain_scale": 1.25,
+          "gate": {
+            "bytes": 9872,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_1.25_gate.json",
+            "sha256": "b1b8f142c99b34e0116e1829580c8e38d85a1ee87d0d64e7bec30326f5c71086"
+          },
+          "mirror": {
+            "bytes": 1391250,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_1.25_mirror.json",
+            "sha256": "16087a0023e17e7d8df75b3e8b73c48713c3986c378020562207c6c68f9f3808"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384948,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_1.25.json",
+            "sha256": "b50f77f1d89f2ca9630b2da9e3df2735a1d9c7491d0743f8dcae91f476b26b76"
+          }
+        },
+        {
+          "gain_scale": 0.5,
+          "gate": {
+            "bytes": 9645,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_0.5_gate.json",
+            "sha256": "964a431795bdaca45256fbad602d42fcc28a1b195561ff6629ad136c013dece5"
+          },
+          "mirror": {
+            "bytes": 1396904,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_0.5_mirror.json",
+            "sha256": "e053dde65a5c04677dc250fa9d371571097840c542dbe1d2302a78922a5786e8"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1390603,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_0.5.json",
+            "sha256": "2540ea9060830d344886d9d1ee26de053e99ea0730788ec5c367709806a631b0"
+          }
+        },
+        {
+          "gain_scale": 1.5,
+          "gate": {
+            "bytes": 9873,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_1.5_gate.json",
+            "sha256": "765dd134e62e862ea8872549cb933656c6b732dd50f9de3b022de5b6cbbc1466"
+          },
+          "mirror": {
+            "bytes": 1390943,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_1.5_mirror.json",
+            "sha256": "330a3e91db7909208fd3d8c087c9978ab96c05073a1565db6cb66f45e08cb404"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384642,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_1.5.json",
+            "sha256": "a59c5b64b3a4bd22354909dd511060fb15d29338073414a228976d41791d8642"
+          }
+        },
+        {
+          "gain_scale": 2.0,
+          "gate": {
+            "bytes": 9643,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_2_gate.json",
+            "sha256": "758eb322c4d08a381767f072d6b9b6a6530d3ce2106aaa8e84c8225c326be43f"
+          },
+          "mirror": {
+            "bytes": 1390481,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_2_mirror.json",
+            "sha256": "96ffe4c1bf33753d1d6ba55802e4e52187e209c5f63a2edcd24c8930f9abdbbf"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384182,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0004_p0.850000000/transfer_gain_2.json",
+            "sha256": "2bc4418b66d476e34f4f122ead7d9463db25d3660f6ef3a15a708cfec414a56d"
+          }
+        }
+      ],
+      "materialized_route_passed": false,
+      "proposed_progress": 0.8500000000000001,
+      "scales": {
+        "length": 1.85,
+        "mass": 0.575
+      },
+      "selected_feedback_gain_scale": null,
+      "step": 0.2,
+      "transfer_passed": false,
+      "trial": 4
+    },
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 1978,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0005_p0.750000000/target.yaml",
+          "sha256": "f5a28afc9f038530401d1aa84ca07a9a8c7943f021f9b85ba0d1e3da1c00fa6e"
+        },
+        "route": {
+          "bytes": 1386509,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0005_p0.750000000/route.json",
+          "sha256": "493a305ce6a6406750538fcdb43e581239c653dbf113a14f4ae5a94a507f1517"
+        },
+        "route_gate": {
+          "bytes": 9795,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0005_p0.750000000/route_gate.json",
+          "sha256": "e0631d1a100f45902b7f34fd6150ad77674a9f428a36c7061385f3e144d5b393"
+        },
+        "route_mirror": {
+          "bytes": 1392798,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0005_p0.750000000/route_mirror.json",
+          "sha256": "37d0ce6444414c989af020850c0606e56ab4153cec1b96fe95e1c3bb25823d57"
+        },
+        "similarity": {
+          "bytes": 2875,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0005_p0.750000000/similarity.json",
+          "sha256": "02c320bc904e7d18e7e47674edacc395d59db632d251fba827d76ad7dfe4fae3"
+        },
+        "transfer": {
+          "bytes": 1390410,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0005_p0.750000000/transfer.json",
+          "sha256": "a9916412aa4e20fb7da83046ada22393b6660da311501c993509ddb640914475"
+        },
+        "transfer_gate": {
+          "bytes": 9797,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0005_p0.750000000/transfer_gate.json",
+          "sha256": "13f718a64d467cec5588bc4215b891e4792a15b216028ba645ec4be0240e6551"
+        },
+        "transfer_mirror": {
+          "bytes": 1396703,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0005_p0.750000000/transfer_mirror.json",
+          "sha256": "9861b1105ca1cd96996e2c94417a5274059a5fcdb22f90b642b4d7bfef7aa089"
+        }
+      },
+      "materialized_route_passed": true,
+      "proposed_progress": 0.75,
+      "scales": {
+        "length": 1.75,
+        "mass": 0.625
+      },
+      "step": 0.1,
+      "transfer_passed": true,
+      "trial": 5
+    },
+    {
+      "accepted": false,
+      "anchor_refinement": {
+        "optimizer": {
+          "bytes": 1340922,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/refine_p0.750000000/optimizer.json",
+          "sha256": "1907faa14e8c79e03c74f693f9e018f3535fc04b26cbdebd0928d87dbcd5f596"
+        },
+        "passed": false
+      },
+      "artifacts": {
+        "config": {
+          "bytes": 2009,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/target.yaml",
+          "sha256": "21d2b86132c554844375f2617ea8313a51eb87319218046f03f622887b85c533"
+        },
+        "similarity": {
+          "bytes": 2950,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/similarity.json",
+          "sha256": "e8752f913a8aa6d540edc4a426bc9c7d071723eddbb95c87905db5b4b190cf97"
+        },
+        "transfer": {
+          "bytes": 1390353,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer.json",
+          "sha256": "f64ca6b1ebe623ce2de180325cee8b5a8313046d7a5c077adce8d6b7ba08f421"
+        },
+        "transfer_gate": {
+          "bytes": 9853,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gate.json",
+          "sha256": "33eb745ab8d5a52f72d7f0bdb4547ab45fab7d4376c83d00872a10c94a9e20c3"
+        },
+        "transfer_mirror": {
+          "bytes": 1396646,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_mirror.json",
+          "sha256": "21d0e6cc1c54c3e26f7a8d895a166cd9d6e267c4a8446b160a998b4b96c5c0ee"
+        }
+      },
+      "feedback_gain_screen": [
+        {
+          "gain_scale": 0.75,
+          "gate": {
+            "bytes": 9885,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_0.75_gate.json",
+            "sha256": "073fe6fa86fd3372e3eeee760d4d8e8ea96d7049d21d8a7c4af2d58529014374"
+          },
+          "mirror": {
+            "bytes": 1393830,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_0.75_mirror.json",
+            "sha256": "fa106416f29bd5ff988b353c8093e93c643cfc182cac4142d6d8e6ca55195f6d"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1387528,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_0.75.json",
+            "sha256": "3cd35c8f25d29ef1d6b52e7df398995af72a97305327ed35e2331ee2c4ed69da"
+          }
+        },
+        {
+          "gain_scale": 1.25,
+          "gate": {
+            "bytes": 9873,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_1.25_gate.json",
+            "sha256": "b96f07d0f64054b0ea124e059c62116b29fd0a76d9035d490fd181308190711a"
+          },
+          "mirror": {
+            "bytes": 1391876,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_1.25_mirror.json",
+            "sha256": "0c2e8e80077f5c22400814e9080561c1a17e756b4f9189a9ed4f7565a8bdad30"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1385574,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_1.25.json",
+            "sha256": "2a279f9d551929e657c2f3427cc28cdd069014fea95343bf02bbe96714f6c219"
+          }
+        },
+        {
+          "gain_scale": 0.5,
+          "gate": {
+            "bytes": 9642,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_0.5_gate.json",
+            "sha256": "e0fee83faedcfd103419795b23e1419143f7a1899a0290b5f4294c3ee0267ac8"
+          },
+          "mirror": {
+            "bytes": 1397007,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_0.5_mirror.json",
+            "sha256": "195f913545853e6ce2eaeea84398e0c8cf28ad1ba879247ac8bd1eec2de4f6fd"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1390706,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_0.5.json",
+            "sha256": "b8623fd06aa8156037011e3623e0de714efeed3ca10562f9d10b3269c7353b94"
+          }
+        },
+        {
+          "gain_scale": 1.5,
+          "gate": {
+            "bytes": 9885,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_1.5_gate.json",
+            "sha256": "93d2cbf7743236a95dc65d58a8d59612d130d9e5ab5807dac0bfbbbddbd47cef"
+          },
+          "mirror": {
+            "bytes": 1390960,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_1.5_mirror.json",
+            "sha256": "ac968b24837c3c5aac32dec5f0e9d860ed613cb7d6d425376679e818efa5763b"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384659,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_1.5.json",
+            "sha256": "2afa295cedd1e1b826cb51d418e52cd5d149cef7c1879ad9ba2ef617f17e870d"
+          }
+        },
+        {
+          "gain_scale": 2.0,
+          "gate": {
+            "bytes": 9642,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_2_gate.json",
+            "sha256": "ce478058ebc1b54fb70f1772eae3505ab5cd79593535b920052bc39f62483aca"
+          },
+          "mirror": {
+            "bytes": 1390362,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_2_mirror.json",
+            "sha256": "ad141571783f57cd36241ea334423b98931b65bfad17cf32c631aa1b39e4f9e5"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384063,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0006_p0.900000000/transfer_gain_2.json",
+            "sha256": "6b52ada89859afb6e0a3306025d097036f64b3e1f45d4b051e2dcf4e2c44bda5"
+          }
+        }
+      ],
+      "materialized_route_passed": false,
+      "proposed_progress": 0.9,
+      "scales": {
+        "length": 1.9,
+        "mass": 0.55
+      },
+      "selected_feedback_gain_scale": null,
+      "step": 0.15000000000000002,
+      "transfer_passed": false,
+      "trial": 6
+    },
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 1990,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0007_p0.825000000/target.yaml",
+          "sha256": "109ad0432b50a3271f56b10fd9bd0be91b32529c4505f2843244668de69433fc"
+        },
+        "route": {
+          "bytes": 1387154,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0007_p0.825000000/route.json",
+          "sha256": "34b1c2526a26a04aa4d0c5cc8251ac3afd9b4f2f4dbd360294695661f5afd2cf"
+        },
+        "route_gate": {
+          "bytes": 9797,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0007_p0.825000000/route_gate.json",
+          "sha256": "5bb94a0ab444c4b9beff29f945778ac76cd121fb78f46043a8ca67fcbe28c1fa"
+        },
+        "route_mirror": {
+          "bytes": 1393443,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0007_p0.825000000/route_mirror.json",
+          "sha256": "0d655bab417daf24d74b2a1efb8bb626ec34a29e9e4caf24ae617043667b251b"
+        },
+        "similarity": {
+          "bytes": 2766,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0007_p0.825000000/similarity.json",
+          "sha256": "eb89d146a74cb4a36d12c537e67568a9569b686eae1694931063a927b0aeb178"
+        },
+        "transfer": {
+          "bytes": 1391009,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0007_p0.825000000/transfer.json",
+          "sha256": "ffc0117feb3fe7aefb437c26131bd8e4746a2d43d2ddf04700b1f37cf5190ea6"
+        },
+        "transfer_gate": {
+          "bytes": 9799,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0007_p0.825000000/transfer_gate.json",
+          "sha256": "c7123f4713dc538b3bc6266e7be9cc29a8b0353dead4f1e1703005ae3ffa32b2"
+        },
+        "transfer_mirror": {
+          "bytes": 1397302,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0007_p0.825000000/transfer_mirror.json",
+          "sha256": "40b10526554ea351102bf89fff993bdccad7f3a0edc1c4aa18bc698775b16f88"
+        }
+      },
+      "materialized_route_passed": true,
+      "proposed_progress": 0.825,
+      "scales": {
+        "length": 1.825,
+        "mass": 0.5875
+      },
+      "step": 0.07500000000000001,
+      "transfer_passed": true,
+      "trial": 7
+    },
+    {
+      "accepted": false,
+      "anchor_refinement": {
+        "optimizer": {
+          "bytes": 1201072,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/refine_p0.825000000/optimizer.json",
+          "sha256": "c432c4d5bd0be53b6480e15f3ef940d816a919c022361149ab3ce62f1b511ece"
+        },
+        "passed": false
+      },
+      "artifacts": {
+        "config": {
+          "bytes": 1988,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/target.yaml",
+          "sha256": "19c6e1e721113d7939e07f99b1e8111fabdaf40af39da81b98c22309d492d305"
+        },
+        "similarity": {
+          "bytes": 2876,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/similarity.json",
+          "sha256": "c855e6830061fb26517c7ad9a77570812bf015e5024d200cc61f24f64bcb29f0"
+        },
+        "transfer": {
+          "bytes": 1390781,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer.json",
+          "sha256": "e45b5355ca3b612a5ee7fa4de5c4093c2f03a44b1dbab5d4ecb5d9aac23c428a"
+        },
+        "transfer_gate": {
+          "bytes": 9823,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gate.json",
+          "sha256": "cd3f280f5b1833686685811b68b175f02d849f937698a3e539d7e78dbce189c5"
+        },
+        "transfer_mirror": {
+          "bytes": 1397074,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_mirror.json",
+          "sha256": "3d2d7f991b7a7ed530626344bb3b7609ffd2b02d0d40a649093c7b8362f8a193"
+        }
+      },
+      "feedback_gain_screen": [
+        {
+          "gain_scale": 0.75,
+          "gate": {
+            "bytes": 9870,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_0.75_gate.json",
+            "sha256": "8c3b6a983e1326a2c55a085c6e28a92799410a1ff985208ea24546caa4d2eb44"
+          },
+          "mirror": {
+            "bytes": 1393548,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_0.75_mirror.json",
+            "sha256": "db2e61aebe83798131c39258d16fe900b2d5bc64318ec0917c6cc7fc2b634786"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1387246,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_0.75.json",
+            "sha256": "593a9f286139ef5a6890d010d327afd0269fbe24599d25a57891c136844b6c7c"
+          }
+        },
+        {
+          "gain_scale": 1.25,
+          "gate": {
+            "bytes": 9871,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_1.25_gate.json",
+            "sha256": "0da1e8f25396bc87e084081bb79acbf721a01addf1d636582c13e8fcc6c2a5b3"
+          },
+          "mirror": {
+            "bytes": 1390797,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_1.25_mirror.json",
+            "sha256": "9a95fccd6e811db37dcf2d0bd0c49ce2b89eef62b3cba36298ed6999fc94b054"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384495,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_1.25.json",
+            "sha256": "cecb74c369c7fb05101f85bbdd3b238a07433ed4a1a626c00560f8427ff4bc54"
+          }
+        },
+        {
+          "gain_scale": 0.5,
+          "gate": {
+            "bytes": 9646,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_0.5_gate.json",
+            "sha256": "b256b079cc2f9905644609bbc47aaf8023995d833dfc3517093123978299ec9e"
+          },
+          "mirror": {
+            "bytes": 1397544,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_0.5_mirror.json",
+            "sha256": "351a336c2c0c132d03773f3c61f7fd31bcec682d85aa17c728f199530f11dced"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1391243,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_0.5.json",
+            "sha256": "1117a3b8fb4ce32aa05be925a00d992ecc9c46a02961295ca7378a72043b05ab"
+          }
+        },
+        {
+          "gain_scale": 1.5,
+          "gate": {
+            "bytes": 9889,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_1.5_gate.json",
+            "sha256": "343bf1c2421d4736b803fc8eb9207b48e126ac7709de956faac21f59803c3879"
+          },
+          "mirror": {
+            "bytes": 1389986,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_1.5_mirror.json",
+            "sha256": "9257188b50a72d48fdd2f35c21e21cd4348a9f4e789f1a78706b2e58f49f9fba"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1383685,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_1.5.json",
+            "sha256": "8b16db404a2c19a43c5cc237a18969fd377b73bbabac8afb9c2290f58814d940"
+          }
+        },
+        {
+          "gain_scale": 2.0,
+          "gate": {
+            "bytes": 9641,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_2_gate.json",
+            "sha256": "272fc439257291c9d4aa9827849cb560c6c2d2b38075f689f192e46aebb377ab"
+          },
+          "mirror": {
+            "bytes": 1389818,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_2_mirror.json",
+            "sha256": "1afe8a2011499b7f39029e780bec86a1c39b8555720dbbce28b3af09ebc47973"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1383519,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0008_p0.937500000/transfer_gain_2.json",
+            "sha256": "c12c9d86d550b72df77183f6f72c223545aac34a02d37693e08ecf962ac7c8d1"
+          }
+        }
+      ],
+      "materialized_route_passed": false,
+      "proposed_progress": 0.9375,
+      "scales": {
+        "length": 1.9375,
+        "mass": 0.53125
+      },
+      "selected_feedback_gain_scale": null,
+      "step": 0.11250000000000002,
+      "transfer_passed": false,
+      "trial": 8
+    },
+    {
+      "accepted": false,
+      "artifacts": {
+        "config": {
+          "bytes": 2028,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/target.yaml",
+          "sha256": "f3c28eb50996e4c0cbc466a4f8cda18c3c14ba8aadd3fc67110c815c930eb004"
+        },
+        "similarity": {
+          "bytes": 2930,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/similarity.json",
+          "sha256": "99bc83fa26125ea365bfafde4db3447baedfe40f07073e8695ebf2c295cc337e"
+        },
+        "transfer": {
+          "bytes": 1390754,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer.json",
+          "sha256": "9f04c036f3c52e92b0d2d24c0605c71dbe567a8b5314e94d934463b903a58939"
+        },
+        "transfer_gate": {
+          "bytes": 9837,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gate.json",
+          "sha256": "76fdb7e77c025bb41c26341c3da95b714bd261c4a0432dfbfea0e6de84404efc"
+        },
+        "transfer_mirror": {
+          "bytes": 1397047,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_mirror.json",
+          "sha256": "6f703c0db5c056654ab7ecddba945372a385139ae5f3eaa2c4452ef45114e70c"
+        }
+      },
+      "feedback_gain_screen": [
+        {
+          "gain_scale": 0.75,
+          "gate": {
+            "bytes": 9869,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_0.75_gate.json",
+            "sha256": "acf4061872232b556aac38a7a2e360212136adab495db4326ab4d5cb3814cde6"
+          },
+          "mirror": {
+            "bytes": 1395254,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_0.75_mirror.json",
+            "sha256": "8a239f3acd38f224b12391768804b02cf6131c294dddf840051342c7b7b14c99"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1388952,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_0.75.json",
+            "sha256": "39cc1a5263393b6f8c47b170815c064a0e0bffa0bd42919e281d3a9db99965e8"
+          }
+        },
+        {
+          "gain_scale": 1.25,
+          "gate": {
+            "bytes": 9873,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_1.25_gate.json",
+            "sha256": "fc752d6607b50ea7f0b2bb427bc0d0aa8bf30581dfe6879f59e6df198a5d2134"
+          },
+          "mirror": {
+            "bytes": 1392151,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_1.25_mirror.json",
+            "sha256": "6104ac519cbe0c7765046cf06ad2500c44e494d3e3175d771fd5a94d25355d38"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1385849,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_1.25.json",
+            "sha256": "1df483c6f8944d4119c519f3d36e67fcc96daf8310b9a3f993652221ffb1be0d"
+          }
+        },
+        {
+          "gain_scale": 0.5,
+          "gate": {
+            "bytes": 9646,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_0.5_gate.json",
+            "sha256": "6362e083779225fb996cf8ddc34fbb1dfc1003d84d191cb0b4aecb7124a8c6d7"
+          },
+          "mirror": {
+            "bytes": 1397587,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_0.5_mirror.json",
+            "sha256": "919972bf1b528e867828f3fe29498898e141659fb67c382907b1fd3a6cc78b52"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1391286,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_0.5.json",
+            "sha256": "32f73a23ddba810154587729f2553d1a92fc9846d899f4e0849f3f13e5bf9a6e"
+          }
+        },
+        {
+          "gain_scale": 1.5,
+          "gate": {
+            "bytes": 9880,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_1.5_gate.json",
+            "sha256": "46a0d3166ce6760c9b20cf8598a759bb9b4970d5f5d24bd371706916d19fbdbf"
+          },
+          "mirror": {
+            "bytes": 1391317,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_1.5_mirror.json",
+            "sha256": "37191d0226b3efe5b3ebad60a58dda05aab0d1005cb551226d8e2df5c4449436"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1385016,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_1.5.json",
+            "sha256": "75924baae7cb3f3253b958554ea0fa246cacd13cfdba1ab2ebe91aea397886e5"
+          }
+        },
+        {
+          "gain_scale": 2.0,
+          "gate": {
+            "bytes": 9642,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_2_gate.json",
+            "sha256": "617b74c4a2108f7fd15d630ea143c2c2b4fec68cf688841a7406cc798c7df16b"
+          },
+          "mirror": {
+            "bytes": 1390792,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_2_mirror.json",
+            "sha256": "f43290c2d505799e18011201e4dcfc40c95419cec6d9d4f38a44eaed1014f2e7"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384493,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0009_p0.881250000/transfer_gain_2.json",
+            "sha256": "ea7eb8e5632922926891fe0435e8046290814147e36648191ca8ba71daa540a7"
+          }
+        }
+      ],
+      "materialized_route_passed": false,
+      "proposed_progress": 0.88125,
+      "scales": {
+        "length": 1.88125,
+        "mass": 0.559375
+      },
+      "selected_feedback_gain_scale": null,
+      "step": 0.05625000000000001,
+      "transfer_passed": false,
+      "trial": 9
+    },
+    {
+      "accepted": false,
+      "artifacts": {
+        "config": {
+          "bytes": 2023,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/target.yaml",
+          "sha256": "9883ddcc5e29d023ba2eaf930303ccc6b6ebad0cf120fb312f3f5edcf0b46204"
+        },
+        "similarity": {
+          "bytes": 2896,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/similarity.json",
+          "sha256": "e68c9b36583934a22c935c877d85be4aa858e07aa0e47272da35bda49dfa6f84"
+        },
+        "transfer": {
+          "bytes": 1389896,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer.json",
+          "sha256": "b0a77b5b68b94a89e18496a86d2fdb57d79de2b002e257d35c89017acb5953d9"
+        },
+        "transfer_gate": {
+          "bytes": 9853,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gate.json",
+          "sha256": "e2f8f01fd1eddfc21c267bf1121e26baa483c04be90228862d627b4d3ac776be"
+        },
+        "transfer_mirror": {
+          "bytes": 1396189,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_mirror.json",
+          "sha256": "b0c0cb8d7adf736b449d52f3a7dfcb71d39ca340fd2a782566fd1180748cf1ca"
+        }
+      },
+      "feedback_gain_screen": [
+        {
+          "gain_scale": 0.75,
+          "gate": {
+            "bytes": 9869,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_0.75_gate.json",
+            "sha256": "7cf89929d7c6bacbb20ffd9533c8d0e4798f4eacb64bd7a926bbfeca6bd7ce0b"
+          },
+          "mirror": {
+            "bytes": 1394331,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_0.75_mirror.json",
+            "sha256": "af509f61fdff91cd7576c8c76c8261edb2b795e17d85707706cfca6f2bcc88d3"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1388029,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_0.75.json",
+            "sha256": "c47c1bcad06522b982fca29b138bfcc3c8b0d2b048b6831941f76faeb73c592d"
+          }
+        },
+        {
+          "gain_scale": 1.25,
+          "gate": {
+            "bytes": 9866,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_1.25_gate.json",
+            "sha256": "851848e108928cb57cac316e147d6cca34b2ab2d58623e3867dc3da2c6a918e1"
+          },
+          "mirror": {
+            "bytes": 1391043,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_1.25_mirror.json",
+            "sha256": "c2ddd96a08653531cf5151783e809f8d701c0fe2b67a2420abb944bbbf108500"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384741,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_1.25.json",
+            "sha256": "ce3a138f876eb06546e26175ece300a390e69492eb88c51d8c1a534c745c73b1"
+          }
+        },
+        {
+          "gain_scale": 0.5,
+          "gate": {
+            "bytes": 9647,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_0.5_gate.json",
+            "sha256": "66661dd993c74f4c13ecfe00b2a5e7f96dfb180b4a1d3b21072c737f075b77f2"
+          },
+          "mirror": {
+            "bytes": 1396720,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_0.5_mirror.json",
+            "sha256": "5543f57154b3f8eb728175c3c4ae99a203f97cac1d06cc64abb24feb3bf20e9e"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1390419,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_0.5.json",
+            "sha256": "706a9bd099e1e355c3a827f7c17cc8698817d9f3470f1eda3ed743f9e0c8a628"
+          }
+        },
+        {
+          "gain_scale": 1.5,
+          "gate": {
+            "bytes": 9887,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_1.5_gate.json",
+            "sha256": "0d5d072b3e6ac5c34f2e909012bd007973ea39c33f03a51d18af44fc48c7d822"
+          },
+          "mirror": {
+            "bytes": 1390590,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_1.5_mirror.json",
+            "sha256": "52b64915a34d2864615d50764b02360f7e8b832befe8016817a52a36876e08c2"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384289,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_1.5.json",
+            "sha256": "553b357e7e08a4347b39338178ea7acd8552d01a2ee2734daf8e8223fdbaee55"
+          }
+        },
+        {
+          "gain_scale": 2.0,
+          "gate": {
+            "bytes": 9643,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_2_gate.json",
+            "sha256": "ab39b48b2ad41a1b2b350faf9a9b3aefc9237516c4871176e9a27abc070d2ac7"
+          },
+          "mirror": {
+            "bytes": 1388910,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_2_mirror.json",
+            "sha256": "5fdf92ade3c3e72da48186e5c15548b30a6a45e6dbbbe8b61a14d833e38f8d19"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1382611,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0010_p0.853125000/transfer_gain_2.json",
+            "sha256": "981d02d58c6f339d20a13b6c2628cc10c465e6c985cf92bccb776eb0b4ca3d9f"
+          }
+        }
+      ],
+      "materialized_route_passed": false,
+      "proposed_progress": 0.8531249999999999,
+      "scales": {
+        "length": 1.853125,
+        "mass": 0.5734375
+      },
+      "selected_feedback_gain_scale": null,
+      "step": 0.028125000000000004,
+      "transfer_passed": false,
+      "trial": 10
+    },
+    {
+      "accepted": false,
+      "artifacts": {
+        "config": {
+          "bytes": 2065,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/target.yaml",
+          "sha256": "a09306d9e37e081c4b57cd3b5836c73d4d3cf419b446ae68e5bd3e4c6de6242f"
+        },
+        "similarity": {
+          "bytes": 2928,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/similarity.json",
+          "sha256": "f35c538fea6d507d0ed7db27915672b5386132a327bee1256ab9af47583da818"
+        },
+        "transfer": {
+          "bytes": 1390399,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer.json",
+          "sha256": "65a574225bd2d0e0ce8116ef33264252d6b4efad39a35a2a98a6a49b19fe707b"
+        },
+        "transfer_gate": {
+          "bytes": 9845,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gate.json",
+          "sha256": "0e135a87c3f3e9e457d90e6a7c06c70d3e4dad64b7dca1b147346003c386f22a"
+        },
+        "transfer_mirror": {
+          "bytes": 1396692,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_mirror.json",
+          "sha256": "2249e9347dd904debbb1858597e37f087a1e5ea6044068a65ca2bd8a5226512a"
+        }
+      },
+      "feedback_gain_screen": [
+        {
+          "gain_scale": 0.75,
+          "gate": {
+            "bytes": 9880,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_0.75_gate.json",
+            "sha256": "d2b2c96e62855ea71c9998a565c9fc12713c3cb18217c93c1662ecc23f5ce7d1"
+          },
+          "mirror": {
+            "bytes": 1393401,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_0.75_mirror.json",
+            "sha256": "024385bdf90480367690b353de5e5c9a9ffb45b83d311a787719c960242f807a"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1387099,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_0.75.json",
+            "sha256": "68b1756cab9e6cba7a693065fa7adb542d7280a573860c9ebb519a63f16aa57c"
+          }
+        },
+        {
+          "gain_scale": 1.25,
+          "gate": {
+            "bytes": 9880,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_1.25_gate.json",
+            "sha256": "cc35a766244577a05a8688aca70a7b4adbaa27b4381cb886397b03372cf619a0"
+          },
+          "mirror": {
+            "bytes": 1391125,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_1.25_mirror.json",
+            "sha256": "d5148ca95342a0f3363676a0850f67d14768e62f9b176258cbc6f3543163a2ed"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384823,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_1.25.json",
+            "sha256": "6df81ebbea7b6196025092a84c7bc35bbe44cde3ce076533d775b4b062df2ed3"
+          }
+        },
+        {
+          "gain_scale": 0.5,
+          "gate": {
+            "bytes": 9643,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_0.5_gate.json",
+            "sha256": "58dd68f5d3e56a520ee9dc4ce66ecde960b1012cf031b91bc40e2fa6a0459188"
+          },
+          "mirror": {
+            "bytes": 1397845,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_0.5_mirror.json",
+            "sha256": "a17abbc2c7d8f44c68706aafdb6df84e0b3b2b1cb98c47cafedf1b2a9570d3c6"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1391544,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_0.5.json",
+            "sha256": "099a5ed25fdb463e3f9689fa78f012de7948d136ed71a80bf281802aeb3b7807"
+          }
+        },
+        {
+          "gain_scale": 1.5,
+          "gate": {
+            "bytes": 9881,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_1.5_gate.json",
+            "sha256": "0cbc28915460f77b39589660b2d67d3be86ed95540f975ab2c28ee66f4828173"
+          },
+          "mirror": {
+            "bytes": 1389933,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_1.5_mirror.json",
+            "sha256": "864ad8ad73ed745fa4e8d4329d0ddb5da12734419e92811bcc2c3ab65772c287"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1383632,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_1.5.json",
+            "sha256": "f475efaca71a8fa92b9b3e222c225a3318a78f49011821bbd331501fb9058105"
+          }
+        },
+        {
+          "gain_scale": 2.0,
+          "gate": {
+            "bytes": 9640,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_2_gate.json",
+            "sha256": "c181f5b384202795c705604921e93ac6b1fa755619c7b9e1d2def500e45024a5"
+          },
+          "mirror": {
+            "bytes": 1390464,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_2_mirror.json",
+            "sha256": "3cbacde13c01cf59d65688e24cebf2aa6d52902851cd3d7ee98cc6a8907917c4"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384165,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0011_p0.839062500/transfer_gain_2.json",
+            "sha256": "804a63f4d878e3744b0f0d5dfac207256d993394d4526be12e1cf8d2e41e7eee"
+          }
+        }
+      ],
+      "materialized_route_passed": false,
+      "proposed_progress": 0.8390624999999999,
+      "scales": {
+        "length": 1.8390624999999998,
+        "mass": 0.5804687500000001
+      },
+      "selected_feedback_gain_scale": null,
+      "step": 0.014062500000000002,
+      "transfer_passed": false,
+      "trial": 11
+    },
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 2026,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0012_p0.832031250/target.yaml",
+          "sha256": "13c8ccdbdbe985a134cba479ca3558bbaed000a3092c9724504d351308349d44"
+        },
+        "route": {
+          "bytes": 1387006,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0012_p0.832031250/route.json",
+          "sha256": "46b5b4c572f2b022dea6b7aac914a540b6c3f7face97794481a89081c6ae2f11"
+        },
+        "route_gate": {
+          "bytes": 9795,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0012_p0.832031250/route_gate.json",
+          "sha256": "e9d57cf87d267594493d0083c54c22cc46ee2981bb5226b042cba5bff19936af"
+        },
+        "route_mirror": {
+          "bytes": 1393295,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0012_p0.832031250/route_mirror.json",
+          "sha256": "4b8b093972d6fd0d083aa86c9fc5137b53ef93c0f7c14add32c3c850bfd600ed"
+        },
+        "similarity": {
+          "bytes": 2860,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0012_p0.832031250/similarity.json",
+          "sha256": "0c425754561f10aa7ba4b7c80d92384b2ba3b67b27cdea1f00eb5e9497ec8df9"
+        },
+        "transfer": {
+          "bytes": 1390866,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0012_p0.832031250/transfer.json",
+          "sha256": "56b57681f721665815b186cfa2dc90205a4dfb2f745b1b293963098cffe6dd4e"
+        },
+        "transfer_gate": {
+          "bytes": 9800,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0012_p0.832031250/transfer_gate.json",
+          "sha256": "a2ef17e45e71c44c7726289c06ec310e3890a19cfba3fc060068bf3c38dc3137"
+        },
+        "transfer_mirror": {
+          "bytes": 1397159,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0012_p0.832031250/transfer_mirror.json",
+          "sha256": "e2a6446743d8f7a889464b5a342019840662801837156fe81a33be674415a67b"
+        }
+      },
+      "materialized_route_passed": true,
+      "proposed_progress": 0.83203125,
+      "scales": {
+        "length": 1.83203125,
+        "mass": 0.583984375
+      },
+      "step": 0.007031250000000001,
+      "transfer_passed": true,
+      "trial": 12
+    },
+    {
+      "accepted": false,
+      "anchor_refinement": {
+        "optimizer": {
+          "bytes": 1317599,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/refine_p0.832031250/optimizer.json",
+          "sha256": "f756bca59f00d25ab6a77627da8487786d5c393fde56e9b5ac491362b1814009"
+        },
+        "passed": false
+      },
+      "artifacts": {
+        "config": {
+          "bytes": 2035,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/target.yaml",
+          "sha256": "7c7b5c34dd49cf59c932b4f1443f44f1f8ae69df9125451efe8d00fa88fda0c7"
+        },
+        "similarity": {
+          "bytes": 2875,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/similarity.json",
+          "sha256": "e18cecdcff0c1e1b6aa918e2d2fd8eb260a72d013957be954396f0dd5a0232eb"
+        },
+        "transfer": {
+          "bytes": 1390439,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer.json",
+          "sha256": "555cc9338fced85aa2107eadff378b1830f23e341ec8b71c289b18c1316aab77"
+        },
+        "transfer_gate": {
+          "bytes": 9841,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gate.json",
+          "sha256": "bbe2854a725430a4d50701d8ab5eefcc7646e06003708d2b9599af6630601688"
+        },
+        "transfer_mirror": {
+          "bytes": 1396732,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_mirror.json",
+          "sha256": "8304f67903725428d663586c40180ff6f3761183030d5f99366c4d57011565ac"
+        }
+      },
+      "feedback_gain_screen": [
+        {
+          "gain_scale": 0.75,
+          "gate": {
+            "bytes": 9883,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_0.75_gate.json",
+            "sha256": "1042bef75d95681a9d2ac46b6c2587c251546e2ca4bdbc4a40085bbe489e5ddb"
+          },
+          "mirror": {
+            "bytes": 1393836,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_0.75_mirror.json",
+            "sha256": "9c815755ea577229be8875d02a44f359e73757ef936a5346e094eb14e782942d"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1387534,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_0.75.json",
+            "sha256": "37fcd639efeb4134cfd541f72a98a8a51ad6658fc8be980ed167253b1c9943b7"
+          }
+        },
+        {
+          "gain_scale": 1.25,
+          "gate": {
+            "bytes": 9888,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_1.25_gate.json",
+            "sha256": "315d29616dbdc4d4347ec00de711f1d4e5a4cdb03e6b6d296c7db605a62df77c"
+          },
+          "mirror": {
+            "bytes": 1392069,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_1.25_mirror.json",
+            "sha256": "49836ed48206e58a514755621f0ae3141a18789fe99c71d5a9c3df953fa6cacf"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1385767,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_1.25.json",
+            "sha256": "ce42e4ba4089e241469b23ba3a505409af1ea445d9711b3dfb4b0e00d7b590a9"
+          }
+        },
+        {
+          "gain_scale": 0.5,
+          "gate": {
+            "bytes": 9648,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_0.5_gate.json",
+            "sha256": "2842b18ecbd313e67706775fe0e9fedc46aa01585cb352c8343453ba2c8a7000"
+          },
+          "mirror": {
+            "bytes": 1398293,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_0.5_mirror.json",
+            "sha256": "770747f006c4a85b7d0abe8295e66816dffc9ea354ee31eb77eee3dc4c6e06a0"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1391992,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_0.5.json",
+            "sha256": "19ad094c9285cd4bfdcc2c8901b5184a8e18b41766bc8463954b21f40743da96"
+          }
+        },
+        {
+          "gain_scale": 1.5,
+          "gate": {
+            "bytes": 9867,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_1.5_gate.json",
+            "sha256": "fbd02a756f93b77cb2b865429b528edc2aef17ff4e8842443561e1c9fd7fa44e"
+          },
+          "mirror": {
+            "bytes": 1390688,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_1.5_mirror.json",
+            "sha256": "8af1d20f27fa919232125483c97ca073a9ca4cc5e53b79060136f4c7d08410ff"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384387,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_1.5.json",
+            "sha256": "8cb78b6e2ea71f10f763d8c0b56f8e90e11284c2807a94519882c43d80807fc3"
+          }
+        },
+        {
+          "gain_scale": 2.0,
+          "gate": {
+            "bytes": 9636,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_2_gate.json",
+            "sha256": "03224736a2756aa62c117962e7e13b212c5e2e1cb47fe43156bf5f22f93e5dc4"
+          },
+          "mirror": {
+            "bytes": 1389760,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_2_mirror.json",
+            "sha256": "f0db28f855103a439ba92aeaa2dfa959f0c1d1842223cd627088c4b65b9500c6"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1383461,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0013_p0.842578125/transfer_gain_2.json",
+            "sha256": "31ca5f25f2d3e61573ea87d961b93abd7fc560050d51b08303714cbee2ddc5ff"
+          }
+        }
+      ],
+      "materialized_route_passed": false,
+      "proposed_progress": 0.842578125,
+      "scales": {
+        "length": 1.842578125,
+        "mass": 0.5787109375
+      },
+      "selected_feedback_gain_scale": null,
+      "step": 0.010546875,
+      "transfer_passed": false,
+      "trial": 13
+    },
+    {
+      "accepted": false,
+      "artifacts": {
+        "config": {
+          "bytes": 2049,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/target.yaml",
+          "sha256": "421b394261660de4779485335008f7df178ffa50853b4af56eb0cadf2c13d8e1"
+        },
+        "similarity": {
+          "bytes": 2891,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/similarity.json",
+          "sha256": "1336f7a0eb869afff5ac0faddeff95a647dc46d8cb97a7f10e07b5bd58124fc8"
+        },
+        "transfer": {
+          "bytes": 1390644,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer.json",
+          "sha256": "154285f59d112d2f4e51ef35aedd441aed3f0b2ed33c40290c8ee6df6d1fd18d"
+        },
+        "transfer_gate": {
+          "bytes": 9850,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gate.json",
+          "sha256": "3479269733bcf5cbbd34ac0b82f9cb7f74ee223918c768cbacffc926913bd58b"
+        },
+        "transfer_mirror": {
+          "bytes": 1396937,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_mirror.json",
+          "sha256": "fa65bddb2048588573d9f5448b98a2075ff1b1bca8293aee6fbf2b126561ee9f"
+        }
+      },
+      "feedback_gain_screen": [
+        {
+          "gain_scale": 0.75,
+          "gate": {
+            "bytes": 9878,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_0.75_gate.json",
+            "sha256": "e911afa6bef4f353c5f79423b163cee985982341d17867f862f0be9c332d5cd3"
+          },
+          "mirror": {
+            "bytes": 1394670,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_0.75_mirror.json",
+            "sha256": "5e259a8ba49e5a83e360b7f0259d8f13303d785be5b7d25f5e27bbaa8085e841"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1388368,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_0.75.json",
+            "sha256": "dc78496ed221e6f0a31cfe15cef605937a2367d17facfb0f92c96bd85b85fa1c"
+          }
+        },
+        {
+          "gain_scale": 1.25,
+          "gate": {
+            "bytes": 9873,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_1.25_gate.json",
+            "sha256": "31137c3a41a724839359f95101d4dc51d7745733af0c9ea85a9711c075666624"
+          },
+          "mirror": {
+            "bytes": 1392617,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_1.25_mirror.json",
+            "sha256": "d6f179fffb22d83109d801b4d65aa6799b920112c84cc764e7323323b5d71dc9"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1386315,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_1.25.json",
+            "sha256": "285bf949d8facd749fc8de9933e4766167a09c18a2dec161766140544cfde6ef"
+          }
+        },
+        {
+          "gain_scale": 0.5,
+          "gate": {
+            "bytes": 9636,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_0.5_gate.json",
+            "sha256": "5614c460cbf69a463bfcb9080759cecc43ec029ffffafa4f6361f68f4b91eb03"
+          },
+          "mirror": {
+            "bytes": 1398429,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_0.5_mirror.json",
+            "sha256": "d644840e47583b9c1fd2d7a91665ab52d54be65df1592baff110041812123710"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1392128,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_0.5.json",
+            "sha256": "937aa375676a32ebd2bc76977dc77affe9a195933a790ce694850a1459cb5404"
+          }
+        },
+        {
+          "gain_scale": 1.5,
+          "gate": {
+            "bytes": 9870,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_1.5_gate.json",
+            "sha256": "cf613a3ffefe048b2ef2614c2bc641465fae6fad625f22ce719124b8c02bc5ab"
+          },
+          "mirror": {
+            "bytes": 1390789,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_1.5_mirror.json",
+            "sha256": "c9fab1ea95e7c9a3ed0f192e21f968251fba62bc5e5bb1919b5be4d5bf003dd8"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384488,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_1.5.json",
+            "sha256": "04b5d57b6d55f4ddbc66e2c8b465e254fc0397d1d2e5d6add3a50630b6d07743"
+          }
+        },
+        {
+          "gain_scale": 2.0,
+          "gate": {
+            "bytes": 9643,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_2_gate.json",
+            "sha256": "c48876cd5d7644247e44a689c167cf437ba8f963b75e5c7bda443247acac1977"
+          },
+          "mirror": {
+            "bytes": 1389991,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_2_mirror.json",
+            "sha256": "098bf8f2cbf92ea436d8ee47f2daa00e802cf0a016344998e4320e53051c5312"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1383692,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0014_p0.837304687/transfer_gain_2.json",
+            "sha256": "299e1283b7e106cda607fa4757504dec66bda948930c2f1675b3337fcc28c0f7"
+          }
+        }
+      ],
+      "materialized_route_passed": false,
+      "proposed_progress": 0.8373046875,
+      "scales": {
+        "length": 1.8373046875,
+        "mass": 0.58134765625
+      },
+      "selected_feedback_gain_scale": null,
+      "step": 0.0052734375,
+      "transfer_passed": false,
+      "trial": 14
+    },
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 2031,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/target.yaml",
+          "sha256": "408455d3242423b99c65d13ba649b60cad39bd64b8cc2ce24a681fdc12476a57"
+        },
+        "route": {
+          "bytes": 1387142,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/route.json",
+          "sha256": "ba56f37cb2f004841b79c5a4efff335421f3f54bb2fa68793f32d0c39fc35fef"
+        },
+        "route_gate": {
+          "bytes": 9820,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/route_gate.json",
+          "sha256": "cd4b4a484424cce0d632407682ee08e2a844ac24a11b67add13d9bf0159d222f"
+        },
+        "route_mirror": {
+          "bytes": 1393431,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/route_mirror.json",
+          "sha256": "fed6d9bf00fc3e9cffa7e3ca2a18b1e5a289c5207ca007b86af6c2688a86be2b"
+        },
+        "selected_transfer": {
+          "bytes": 1395402,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_segment_s1_t1.25.json",
+          "sha256": "0daeccba1dd098aa9359df3c787dccf253b6ed7ff08396c14cf753164ec9d65b"
+        },
+        "selected_transfer_mirror": {
+          "bytes": 1401697,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_segment_s1_t1.25_mirror.json",
+          "sha256": "8917c89d4e16a5855fdadbc6c94ae06c64261d0e1e7a28c486b916b5266ffe02"
+        },
+        "similarity": {
+          "bytes": 2896,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/similarity.json",
+          "sha256": "023f385f40c6f9f820e8ba8c5df093855fff6b9e0aec8c0bdf24cf6d4a6503b7"
+        },
+        "transfer": {
+          "bytes": 1391365,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer.json",
+          "sha256": "c6d5e8e5b922a52305ab4a7303ffb63ec7d29acb6f2bbc6693a879477cf789d6"
+        },
+        "transfer_gate": {
+          "bytes": 9873,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gate.json",
+          "sha256": "4eeb8b653002bc6b696bce04ca9d7110ce07366bc19777e7b724b0628f1dd96a"
+        },
+        "transfer_mirror": {
+          "bytes": 1397658,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_mirror.json",
+          "sha256": "d162c414ea90d8011c73796b3f2149bca8488170f1f790300c25a183d989d4ab"
+        }
+      },
+      "feedback_gain_screen": [
+        {
+          "gain_scale": 0.75,
+          "gate": {
+            "bytes": 9901,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_0.75_gate.json",
+            "sha256": "38fc6052312ce2d2c761ea55ee3260d42fac96b884b3c43e563a47cb36c38a37"
+          },
+          "mirror": {
+            "bytes": 1394451,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_0.75_mirror.json",
+            "sha256": "33daa15ee7c2c73eef45ac7cf8bc97f928785f57d80e85ee1af2bccdbefbc072"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1388149,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_0.75.json",
+            "sha256": "7b7584570462a8214867f6ed524a9d468dd00c89676c03be1f37b7b963c4df09"
+          }
+        },
+        {
+          "gain_scale": 1.25,
+          "gate": {
+            "bytes": 9905,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_1.25_gate.json",
+            "sha256": "a77eaa2b666271aaeea1b26efcca14868a039b57fa8440a4040d94bc890054d7"
+          },
+          "mirror": {
+            "bytes": 1392359,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_1.25_mirror.json",
+            "sha256": "bf2ec0e91afcce7cbb4876c9c69129bbcd316e2273aeaabf959ff27a85af8931"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1386057,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_1.25.json",
+            "sha256": "c2c2a758ff6dfd860be7b842a9887a1efa866bd5f20fe65809c2d398fc13e868"
+          }
+        },
+        {
+          "gain_scale": 0.5,
+          "gate": {
+            "bytes": 9665,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_0.5_gate.json",
+            "sha256": "22f01cd73c744edb1be71010a3d7bbfb1c6afe4bef6757883dfc2084d78bc396"
+          },
+          "mirror": {
+            "bytes": 1398874,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_0.5_mirror.json",
+            "sha256": "58e14a6fca9d94283362474bb2feaf3ba4c897fd5e5e0ce75d6df441231a8969"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1392573,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_0.5.json",
+            "sha256": "fd53405882fffc27a454dfdbe6d64e86d1c5929ef93b2c7379a6cb2012d7bd8b"
+          }
+        },
+        {
+          "gain_scale": 1.5,
+          "gate": {
+            "bytes": 9906,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_1.5_gate.json",
+            "sha256": "de8ec2b6806419849326f8437fd439e58127630bc698ec735684f0f4a7a463e8"
+          },
+          "mirror": {
+            "bytes": 1390967,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_1.5_mirror.json",
+            "sha256": "03fbfa7e6a9a8712b3d7409eb42617256d5bf7fe6a89e0948d775b37514f0dbd"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384666,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_1.5.json",
+            "sha256": "6abc3de1da5cab08f95390eaf7fc3e6fd043ea476b0662e541ba272df4ec8437"
+          }
+        },
+        {
+          "gain_scale": 2.0,
+          "gate": {
+            "bytes": 9670,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_2_gate.json",
+            "sha256": "eb1c7eb0455b2ae2be03f45ab8608e5bd92f7d72bc7370591df548326dbfd728"
+          },
+          "mirror": {
+            "bytes": 1391058,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_2_mirror.json",
+            "sha256": "62cc2349be4956e8b78c031e193904e5f6d4c14bdcd2ccfd3830ce4929398aae"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384759,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_gain_2.json",
+            "sha256": "7986d4dc0ea50135a7e155cdfc324568a27b4d4ea661f5da004b18642d0a7f89"
+          }
+        },
+        {
+          "gate": {
+            "bytes": 9853,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_segment_s1_t1.25_gate.json",
+            "sha256": "b40ec5eb7508723c3d1608bd657da4ad9e3594ada063fece7b3ad722f22ff4be"
+          },
+          "mirror": {
+            "bytes": 1401697,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_segment_s1_t1.25_mirror.json",
+            "sha256": "8917c89d4e16a5855fdadbc6c94ae06c64261d0e1e7a28c486b916b5266ffe02"
+          },
+          "passed": true,
+          "route": {
+            "bytes": 1395402,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0015_p0.837031250/transfer_segment_s1_t1.25.json",
+            "sha256": "0daeccba1dd098aa9359df3c787dccf253b6ed7ff08396c14cf753164ec9d65b"
+          },
+          "swing_gain_scale": 1.0,
+          "tail_gain_scale": 1.25
+        }
+      ],
+      "materialized_route_passed": true,
+      "proposed_progress": 0.83703125,
+      "scales": {
+        "length": 1.83703125,
+        "mass": 0.581484375
+      },
+      "selected_feedback_gain_scale": null,
+      "selected_segment_feedback_gain_scales": {
+        "swing": 1.0,
+        "tail": 1.25
+      },
+      "step": 0.005,
+      "transfer_passed": true,
+      "trial": 15
+    },
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 2018,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0016_p0.844531250/target.yaml",
+          "sha256": "c9fb31e8e7f1901d6d8c2a804fe383fef63e42a09911fc74499938c8eb7f1691"
+        },
+        "route": {
+          "bytes": 1386532,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0016_p0.844531250/route.json",
+          "sha256": "d3009ddbc59c7a503af2fd837f1516e9e4769f5d2bbb4c1a2ba7ea8d296ea4a9"
+        },
+        "route_gate": {
+          "bytes": 9802,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0016_p0.844531250/route_gate.json",
+          "sha256": "3d75353fab15ad429d5f0982140bf783d8026109c6d1c3a1bd523bfd809be1e4"
+        },
+        "route_mirror": {
+          "bytes": 1392821,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0016_p0.844531250/route_mirror.json",
+          "sha256": "5b4ce7c95c681c9f35114603d93309f4d8e871fb37a910cf76ebd63c64eccd86"
+        },
+        "similarity": {
+          "bytes": 2860,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0016_p0.844531250/similarity.json",
+          "sha256": "b9f6c9112cfcd6bd5f1d4475c9409f441ba06da10890c2267586690aa737ed8c"
+        },
+        "transfer": {
+          "bytes": 1390426,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0016_p0.844531250/transfer.json",
+          "sha256": "ae9ff076f4f1db4303f7d1206f357133693d5da73ac0383100e7485dcb182887"
+        },
+        "transfer_gate": {
+          "bytes": 9806,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0016_p0.844531250/transfer_gate.json",
+          "sha256": "8e65a992a6d32d723a1f063137e77f5cbe3ed2b95da2b0310808551a94a59c8e"
+        },
+        "transfer_mirror": {
+          "bytes": 1396719,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0016_p0.844531250/transfer_mirror.json",
+          "sha256": "9ca7c034ca777bf4189f617e1389237f3a667401f91b2ac4feca2abe2ece3554"
+        }
+      },
+      "materialized_route_passed": true,
+      "proposed_progress": 0.84453125,
+      "scales": {
+        "length": 1.84453125,
+        "mass": 0.577734375
+      },
+      "step": 0.0075,
+      "transfer_passed": true,
+      "trial": 16
+    },
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 2031,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0017_p0.855781250/target.yaml",
+          "sha256": "374663bd9b5c0c9c5faf97589b97cb8b652a90b1079ae6c4fbb99a3f816dd1a0"
+        },
+        "route": {
+          "bytes": 1387246,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0017_p0.855781250/route.json",
+          "sha256": "aa56c3a93b1c4e6f9415c24887fe0a8000ce41e3ec32d98353074625db67200c"
+        },
+        "route_gate": {
+          "bytes": 9818,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0017_p0.855781250/route_gate.json",
+          "sha256": "74dfd1d203bac841729e94bc718f49d5471501ca627b84874a3e3c81e656846e"
+        },
+        "route_mirror": {
+          "bytes": 1393535,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0017_p0.855781250/route_mirror.json",
+          "sha256": "bc1912e01e3d788625214a4aa5e70a520321b6c6edb9d07dd5052383bc8a3a20"
+        },
+        "similarity": {
+          "bytes": 2881,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0017_p0.855781250/similarity.json",
+          "sha256": "60dadf3ae787f8709fb1b1579d66663b35a7519310e04b151e0e42c5e2dd5312"
+        },
+        "transfer": {
+          "bytes": 1391122,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0017_p0.855781250/transfer.json",
+          "sha256": "ad0c19bd48909d968b8fc2bf101545b81d8a765bce7eb3f0c2424221be55a082"
+        },
+        "transfer_gate": {
+          "bytes": 9825,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0017_p0.855781250/transfer_gate.json",
+          "sha256": "a4f7ee8c7636d1664c0b16b58b7f413bb578df62e99d3656d70a35e1ffffb997"
+        },
+        "transfer_mirror": {
+          "bytes": 1397415,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0017_p0.855781250/transfer_mirror.json",
+          "sha256": "b1dd0bb2eb2dbe9a3daee2357f9953d142f7f8523dfe8f378e248e6291a93299"
+        }
+      },
+      "materialized_route_passed": true,
+      "proposed_progress": 0.8557812499999999,
+      "scales": {
+        "length": 1.85578125,
+        "mass": 0.572109375
+      },
+      "step": 0.01125,
+      "transfer_passed": true,
+      "trial": 17
+    },
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 2041,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0018_p0.872656250/target.yaml",
+          "sha256": "fa23cd31fb08b5f00116a828505fa175803a074210c119dc9d370dbabd2edbf6"
+        },
+        "route": {
+          "bytes": 1385886,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0018_p0.872656250/route.json",
+          "sha256": "76cc1fb2ed63ac5767b9bd2fb7a4e6ee91e2b9ebf832bb854905c94a7c550dcb"
+        },
+        "route_gate": {
+          "bytes": 9814,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0018_p0.872656250/route_gate.json",
+          "sha256": "11a33bc098826aa075b176528ef9d9a5f29e7ba65abfe87d0b226341d87a76cf"
+        },
+        "route_mirror": {
+          "bytes": 1392175,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0018_p0.872656250/route_mirror.json",
+          "sha256": "9e816c4a27ee5ba271ef15858bb623dff712048daf72acf970ecf4a931a19594"
+        },
+        "similarity": {
+          "bytes": 2898,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0018_p0.872656250/similarity.json",
+          "sha256": "9cbe30173940685cc1fc1ac3465c04a5fa968c134ae2d00d6248dd84cda3b385"
+        },
+        "transfer": {
+          "bytes": 1389777,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0018_p0.872656250/transfer.json",
+          "sha256": "65e4829e854c34ffc90e60c73525380bcb79ca8c3e6a639ab2004cd3d6b910da"
+        },
+        "transfer_gate": {
+          "bytes": 9816,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0018_p0.872656250/transfer_gate.json",
+          "sha256": "8a5bbe52bce6de6807d478a8caae959b34f781d97737bbab4ea54742859d63b8"
+        },
+        "transfer_mirror": {
+          "bytes": 1396070,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0018_p0.872656250/transfer_mirror.json",
+          "sha256": "931b0d1e8698d0622329bedf833ad8a83a3f7c76f255da62c8a673f6cd720baa"
+        }
+      },
+      "materialized_route_passed": true,
+      "proposed_progress": 0.8726562499999999,
+      "scales": {
+        "length": 1.87265625,
+        "mass": 0.563671875
+      },
+      "step": 0.016875,
+      "transfer_passed": true,
+      "trial": 18
+    },
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 2033,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0019_p0.897968750/target.yaml",
+          "sha256": "e292a6f87e814677cd0aba77b0d4e16475f8026addcdc4374f67e6f9dac28431"
+        },
+        "route": {
+          "bytes": 1386923,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0019_p0.897968750/route.json",
+          "sha256": "06558656a8d054360cfb0c34638cbc78050743b4a82f1900b8c84e31cee3098c"
+        },
+        "route_gate": {
+          "bytes": 9815,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0019_p0.897968750/route_gate.json",
+          "sha256": "34623b4db50983ade253cbe1cb56172510e1303d1971459c7ae9f9781bcfc6e9"
+        },
+        "route_mirror": {
+          "bytes": 1393212,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0019_p0.897968750/route_mirror.json",
+          "sha256": "38503c3b713ee12681749c56d6c5b22367c5fa259d97e627a15dde7652fe964a"
+        },
+        "similarity": {
+          "bytes": 2954,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0019_p0.897968750/similarity.json",
+          "sha256": "85dfac89c355f56423b50ab01efbdc63c0aa44eb9ba936aeefd348cb2c29bbd1"
+        },
+        "transfer": {
+          "bytes": 1390858,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0019_p0.897968750/transfer.json",
+          "sha256": "2748ad36b180c0f965f1ce9048b58064a814aca27955ad6dca7a5ba6e2f16966"
+        },
+        "transfer_gate": {
+          "bytes": 9822,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0019_p0.897968750/transfer_gate.json",
+          "sha256": "190dd343c3d903159ab726341719f5c1951a83a61869002a80e1e258b6642780"
+        },
+        "transfer_mirror": {
+          "bytes": 1397151,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0019_p0.897968750/transfer_mirror.json",
+          "sha256": "c63db3f028f210daacbf56a80c14eefbe36218a2adce17f747827c4410b2d51c"
+        }
+      },
+      "materialized_route_passed": true,
+      "proposed_progress": 0.8979687499999999,
+      "scales": {
+        "length": 1.89796875,
+        "mass": 0.551015625
+      },
+      "step": 0.0253125,
+      "transfer_passed": true,
+      "trial": 19
+    },
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 2045,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0020_p0.935937500/target.yaml",
+          "sha256": "ca42f2c38ba932a4e60fad84490b541915c3d4d63f385118fa1375c8c7fa571c"
+        },
+        "route": {
+          "bytes": 1385980,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0020_p0.935937500/route.json",
+          "sha256": "744f9ad76f4e6c9a6988e09e21c62d66b65e8729c20842f7872ea2fa4a4258b2"
+        },
+        "route_gate": {
+          "bytes": 9819,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0020_p0.935937500/route_gate.json",
+          "sha256": "3a26e87f17710183c24a826e522573d32ea34d448e5fcaf0dd8868d687c61056"
+        },
+        "route_mirror": {
+          "bytes": 1392269,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0020_p0.935937500/route_mirror.json",
+          "sha256": "85964eaf17b24f4a1796d4dda66acfd6c1d2ed59616f8555bc6cbcada5dfe9d6"
+        },
+        "similarity": {
+          "bytes": 2897,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0020_p0.935937500/similarity.json",
+          "sha256": "891bad2518063ecce5cb9dc50838cbad667573bad16afa08b57ae98003442330"
+        },
+        "transfer": {
+          "bytes": 1389920,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0020_p0.935937500/transfer.json",
+          "sha256": "3d02db2ffdd6e4402e5fa545fedc099ad53781cfd90c7f59c8bbeee820a94617"
+        },
+        "transfer_gate": {
+          "bytes": 9817,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0020_p0.935937500/transfer_gate.json",
+          "sha256": "4e72ac5452378ee8be9de90c3a0f326e16fe2f59b13d5f490039f94d09683227"
+        },
+        "transfer_mirror": {
+          "bytes": 1396213,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0020_p0.935937500/transfer_mirror.json",
+          "sha256": "9cfbeebc8ac25eaabfdcae4125fe7797e008f9f0335a66f7953171f21626eb94"
+        }
+      },
+      "materialized_route_passed": true,
+      "proposed_progress": 0.9359374999999999,
+      "scales": {
+        "length": 1.9359374999999999,
+        "mass": 0.5320312500000001
+      },
+      "step": 0.03796875,
+      "transfer_passed": true,
+      "trial": 20
+    },
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 2055,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/target.yaml",
+          "sha256": "224ce951403637a7ca6919ddf0d58205d236f3e47a318aa66a38cd91ce65b5dd"
+        },
+        "route": {
+          "bytes": 1386317,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/route.json",
+          "sha256": "475657612810589d74fb5627736ed9ad88ec478d7e6a7c4f8c577bfa0901f8c4"
+        },
+        "route_gate": {
+          "bytes": 9824,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/route_gate.json",
+          "sha256": "12e26ad376ef00922687f98cc823363ffd052e8de8b3dc281bec414832e05ac9"
+        },
+        "route_mirror": {
+          "bytes": 1392606,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/route_mirror.json",
+          "sha256": "b6ef36fa4bf75df0a5cc0506301eec97097e467cfb5a8bacae85e5f436e52809"
+        },
+        "selected_transfer": {
+          "bytes": 1394598,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_segment_s1_t1.5.json",
+          "sha256": "8fcf26b36f9ddd405186aa857462dbeaa5cf07888c022c81f3fdccbd7e5b5d1a"
+        },
+        "selected_transfer_mirror": {
+          "bytes": 1400892,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_segment_s1_t1.5_mirror.json",
+          "sha256": "aad780308b59bf623893725c184b6f339f7d92ad2cecd7697a4e4850b67ed01c"
+        },
+        "similarity": {
+          "bytes": 2885,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/similarity.json",
+          "sha256": "464e0e995d8e308fb5e1dcfd8e775ddc7c026b23b9e91c70f87bfc88d81687ed"
+        },
+        "transfer": {
+          "bytes": 1391258,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer.json",
+          "sha256": "4f150e25e8aec5b5c95c4d03fc0c51563b9545a7bd3fe5ea64c6fbda5c43f134"
+        },
+        "transfer_gate": {
+          "bytes": 9867,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gate.json",
+          "sha256": "92a0ac05d4b3462c32e3ebe4f0cfb874cfc419ce4208e3ee2ca76210a914cf1b"
+        },
+        "transfer_mirror": {
+          "bytes": 1397551,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_mirror.json",
+          "sha256": "911a2cf32d1edb46cb5f00c8544cf3549df3bd51d869a54b815644534be12fd8"
+        }
+      },
+      "feedback_gain_screen": [
+        {
+          "gain_scale": 0.75,
+          "gate": {
+            "bytes": 9904,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_0.75_gate.json",
+            "sha256": "c22472bfb7cb645c02b49afef2013067f383cab4e49246325b2b6b713cc3c148"
+          },
+          "mirror": {
+            "bytes": 1393271,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_0.75_mirror.json",
+            "sha256": "12ad1bc8ac7f20a50e81dadc6989e3744a2e0ed6da340cc62432db153f329f22"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1386969,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_0.75.json",
+            "sha256": "2f47796d80b3b10fe03596c97863c74a5528b80d2f145e506a4389eff655263d"
+          }
+        },
+        {
+          "gain_scale": 1.25,
+          "gate": {
+            "bytes": 9900,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_1.25_gate.json",
+            "sha256": "458965245bfaa02613c3207174391ee796d688cdc6d9ae73bfc7258db5b1ff9e"
+          },
+          "mirror": {
+            "bytes": 1392605,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_1.25_mirror.json",
+            "sha256": "0a115fdfa54872465b4ad6487d42dfd1bb09c71efd84cff04b5d7e23eb913e89"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1386303,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_1.25.json",
+            "sha256": "2cf068d82364c35486fcae9facbd7a075a77bdc8181ebd1176ae0b41e13dbe56"
+          }
+        },
+        {
+          "gain_scale": 0.5,
+          "gate": {
+            "bytes": 9677,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_0.5_gate.json",
+            "sha256": "3372ae006b3f69bf0d5cd192fb751becc6633fa5bb0a67ccd9f14d6d39b79929"
+          },
+          "mirror": {
+            "bytes": 1397663,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_0.5_mirror.json",
+            "sha256": "4bece5c6c3b6ff57c1d4f9805c0a52cc03e8e6cc661acb22fd4e680277ea9a1c"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1391362,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_0.5.json",
+            "sha256": "64ca888595a6b04bd0d9d93e7574b70487b36e19d9db3afcba23702c94304af2"
+          }
+        },
+        {
+          "gain_scale": 1.5,
+          "gate": {
+            "bytes": 9909,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_1.5_gate.json",
+            "sha256": "6de2e91ff2a4f5fa7a6fb11e380ca136683cf188561c6f044080040ea68243f5"
+          },
+          "mirror": {
+            "bytes": 1390890,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_1.5_mirror.json",
+            "sha256": "c6ca08fc697f61c8ba52aff2fb9e8766ec4e346c22949fdb599f41dc407707fe"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384589,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_1.5.json",
+            "sha256": "db03a00c0a527fc413fe7eebbd9d2a60fe0e0b0b132ccc534113524e6cd23c43"
+          }
+        },
+        {
+          "gain_scale": 2.0,
+          "gate": {
+            "bytes": 9654,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_2_gate.json",
+            "sha256": "7ddce698ddb264632e8f8e6fa87da8d0ffd2ac16d528af97e7bb18c60275623f"
+          },
+          "mirror": {
+            "bytes": 1390980,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_2_mirror.json",
+            "sha256": "aeb2a3b372826045ed5f03bd740844b42c5efea8408a532cddaa5541978e89d1"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1384681,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_gain_2.json",
+            "sha256": "4cc37ec1fb3009a022fcb9339e6603d5abfb5a607c35f060230a969a43bd104b"
+          }
+        },
+        {
+          "gate": {
+            "bytes": 9907,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_segment_s1_t1.25_gate.json",
+            "sha256": "b185c8d9b6d313d5a8be4b72f18771529c730610d8d226f4c7269bcf71e62126"
+          },
+          "mirror": {
+            "bytes": 1401938,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_segment_s1_t1.25_mirror.json",
+            "sha256": "44af195a29559d59d3d3d483f1c355eaf2774433f2da795f80492833d52467d3"
+          },
+          "passed": false,
+          "route": {
+            "bytes": 1395643,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_segment_s1_t1.25.json",
+            "sha256": "950cbfa7bca6505f7ebcde9b423240da9858ffc34ccaa0bec32831c8c025ede7"
+          },
+          "swing_gain_scale": 1.0,
+          "tail_gain_scale": 1.25
+        },
+        {
+          "gate": {
+            "bytes": 9852,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_segment_s1_t1.5_gate.json",
+            "sha256": "9f1479333e433c7320c576cbfe9909b6dc7f5a17a1f52035971cd6595c2e41f4"
+          },
+          "mirror": {
+            "bytes": 1400892,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_segment_s1_t1.5_mirror.json",
+            "sha256": "aad780308b59bf623893725c184b6f339f7d92ad2cecd7697a4e4850b67ed01c"
+          },
+          "passed": true,
+          "route": {
+            "bytes": 1394598,
+            "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0021_p0.992890625/transfer_segment_s1_t1.5.json",
+            "sha256": "8fcf26b36f9ddd405186aa857462dbeaa5cf07888c022c81f3fdccbd7e5b5d1a"
+          },
+          "swing_gain_scale": 1.0,
+          "tail_gain_scale": 1.5
+        }
+      ],
+      "materialized_route_passed": true,
+      "proposed_progress": 0.9928906249999999,
+      "scales": {
+        "length": 1.9928906249999998,
+        "mass": 0.5035546875000001
+      },
+      "selected_feedback_gain_scale": null,
+      "selected_segment_feedback_gain_scales": {
+        "swing": 1.0,
+        "tail": 1.5
+      },
+      "step": 0.05695312500000001,
+      "transfer_passed": true,
+      "trial": 21
+    },
+    {
+      "accepted": true,
+      "artifacts": {
+        "config": {
+          "bytes": 1946,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0022_p1.000000000/target.yaml",
+          "sha256": "2c1ffd403e8e3707b5e949de1860d1f1a79863e8317a8ce1450c2458c6e9909b"
+        },
+        "route": {
+          "bytes": 1386469,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0022_p1.000000000/route.json",
+          "sha256": "b164938297468a2fc3a4ed2f1d24c391c5dc3cc7a82a864851f3c4cf7b09db51"
+        },
+        "route_gate": {
+          "bytes": 9801,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0022_p1.000000000/route_gate.json",
+          "sha256": "c8395ebf5c0f4fe6cb2491ed3dd55c86919ab120864358825f678846e266bbe6"
+        },
+        "route_mirror": {
+          "bytes": 1392758,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0022_p1.000000000/route_mirror.json",
+          "sha256": "00f9abccdc848534018c558f6757f0f329c4ef0c1ce0155ca2f4b90eb456405d"
+        },
+        "similarity": {
+          "bytes": 2757,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0022_p1.000000000/similarity.json",
+          "sha256": "8d9d1ece2ba5a4640dff8db34de67719df3133f4ee896baaf5c2cd5dcb2371a1"
+        },
+        "transfer": {
+          "bytes": 1390343,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0022_p1.000000000/transfer.json",
+          "sha256": "01c389550408019a7a5d7adcff476b88e6ce2a9a5e6d7559714d8e43d7d3c508"
+        },
+        "transfer_gate": {
+          "bytes": 9819,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0022_p1.000000000/transfer_gate.json",
+          "sha256": "3cb067823c49f89aa16db3e4c8c3e2518184fc0225eabd89a1785599150b0e62"
+        },
+        "transfer_mirror": {
+          "bytes": 1396636,
+          "path": "/tmp/cartpole-sim-driver-n4-promote/trial_0022_p1.000000000/transfer_mirror.json",
+          "sha256": "59e6a418921f2774060449b1951708559ea10b0273d87a8150f99fa92236236c"
+        }
+      },
+      "materialized_route_passed": true,
+      "proposed_progress": 1.0,
+      "scales": {
+        "length": 2.0,
+        "mass": 0.5
+      },
+      "step": 0.007109375000000084,
+      "transfer_passed": true,
+      "trial": 22
+    }
+  ],
+  "updated_at": "2026-09-14T06:43:05+00:00"
+}

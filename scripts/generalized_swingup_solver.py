@@ -639,6 +639,16 @@ def transfer_command(args: argparse.Namespace) -> None:
             "cost": None,
         },
     }
+    if "materialized_swing_prefix_steps" in controller:
+        step_ratio = controls.size / source_controls.size
+        prefix_steps = round(
+            float(controller["materialized_swing_prefix_steps"]) * step_ratio
+        )
+        prefix_steps = min(max(prefix_steps, 0), controls.size)
+        output["controller"]["materialized_swing_prefix_steps"] = prefix_steps
+        output["controller"]["materialized_lqr_tail_steps"] = int(
+            controls.size - prefix_steps
+        )
     dump_json(output, args.out)
     print(
         f"wrote {args.out}: n={source_setup.n_links}->{target_setup.n_links}, "

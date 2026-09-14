@@ -1,0 +1,396 @@
+{
+  "claim_status": "verified_generalized_similarity_continuation",
+  "continuation": {
+    "accepted_trials": 15,
+    "input_sha256": "77fcecbe20adc58e82e0bebf1ec9b8f929b81d94d34576c402ebb986c1fa9878",
+    "rejected_trials": 8,
+    "trace": [
+      {
+        "accepted": true,
+        "global_feedback_scale": null,
+        "progress": 0.1,
+        "route_passed": true,
+        "segment_feedback_scales": null,
+        "step": 0.1,
+        "transfer_passed": true,
+        "trial": 0
+      },
+      {
+        "accepted": true,
+        "global_feedback_scale": 0.75,
+        "progress": 0.25,
+        "route_passed": true,
+        "segment_feedback_scales": null,
+        "step": 0.15000000000000002,
+        "transfer_passed": true,
+        "trial": 1
+      },
+      {
+        "accepted": true,
+        "global_feedback_scale": null,
+        "progress": 0.45,
+        "route_passed": true,
+        "segment_feedback_scales": null,
+        "step": 0.2,
+        "transfer_passed": true,
+        "trial": 2
+      },
+      {
+        "accepted": true,
+        "global_feedback_scale": null,
+        "progress": 0.65,
+        "route_passed": true,
+        "segment_feedback_scales": null,
+        "step": 0.2,
+        "transfer_passed": true,
+        "trial": 3
+      },
+      {
+        "accepted": false,
+        "global_feedback_scale": null,
+        "progress": 0.8500000000000001,
+        "route_passed": false,
+        "segment_feedback_scales": null,
+        "step": 0.2,
+        "transfer_passed": false,
+        "trial": 4
+      },
+      {
+        "accepted": true,
+        "global_feedback_scale": null,
+        "progress": 0.75,
+        "route_passed": true,
+        "segment_feedback_scales": null,
+        "step": 0.1,
+        "transfer_passed": true,
+        "trial": 5
+      },
+      {
+        "accepted": false,
+        "global_feedback_scale": null,
+        "progress": 0.9,
+        "route_passed": false,
+        "segment_feedback_scales": null,
+        "step": 0.15000000000000002,
+        "transfer_passed": false,
+        "trial": 6
+      },
+      {
+        "accepted": true,
+        "global_feedback_scale": null,
+        "progress": 0.825,
+        "route_passed": true,
+        "segment_feedback_scales": null,
+        "step": 0.07500000000000001,
+        "transfer_passed": true,
+        "trial": 7
+      },
+      {
+        "accepted": false,
+        "global_feedback_scale": null,
+        "progress": 0.9375,
+        "route_passed": false,
+        "segment_feedback_scales": null,
+        "step": 0.11250000000000002,
+        "transfer_passed": false,
+        "trial": 8
+      },
+      {
+        "accepted": false,
+        "global_feedback_scale": null,
+        "progress": 0.88125,
+        "route_passed": false,
+        "segment_feedback_scales": null,
+        "step": 0.05625000000000001,
+        "transfer_passed": false,
+        "trial": 9
+      },
+      {
+        "accepted": false,
+        "global_feedback_scale": null,
+        "progress": 0.8531249999999999,
+        "route_passed": false,
+        "segment_feedback_scales": null,
+        "step": 0.028125000000000004,
+        "transfer_passed": false,
+        "trial": 10
+      },
+      {
+        "accepted": false,
+        "global_feedback_scale": null,
+        "progress": 0.8390624999999999,
+        "route_passed": false,
+        "segment_feedback_scales": null,
+        "step": 0.014062500000000002,
+        "transfer_passed": false,
+        "trial": 11
+      },
+      {
+        "accepted": true,
+        "global_feedback_scale": null,
+        "progress": 0.83203125,
+        "route_passed": true,
+        "segment_feedback_scales": null,
+        "step": 0.007031250000000001,
+        "transfer_passed": true,
+        "trial": 12
+      },
+      {
+        "accepted": false,
+        "global_feedback_scale": null,
+        "progress": 0.842578125,
+        "route_passed": false,
+        "segment_feedback_scales": null,
+        "step": 0.010546875,
+        "transfer_passed": false,
+        "trial": 13
+      },
+      {
+        "accepted": false,
+        "global_feedback_scale": null,
+        "progress": 0.8373046875,
+        "route_passed": false,
+        "segment_feedback_scales": null,
+        "step": 0.0052734375,
+        "transfer_passed": false,
+        "trial": 14
+      },
+      {
+        "accepted": true,
+        "global_feedback_scale": null,
+        "progress": 0.83703125,
+        "route_passed": true,
+        "segment_feedback_scales": {
+          "swing": 1.0,
+          "tail": 1.25
+        },
+        "step": 0.005,
+        "transfer_passed": true,
+        "trial": 15
+      },
+      {
+        "accepted": true,
+        "global_feedback_scale": null,
+        "progress": 0.84453125,
+        "route_passed": true,
+        "segment_feedback_scales": null,
+        "step": 0.0075,
+        "transfer_passed": true,
+        "trial": 16
+      },
+      {
+        "accepted": true,
+        "global_feedback_scale": null,
+        "progress": 0.8557812499999999,
+        "route_passed": true,
+        "segment_feedback_scales": null,
+        "step": 0.01125,
+        "transfer_passed": true,
+        "trial": 17
+      },
+      {
+        "accepted": true,
+        "global_feedback_scale": null,
+        "progress": 0.8726562499999999,
+        "route_passed": true,
+        "segment_feedback_scales": null,
+        "step": 0.016875,
+        "transfer_passed": true,
+        "trial": 18
+      },
+      {
+        "accepted": true,
+        "global_feedback_scale": null,
+        "progress": 0.8979687499999999,
+        "route_passed": true,
+        "segment_feedback_scales": null,
+        "step": 0.0253125,
+        "transfer_passed": true,
+        "trial": 19
+      },
+      {
+        "accepted": true,
+        "global_feedback_scale": null,
+        "progress": 0.9359374999999999,
+        "route_passed": true,
+        "segment_feedback_scales": null,
+        "step": 0.03796875,
+        "transfer_passed": true,
+        "trial": 20
+      },
+      {
+        "accepted": true,
+        "global_feedback_scale": null,
+        "progress": 0.9928906249999999,
+        "route_passed": true,
+        "segment_feedback_scales": {
+          "swing": 1.0,
+          "tail": 1.5
+        },
+        "step": 0.05695312500000001,
+        "transfer_passed": true,
+        "trial": 21
+      },
+      {
+        "accepted": true,
+        "global_feedback_scale": null,
+        "progress": 1.0,
+        "route_passed": true,
+        "segment_feedback_scales": null,
+        "step": 0.007109375000000084,
+        "transfer_passed": true,
+        "trial": 22
+      }
+    ],
+    "trials": 23
+  },
+  "gate": {
+    "artifact": {
+      "bytes": 22842,
+      "path": "runs/generalized_solver/similarity_n4_l2_m05_continuation_gate20.json",
+      "sha256": "0148fafa13268fc188ce60a30617db28c98b41d8c51b459b6e4bd26372f0b45c"
+    },
+    "configured_rail_ratio": 1.0,
+    "episodes": 20,
+    "maximum_required_rail_ratio": 0.9957618906534565,
+    "maximum_upright_hold_seconds": 8.45699710299111,
+    "minimum_upright_hold_seconds": 8.45699710299111,
+    "prediction_execution_agreement": 20,
+    "successes": 20
+  },
+  "generated_at": "2026-09-14T06:46:15+00:00",
+  "git": {
+    "available": true,
+    "commit": "c5a0ea083c046062a74d8f2cf0348a57f6c0481a",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      " M Makefile",
+      " M README.md",
+      " M ROADMAP.md",
+      " M docs/generalized_solver.md",
+      " M docs/levers_and_pitfalls.md",
+      " M runs/generalized_solver/n2_to_n3_supported_unlock_k1_to_k10_ramp/continuation.json",
+      " M scripts/diagnose_capture_geometry.py",
+      " M scripts/extract_search_handoff_state.py",
+      " M scripts/extract_trajectory_states.py",
+      " M scripts/force_proposal_to_fddp.py",
+      " M scripts/generalized_swingup_solver.py",
+      " M scripts/refine_swingup_endpoint_gauss_newton.py",
+      " M scripts/run_joint_morphology_rail_homotopy.py",
+      " M scripts/search_capture_online_mpc.py",
+      " M scripts/search_capture_recovery.py",
+      " M scripts/search_fddp_capture.py",
+      " M scripts/search_swingup_action_sequence.py",
+      " M scripts/search_swingup_global_exact_cem.py",
+      " M scripts/search_swingup_ilqr_terminal.py",
+      " M scripts/search_swingup_tail_action_cem.py",
+      " M scripts/search_swingup_tail_ilqr.py",
+      " M src/gcartpole/env.py",
+      " M src/gcartpole/mjxml.py",
+      " M tests/test_capture_envelope.py",
+      " M tests/test_roadmap_verifier.py",
+      "?? configs/generalized_n4_similar_l2_m05.yaml",
+      "?? configs/swingup10_capture_endpoint.yaml",
+      "?? configs/swingup10_capture_exact_curriculum.yaml",
+      "?? configs/swingup10_ghost_continuation.yaml",
+      "?? configs/swingup10_ghost_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l010m010d01k1_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l010m010d05k2_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l015m010d05k5_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_supported_d10k100_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_supported_rail6.yaml",
+      "?? configs/swingup10_ghost_light_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_tiny_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d005k05_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d01k1_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d05k5_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d1k10_hold_support_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d1k10_rail6.yaml",
+      "?? configs/swingup10_split_locked.yaml",
+      "?? configs/swingup10_split_stiff100.yaml",
+      "?? configs/swingup10_support_release_p040539.yaml",
+      "?? configs/swingup10_tip_light_rail6.yaml",
+      "?? configs/swingup10_uniform_rail12.yaml",
+      "?? configs/swingup8_split_compatible.yaml",
+      "?? configs/swingup9_mid_split_locked_continuation.yaml",
+      "?? configs/swingup9_split_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_302_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_fixed.yaml",
+      "?? scripts/build_ghost_count_continuation.py",
+      "?? scripts/convert_gn_endpoint_route.py",
+      "?? scripts/embed_locked_split_route.py",
+      "?? scripts/evaluate_embedded_source_lqr_tail.py",
+      "?? scripts/materialize_generalized_rollout.py",
+      "?? scripts/retune_generalized_route.py",
+      "?? scripts/run_similarity_continuation.py",
+      "?? scripts/search_capture_prefix_lqr.py",
+      "?? scripts/search_maintenance_actor_cem.py",
+      "?? scripts/stitch_route_tail_warm_start.py",
+      "?? scripts/translate_generalized_route.py",
+      "?? scripts/verify_similarity_continuation.py",
+      "?? tests/test_embed_locked_split_route.py",
+      "?? tests/test_materialize_generalized_rollout.py",
+      "?? tests/test_retune_generalized_route.py",
+      "?? tests/test_similarity_continuation.py"
+    ]
+  },
+  "passed": true,
+  "route_structure": {
+    "analytic_tail_steps": 348,
+    "mirror_exact": true,
+    "periodic_coordinate_errors": true,
+    "steps": 1500,
+    "swing_prefix_steps": 1152
+  },
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "source": {
+    "config": {
+      "bytes": 1790,
+      "path": "configs/swingup7_uniform.yaml",
+      "sha256": "1e92bc4621428f2fe343b7483b2c32d7804a82762159483db280e71a526b6c04"
+    },
+    "controller": {
+      "bytes": 719897,
+      "path": "runs/generalized_solver/n4_route_solver.json",
+      "sha256": "dd40d7b0650e1d259c389dcba3c5339e0ecb7e3fa43ab1b90f619ddb49241266"
+    },
+    "n_links": 4
+  },
+  "summary": "A link-count-independent continuation transferred an executed swing-and-hold route through an exact dynamic-similarity family with bounded scalar adaptation.",
+  "target": {
+    "config": {
+      "bytes": 1946,
+      "path": "configs/generalized_n4_similar_l2_m05.yaml",
+      "sha256": "2c1ffd403e8e3707b5e949de1860d1f1a79863e8317a8ce1450c2458c6e9909b"
+    },
+    "length_scale": 2.0,
+    "mass_scale": 0.5,
+    "maximum_dimensionless_error": 0.0,
+    "mirror": {
+      "bytes": 1392758,
+      "path": "runs/generalized_solver/similarity_n4_l2_m05_continuation_route_mirror.json",
+      "sha256": "cfc40716a96d4465cf06fc1114c491aa3e5caf34e282a1ead919f65b2fbf6341"
+    },
+    "route": {
+      "bytes": 1386469,
+      "path": "runs/generalized_solver/similarity_n4_l2_m05_continuation_route.json",
+      "sha256": "b164938297468a2fc3a4ed2f1d24c391c5dc3cc7a82a864851f3c4cf7b09db51"
+    }
+  }
+}

@@ -116,6 +116,58 @@ was `0.8584 L` on the configured `R/L = 1.0` plant. See the
 [one-command pipeline manifest](../runs/generalized_solver/similarity_n7_l2_m05_refined_pipeline.json)
 and [hash-bound seven-link frontier](../runs/generalized_solver/similarity_n7_l2_m05_refined_frontier.json).
 
+### Adaptive similarity continuation and executed-route materialization
+
+A hard four-link test exposed an important distinction between a successful
+controller and its optimizer reference. The old packaging path saved the
+planned controls and nominal states even when trajectory feedback had produced
+materially different executed actions and states. Transferring that optimizer
+reference eventually hit a false minimum-step frontier. The new materializer
+instead records the feedback-corrected swing rollout and appends the analytic
+LQR maintenance rollout as one continuous topology-aware route. Swing feedback
+remains on the prefix; the coordinate-space LQR gain is repeated on the tail.
+
+`run_similarity_continuation.py` then advances through a length/mass scale path
+with no link-count cases:
+
+1. transfer the last accepted route using the analytic similarity map;
+2. require a noisy exact-model prediction/execution gate;
+3. if needed, screen a fixed global feedback grid;
+4. if the route is materialized, screen a fixed two-scalar swing/tail grid;
+5. promote only a passing route, grow the step after acceptance, and halve it
+   after rejection;
+6. use Box-FDDP only after these deterministic low-dimensional repairs fail;
+7. require a separate 20-episode endpoint promotion gate.
+
+On the declared four-link stress test, the target doubled every length and
+halved every mass while preserving every dimensionless plant group and the
+original `R/L = 1.0` rail. The continuation used 23 proposals, accepting 15
+and rejecting 8. Only three accepted waypoints needed bounded feedback
+adaptation: one global `0.75` multiplier, then maintenance-tail multipliers
+`1.25` and `1.5` with the swing prefix unchanged. The final target passed
+**20/20** fresh noisy hanging-start episodes with exact prediction/execution
+agreement, minimum upright hold `8.457 s`, and maximum body-aware rail demand
+`0.995762 L`. A wider-rail negative probe did not repair the unstable transfer,
+confirming that rail contact at the former frontier was a dynamical symptom,
+not evidence that rail alone should be enlarged.
+
+The compact public result is
+[verified here](../runs/generalized_solver/similarity_n4_l2_m05_continuation_verified.json),
+with its [gate](../runs/generalized_solver/similarity_n4_l2_m05_continuation_gate20.json),
+[route](../runs/generalized_solver/similarity_n4_l2_m05_continuation_route.json),
+and [exact mirror](../runs/generalized_solver/similarity_n4_l2_m05_continuation_route_mirror.json).
+Recheck the hashes, dynamic-similarity groups, route dimensions, exact mirror,
+materialized segment boundary, selector predictions, outcomes, and rail
+calculation with:
+
+```bash
+make verify-generalized-similarity-n4-continuation
+```
+
+This closes a deliberately extreme physical-scale transfer for one four-link
+route. It does not yet prove that the same bounded screens close every link
+count, unequal morphology, actuator mismatch, or arbitrary rail ratio.
+
 Together the current similarity certificate covers **120/120** episodes across
 link counts one, two, and seven, including both blind transfer and generic
 exact-target repair.

@@ -252,6 +252,21 @@ refined route held for `36.034 s`, prediction matched execution in all 20, and
 its maximum body-aware rail requirement was `0.8584` times total chain length.
 That brings the scale-family certificate to **120/120** across links one, two,
 and seven.
+
+The four-link route now also exercises an adaptive physical-scale continuation
+instead of one blind endpoint jump. It materializes the feedback-corrected
+swing **and** analytic maintenance tail that actually passed, advances through
+the dimensionless length/mass family with an adaptive step, and screens only a
+bounded set of global or swing/tail feedback multipliers when a direct transfer
+fails. There are no four-link branches or learned swing parameters. Starting
+from the ordinary four-link route, it reached **2x total length and 0.5x total
+mass** on the original `R/L = 1.0` rail and passed a fresh **20/20** noisy
+promotion gate. Prediction matched execution in all 20, minimum upright hold
+was `8.457 s`, and maximum body-aware rail demand was `0.995762 L`. See the
+[portable verification manifest](runs/generalized_solver/similarity_n4_l2_m05_continuation_verified.json),
+[20-episode gate](runs/generalized_solver/similarity_n4_l2_m05_continuation_gate20.json),
+and [derivation and limits](docs/generalized_solver.md).
+
 The generator preserves force authority, natural-time/control-rate, damping,
 armature, cart/rail geometry, and initial-noise groups exactly; the verifier
 also checks body-aware rail demand, normalized capture timing, and the
