@@ -642,7 +642,7 @@ upright requirement.
 
 | Links | Result | Deterministic backbone | Required physical rail ratio |
 |---:|---:|---|---:|
-| 1 | 20/20 | energy PFL -> exact LQR | 0.9594 |
+| 1 | 20/20 shared evaluator | energy PFL teacher -> shared route/mirror selector -> exact LQR | 0.9511 |
 | 2 | 20/20 | phase-aware PFL -> Box-FDDP -> exact LQR; mirror selection | 1.0127 |
 | 3 | 20/20 | modal route -> full-horizon Box-FDDP -> exact LQR; mirror selection | 1.0008 |
 | 4 | 20/20 | modal-ranked PFL handoff -> full-horizon Box-FDDP -> exact LQR; mirror selection | 0.9953 |
@@ -650,7 +650,7 @@ upright requirement.
 | 6 | 20/20 | analytic modal seed -> bounded residual -> endpoint Gauss--Newton -> Box-FDDP -> exact LQR; mirror selection | 1.0929 |
 | 7 | 20/20 shared evaluator; 100/100 release | frozen Box-FDDP reference route -> exact LQR; mirror selection in shared gate | 0.8501 |
 
-Evidence: [n=1 gate](../runs/generalized_solver/energy_n1_noisy20_v2.json),
+Evidence: [n=1 shared-architecture gate](../runs/generalized_solver/n1_gate_20_shared.json),
 [n=2 gate](../runs/generalized_solver/n2_gate.json),
 [n=3 gate](../runs/generalized_solver/n3_gate.json),
 [n=4 gate](../runs/generalized_solver/n4_gate_20.json),
@@ -662,6 +662,18 @@ n=7 episode. The [n=5 frontier artifact](../runs/generalized_solver/frontier_n5.
 records the three-metre failure boundary, rail continuation, deterministic
 repair, and accepted gate. The [n=6 promotion record](../runs/generalized_solver/frontier_n6.json)
 records the new full-rank endpoint correction and accepted gate.
+
+The [hash-bound uniform-ladder verifier](../runs/generalized_solver/uniform_ladder_n1_n7.json)
+checks the shared route representation and state dimension, normalized action
+bounds, exact planar symmetry, exact-model selector, controller hashes, unique
+noisy seeds, prediction/execution agreement, uninterrupted termination, and
+body-aware rail calculation. It currently reports **140/140** successes and
+**140/140** prediction agreements. The original
+[analytic n=1 gate](../runs/generalized_solver/energy_n1_noisy20_v2.json)
+remains the teacher evidence; the converted n=1 route then independently
+passed the same evaluator used for every higher rung. This closes an execution-
+architecture inconsistency without claiming that all morphologies share one
+unchanged force trace or discovery primitive.
 
 ## Current reproducible commands
 

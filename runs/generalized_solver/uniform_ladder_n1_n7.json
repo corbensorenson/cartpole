@@ -1,0 +1,338 @@
+{
+  "boundary": "This verifies a shared execution architecture on the declared canonical uniform plants. It does not prove that one open-loop force trace transfers unchanged, that every route is synthesized by one primitive, or that an arbitrary unequal morphology is solved without exact-model refinement.",
+  "claim_status": "verified_development_uniform_shared_architecture_ladder",
+  "generated_at": "2026-09-14T04:51:53+00:00",
+  "git": {
+    "available": true,
+    "commit": "b1354b52746617178da53182bc02ca3fe22820ea",
+    "dirty": true,
+    "includes_untracked_files": true,
+    "root": "/Users/corbensorenson/Documents/cartpole",
+    "status_short": [
+      " M Makefile",
+      " M docs/levers_and_pitfalls.md",
+      " M runs/generalized_solver/n2_to_n3_supported_unlock_k1_to_k10_ramp/continuation.json",
+      " M scripts/extract_search_handoff_state.py",
+      " M scripts/extract_trajectory_states.py",
+      " M scripts/force_proposal_to_fddp.py",
+      " M scripts/refine_swingup_endpoint_gauss_newton.py",
+      " M scripts/run_joint_morphology_rail_homotopy.py",
+      " M scripts/search_capture_online_mpc.py",
+      " M scripts/search_capture_recovery.py",
+      " M scripts/search_fddp_capture.py",
+      " M scripts/search_swingup_action_sequence.py",
+      " M scripts/search_swingup_global_exact_cem.py",
+      " M scripts/search_swingup_ilqr_terminal.py",
+      " M scripts/search_swingup_tail_action_cem.py",
+      " M scripts/search_swingup_tail_ilqr.py",
+      " M src/gcartpole/mjxml.py",
+      " M tests/test_roadmap_verifier.py",
+      "?? configs/swingup10_capture_endpoint.yaml",
+      "?? configs/swingup10_ghost_continuation.yaml",
+      "?? configs/swingup10_ghost_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l010m010d01k1_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l010m010d05k2_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_l015m010d05k5_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_supported_d10k100_rail6.yaml",
+      "?? configs/swingup10_ghost_grow_supported_rail6.yaml",
+      "?? configs/swingup10_ghost_light_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_tiny_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_continuation_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d005k05_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d01k1_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d05k5_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d1k10_hold_support_rail6.yaml",
+      "?? configs/swingup10_ghost_unlocked_d1k10_rail6.yaml",
+      "?? configs/swingup10_split_locked.yaml",
+      "?? configs/swingup10_split_stiff100.yaml",
+      "?? configs/swingup10_support_release_p040539.yaml",
+      "?? configs/swingup10_tip_light_rail6.yaml",
+      "?? configs/swingup10_uniform_rail12.yaml",
+      "?? configs/swingup8_split_compatible.yaml",
+      "?? configs/swingup9_mid_split_locked_continuation.yaml",
+      "?? configs/swingup9_split_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_302_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_continuation.yaml",
+      "?? configs/swingup9_tip_dummy_locked_fixed.yaml",
+      "?? scripts/build_ghost_count_continuation.py",
+      "?? scripts/convert_gn_endpoint_route.py",
+      "?? scripts/embed_locked_split_route.py",
+      "?? scripts/evaluate_embedded_source_lqr_tail.py",
+      "?? scripts/search_capture_prefix_lqr.py",
+      "?? scripts/search_maintenance_actor_cem.py",
+      "?? scripts/stitch_route_tail_warm_start.py",
+      "?? scripts/translate_generalized_route.py",
+      "?? scripts/verify_generalized_uniform_ladder.py",
+      "?? tests/test_embed_locked_split_route.py",
+      "?? tests/test_verify_generalized_uniform_ladder.py"
+    ]
+  },
+  "passed": true,
+  "rows": [
+    {
+      "controller_types": [
+        "energy_teacher_route_warm_start_then_exact_lqr"
+      ],
+      "episodes": 20,
+      "errors": [],
+      "gate": {
+        "bytes": 21614,
+        "path": "runs/generalized_solver/n1_gate_20_shared.json",
+        "sha256": "a1a2df6b73889046f9a1d4a369ea60d4f646dc15073307fc01515bbff42d646e"
+      },
+      "maximum_body_aware_required_rail_ratio": 0.951124423116155,
+      "n_links": 1,
+      "passed": true,
+      "prediction_execution_agreements": 20,
+      "route_selection_counts": {
+        "0": 13,
+        "1": 7
+      },
+      "routes": [
+        {
+          "bytes": 78867,
+          "path": "runs/generalized_solver/n1_shared_route.json",
+          "sha256": "8ad866cacd7f3546fc00f3fa940e8ebfc834e4b7335145ac78f3ce000e4d9bcf"
+        },
+        {
+          "bytes": 79232,
+          "path": "runs/generalized_solver/n1_shared_route_mirror.json",
+          "sha256": "d08855a19b9d71b59f27268d08611e5e3fdc476306d220ded08e31754a3b0349"
+        }
+      ],
+      "successes": 20
+    },
+    {
+      "controller_types": [
+        "generalized_launch_then_box_fddp_then_lqr"
+      ],
+      "episodes": 20,
+      "errors": [],
+      "gate": {
+        "bytes": 20676,
+        "path": "runs/generalized_solver/n2_gate.json",
+        "sha256": "d106c1f05ee0fbf1950e0fd59580dd851b53f0dfbecac4e93d9afdbf5f5a812c"
+      },
+      "maximum_body_aware_required_rail_ratio": 1.012717711038668,
+      "n_links": 2,
+      "passed": true,
+      "prediction_execution_agreements": 20,
+      "route_selection_counts": {
+        "0": 19,
+        "1": 1
+      },
+      "routes": [
+        {
+          "bytes": 180382,
+          "path": "runs/generalized_solver/n2_route.json",
+          "sha256": "ce2a8a62d86178dfff195be8c3a2d41fbee759df0f9d5cc47a0abb9447d4b836"
+        },
+        {
+          "bytes": 180712,
+          "path": "runs/generalized_solver/n2_route_mirror.json",
+          "sha256": "1859dfd2f9104bac5b2eb15e86a2171aced5ecf621bc5bdced4f8eb9fa169578"
+        }
+      ],
+      "successes": 20
+    },
+    {
+      "controller_types": [
+        "crocoddyl_box_fddp_exact_mujoco_then_lqr"
+      ],
+      "episodes": 20,
+      "errors": [],
+      "gate": {
+        "bytes": 20658,
+        "path": "runs/generalized_solver/n3_gate.json",
+        "sha256": "338aa179cd25a3f07a1c28a36fc12a80ef1eb638729235af49fd8e2912599af9"
+      },
+      "maximum_body_aware_required_rail_ratio": 1.0007795768904344,
+      "n_links": 3,
+      "passed": true,
+      "prediction_execution_agreements": 20,
+      "route_selection_counts": {
+        "0": 4,
+        "1": 16
+      },
+      "routes": [
+        {
+          "bytes": 414541,
+          "path": "runs/generalized_solver/n3_route.json",
+          "sha256": "bb01b1832f5e032f7971456d18e332ba741a9f93d0ddb987b564393a46ce9aa7"
+        },
+        {
+          "bytes": 414414,
+          "path": "runs/generalized_solver/n3_route_mirror.json",
+          "sha256": "a61b29747061a0cdaff3d0d53ac062997688057f28fc4d58411777f1b6029c17"
+        }
+      ],
+      "successes": 20
+    },
+    {
+      "controller_types": [
+        "crocoddyl_box_fddp_exact_mujoco_then_lqr"
+      ],
+      "episodes": 20,
+      "errors": [],
+      "gate": {
+        "bytes": 19536,
+        "path": "runs/generalized_solver/n4_gate_20.json",
+        "sha256": "3d9be9cfc2f45f10290e09797c4f7075c292e2ef9737dcf842f9e6f4e0d1136a"
+      },
+      "maximum_body_aware_required_rail_ratio": 0.9953431452565688,
+      "n_links": 4,
+      "passed": true,
+      "prediction_execution_agreements": 20,
+      "route_selection_counts": {
+        "0": 10,
+        "1": 10
+      },
+      "routes": [
+        {
+          "bytes": 719897,
+          "path": "runs/generalized_solver/n4_route_solver.json",
+          "sha256": "dd40d7b0650e1d259c389dcba3c5339e0ecb7e3fa43ab1b90f619ddb49241266"
+        },
+        {
+          "bytes": 720356,
+          "path": "runs/generalized_solver/n4_route_solver_mirror.json",
+          "sha256": "9b8132edc4f4618a64a276755b0e3a553e9534e0527794b04ed5450870b6bbf0"
+        }
+      ],
+      "successes": 20
+    },
+    {
+      "controller_types": [
+        "crocoddyl_box_fddp_exact_mujoco_then_lqr"
+      ],
+      "episodes": 20,
+      "errors": [],
+      "gate": {
+        "bytes": 18957,
+        "path": "runs/generalized_solver/n5_gate_20.json",
+        "sha256": "8d70b6e67dfc72f533b2468425b5a8541fca4e1e7057867c589ceab04bc15136"
+      },
+      "maximum_body_aware_required_rail_ratio": 1.170582997295963,
+      "n_links": 5,
+      "passed": true,
+      "prediction_execution_agreements": 20,
+      "route_selection_counts": {
+        "0": 5,
+        "1": 15
+      },
+      "routes": [
+        {
+          "bytes": 314765,
+          "path": "runs/generalized_solver/n5_route_solver.json",
+          "sha256": "0fb607ded5efee7e41b596bcf4ef5a3f33ac1fefc1a05eb64330593d4691b7db"
+        },
+        {
+          "bytes": 314921,
+          "path": "runs/generalized_solver/n5_route_solver_mirror.json",
+          "sha256": "f8f509fab1e1af8f082686a419a1175a03728f713fc7d4ecc8be5f9602d7c5f6"
+        }
+      ],
+      "successes": 20
+    },
+    {
+      "controller_types": [
+        "crocoddyl_box_fddp_exact_mujoco_then_lqr"
+      ],
+      "episodes": 20,
+      "errors": [],
+      "gate": {
+        "bytes": 19309,
+        "path": "runs/generalized_solver/n6_gate_20.json",
+        "sha256": "d381f9b8ddfcc4b45489036c4da83f127c4989c0ea79b96511f7ace7675f78d0"
+      },
+      "maximum_body_aware_required_rail_ratio": 1.092936204002189,
+      "n_links": 6,
+      "passed": true,
+      "prediction_execution_agreements": 20,
+      "route_selection_counts": {
+        "0": 12,
+        "1": 8
+      },
+      "routes": [
+        {
+          "bytes": 181470,
+          "path": "runs/generalized_solver/n6_route_solver.json",
+          "sha256": "867f8d9aaff2593dad0723d35335474ef2f7443a366ac696d44776054400b3bb"
+        },
+        {
+          "bytes": 181628,
+          "path": "runs/generalized_solver/n6_route_solver_mirror.json",
+          "sha256": "9f1b335343e6d661142b00d845f165cead6222a631df08bc494de9424b8ac3ec"
+        }
+      ],
+      "successes": 20
+    },
+    {
+      "controller_types": [
+        "crocoddyl_box_fddp_exact_mujoco_then_lqr"
+      ],
+      "episodes": 20,
+      "errors": [],
+      "gate": {
+        "bytes": 18851,
+        "path": "runs/generalized_solver/n7_gate_20.json",
+        "sha256": "0cd32e41ede1f7c1e2a6c92f7a12044cd60a33816ee81238a07e4b450d5b0525"
+      },
+      "maximum_body_aware_required_rail_ratio": 0.8500977155138609,
+      "n_links": 7,
+      "passed": true,
+      "prediction_execution_agreements": 20,
+      "route_selection_counts": {
+        "0": 7,
+        "1": 13
+      },
+      "routes": [
+        {
+          "bytes": 206061,
+          "path": "runs/swingup7_uniform/seven_link_release_controller.json",
+          "sha256": "0e70e1de5547c41569401ccf246b30b9650c369d81cc7846d02523ab72f7b01f"
+        },
+        {
+          "bytes": 206114,
+          "path": "runs/generalized_solver/n7_release_route_mirror.json",
+          "sha256": "0d8fa59bbf84409da91e5ba1ea81ce813d17e8e39addeb01bdb314afc4f285ce"
+        }
+      ],
+      "successes": 20
+    }
+  ],
+  "runtime": {
+    "machine": "arm64",
+    "packages": {
+      "gymnasium": "1.3.0",
+      "mlx": "0.32.2",
+      "mujoco": "3.3.5",
+      "numpy": "2.5.3"
+    },
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14"
+  },
+  "schema_version": 1,
+  "scope": {
+    "link_range": [
+      1,
+      7
+    ],
+    "minimum_episodes_per_link": 20,
+    "total_episodes": 140,
+    "total_prediction_execution_agreements": 140,
+    "total_successes": 140
+  },
+  "shared_execution_contract": [
+    "dimensionless absolute-angle route coordinates",
+    "normalized bounded cart action",
+    "time-varying route feedback interface",
+    "exact planar mirror route",
+    "exact target-model forward selection",
+    "exact upright LQR capture",
+    "uninterrupted noisy hanging-start gate",
+    "body-aware rail ratio measurement"
+  ],
+  "summary": "Uniform n=1..7 all pass one hash-bound route/feedback/exact-selector/LQR/uninterrupted-gate execution contract. Deterministic route teachers still differ by morphology; this is not an arbitrary-setup certificate."
+}

@@ -201,7 +201,7 @@ the swing trajectory.
 
 | Uniform chain | Current gate | Body-aware required rail ratio |
 |---:|---:|---:|
-| 1 link | **20/20** | 0.959 |
+| 1 link | **20/20** through shared evaluator | 0.951 |
 | 2 links | **20/20** | 1.013 |
 | 3 links | **20/20** | 1.001 |
 | 4 links | **20/20** | 0.995 |
@@ -227,6 +227,18 @@ the record route. The n=8 row is the separate parked-launch promotion and its
 same parked-launch promotion with a `1.053` body-aware ratio from the noisy
 100-episode maximum. Neither is an independent modal-synthesis regeneration.
 Arbitrary unequal morphologies and n>=10 remain active work.
+
+The n=1 rung now uses the same saved-route, exact mirror, forward-model
+selection, bounded-action execution, LQR capture, and uninterrupted noisy gate
+interface as n=2 through n=7. Its analytic energy controller acts only as a
+deterministic route teacher. A hash-bound verifier checks all controller
+dimensions and action bounds, exact symmetry, selector predictions, rail
+measurements, unique seeds, and uninterrupted outcomes: the shared contract is
+currently **140/140** with prediction matching execution in all **140/140**
+episodes. See the [verified uniform ladder](runs/generalized_solver/uniform_ladder_n1_n7.json)
+and [n=1 shared-evaluator gate](runs/generalized_solver/n1_gate_20_shared.json).
+This verifies one execution architecture, not one unchanged force trace or one
+route-synthesis primitive for every morphology.
 
 The count-agnostic locked-split continuation has also crossed its deliberately
 hard n=2 to unequal-n=3 topology boundary. Direct equality relaxation reached
