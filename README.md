@@ -1,6 +1,12 @@
-# Nine-, Eight-, and Seven-Link Cart-Pole Swing-Up & Hold
+# Ten-, Nine-, Eight-, and Seven-Link Cart-Pole Swing-Up & Hold
 
-> **Highest verified internal benchmark: 9 links · noisy hanging start · 100/100 successful episodes · zero resets · ±3 m rail**
+> **Highest verified internal benchmark: 10 links · noisy hanging start · 100/100 successful episodes · zero resets · ±3 m rail**
+
+<p align="center">
+  <strong><a href="runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4">Watch the full ten-link run</a></strong>
+  · <a href="docs/ten_link_swingup_paper.md">Read the ten-link paper</a>
+  · <a href="runs/generalized_solver/ten_link_swingup_manifest.json">Inspect the ten-link manifest</a>
+</p>
 
 <p align="center">
   <strong><a href="runs/generalized_solver/nine_link_swingup_success.mp4">Watch the full nine-link run</a></strong>
@@ -35,7 +41,7 @@
 </p>
 
 This repository demonstrates reset-free swing-up and sustained hold of uniform
-seven-, eight-, and nine-link cart-poles in MuJoCo. Each frozen hybrid controller passed
+seven-, eight-, nine-, and ten-link cart-poles in MuJoCo. Each frozen hybrid controller passed
 disjoint `20/20` and `100/100` noisy hanging-start gates on its declared plant.
 The videos above are held-out, uninterrupted 30-second replays; click either
 animated preview for the source MP4. Controllers, hashes, negative controls,
@@ -43,6 +49,7 @@ method papers, and reproduction commands are public.
 
 | Result | Noisy 20-episode gate | Disjoint noisy 100-episode gate | Held-out video | Method |
 |---|---:|---:|---|---|
+| **10 links — latest internal benchmark** | **20/20** | **100/100** | [MP4](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4) | [paper](docs/ten_link_swingup_paper.md) |
 | **9 links — latest internal benchmark** | **20/20** | **100/100** | [MP4](runs/generalized_solver/nine_link_swingup_success.mp4) | [paper](docs/nine_link_swingup_paper.md) |
 | **8 links — latest internal benchmark** | **20/20** | **100/100** | [MP4](runs/generalized_solver/eight_link_swingup_success.mp4) | [paper](docs/eight_link_swingup_paper.md) |
 | **7 links — frozen release** | **20/20** | **100/100** | [MP4](runs/swingup7_uniform/seven_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |
@@ -78,21 +85,21 @@ See the [fairness notes](docs/yacine_fairness_notes.md) and
 noisy hanging start
         │
         ▼
-10 s hanging-equilibrium LQR conditioning
+16 s hanging-equilibrium LQR conditioning
         │
         ▼
-4.56 s Box-FDDP swing route with time-varying feedback
+8.0 s Box-FDDP swing route with time-varying feedback
         │
         ▼
 terminal LQR capture and upright hold
 ```
 
-The conditioning phase damps the initial perturbation and recenters the cart
-without changing simulator state. A finite-horizon Box-FDDP controller then
-executes the swing route, and a terminal LQR takes over only after the chain
-arrives quiet enough to hold. The complete explanation—including the state
-coordinate bug, the failed approaches, and the decisive robustness changes—is
-in **[Seven-Link Cart-Pole Swing-Up: A Settled-Launch Two-Expert Controller](docs/seven_link_swingup_paper.md)**.
+The latest ten-link release uses a 16-second hanging-equilibrium park at `-0.05 m`,
+an 8-second Box-FDDP route with saved time-varying feedback, and a terminal LQR
+around the same parked target. It is a two-expert controller with no state reset
+between phases. See the [ten-link method paper](docs/ten_link_swingup_paper.md)
+for the exact contract and the [seven-link paper](docs/seven_link_swingup_paper.md)
+for the original release.
 
 ## Evidence
 
@@ -153,6 +160,43 @@ handoff. See the [nine-link method paper](docs/nine_link_swingup_paper.md).
 | [Nine-link manifest](runs/generalized_solver/nine_link_swingup_manifest.json) | Frozen phase timings, controller hash, config hash, and evidence links |
 | [Nine-link method paper](docs/nine_link_swingup_paper.md) | Method, terminal-angle refinement, negative controls, limitations, and reproduction commands |
 
+## The ten-link record extension
+
+The same settled-launch, feedback-route, and delayed-capture architecture now
+passes the repository's uniform ten-link benchmark. This is the highest
+verified internal result in the project, not a claim about an external
+competition record.
+
+| Benchmark property | Result |
+|---|---:|
+| Links | **10** |
+| 20-episode noisy gate | **20/20 (100%)** |
+| 100-episode noisy gate | **100/100 (100%)** |
+| Exact 20-episode check | **20/20 (100%)** |
+| Resets inside episodes | **0** |
+| Rail failures in the 100-episode gate | **0** |
+| Parked launch | **16.0 s at -0.05 m** |
+| Swing route | **400 steps / 8.0 s** |
+| Maximum cart excursion across 100 noisy episodes | **1.9976 m** |
+| Held-out video | **30.0 s, 1,500 frames, zero resets** |
+
+The ten-link controller was obtained by exact target-plant Box-FDDP refinement
+of a two-second endpoint-shaped route. The decisive change was to optimize the
+route feedback and the terminal arrival together; the earlier single-sample
+endpoint route passed exact replay but had no usable noisy capture basin.
+
+| Artifact | What it establishes |
+|---|---|
+| [Zoomed-out 30-second video](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4) | Held-out noisy hanging-start replay with all ten links visible |
+| [Video metadata](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.video.json) | Seed, 1,500 frames, zero resets, final success, and hashes |
+| [20-episode noisy gate](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005_20.json) | First ten-link acceptance gate: 20/20 |
+| [100-episode noisy gate](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005_100.json) | Ten-link final statistical gate: 100/100 |
+| [Exact 20-episode check](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005_exact20.json) | Deterministic no-noise replay: 20/20 |
+| [Ten-link controller](runs/generalized_solver/n10_fddp_refined_route_feedback100.json) | Target-plant Box-FDDP route, nominal states, and time-varying feedback |
+| [Ten-link manifest](runs/generalized_solver/ten_link_swingup_manifest.json) | Frozen contract, hashes, seeds, method, and limitations |
+| [Ten-link SHA-256 checksums](runs/generalized_solver/n10_release_SHA256SUMS) | Release checksum list for the config, controller, gates, video, metadata, manifest, paper, and verifier |
+| [Ten-link method paper](docs/ten_link_swingup_paper.md) | Method, evidence, negative controls, and reproduction commands |
+
 ## The eight-link record extension
 
 The same two-expert idea reaches eight links on the repository's canonical
@@ -210,6 +254,7 @@ the swing trajectory.
 | 7 links | **20/20** through shared evaluator; canonical release is **100/100** | 0.850 |
 | 8 links | Separate parked-launch release is **100/100** | 1.037 |
 | 9 links | Separate parked-launch release is **100/100** | 1.053 |
+| 10 links | Separate parked-launch release is **100/100** | 0.726 |
 
 These are development results, not additions to the public seven-link record
 claim. See the [generalized solver design and honest frontier](docs/generalized_solver.md),
@@ -226,7 +271,7 @@ the record route. The n=8 row is the separate parked-launch promotion and its
 `1.037` body-aware ratio is `(2.9300 m + 0.18 m) / 3 m`; the n=9 row is the
 same parked-launch promotion with a `1.053` body-aware ratio from the noisy
 100-episode maximum. Neither is an independent modal-synthesis regeneration.
-Arbitrary unequal morphologies and n>=10 remain active work.
+Arbitrary unequal morphologies and n>=11 remain active work.
 
 The n=1 rung now uses the same saved-route, exact mirror, forward-model
 selection, bounded-action execution, LQR capture, and uninterrupted noisy gate
@@ -396,22 +441,26 @@ make that promotion boundary inspectable. The newer
 and [exact replay](runs/generalized_solver/n3_unequal_p036214_exact1.json) keep
 the continuing deterministic frontier separate from the robust claim.
 
-## Next frontier: ten links
+## Next frontier: eleven links
 
-Nine links has passed the repository's internal evidence bundle. The next
-active frontier is **ten links**, and it must use the same discipline: start
+Ten links has passed the repository's internal evidence bundle. The next
+active frontier is **eleven links**, and it must use the same discipline: start
 hanging, apply the settled-cart launch, swing with saved feedback, capture in
-the same episode, and pass fresh 20/100 noisy gates on the canonical rail.
-The earlier nine-link transfer, tail-search, and locked-link artifacts remain
-preserved as negative controls in the experiment ledger.
+the same episode, and pass fresh exact and noisy gates on the canonical rail.
+The ten-link route is a warm start for target-plant re-optimization, not a
+literal dimension-lifted controller. Earlier transfer, tail-search, and
+training-wheel artifacts remain preserved as negative controls in the
+experiment ledger.
 
-- [`configs/swingup9_uniform.yaml`](configs/swingup9_uniform.yaml)
-- [`runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json`](runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json)
-- [`runs/generalized_solver/nine_link_swingup_manifest.json`](runs/generalized_solver/nine_link_swingup_manifest.json)
+- [`configs/swingup10_uniform.yaml`](configs/swingup10_uniform.yaml)
+- [`runs/generalized_solver/n10_fddp_refined_route_feedback100.json`](runs/generalized_solver/n10_fddp_refined_route_feedback100.json)
+- [`runs/generalized_solver/ten_link_swingup_manifest.json`](runs/generalized_solver/ten_link_swingup_manifest.json)
+- [`docs/ten_link_swingup_paper.md`](docs/ten_link_swingup_paper.md)
 - [`ROADMAP.md`](ROADMAP.md)
 
-The project advances one link only after the same evidence bundle passes. No
-ten-link result is claimed yet.
+The project advances one link only after the same evidence bundle passes. Ten
+links is the highest verified internal benchmark; eleven links is now the
+active frontier. No external world-record claim is made here.
 
 ## Reproduce the result
 
@@ -427,20 +476,27 @@ cd cartpole
 make setup-aligator
 make release-swingup7
 
-# Verify the published internal nine-link controller, gates, video, and manifest.
-cd runs/generalized_solver
-shasum -a 256 -c SHA256SUMS
+# Verify the original seven-link release when reproducing that release.
+make verify-swingup7
+
+# Verify the released internal ten-link controller, gates, video, and manifest.
+make verify-ten-link-release
+sha256sum -c runs/generalized_solver/n10_release_SHA256SUMS
 ```
 
-`release-swingup7` regenerates two disjoint evaluation cohorts, the independent
-video, the non-canonical robustness sweep, checksums, and the final verifier
-report. It intentionally refuses to run when tracked source files are dirty.
+`release-swingup7` regenerates the original seven-link release and intentionally
+refuses to run when tracked source files are dirty. The ten-link command above
+audits the frozen internal bundle without regenerating it; the manifest records
+that its source tree was dirty at generation, so the exact artifact hashes are
+the authority for this release.
 For individual replay commands and the evidence contract, follow the
 [seven-link paper's reproduction section](docs/seven_link_swingup_paper.md#6-reproduction).
 The [eight-link reproduction section](docs/eight_link_swingup_paper.md#6-reproduction)
 contains the exact parked-launch evaluation and rendering commands.
 The [nine-link reproduction section](docs/nine_link_swingup_paper.md#6-reproduction)
 contains the current frontier's exact commands and terminal-angle settings.
+The [ten-link reproduction section](docs/ten_link_swingup_paper.md#4-reproduction)
+contains the exact parked-route gates, held-out render, and release verifier.
 
 ## Repository map
 
@@ -451,7 +507,7 @@ contains the current frontier's exact commands and terminal-angle settings.
 | [`scripts`](scripts) | Training, search, evaluation, replay, and rendering entry points |
 | [`tests`](tests) | Dynamics, optimizer, morphology, and evidence-contract tests |
 | [`docs`](docs) | Paper, roadmap support, experiment ledger, and reproduction notes |
-| [`runs/generalized_solver`](runs/generalized_solver) | Curated n=1..9 gates, routes, videos, and honest frontier records |
+| [`runs/generalized_solver`](runs/generalized_solver) | Curated n=1..10 gates, routes, videos, and honest frontier records |
 | [`runs/swingup7_uniform`](runs/swingup7_uniform) | Curated public seven-link evidence bundle |
 
 Research history is intentionally preserved, including negative results. Start

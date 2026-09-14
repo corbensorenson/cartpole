@@ -4,15 +4,16 @@
 
 This is the authoritative completion contract for the project.
 
-The project advances one link at a time. The current active frontier is a reproducible uniform **10-link** MuJoCo cart-pole because the 9-link controller has now passed the project's canonical 20/100 control gate. Every frontier starts hanging below the cart, swings up, captures, and remains upright. The existing 6-link work is a required calibration and debugging gate because a public 6-link result already exists; it is not the endpoint.
+The project advances one link at a time. The current active frontier is a reproducible uniform **11-link** MuJoCo cart-pole because the 10-link controller has now passed the project's canonical 20/100 control gate. Every frontier starts hanging below the cart, swings up, captures, and remains upright. The existing 6-link work is a required calibration and debugging gate because a public 6-link result already exists; it is not the endpoint.
 
-Promotion update (2026-09-13): nine links passed `20/20` and `100/100` noisy
+Promotion update (2026-09-14): ten links passed `20/20` and `100/100` noisy
 episodes on the canonical `+/-3 m` rail, an exact `20/20` replay, and a
-reset-free 30-second held-out video. The promoted route uses the inherited
-settled-launch architecture with a measured cart park at `-0.05 m`, saved
-Box-FDDP feedback, angle-weighted terminal optimization, and parked-target LQR
-capture. The next campaign is ten links and must begin by applying this same
-stack before broadening the search.
+reset-free 30-second held-out video. The promoted route uses a 16-second
+settled launch, target-plant Box-FDDP feedback with angle/rate-weighted
+terminal refinement, and parked-target LQR capture. The next campaign is
+eleven links and must begin by applying this same stack before broadening the
+search. This is an internal canonical benchmark promotion, not an external
+world-record claim.
 
 The project goal can point directly at this file:
 
@@ -457,6 +458,8 @@ After P7, turn the seven-link result into an arbitrary-`n` scaling experiment. T
 | P0 benchmark/verifier | Passed | Canonical config, XML hash export, runtime assertions, native MuJoCo tests, and the final artifact verifier are present; all 78 tests pass in the release environment. |
 | Global discovery feasibility | Not passed | The CPU-safe exact-MuJoCo evaluator records `0/4` five-second holds for the current low-momentum swing plus LQR chain; the best baseline streak is `0.04 s`. Capture-ready CEM reduced nominal hinge RMS to about `0.835 rad/s` but still produced no sustained hold. The active phase/energy branch now has a measured rail-length diagnostic: the intermediate checkpoint crossed upright at `12 m` in `1/2` episodes and at `18 m` in `2/2`, but had `0/2` low-momentum handoffs and `0/2` captures. The completed 150-update real-handoff capture curriculum reached a best `0.28 s` upright streak and `0.7958` capture-quality score, but captured `0/2` episodes, succeeded `0/2`, and reached about `3.07 m` cart excursion. |
 | P1 six-link capture basin | In progress | The seeded 20k/2k/1k envelope and strict gate evaluator are frozen. At `p=0.0700`, target planning reaches `217/256`, standard feedback MPC reaches `227/256`, and deterministic escalation reaches `233/256 = 91.02%` with a `13.90 s` median hold and no successful rail hits. The next `p=0.0725` cascade reaches only `220/256 = 85.94%`, so the accepted frontier remains `p=0.0700`. On representative `p=1.0` state 674, a frozen CEM-seeded DDP approach, settling tail, and LQR fallback succeeds in uninterrupted replay: funnel entry at `5.02 s`, minimum `V=0.12`, `9.30 s` upright hold, and maximum cart excursion `2.413 m`; its measured feedback tube is only `4/32` at normalized radius `0.005` and zero by `0.05`. Static action distillation, reward-only PPO, and raw-action DAgger are rejected. Predictive and receding-iLQR tails bottom out near `V=4,500`. Exact-MuJoCo Box-FDDP with stronger endpoint weights and policy-action precision parity now produces strict `10.56 s` replay successes through `alpha=0.7878125` toward held-out state 442. Full trajectory feedback recovers `32/32` perturbations through normalized radius `0.05`, `26/32` at `0.10`, and `13/32` at `0.20`, but `0/23` nearest distinct validation states. This is one useful local funnel rather than a reusable capture policy, and P1 is not passed. |
+
+Latest full-width calibration note (2026-09-14): the strongest complete validation checkpoint is the LQR-homotopy residual policy at `p=0.05925`, scoring `1803/2000 = 90.15%` with a `15.02 s` median hold and `197` rail terminations. The 1000-state fine continuation fails `p=0.0595` at `89.6%`; hard-tail sampling and residual-floor experiments do not improve the full split. The final `p=1.0` test gate and reusable capture policy remain open. See `docs/levers_and_pitfalls.md` for the experiment ledger.
 | P2 six-link swing handoff | In progress | Best learned handoffs are from a progress-`0.3875` curriculum plant, not final uniform 6-link. |
 | P3 integrated six | In progress | The saved Box-FDDP route plus mirrored route passes `20/20` and `100/100` from conditioned noisy hanging starts at canonical `+/-3 m`; the reset-free noisy video and route manifest are now recorded, while separate P1/P2 closure remains outstanding. |
 | P4 seven-link maintenance/capture | Superseded by integrated pass | The terminal upright LQR holds all 120 disjoint canonical release episodes after the Box-FDDP route; older curriculum failures remain preserved as research history. |
@@ -465,7 +468,8 @@ After P7, turn the seven-link result into an arbitrary-`n` scaling experiment. T
 | P7 public reproduction | Passed for the canonical release | Public README, paper, commands, hashes, limitations, verifier, and fresh-clone audit are present. Independent third-party reproduction and external competition matching remain open. |
 | P8 eight-link promotion | Passed internal canonical bundle | `20/20` and `100/100` noisy parked-route gates, exact `20/20`, held-out reset-free video, and manifest are recorded. This is not an external record claim. |
 | P9 nine-link promotion | Passed internal canonical bundle | `20/20` and `100/100` noisy parked-route gates, exact `20/20`, held-out reset-free video, and manifest are recorded. This is not an external record claim. |
-| P10 ten-link frontier | Active | Reuse the nine-link parked-launch, feedback-route, angle-weighted terminal objective, and capture contract. |
+| P10 ten-link promotion | Passed internal canonical bundle | `20/20` and `100/100` noisy parked-route gates, exact `20/20`, held-out reset-free video, and manifest are recorded on the canonical uniform ten-link plant. This is not an external record claim. |
+| P11 eleven-link frontier | Active | Reuse the ten-link 16-second settled launch, target-plant Box-FDDP feedback route, angle/rate-weighted terminal objective, parked-target LQR capture, and the same canonical evidence contract. |
 
 Six-link canonical route checkpoint (2026-09-13): the inherited seven-link
 architecture was re-run with corrected six-link provenance and carried through
@@ -487,6 +491,65 @@ boundary: `78.125%` at `0.070`, followed by `59%` at `0.080` with no further
 frontier advance. These runs are diagnostic only; P1 remains open and the
 next inherited method is a reusable internal-mode recovery teacher evaluated
 against the same frozen 1,000-state gate.
+
+Latest slow P1 continuation (2026-09-14): the retained `p=0.0725` checkpoint
+was continued with `0.00125` curriculum steps and `80` updates per stage.
+The internal gate promoted it once to `p=0.07375` at `71.09%`, but repeated
+evaluations at that boundary plateaued at `67.19%` through update `320`. The
+best frozen held-out validation at `p=0.0725` was `181/256 = 70.70%`, with a
+`13.90 s` median hold among successful episodes and `75/256` total rail exits.
+This is a measured improvement over the earlier boundary, but it is not the
+required `1,000`-episode, `90%` P1 capture basin; the gate remains open.
+
+Latest normalized-observation continuation (2026-09-14): the six-link gated
+curriculum was restarted from the easy funnel with an opt-in observation map
+that divides reset-scaled cart and hinge state back to its effective state
+coordinates. It advanced through `p=0.07`; an independent frozen validation
+replay scored `187/256 = 73.0%` at `p=0.07` and `149/256 = 58.2%` at `p=0.08`,
+with `69/256` and `107/256` rail exits respectively. The final checkpoint
+scored `0/256` at the actual `p=1.0` envelope, with `0.04 s` median hold and
+`256/256` rail exits. Normalization improves curriculum transfer but does not
+close P1 or provide a valid n10 transfer; the strict `1,000`-episode/`90%`
+gate remains open. Artifacts: `runs/p1_capture_normalized_obs_curriculum/`
+and `tests/test_capture_envelope.py`.
+
+Latest scale-conditioned curriculum rejection (2026-09-14): a fresh policy
+retained both physical and effective reset observations and the two reset
+scales, then used linear `qpos` and `qvel` scales. It passed the trivial
+`p=0` stage but failed immediately at `p=0.05`: the internal held-out row was
+`1/128 = 0.78%`, and independent replay of the saved checkpoint was
+`6/256 = 2.3%` with `244/256` rail exits and `0.26 s` median hold. The run
+was stopped at its decision boundary; this curriculum is rejected and P1
+remains open. Artifact: `runs/p1_capture_dual_obs_linear_curriculum/`.
+
+Latest angle-linear/velocity-cubic curriculum rejection (2026-09-14): a
+second dual-observation policy retained the raw physical state, appended the
+effective reset state and reset scales, and used a linear angle scale with a
+cubic velocity scale. It again failed at the first nontrivial `p=0.05` stage:
+the internal held-out row was `5/128 = 3.91%` with a `0.823 s` mean maximum
+upright streak, while independent replay of the saved checkpoint was
+`8/256 = 3.1%`, with a `0.240 s` median hold and `184/256` rail exits. The
+checkpoint was stopped at the boundary; changing the observation schedule in
+this way does not close P1. Artifact:
+`runs/p1_capture_angle_linear_velocity_cubic_curriculum/`.
+
+Latest ten-link split-unlock frontier (2026-09-14): an exactly embedded
+nine-link route first passed the temporarily locked ten-link split plant for
+`26.18 s` on a `+/-6 m` diagnostic rail. Releasing the inserted joint was then
+tested with exact replay, bounded waypoint repair, and Box-FDDP at
+`p=0.005`, `0.0025`, and `0.00125`; all three proposals were rejected. The
+best repaired replay latched only `0.68 s` at `p=0.0025` and still reached
+`6.04 m`, while the smallest tested step reached only `0.26 s` and `6.04 m`.
+The adaptive ledger reached a bisected next step of `0.000625` without an
+accepted free-joint route. A nine-combination explicit split-joint angle/rate
+residual was also negative at both `p=0.005` and the genuinely free uniform
+endpoint: all endpoint replays had `0 s` hold and `3.013--3.081 m` excursion.
+This closed the simple split-joint-feedback lever at the 2026-09-11
+checkpoint; ten links were still unsolved at that time. The later canonical
+promotion is recorded below.
+Artifacts: `runs/generalized_solver/n10_split_locked_homotopy_rail6/`,
+`runs/generalized_solver/n10_split_joint_feedback_probe/`, and
+`runs/generalized_solver/n10_split_joint_feedback_uniform_probe/`.
 
 Latest P4/P5 update (2026-09-11): the CPU Torch finite-difference-LQR
 residual curriculum advanced a narrow seven-link capture frontier through
@@ -1488,15 +1551,17 @@ canonical `+/-3 m` rail and passed there. Direct transfer, balanced terminal
 objectives, strict tail CEM, wide-rail tail CEM, and the repaired locked-link
 continuation remain documented negative controls.
 
-The active frontier is now ten links. It must start from the nine-link
-controller and preserve the `14.0 s` settled launch, saved feedback route,
-angle-weighted terminal objective, parked cart target, and terminal LQR while
-re-optimizing only the link-count-dependent route. The public nine-link bundle
-is an internal benchmark result, not an external world-record claim.
+At the time of this handoff the active frontier was ten links. It started from
+the nine-link controller, preserved the settled-launch and parked-target
+contract, and required exact target-plant route re-optimization rather than a
+literal dimension-lifted copy. The public nine-link bundle is an internal
+benchmark result, not an external world-record claim.
 
-## Ten-Link Frontier Diagnostics (2026-09-13)
+## Ten-Link Frontier Diagnostics Before Promotion (2026-09-13)
 
-The ten-link campaign is active, but it has not produced a canonical solve.
+Before the later 2026-09-14 promotion, the ten-link campaign had not produced
+a canonical solve. These experiments remain useful historical diagnostics;
+none of them is the promoted evidence.
 The uniform ten-link plant, not a ghost-link or temporarily supported plant, is
 the acceptance target. The following experiments are retained as measured
 diagnostics:
@@ -1520,3 +1585,45 @@ promotion artifacts because they depend on temporary support or an effectively
 locked inserted mode. The next route search must preserve incumbent rollback,
 use the saved nine-link parked launch, score the downstream capture value at
 the actual terminal state, and remove every support before any 10-link claim.
+
+## Ten-Link Promotion And Eleven-Link Handoff (2026-09-14)
+
+The uniform ten-link target now has the complete internal canonical evidence
+bundle. The accepted controller conditions the noisy hanging state for
+`16.0 s` at cart target `-0.05 m`, replays a target-plant `8.0 s` Box-FDDP
+route with saved time-varying feedback, and switches without a reset to the
+upright LQR around the same parked target.
+
+| Evidence | Result |
+| --- | ---: |
+| Noisy 20-episode gate | `20/20` |
+| Disjoint noisy 100-episode gate | `100/100` |
+| Exact 20-episode replay | `20/20` |
+| Held-out video | `30.0 s`, `1,500` frames, zero resets, all ten links visible |
+| Noisy 100 maximum cart excursion | `1.9976 m` on the canonical `+/-3 m` rail |
+| Held-out maximum cart excursion | `1.9717 m` |
+| Held-out first upright / sustained hold | `23.90 s` / `6.12 s` |
+
+The decisive change was to re-optimize the ten-link route and its feedback on
+the actual target plant. A single quiet endpoint, static LQR sweep, nonlinear
+MPC tail, wider rail, or temporary ghost-link continuation was not enough. The
+longer parked launch removed the residual hanging-state error, and the final
+two seconds of the arrival were shaped before Box-FDDP so the feedback route
+entered a bounded capture basin. The exact gate, noisy gates, video, hashes,
+and limitations are frozen in
+[`runs/generalized_solver/ten_link_swingup_manifest.json`](runs/generalized_solver/ten_link_swingup_manifest.json),
+with the method paper at
+[`docs/ten_link_swingup_paper.md`](docs/ten_link_swingup_paper.md).
+
+This is a repository benchmark promotion, not an external world-record claim.
+External comparison still requires matching the competing plant, force
+convention, rail geometry, timing, initialization distribution, and judging
+rules.
+
+The active frontier is now **eleven links**. It must begin from the ten-link
+launch contract and use the ten-link route as a warm start, but it must be
+re-optimized and replayed on the uniform eleven-link target plant. A literal
+dimension-lifted route is only a diagnostic. The eleven-link campaign must
+again pass the exact `20/20`, disjoint noisy `20/20` and `100/100`, reset-free
+30-second video, artifact-hash, and fresh-clone reproduction checks before it
+is promoted to twelve links.

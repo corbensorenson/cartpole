@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "claim_status": "released_internal_canonical_ten_link",
+  "architecture": "parked_launch_box_fddp_feedback_and_upright_lqr",
+  "benchmark": {
+    "config": "configs/swingup10_uniform.yaml",
+    "config_sha256": "d7c5a4b85118be71340dbc39e06c1ee0ec848b5b2302b6b47dc5d64afc5e26b9",
+    "resolved_noisy_config_sha256": "74e64131c52ee6f37198b6019054bd6550bb44a744cb47fac5c44c3d4ee5d912",
+    "resolved_exact_config_sha256": "a7357d44e5ab11e858a31615ec82e9807c99884d6749c6d223ed7b7057bcd213",
+    "generated_xml_sha256": "41c2db8b6de6e2effa3860f19037ce0dd5094bfcd7d82450bb1fa92ad6255491",
+    "n_links": 10,
+    "total_link_length_m": 3.0,
+    "total_link_mass_kg": 1.0,
+    "cart_mass_kg": 1.0,
+    "rail_limit_m": 3.0,
+    "force_limit_n": 80.0,
+    "policy_rate_hz": 50.0,
+    "episode_seconds": 30.0,
+    "upright_threshold_rad": 0.15,
+    "success_sustain_seconds": 5.0,
+    "initial_mode": "hanging"
+  },
+  "controller": {
+    "path": "runs/generalized_solver/n10_fddp_refined_route_feedback100.json",
+    "bytes": 4084813,
+    "sha256": "75177e6a2956683eca7a9ef57f9aedfc7d37a74008c70d157981e46b1b2de4a4",
+    "route_steps": 400,
+    "route_seconds": 8.0,
+    "tracking_gain_scale": 1.0,
+    "lqr_scale": 1.0,
+    "lqr_control_cost": 1000.0,
+    "terminal_angle_factor": 20.0,
+    "terminal_hinge_velocity_factor": 4.0,
+    "optimizer_soft_rail_m": 2.85,
+    "optimizer_soft_rail_is_inside_benchmark": true
+  },
+  "experts": {
+    "conditioning": {
+      "type": "hanging_equilibrium_lqr_cart_park",
+      "duration_seconds": 16.0,
+      "cart_target_m": -0.05,
+      "control_cost": 1000.0,
+      "state_reset": false
+    },
+    "swing": {
+      "type": "box_fddp_time_varying_feedback",
+      "route_steps": 400,
+      "route_seconds": 8.0,
+      "tracking_gain_scale": 1.0,
+      "shift_nominal_cart_position_to_parked_x": true
+    },
+    "capture": {
+      "type": "upright_lqr",
+      "activation": "after_swing_route_horizon",
+      "scale": 1.0,
+      "control_cost": 1000.0,
+      "cart_target_m": -0.05
+    }
+  },
+  "switch": {
+    "state_reset_at_phase_boundaries": false,
+    "conditioning_to_swing": "after 16.0 seconds",
+    "swing_to_capture": "after 400 route steps",
+    "hysteresis": "not applicable; deterministic time-indexed boundaries"
+  },
+  "evaluation": {
+    "twenty_episode": {
+      "path": "runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005_20.json",
+      "bytes": 135305,
+      "sha256": "dceeccb9549695ea4fdd4b7d14c18548815dc05147a241b7e958a2b62f79ac37",
+      "seed_start": 102001,
+      "seed_end": 102020,
+      "successes": 20
+    },
+    "hundred_episode": {
+      "path": "runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005_100.json",
+      "bytes": 652034,
+      "sha256": "610004edef45a6447c08d6f3eb6cfc0855114a6bb7916e6d0505e0388eb647f6",
+      "seed_start": 102101,
+      "seed_end": 102200,
+      "successes": 100
+    },
+    "exact_twenty_episode": {
+      "path": "runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005_exact20.json",
+      "bytes": 135340,
+      "sha256": "8750274cebb2a360d92fabda248a977051bcc0f1d9feda4cc53dd6288cb3c264",
+      "seed_start": 102201,
+      "seed_end": 102220,
+      "successes": 20
+    },
+    "cohorts_are_pairwise_disjoint_for_noisy_gate": true,
+    "video": {
+      "path": "runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4",
+      "bytes": 996097,
+      "sha256": "26ab6d43bd4952dde9bf397355ad63fb0606195745ba8078ea30bd538c05f9d2",
+      "video_seed": 102221,
+      "video_seed_is_outside_noisy_cohorts": true,
+      "video_reset_count": 0,
+      "video_first_upright_time": 23.9,
+      "video_max_upright_streak_seconds": 6.12
+    },
+    "video_metadata": {
+      "path": "runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.video.json",
+      "bytes": 6441,
+      "sha256": "26218e2418a1945cbfdcf590cd1c420eacff91a00933cd01405845df3b4bc2f6"
+    },
+    "noisy100_max_cart_excursion_m": 1.9976436058363949,
+    "video_max_cart_excursion_m": 1.9716791082994876
+  },
+  "release": {
+    "source_commit": "3b93fb0032d9039ff605e1eb911e2274beccb66d",
+    "source_commit_is_clean_at_generation": false,
+    "verification_commands": [
+      "scripts/evaluate_fddp_parked_route.py --config configs/swingup10_uniform.yaml --controller runs/generalized_solver/n10_fddp_refined_route_feedback100.json --episodes 20 --seed 102001 --park-seconds 16 --cart-target -0.05 --tracking-gain-scale 1 --release-evidence --out runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005_20.json",
+      "scripts/evaluate_fddp_parked_route.py --config configs/swingup10_uniform.yaml --controller runs/generalized_solver/n10_fddp_refined_route_feedback100.json --episodes 100 --seed 102101 --park-seconds 16 --cart-target -0.05 --tracking-gain-scale 1 --release-evidence --out runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005_100.json",
+      "scripts/evaluate_fddp_parked_route.py --config configs/swingup10_uniform.yaml --controller runs/generalized_solver/n10_fddp_refined_route_feedback100.json --episodes 20 --seed 102201 --zero-noise --park-seconds 16 --cart-target -0.05 --tracking-gain-scale 1 --release-evidence --out runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005_exact20.json",
+      "scripts/render_fddp_parked_route_video.py --config configs/swingup10_uniform.yaml --controller runs/generalized_solver/n10_fddp_refined_route_feedback100.json --out runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4 --metadata-out runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.video.json --seed 102221 --park-seconds 16 --cart-target -0.05 --tracking-gain-scale 1 --phase-window 0 --seconds 30 --fps 50 --width 1280 --height 720 --fail-on-failure",
+      "PYTHONPATH=src ./.conda-aligator/bin/python scripts/verify_ten_link_release.py"
+    ],
+    "paper": "docs/ten_link_swingup_paper.md",
+    "ledger": "docs/levers_and_pitfalls.md",
+    "checksums": "runs/generalized_solver/n10_release_SHA256SUMS",
+    "verifier": "scripts/verify_ten_link_release.py"
+  },
+  "limitations": [
+    "Internal canonical benchmark result, not an external competition record claim.",
+    "Uniform ten-link plant and exact 50 Hz action timing only.",
+    "Hybrid model-based controller, not a single neural policy.",
+    "No claim of robustness to morphology variation, actuator delay, or sensor noise outside the declared reset distribution.",
+    "The 16-second parked launch and -0.05 m cart target are part of the declared controller contract.",
+    "The repository remains a dirty development tree at generation; the manifest records the source commit and all artifact hashes."
+  ]
+}
