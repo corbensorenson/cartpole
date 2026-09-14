@@ -24,7 +24,7 @@ from gcartpole.modal import dimensionless_wrapped_state
 
 try:
     from scripts.evaluate_fddp_two_expert import (
-        hanging_lqr_action,
+        hanging_lqr_action_from_state,
         hanging_lqr_gain,
         load_controller,
         run_episode,
@@ -33,7 +33,7 @@ try:
     from scripts.search_swingup_capture import lqr_gain
 except ModuleNotFoundError:
     from evaluate_fddp_two_expert import (
-        hanging_lqr_action,
+        hanging_lqr_action_from_state,
         hanging_lqr_gain,
         load_controller,
         run_episode,
@@ -93,6 +93,7 @@ def execute_route(
     *,
     tracking_gain_scale: float,
     phase_window: int,
+    cart_target: float,
 ) -> tuple[dict[str, Any], list[float]]:
     controls = controller["controls"]
     nominal = controller["nominal_states"].copy()
@@ -109,6 +110,7 @@ def execute_route(
         if phase_cursor < controls.size:
             if cart_shift is None:
                 cart_shift = float(coordinates[0] - nominal[0, 0])
+                # The measured launch state already includes any parked cart target.
                 nominal[:, 0] += cart_shift
             candidates = np.arange(
                 phase_cursor,
@@ -136,13 +138,23 @@ def execute_route(
                 qvel,
                 upright_gain,
                 scale=controller["lqr_scale"],
-                cart_target=0.0,
+                cart_target=cart_target,
             )
         _, _, terminated, truncated, final_info = env.step([action])
         cart_positions.append(float(env.data.qpos[0]))
         if terminated or truncated:
             break
     return final_info, cart_positions
+
+
+def route_cart_target(
+    controller: dict[str, Any], *, target: float, mode: str
+) -> float:
+    if mode == "fixed":
+        return float(target)
+    if mode == "mirror_symmetric":
+        return float(-target if controller.get("mirror_symmetry", False) else target)
+    raise ValueError(f"unsupported route cart target mode: {mode}")
 
 
 def main() -> None:
@@ -155,9 +167,29 @@ def main() -> None:
     parser.add_argument("--conditioning-seconds", type=float, default=15.0)
     parser.add_argument("--tracking-gain-scale", type=float, default=1.5)
     parser.add_argument("--phase-window", type=int, default=6)
+    parser.add_argument(
+        "--cart-target",
+        type=float,
+        default=0.0,
+        help="cart target in metres used during conditioning, route translation, and capture",
+    )
+    parser.add_argument(
+        "--route-target-mode",
+        choices=("fixed", "mirror_symmetric"),
+        default="fixed",
+        help="use one target for every route or flip the target for the mirrored route",
+    )
+    parser.add_argument(
+        "--park-seconds",
+        type=float,
+        default=0.0,
+        help="reset-free hanging-LQR parking time after route selection",
+    )
     parser.add_argument("--out", required=True)
     parser.add_argument("--override", action="append", default=[])
     args = parser.parse_args()
+    if args.park_seconds < 0.0:
+        raise ValueError("park-seconds must be nonnegative")
     cfg = apply_overrides(load_config(args.config), args.override)
     if args.n_links is not None:
         if args.n_links < 1:
@@ -180,8 +212,15 @@ def main() -> None:
     settle_gain = hanging_lqr_gain(cfg, progress=1.0, fd_eps=1e-7, control_cost=1000.0)
     setup = setup_from_config(cfg)
     live_cfg = copy.deepcopy(cfg)
-    live_cfg["env"]["episode_seconds"] = float(cfg["env"]["episode_seconds"]) + float(
-        args.conditioning_seconds
+    conditioning_target = (
+        float(args.cart_target)
+        if args.route_target_mode == "fixed"
+        else 0.0
+    )
+    live_cfg["env"]["episode_seconds"] = (
+        float(cfg["env"]["episode_seconds"])
+        + float(args.conditioning_seconds)
+        + float(args.park_seconds)
     )
     results: list[dict[str, Any]] = []
     for episode_index in range(args.episodes):
@@ -191,7 +230,14 @@ def main() -> None:
         conditioning_steps = round(args.conditioning_seconds / env.dt)
         live_cart = [float(env.data.qpos[0])]
         for _ in range(conditioning_steps):
-            action = hanging_lqr_action(env, settle_gain, scale=1.0)
+            settle_qpos = np.asarray(env.data.qpos, dtype=np.float64).copy()
+            settle_qpos[0] -= conditioning_target
+            action = hanging_lqr_action_from_state(
+                settle_qpos,
+                np.asarray(env.data.qvel, dtype=np.float64),
+                settle_gain,
+                scale=1.0,
+            )
             _, _, terminated, truncated, _info = env.step([action])
             live_cart.append(float(env.data.qpos[0]))
             if terminated or truncated:
@@ -214,6 +260,11 @@ def main() -> None:
                 phase_adaptive=True,
                 phase_window=args.phase_window,
                 shift_cart_nominal=True,
+                cart_target=route_cart_target(
+                    controller,
+                    target=args.cart_target,
+                    mode=args.route_target_mode,
+                ),
                 include_trajectory=False,
             )
             for index, controller in enumerate(controllers)
@@ -227,12 +278,32 @@ def main() -> None:
                 index,
             ),
         )
+        selected_cart_target = route_cart_target(
+            controllers[selected],
+            target=args.cart_target,
+            mode=args.route_target_mode,
+        )
+        parking_steps = round(float(args.park_seconds) / env.dt)
+        for _ in range(parking_steps):
+            settle_qpos = np.asarray(env.data.qpos, dtype=np.float64).copy()
+            settle_qpos[0] -= selected_cart_target
+            action = hanging_lqr_action_from_state(
+                settle_qpos,
+                np.asarray(env.data.qvel, dtype=np.float64),
+                settle_gain,
+                scale=1.0,
+            )
+            _, _, terminated, truncated, _info = env.step([action])
+            live_cart.append(float(env.data.qpos[0]))
+            if terminated or truncated:
+                raise RuntimeError("route-specific parking terminated before swing route")
         final_info, route_cart = execute_route(
             env,
             controllers[selected],
             upright_gains[selected],
             tracking_gain_scale=args.tracking_gain_scale,
             phase_window=args.phase_window,
+            cart_target=selected_cart_target,
         )
         live_cart.extend(route_cart[1:])
         result = {
@@ -273,6 +344,10 @@ def main() -> None:
             "type": "exact_forward_model_argmin",
             "tracking_gain_scale": args.tracking_gain_scale,
             "phase_window": args.phase_window,
+            "cart_target": args.cart_target,
+            "route_target_mode": args.route_target_mode,
+            "park_seconds": args.park_seconds,
+            "conditioning_target": conditioning_target,
             "conditioning_seconds": args.conditioning_seconds,
             "route_lqr_control_costs": [
                 float(controller["lqr_control_cost"]) for controller in controllers
