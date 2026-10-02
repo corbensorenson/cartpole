@@ -55,8 +55,8 @@ Proceed through these checkpoints:
    records, and publish a GitHub release for each new accepted count.
 
 Current campaign artifacts live in `runs/frontier_campaign_20261001/`.
-The active frontier is now **thirteen** after the complete twelve-link bundle
-passed. Preparing higher-count configs or finding a component controller
+The active frontier is now **fourteen** after the complete thirteen-link bundle
+passed. Thirteen GitHub publication is in progress. Preparing higher-count configs or finding a component controller
 never advances a count. Earlier diagnostics below retain their claim status
 at the time they were performed.
 
@@ -135,12 +135,21 @@ Canonical parked development tests then pass noisy20/20 and disjoint
 noisy100/100. A frozen clean source commit and policy now pass reserved
 noisy20/20, noisy100/100, exact20/20 and the held-out video episode at 50 Hz.
 The 1500-frame full video is rendered and inspected, and the final release
-manifest verifier passes. Twelve is the accepted internal canonical frontier;
-its GitHub publication is in progress, and thirteen is active. The first reserved attempt passed physically but failed the clean
+manifest verifier passes. Twelve is the accepted internal canonical frontier and is
+[published with all 25 verified assets](https://github.com/corbensorenson/cartpole/releases/tag/twelve-link-canonical-20261002); thirteen is active. The first reserved attempt passed physically but failed the clean
 Git provenance check solely because of Finder metadata; it is preserved, and
 identical cohorts were rerun without tuning. All 374 current tests and 103
 focused tests in the frozen source clone pass. See
 [the twelve-link development note](docs/twelve_link_development.md).
+
+Thirteen follow-up (2026-10-02): preserve the physical curve’s hanging winding
+when fitting and transferring it. A hardcoded +pi assumption rejected the
+released source’s equivalent -pi start; the check now validates canonical
+hanging modulo full turns and preserves the supplied branch. Nine regression
+cases cover valid and invalid starts. A fitted inverse/FDDP/restoration path
+and direct physical-curve residual-SCvx path are running independently. No
+thirteen reserved seeds have been used. All 385 current tests and both frozen
+eleven/twelve release verifiers pass.
 
 Numerical follow-up (2026-10-01): an opt-in 80–100 digit Riccati calculation
 now finds stabilizing designs for the supplied linear matrices through
@@ -367,7 +376,8 @@ terminal state, rail outcome, and capture outcome in `docs/levers_and_pitfalls.m
 | 9 | Passed internal canonical bundle | Retain as the reference route and preserve all negative controls |
 | 10 | Passed internal canonical bundle | Retain the parked-launch manifest, 20/100 gates, exact replay, and reset-free video as the current ten-link release; it is not an external record claim |
 | 11 | Passed local internal canonical bundle | Retain the 20/100 noisy gates, exact 20, reset-free video, clean source bundle and eleven-link appendix |
-| 12–20 | Active queue, starting at twelve | Transfer the validated predecessor and promote one link at a time only after the complete evidence bundle passes |
+| 12 | Passed and published complete canonical bundle | Preserve the full video, frozen source, reserved 20/100/exact20 and verified GitHub assets |
+| 13–20 | Active queue, starting at thirteen | Transfer the validated predecessor and promote one link at a time only after the complete evidence bundle passes |
 
 ## Final Definition Of Done
 
@@ -1925,3 +1935,54 @@ dimension-lifted route is only a diagnostic. The eleven-link campaign must
 again pass the exact `20/20`, disjoint noisy `20/20` and `100/100`, reset-free
 30-second video, artifact-hash, and fresh-clone reproduction checks before it
 is promoted to twelve links.
+
+
+Thirteen continuation update (2026-10-02): the direct physical-curve
+initializer’s first twenty residual-SCvx iterations finish with maximum
+physical dynamics gap0.00101238. Nominal cart motion is within2.031 m, but
+actual replay violates the rail at4.04 s with zero hold. The complete
+negative result is retained. A further forty iterations from that saved
+trajectory use a tighter initial QP tolerance cap1e-5 and the same full
+objective and physical plant. No thirteen reserved seeds have been used.
+The generic handoff/rebuild helpers reproduce the released twelve source
+exactly in independent physical regression replays; both retain23.50 s hold.
+The freezer additionally requires matching development controller/config,
+gain hashes, launch parameters and disjoint non-reserved cohorts. All396
+current tests pass, including eleven checks against mismatched freeze evidence.
+
+
+Thirteen numerical follow-up (2026-10-02): the inverse/FDDP pipeline fails
+physical capture despite small virtual defects; pure LTV tracking alone also
+fails. Matched-source residual-SCvx continuations compare native OSQP and an
+optional Clarabel0.11.1 interior-point backend, then compare legacy trust
+updates with nonlinear merit agreement updates. Every branch retains the
+same canonical physical plant and capture objective. Native residual scales
+and different inner iteration budgets are disclosed separately. All401
+tests and frozen eleven/twelve release verifiers pass. See
+[the thirteen-link development chronology](docs/thirteen_link_development.md).
+
+
+Thirteen exact-start recovery (2026-10-02): the forty-iteration Clarabel
+continuation with nonlinear agreement updates ends at maximum physical
+dynamics gap4.50616e-8. Actual replay holds upright7.64 s, then fails after
+the14-second LQR handoff. Without changing controls, feedback or physical
+prefixes, handoffs9,10 and12 s pass the complete thirty-second episode with
+23.50 s hold and maximum cart excursion1.9934265 m;8 s fails. Nine is the
+earliest passing time in this predeclared screen. It is selected for an
+exact delivered-control physical rebuild and fresh noisy development gates.
+Thirteen is not promoted: no reserved validation has been run. The legacy
+Clarabel continuation ends with gap0.000182364 and fails at6.06 s; the
+inverse/restored twenty-iteration residual-SCvx branch ends with gap
+0.000378893 and fails at4.26 s. Every negative and positive source is retained.
+
+
+Thirteen canonical promotion (2026-10-02): the frozen source and policy pass
+reserved noisy 20/20, disjoint noisy 100/100, exact 20/20 and the held-out full
+thirty-second video. All 141 episodes complete 1500 physical steps, hold for
+7.50 s and stay within the canonical rail (maximum excursion 1.943463 m).
+The full 50 fps video is rendered from recorded physical states. All 401
+publication tests, 73 focused frozen-source tests and the release verifier
+pass. The source bundle, complete positive and negative synthesis evidence,
+controller and video are preserved under `runs/swingup13_uniform/`.
+Fourteen is active; its source is the accepted thirteen-link controller.
+The control rate remains 50 Hz. Higher counts must pass the same gates.

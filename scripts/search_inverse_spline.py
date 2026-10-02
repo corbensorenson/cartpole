@@ -31,6 +31,23 @@ def refine_saved_spline(source, rounds):
     return spline
 
 
+def inherited_hanging_state(source, n_links):
+    """Preserve a saved hanging winding without accepting a different start."""
+    d = n_links+1
+    selected = source.get('selected_state', {})
+    qpos = np.asarray(selected.get('qpos', []), dtype=float)
+    qvel = np.asarray(selected.get('qvel', []), dtype=float)
+    points = np.asarray(source.get('search', {}).get('spline_control_points', []), dtype=float)
+    reference = np.r_[np.pi, np.zeros(n_links-1)]
+    if (qpos.shape != (d,) or qvel.shape != (d,) or points.ndim != 2 or points.shape[1] != d
+            or not len(points) or not np.all(np.isfinite(np.r_[qpos, qvel, points.ravel()]))
+            or qpos[0] != 0. or np.any(qvel != 0.) or not np.array_equal(points[0], qpos)
+            or not np.allclose((qpos[1:]-reference)/(2*np.pi),
+                               np.round((qpos[1:]-reference)/(2*np.pi)), rtol=0., atol=1e-12)):
+        raise ValueError('saved spline must start at stationary canonical hanging, allowing integer angle windings')
+    return qpos.copy()
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", required=True)
@@ -59,7 +76,8 @@ def main():
             raise ValueError("positive link count required")
         cfg["env"]["n_links"] = args.n_links
     n, d = cfg["env"]["n_links"], cfg["env"]["n_links"] + 1
-    initial = np.r_[0., np.pi, np.zeros(n - 1)]
+    source = json.loads(Path(args.initial_spline).read_text()) if args.initial_spline else None
+    initial = np.r_[0., np.pi, np.zeros(n - 1)] if source is None else inherited_hanging_state(source, n)
     selected = dict(qpos=initial.tolist(), qvel=np.zeros(d).tolist())
     cfg = fixed_state_cfg(cfg, selected, 30.)
     env = NLinkCartPoleEnv(cfg, progress=1., seed=0)
@@ -70,7 +88,6 @@ def main():
     samples = np.linspace(0., duration, int(np.ceil(duration / args.sample_dt)) + 1)
     points = knots = source_metadata = None
     if args.initial_spline:
-        source = json.loads(Path(args.initial_spline).read_text())
         if source["effective_config"]["env"] != cfg["env"] or source["controller"]["horizon_seconds"] != duration:
             raise ValueError("saved spline must use the same physical config, initial state and duration")
         refined = refine_saved_spline(source, args.refine_knots)

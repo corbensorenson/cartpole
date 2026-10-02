@@ -5766,7 +5766,7 @@ zero gaps and reproduces every state of the successful episode. Its parked
 noisy development20/20 and disjoint100/100 both pass with the same 16-second
 contraction, cart costs10/5, and unchanged50 Hz benchmark as eleven. The
 frozen-source reserved cohorts, full video and final manifest verifier all
-pass. Twelve is promoted internally; GitHub publication is in progress. The first reserved attempt is
+pass. Twelve is promoted internally and published on GitHub with 25 hash-verified assets, including the full thirty-second video. The first reserved attempt is
 retained separately because untracked .DS_Store made its Git provenance
 dirty; identical-policy/cohort reruns from a clean clone pass.
 
@@ -5784,3 +5784,71 @@ Commands and frozen snapshots accompany every trial; 374 current tests pass.
 The experiment chronology and the manually selected nine-second handoff are
 disclosed in docs/twelve_link_development.md. Automatic re-synthesis and
 arbitrary morphology generalization remain separate research gates.
+
+
+### Thirteen: preserve winding and distinguish physical transfer from feasibility
+
+The released twelve-link physical route begins at -pi and ends at zero. A
+constant +2pi shift to match a +pi template also moves its upright endpoint;
+that is an incorrect fit of the intended winding. Matching both endpoint
+branches produces maximum fitted absolute-angle error0.003926 rad. The inverse
+initializer then rejected the equivalent -pi hanging start because it assumed
++pi. It now validates hanging modulo integer full turns, exact zero velocity
+and cart position, finite dimensions and agreement with the spline start,
+while preserving the source branch. Nine regression cases pass.
+
+Thirteen is being tested through both fitted inverse/FDDP/restoration and
+direct material interpolation of the executed twelve-link position and
+velocity curve, followed by full-horizon residual SCvx with a declared virtual
+five-second capture tail. Interpolated nodes and zero feedback placeholders
+are optimizer initializers, not executable solution evidence. Only full
+physical replay can establish capture. No thirteen reserved seeds have been
+used. All 385 tests and the unchanged eleven/twelve manifest verifiers pass.
+
+
+Thirteen continuation update (2026-10-02): the direct physical-curve
+initializer’s first twenty residual-SCvx iterations finish with maximum
+physical dynamics gap0.00101238. Nominal cart motion is within2.031 m, but
+actual replay violates the rail at4.04 s with zero hold. The complete
+negative result is retained. A further forty iterations from that saved
+trajectory use a tighter initial QP tolerance cap1e-5 and the same full
+objective and physical plant. No thirteen reserved seeds have been used.
+The generic handoff/rebuild helpers reproduce the released twelve source
+exactly in independent physical regression replays; both retain23.50 s hold.
+The freezer additionally requires matching development controller/config,
+gain hashes, launch parameters and disjoint non-reserved cohorts. All396
+current tests pass, including eleven checks against mismatched freeze evidence.
+
+
+Thirteen numerical follow-up (2026-10-02): the inverse/FDDP pipeline fails
+physical capture despite small virtual defects; pure LTV tracking alone also
+fails. Matched-source residual-SCvx continuations compare native OSQP and an
+optional Clarabel0.11.1 interior-point backend, then compare legacy trust
+updates with nonlinear merit agreement updates. Every branch retains the
+same canonical physical plant and capture objective. Native residual scales
+and different inner iteration budgets are disclosed separately. All401
+tests and frozen eleven/twelve release verifiers pass. See
+[the thirteen-link development chronology](docs/thirteen_link_development.md).
+
+
+Thirteen exact-start recovery (2026-10-02): the forty-iteration Clarabel
+continuation with nonlinear agreement updates ends at maximum physical
+dynamics gap4.50616e-8. Actual replay holds upright7.64 s, then fails after
+the14-second LQR handoff. Without changing controls, feedback or physical
+prefixes, handoffs9,10 and12 s pass the complete thirty-second episode with
+23.50 s hold and maximum cart excursion1.9934265 m;8 s fails. Nine is the
+earliest passing time in this predeclared screen. It is selected for an
+exact delivered-control physical rebuild and fresh noisy development gates.
+Thirteen is not promoted: no reserved validation has been run. The legacy
+Clarabel continuation ends with gap0.000182364 and fails at6.06 s; the
+inverse/restored twenty-iteration residual-SCvx branch ends with gap
+0.000378893 and fails at4.26 s. Every negative and positive source is retained.
+
+
+Thirteen final validation (2026-10-02): exact physical rebuilding preserves
+every state of the passing nine-second handoff replay. The unchanged parked
+launch then passes fresh development 20/20 and 100/100. After freezing, all
+141 reserved episodes pass with 7.50 s hold and full thirty-second duration.
+Numerical model agreement and timely maintenance transfer were sufficient at
+50 Hz; this result does not establish that higher frequency is necessary.
+Fourteen is now active under the same sequential validation contract.

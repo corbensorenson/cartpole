@@ -1,0 +1,102 @@
+{
+  "claim_status": "released_internal_canonical_frontier",
+  "evaluation": {
+    "exact20": {
+      "bytes": 168440,
+      "path": "runs/swingup13_uniform/eval_swingup13_exact20.json",
+      "sha256": "8341b5b8cab063c3e4d6f3c6a1cbf27a486c159f1c358633fee00cd798a2af14"
+    },
+    "gate100": {
+      "bytes": 828439,
+      "path": "runs/swingup13_uniform/eval_swingup13_100.json",
+      "sha256": "4de4ad5310d9bb0002fc3cf3df84641c7df33f042df1a6bbdd6773f5147fbefb"
+    },
+    "gate20": {
+      "bytes": 168050,
+      "path": "runs/swingup13_uniform/eval_swingup13_20.json",
+      "sha256": "74033d92d2477ce1092c340fdd5bc3a961ff561325a94f0d7adf2cc1699659a4"
+    },
+    "video_episode": {
+      "bytes": 3119627,
+      "path": "runs/swingup13_uniform/thirteen_link_video_episode.json",
+      "sha256": "b584516de7bf8da3663063e6934b614172f668f75bd2fa88d9f29a5e6fadb4f2"
+    }
+  },
+  "generated_at": "2026-10-02T08:23:51+00:00",
+  "limitations": [
+    "Internal repository benchmark; no external world-record claim.",
+    "Declared MuJoCo full-state initial-noise benchmark; hardware, sensor noise, delay and model mismatch are not evaluated.",
+    "Linear Riccati and Lyapunov checks are not nonlinear capture certificates."
+  ],
+  "method": "Adjacent material transfer of the released twelve-link physical curve; twenty residual-SCvx iterations followed by forty Clarabel iterations with nonlinear model agreement, an unchanged nine-second maintenance handoff, exact delivered-action physical rebuilding, and the unchanged parked launch contract.",
+  "metrics": {
+    "exact20": {
+      "all_full_episode": true,
+      "episodes": 20,
+      "maximum_cart_excursion": 1.9434263382249126,
+      "minimum_hold": 7.5,
+      "seed_start": 213200,
+      "successes": 20
+    },
+    "gate100": {
+      "all_full_episode": true,
+      "episodes": 100,
+      "maximum_cart_excursion": 1.9434628831687981,
+      "minimum_hold": 7.5,
+      "seed_start": 213100,
+      "successes": 100
+    },
+    "gate20": {
+      "all_full_episode": true,
+      "episodes": 20,
+      "maximum_cart_excursion": 1.9434549650014692,
+      "minimum_hold": 7.5,
+      "seed_start": 213000,
+      "successes": 20
+    },
+    "video_episode": {
+      "all_full_episode": true,
+      "episodes": 1,
+      "maximum_cart_excursion": 1.9434446013004827,
+      "minimum_hold": 7.5,
+      "seed_start": 213500,
+      "successes": 1
+    }
+  },
+  "n_links": 13,
+  "not_solution": false,
+  "policy": {
+    "bytes": 25164,
+    "path": "runs/swingup13_uniform/thirteen_link_policy.json",
+    "sha256": "7ecf98870f9729da3067c1bd5049e3217d6dfaf4cb6663e7332395c68473afc9"
+  },
+  "reproduction": {
+    "commands": {
+      "bytes": 3787,
+      "path": "runs/swingup13_uniform/reserved_commands.json",
+      "sha256": "c50887155fd9f2f2daf99320b8761142c3ca985444943d70ce410f66189bf38b"
+    },
+    "focused_source_tests_passed": 73,
+    "fresh_clone": "runs/frontier_campaign_20261001/n13_release_fresh_clone",
+    "full_working_tree_tests_passed": 401,
+    "source_bundle": {
+      "bytes": 2456388,
+      "path": "runs/swingup13_uniform/thirteen_link_source.bundle",
+      "sha256": "45c9700a98112215ee13c5f0cc8cbf37a369c4f6454ea33d08b434ad03be6eda"
+    },
+    "source_commit": "aa16a383b1562696772b2c26cf8bf83bae22d824",
+    "verifier": "scripts/verify_frontier_release.py"
+  },
+  "schema_version": 1,
+  "tuning_disclosure": "Development data selected synthesis and handoff parameters. Reserved cohorts remained unused until the policy and clean source commit were frozen. Independent automatic re-synthesis and arbitrary morphology generalization remain separate research gates.",
+  "video": {
+    "bytes": 838241,
+    "path": "runs/swingup13_uniform/thirteen_link_swingup_success.mp4",
+    "sha256": "f20e550d20c03b1d7bbe0274da3bc90c91dfd6c1147919c15f7dd1961160972d"
+  },
+  "video_metadata": {
+    "bytes": 5928,
+    "path": "runs/swingup13_uniform/thirteen_link_swingup_success.video.json",
+    "sha256": "3f1e619b81cde9aea9462ea138cb79cf08dfcdca49b07cff77dc31fd2e78f406"
+  }
+}

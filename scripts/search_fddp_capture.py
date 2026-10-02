@@ -375,6 +375,8 @@ def main() -> None:
                         help="Reject rail-violating nominal trials in QR optimizers; requires an in-rail initializer and does not certify physical replay.")
     parser.add_argument("--optimize-suffix-start-seconds", type=float, default=0.,
                         help="Freeze an exactly feasible inherited prefix and optimize only the remaining QR horizon; deployment still starts from hanging.")
+    parser.add_argument("--sparse-trust-policy", choices=("legacy", "agreement"), default="legacy")
+    parser.add_argument("--sparse-qp-solver", choices=("osqp", "clarabel"), default="osqp")
     parser.add_argument("--sparse-state-trust", type=float, default=.05)
     parser.add_argument("--sparse-control-trust", type=float, default=.1)
     parser.add_argument("--sparse-qp-max-iterations", type=int, default=10000)
@@ -904,7 +906,7 @@ def main() -> None:
             from gcartpole.constrained_shooting import optimize_constrained_shooting
             optimize_function = optimize_constrained_shooting
             options = dict(initial_states=initial_states[optimization_start_step:], defect_penalty=args.defect_penalty,
-                           defect_factor=cost_mapping, state_trust=args.sparse_state_trust,
+                           defect_factor=cost_mapping, qp_solver=args.sparse_qp_solver, trust_policy=args.sparse_trust_policy, state_trust=args.sparse_state_trust,
                            control_trust=args.sparse_control_trust, qp_max_iterations=args.sparse_qp_max_iterations,
                            qp_tolerance=args.sparse_qp_tolerance, qp_initial_tolerance=args.sparse_qp_initial_tolerance,
                            qp_inexact_dual_tolerance=args.sparse_qp_inexact_dual_tolerance)
@@ -1145,6 +1147,7 @@ def main() -> None:
             "rail_weight": float(args.rail_weight),
             "enforce_rail_during_search": bool(args.enforce_rail_during_search or args.optimizer == 'sparse-scvx'),
             "sparse_qp_parameters": None if args.optimizer != 'sparse-scvx' else dict(
+                solver=args.sparse_qp_solver, trust_policy=args.sparse_trust_policy,
                 formulation='explicit_cost_residuals_and_l1_virtual_control',
                 state_trust=args.sparse_state_trust, control_trust=args.sparse_control_trust,
                 qp_max_iterations=args.sparse_qp_max_iterations, qp_tolerance=args.sparse_qp_tolerance,

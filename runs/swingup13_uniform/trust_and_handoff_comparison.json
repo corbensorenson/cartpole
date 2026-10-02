@@ -1,0 +1,76 @@
+{
+  "comparison": [
+    {
+      "final_gap": 0.0001823644029280702,
+      "physical": {
+        "first_handoff_step": null,
+        "first_handoff_time": null,
+        "latched": false,
+        "length": 303,
+        "max_cart_excursion": 3.0694149428659685,
+        "max_low_momentum_upright_streak_seconds": 0.0,
+        "max_upright_streak_seconds": 0.0,
+        "minimum_lyapunov": 8375217.195447023,
+        "return": -1392.7714179062818,
+        "success": false,
+        "termination_reason": "rail_violation",
+        "trajectory_integrity": true
+      },
+      "search_seconds": 1441.167307138443,
+      "source": {
+        "bytes": 2566011,
+        "path": "runs/frontier_campaign_20261001/n13_adjacent_physical_curve_scvx_continuation40_clarabel200_qpcap1e5/result.json",
+        "sha256": "faaa034f0f4aabab88bb5d7b2707fe8182c0d434a6b82eb2d4c42ce6128699cd"
+      }
+    },
+    {
+      "final_gap": 4.506158646222502e-08,
+      "physical": {
+        "first_handoff_step": 700,
+        "first_handoff_time": 14.0,
+        "latched": true,
+        "length": 869,
+        "max_cart_excursion": 3.0258572698193427,
+        "max_low_momentum_upright_streak_seconds": 7.62,
+        "max_upright_streak_seconds": 7.640000000000001,
+        "minimum_lyapunov": 3.435441287632512e-08,
+        "return": 35701.70945863598,
+        "success": false,
+        "termination_reason": "rail_violation",
+        "trajectory_integrity": true
+      },
+      "search_seconds": 1399.8589189052582,
+      "source": {
+        "bytes": 4123130,
+        "path": "runs/frontier_campaign_20261001/n13_adjacent_physical_curve_scvx_continuation40_clarabel200_agreement_qpcap1e5/result.json",
+        "sha256": "e8369930b087676b5a03cc85b7ccda7aa2ada09a45efd1c49bb15b4141ddd6e4"
+      }
+    }
+  ],
+  "figures": [
+    {
+      "bytes": 120785,
+      "path": "runs/frontier_campaign_20261001/n13_adjacent_trust_and_handoff_recovery_report/model_agreement_vs_legacy.png",
+      "sha256": "e8540dc416bb79e11c1dd43222109370c26e66f3f385196d86c7559107dcc3d3"
+    },
+    {
+      "bytes": 140930,
+      "path": "runs/frontier_campaign_20261001/n13_adjacent_trust_and_handoff_recovery_report/earlier_handoff_physical_recovery.png",
+      "sha256": "b7cf2a9dbdf4ac99f7bc36043665409f9dc98a52107d97820e08b4a8a5a001e4"
+    }
+  ],
+  "generated_at": "2026-10-02T08:04:15+00:00",
+  "not_solution": true,
+  "note": "Development comparison only. Timing was measured during concurrent independent experiments and is not a serial wall-time benchmark. Earlier handoffs9/10/12 pass;8 fails. Canonical noisy and reserved release gates remain separate.",
+  "physical_rebuild": {
+    "bytes": 5111768,
+    "path": "runs/frontier_campaign_20261001/n13_adjacent_agreement_handoff9_physical_rebuild/result.json",
+    "sha256": "2eb6e2383ed96abb6fd041529c811bc1e21a05b401edf3e7043b6eaf85b65995"
+  },
+  "reserved_seeds_used": false,
+  "selected_handoff": {
+    "bytes": 5112058,
+    "path": "runs/frontier_campaign_20261001/n13_adjacent_agreement_scvx_handoff9_replay/result.json",
+    "sha256": "6c51f26f7dae342149b908bd7d5c415e0c90fdcc2cc26763336899b348661dcf"
+  }
+}

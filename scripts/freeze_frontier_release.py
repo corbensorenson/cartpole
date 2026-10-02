@@ -17,6 +17,32 @@ from scripts.synthesize_inverse_increment import exact_candidate_passed
 WORDS = dict(zip(range(11, 21), 'eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty'.split()))
 
 
+
+def validate_development_cohorts(cohorts, *, n_links, controller_sha256, config_sha256,
+                                 parameters, capture_gain_sha256, settle_gain_sha256,
+                                 generated_xml_sha256, reserved_seeds):
+    """Require the development evidence to match the entire policy being frozen."""
+    seen = set()
+    for size, data in cohorts:
+        if data['episodes'] != size or data['full_episode_successes'] != size or data['zero_noise']:
+            raise ValueError('both development noisy cohorts must pass completely before freezing')
+        if (data['controller_sha256'] != controller_sha256 or data['n_links'] != n_links
+                or data['config']['sha256'] != config_sha256):
+            raise ValueError('development cohorts must match source, count and config')
+        for key, value in parameters.items():
+            if data.get(key) != value:
+                raise ValueError(f'development policy parameter mismatch: {key}')
+        for key, value in dict(capture_gain_sha256=capture_gain_sha256,
+                               settle_gain_sha256=settle_gain_sha256,
+                               generated_xml_sha256=generated_xml_sha256).items():
+            if data.get(key) != value:
+                raise ValueError(f'development policy evidence mismatch: {key}')
+        seeds = set(range(data['seed_start'], data['seed_start'] + size))
+        if seen & seeds or seeds & reserved_seeds:
+            raise ValueError('development cohorts must be disjoint and avoid reserved seeds')
+        seen.update(seeds)
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--n-links', type=int, required=True, choices=range(11, 21))
@@ -33,17 +59,9 @@ def main():
     cfg = load_config(config_path)
     if cfg['env']['n_links'] != n or not exact_candidate_passed(json.loads(source.read_text()), cfg):
         raise ValueError('source must pass exact feasible full-episode calibration on the requested count')
-    for size, path in ((20, args.noisy20), (100, args.noisy100)):
-        data = json.loads(Path(path).read_text())
-        if data['episodes'] != size or data['full_episode_successes'] != size or data['zero_noise']:
-            raise ValueError('both development noisy cohorts must pass completely before freezing')
-        if data['controller_sha256'] != file_metadata(source)['sha256']:
-            raise ValueError('development cohorts must evaluate the exact source controller being frozen')
-    release = Path(f'runs/swingup{n}_uniform')
-    release.mkdir(parents=True, exist_ok=False)
-    controller_path, policy_path = release/f'{word}_link_controller.json', release/f'{word}_link_policy.json'
-    shutil.copy2(source, controller_path)
-    controller = load_controller(controller_path, n, load_config('benchmarks/p1_capture_envelope.yaml'))
+    cohorts = [(size, json.loads(Path(path).read_text()))
+               for size, path in ((20, args.noisy20), (100, args.noisy100))]
+    controller = load_controller(source, n, load_config('benchmarks/p1_capture_envelope.yaml'))
     capture = lqr_gain(cfg, progress=1., fd_eps=1e-7, control_cost=controller['lqr_control_cost'],
                        q_weights=controller['lqr_weights'], decimal_digits=controller['lqr_decimal_digits']).reshape(-1)
     probe = NLinkCartPoleEnv(cfg, progress=1., seed=0)
@@ -52,13 +70,25 @@ def main():
     xml, dt = text_sha256(probe.xml), probe.dt
     probe.close()
     seed_base = 200000+1000*n
+    parameters = dict(park_seconds=args.park_seconds, cart_target=args.cart_target,
+        settle_control_cost=1000., settle_cart_position_cost=args.settle_cart_position_cost,
+        settle_cart_velocity_cost=args.settle_cart_velocity_cost, tracking_gain_scale=1.,
+        phase_adaptive=False, phase_window=12)
+    reserved = set(range(seed_base, seed_base+20)) | set(range(seed_base+100, seed_base+200))
+    reserved |= set(range(seed_base+200, seed_base+220)) | {seed_base+500}
+    validate_development_cohorts(cohorts, n_links=n, controller_sha256=file_metadata(source)['sha256'],
+        config_sha256=file_metadata(config_path)['sha256'], parameters=parameters,
+        capture_gain_sha256=data_sha256(capture.tolist()), settle_gain_sha256=data_sha256(settle.tolist()),
+        generated_xml_sha256=xml, reserved_seeds=reserved)
+    release = Path(f'runs/swingup{n}_uniform')
+    release.mkdir(parents=True, exist_ok=False)
+    controller_path, policy_path = release/f'{word}_link_controller.json', release/f'{word}_link_policy.json'
+    shutil.copy2(source, controller_path)
     dump_json(dict(schema_version=1, generated_at=utc_timestamp(),
         claim_status=f'frozen_{word}_link_policy_before_reserved_validation', not_solution=True,
         n_links=n, config=file_metadata(config_path), controller=file_metadata(controller_path),
         source_candidate=file_metadata(source), generated_xml_sha256=xml,
-        parameters=dict(park_seconds=args.park_seconds, cart_target=args.cart_target, settle_control_cost=1000.,
-            settle_cart_position_cost=args.settle_cart_position_cost, settle_cart_velocity_cost=args.settle_cart_velocity_cost,
-            tracking_gain_scale=1., phase_adaptive=False, phase_window=12),
+        parameters=parameters,
         settle_gain=settle.tolist(), settle_gain_sha256=data_sha256(settle.tolist()),
         capture_gain=capture.tolist(), capture_gain_sha256=data_sha256(capture.tolist()),
         coordinate_transform=controller['transform'].tolist(),
