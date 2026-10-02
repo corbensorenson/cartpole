@@ -1,0 +1,50 @@
+{
+  "inspected_at": "2026-10-02T10:36:19+00:00",
+  "inspected_frames": [
+    20,
+    23,
+    30
+  ],
+  "physical_trace_validated": true,
+  "observations": "Fixed isotropic camera shows all fourteen links and rail. Swing pose at20 s and centered upright final pose are legible; final hold8.16 s. Every frame derives from the reserved physical trace.",
+  "ffprobe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "width": 1280,
+        "height": 720,
+        "r_frame_rate": "50/1",
+        "nb_frames": "1500"
+      }
+    ],
+    "format": {
+      "duration": "30.000000"
+    }
+  },
+  "preview": {
+    "path": "assets/fourteen-link-swingup.gif",
+    "bytes": 757147,
+    "sha256": "407e4a95fa162587e2067d7a95bbcdae6e0d99402fabb5e00b1776134b623acc"
+  },
+  "preview_frames": 375,
+  "preview_seconds": 15,
+  "preview_speed": 2,
+  "qa_frames": [
+    {
+      "path": "runs/swingup14_uniform/video_qa/frame_20s.png",
+      "bytes": 51007,
+      "sha256": "b88cbd2be108addd33b1701b816d481227431715a703dd9fbbf9c879ca4f93d5"
+    },
+    {
+      "path": "runs/swingup14_uniform/video_qa/frame_23s.png",
+      "bytes": 46108,
+      "sha256": "e9879b82d784799c284d71d81a847595bbb442b276df57a58e2bd61a95f5f283"
+    },
+    {
+      "path": "runs/swingup14_uniform/video_qa/frame_30s.png",
+      "bytes": 42627,
+      "sha256": "90d5a0ce4b7ec5ca4f833b21f58ba1c658e207c5c0ebd4cdb0884411f010ef8b"
+    }
+  ]
+}

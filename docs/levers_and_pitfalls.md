@@ -5852,3 +5852,13 @@ launch then passes fresh development 20/20 and 100/100. After freezing, all
 Numerical model agreement and timely maintenance transfer were sufficient at
 50 Hz; this result does not establish that higher frequency is necessary.
 Fourteen is now active under the same sequential validation contract.
+
+
+Fourteen final validation (2026-10-02): merely reducing nominal gaps did not
+repair the original physical replay. The declared initializer timing bracket
+selects eight seconds, with a nine-second executed handoff. Exact delivered-
+action rebuilding and the unchanged parked launch pass 20/20 and 100/100
+development episodes, then all 141 frozen-source reserved episodes with 8.16 s
+hold and full thirty-second duration. Local higher-Hz and precision probes
+remain negative component evidence. Full details and reproduction inputs are
+in `docs/fourteen_link_swingup_paper.md` and the fourteen release.

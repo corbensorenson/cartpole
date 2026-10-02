@@ -110,7 +110,7 @@ def square_root_backward_pass(
 def square_root_tracking_gains(
     transition, states, controls, cost: QuadraticTrajectoryCost, *,
     regularization=0., state_epsilon=1e-5, action_epsilon=1e-4,
-    running_costs=None,
+    running_costs=None, decimal_digits=0, callback=None, value_factor_callback=None,
 ):
     """Design pure perturbation feedback about the supplied nominal route.
 
@@ -123,6 +123,14 @@ def square_root_tracking_gains(
     costs = resolve_running_costs(cost, len(controls), running_costs)
     if not np.isfinite(regularization) or regularization < 0 or any(c.control <= 0 for c in costs):
         raise ValueError('tracking regularization must be finite and nonnegative; control costs positive')
+    if not isinstance(decimal_digits, int) or decimal_digits < 0 or 0 < decimal_digits < 40:
+        raise ValueError('tracking precision must be zero or at least forty decimal digits')
+    if value_factor_callback is not None and not decimal_digits:
+        raise ValueError('value factor export requires high-precision tracking design')
+    if decimal_digits:
+        return _high_precision_tracking_gains(
+            transition, states, controls, cost, costs, regularization,
+            state_epsilon, action_epsilon, decimal_digits, callback, value_factor_callback)
     nx = states.shape[1]
     factor, _ = _state_residual(states[-1], cost, transition.env.n, terminal=True)
     _, root = np.linalg.qr(factor, mode='reduced')
@@ -142,6 +150,59 @@ def square_root_tracking_gains(
         root = upper[1:nx+1, 1:nx+1]
         if not np.all(np.isfinite(root)) or not np.all(np.isfinite(gains[step])):
             raise np.linalg.LinAlgError(f'nonfinite tracking factor at step {step}')
+    return gains
+
+
+def _high_precision_tracking_gains(transition, states, controls, cost, costs,
+                                  regularization, state_epsilon, action_epsilon,
+                                  decimal_digits, callback, value_factor_callback):
+    """Finite-horizon Riccati arithmetic on the same native derivative inputs.
+
+    Cost factors are carried into MP before forming their Gram matrices. This
+    changes design arithmetic only; gains are rounded to binary64 for replay.
+    Native transition derivatives remain binary64 finite differences.
+    """
+    import mpmath
+    ctx = mpmath.mp.clone()
+    ctx.dps = decimal_digits
+    matrix = lambda value: ctx.matrix(np.asarray(value, dtype=float).tolist())
+    factor, _ = _state_residual(states[-1], cost, transition.env.n, terminal=True)
+    terminal = matrix(factor)
+    value = terminal.T * terminal
+    def emit_value(step):
+        if value_factor_callback is not None:
+            root = np.asarray(ctx.cholesky(value).T.tolist(), dtype=float)
+            if not np.all(np.isfinite(root)):
+                raise np.linalg.LinAlgError(f'nonfinite MP tracking value factor at step {step}')
+            value_factor_callback(step, root)
+    emit_value(len(controls))
+    gains = np.empty((len(controls), states.shape[1]))
+    factors = {}
+    for step in range(len(controls)-1, -1, -1):
+        a, b = transition.linearize(states[step], float(controls[step]),
+                                    state_epsilon=state_epsilon, action_epsilon=action_epsilon)
+        a, b = matrix(a), matrix(b)
+        root, _ = _state_residual(states[step], costs[step], transition.env.n, terminal=False)
+        key = (root.shape, root.tobytes())
+        if key not in factors:
+            factor = matrix(root)
+            factors[key] = factor.T * factor
+        va, vb = value * a, value * b
+        pivot = ctx.mpf(costs[step].control) + ctx.mpf(regularization) + (b.T * vb)[0]
+        if not ctx.isfinite(pivot) or pivot <= 0:
+            raise np.linalg.LinAlgError(f'invalid MP tracking control curvature at step {step}')
+        cross = b.T * va
+        gain = -cross / pivot
+        gains[step] = [float(gain[0, column]) for column in range(states.shape[1])]
+        value = factors[key] + a.T * va - cross.T * cross / pivot
+        value = (value + value.T) / 2
+        if not np.all(np.isfinite(gains[step])) or any(
+                not ctx.isfinite(value[i, i]) or value[i, i] < 0 for i in range(value.rows)):
+            raise np.linalg.LinAlgError(f'invalid MP tracking value at step {step}')
+        emit_value(step)
+        if callback is not None and (step % 100 == 0 or step == len(controls)-1):
+            callback(dict(tracking_backward_step=step, decimal_digits=decimal_digits,
+                          feedback_norm=float(np.linalg.norm(gains[step]))))
     return gains
 
 

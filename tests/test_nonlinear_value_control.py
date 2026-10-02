@@ -36,3 +36,34 @@ def test_invalid_and_out_of_rail_previews_are_rejected():
     assert np.isinf(diag['baseline_predicted_value'])
     with pytest.raises(SimulationError,match='no finite'):
         select_nonlinear_value_action(lambda x,u:np.array([np.nan]),np.zeros(1),np.eye(1),0.)
+
+
+def test_factored_mp_preview_preserves_weak_error_and_action_penalty():
+    # Strong residual components cancel exactly; the weak component and
+    # declared effort cost still determine the native delivered action.
+    factor=np.array([[1e20,1e20],[0.,1.]])
+    def forecast(state,action):return np.array([action,-action])
+    target=np.array([.3,-.3])
+    action,diag=select_nonlinear_value_action(forecast,np.zeros(2),factor,.3,
+        error_function=lambda x:x-target,control_cost=1.,reference_action=0.,
+        decimal_digits=80,candidate_actions=[0.])
+    assert action==float(np.float32(action))
+    assert abs(action-.15)<1e-6
+    np.testing.assert_allclose(diag['predicted_value'],.045,rtol=1e-12)
+    assert diag['improves_baseline']
+
+
+def test_native_preview_does_not_modify_live_mujoco_state():
+    from gcartpole.config import load_config
+    from gcartpole.env import NLinkCartPoleEnv
+    from gcartpole.ilqr import MujocoTransition,data_state
+    cfg=load_config('configs/swingup11_uniform.yaml');cfg['env']['n_links']=1
+    env=NLinkCartPoleEnv(cfg,progress=1.,seed=12);env.reset(seed=12)
+    before=data_state(env.data).copy();time_before=env.data.time
+    predictor=MujocoTransition(env,continuous_angles=True)
+    try:
+        select_nonlinear_value_action(predictor,before,np.eye(4),0.,grid_points=3,max_iterations=2,
+            error_function=lambda x:x-before,decimal_digits=80)
+        np.testing.assert_array_equal(data_state(env.data),before)
+        assert env.data.time==time_before
+    finally:env.close()

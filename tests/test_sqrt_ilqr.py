@@ -5,7 +5,7 @@ import mpmath as mp
 import numpy as np
 
 from gcartpole.ilqr import QuadraticTrajectoryCost, rollout
-from gcartpole.sqrt_ilqr import optimize_sqrt_ilqr, square_root_backward_pass
+from gcartpole.sqrt_ilqr import optimize_sqrt_ilqr, square_root_backward_pass, square_root_tracking_gains
 
 
 class LinearPlant:
@@ -22,6 +22,46 @@ class LinearPlant:
 
     def difference(self, x, reference):
         return x - reference
+
+
+def test_mp_tracking_matches_independent_condensed_horizon_optimum():
+    a = np.array([[1.2,.3],[0.,.9]])
+    b = np.array([[.1],[.8]])
+    plant = LinearPlant(a,b)
+    cost = QuadraticTrajectoryCost(np.diag([2.,3.]),np.diag([5.,6.]),.2,100.,200.,0.,wrap_angles=False)
+    horizon = 6
+    factors = {}
+    gains = square_root_tracking_gains(plant,np.zeros((horizon+1,2)),np.zeros(horizon),cost,
+                                      regularization=.07,decimal_digits=80,
+                                      value_factor_callback=lambda step,root:factors.__setitem__(step,root))
+    for start in [0,2,5]:
+        remaining = horizon-start
+        x0 = np.array([.2,-.15])
+        mapping = np.zeros((2,remaining));state=x0.copy();blocks=[];offsets=[]
+        for step in range(remaining+1):
+            root=np.linalg.cholesky(cost.terminal_state if step==remaining else cost.stage_state).T
+            blocks.append(root@mapping);offsets.append(root@state)
+            if step<remaining:
+                mapping=a@mapping;mapping[:,step]+=b[:,0];state=a@state
+        matrix=np.vstack(blocks+[np.sqrt(cost.control+.07)*np.eye(remaining)])
+        rhs=np.r_[np.concatenate(offsets),np.zeros(remaining)]
+        optimum=np.linalg.lstsq(matrix,-rhs,rcond=None)[0]
+        np.testing.assert_allclose(gains[start]@x0,optimum[0],rtol=2e-13,atol=1e-15)
+        np.testing.assert_allclose(np.linalg.norm(factors[start]@x0)**2,
+                                   np.linalg.norm(matrix@optimum+rhs)**2,rtol=2e-13,atol=1e-15)
+
+
+def test_mp_tracking_preserves_weak_value_directions_from_cost_factors():
+    root=np.array([[1e20,1e20],[1.,0.],[0.,1.]])
+    plant=LinearPlant(np.eye(2),np.array([[1.],[-1.]]))
+    cost=QuadraticTrajectoryCost(np.eye(2),root.T@root,.1,100.,200.,0.,wrap_angles=False,terminal_factor=root)
+    factors={}
+    gains=square_root_tracking_gains(plant,np.zeros((2,2)),np.zeros(1),cost,regularization=0.,decimal_digits=80,
+        value_factor_callback=lambda step,root:factors.__setitem__(step,root))
+    # The strong row is orthogonal to the actuator. Its squared Gram entries
+    # erase the unit directions in binary64, but those directions determine K.
+    np.testing.assert_allclose(gains[0],[-1/2.1,1/2.1],rtol=2e-15)
+    np.testing.assert_allclose(np.linalg.norm(factors[1]@np.array([1.,-1.]))**2,2.,rtol=2e-15)
 
 
 def test_square_root_optimizer_matches_independent_dense_horizon_solution():

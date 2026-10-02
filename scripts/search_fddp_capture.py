@@ -392,6 +392,10 @@ def main() -> None:
     parser.add_argument("--recompute-tracking-feedback", action="store_true",
                         help="Rebuild pure LTV perturbation gains about the final route, independently of optimization descent clipping and regularization.")
     parser.add_argument("--tracking-feedback-regularization", type=float, default=0.)
+    parser.add_argument("--tracking-feedback-decimal-digits", type=int, default=0,
+                        help="Experimental MP finite-horizon Riccati feedback; zero preserves native QR design.")
+    parser.add_argument("--export-tracking-value-factors", default=None,
+                        help="Save MP-designed finite-horizon value roots for nonlinear tracking probes.")
     parser.add_argument("--fddp-ascent-acceptance", type=float,
                         help="Override native uphill-step acceptance threshold; zero requires cost decrease in its ascent branch.")
     parser.add_argument("--initial-regularization", type=float, default=1e-6)
@@ -999,15 +1003,46 @@ def main() -> None:
             invalid_transition_count += int(capture_model.invalid_transition_count)
     optimization_transition_evaluations = transition.evaluations - warm_start_transition_evaluations
     tracking_feedback_evaluations = 0
+    tracking_value_export = None
     if args.recompute_tracking_feedback:
         from gcartpole.sqrt_ilqr import square_root_tracking_gains
+        value_factors = None
+        if args.export_tracking_value_factors:
+            if args.tracking_feedback_decimal_digits < 40:
+                raise ValueError('value factor export requires high-precision feedback design')
+            if Path(args.export_tracking_value_factors).exists():
+                raise FileExistsError(args.export_tracking_value_factors)
+            value_factors = [None] * (len(controls)+1)
         before_feedback = transition.evaluations
         solver_feedback_gains = square_root_tracking_gains(
             transition, nominal_states, controls, trajectory_cost,
             running_costs=running_costs, regularization=args.tracking_feedback_regularization,
-            state_epsilon=args.state_epsilon, action_epsilon=args.action_epsilon)
+            state_epsilon=args.state_epsilon, action_epsilon=args.action_epsilon,
+            decimal_digits=args.tracking_feedback_decimal_digits,
+            callback=(lambda row: print(json.dumps(row), flush=True)) if args.solver_verbose else None,
+            value_factor_callback=(lambda step,root:value_factors.__setitem__(step,root)) if value_factors is not None else None)
         feedback_gains = args.tracking_gain_scale * solver_feedback_gains
         tracking_feedback_evaluations = transition.evaluations - before_feedback
+        if value_factors is not None:
+            if any(factor is None for factor in value_factors):
+                raise ValueError('tracking value design omitted a node')
+            dump_json(dict(not_solution=True, benchmark_evidence=False,
+                generated_at=utc_timestamp(), config=file_metadata(args.config),
+                source_controller=file_metadata(args.initial_controller),
+                controls_sha256=data_sha256(controls.tolist()),
+                nominal_states_sha256=data_sha256(nominal_states.tolist()),
+                coordinate_transform=transform.tolist(),
+                decimal_digits=args.tracking_feedback_decimal_digits,
+                regularization=args.tracking_feedback_regularization,
+                control_cost=args.control_cost,
+                derivative_order=args.derivative_order,
+                state_epsilon=args.state_epsilon, action_epsilon=args.action_epsilon,
+                value_factors=[factor.tolist() for factor in value_factors],
+                scope='MP finite-horizon perturbation value roots rounded to binary64. Same native derivative inputs. These roots guide experiments; they do not certify nonlinear capture or feasibility.'),
+                args.export_tracking_value_factors)
+            tracking_value_export = file_metadata(args.export_tracking_value_factors)
+    elif args.export_tracking_value_factors:
+        raise ValueError('value export requires recomputed tracking feedback')
     final_diagnostics = warm_start_diagnostics(
         transition, start_state, controls, nominal_states
     )
@@ -1120,8 +1155,13 @@ def main() -> None:
             "initial_regularization": float(args.initial_regularization),
             "tracking_gain_scale": float(args.tracking_gain_scale),
             "tracking_feedback_design": None if not args.recompute_tracking_feedback else dict(
-                implementation="pure_ltv_square_root_qr", regularization=args.tracking_feedback_regularization,
+                implementation="pure_ltv_mp_riccati" if args.tracking_feedback_decimal_digits else "pure_ltv_square_root_qr",
+                decimal_digits=args.tracking_feedback_decimal_digits,
+                derivative_arithmetic="native_binary64_finite_difference",
+                replay_gain_arithmetic="binary64",
+                regularization=args.tracking_feedback_regularization,
                 transition_evaluations=tracking_feedback_evaluations,
+                value_factor_export=tracking_value_export,
                 nominal_controls_unchanged=True, nominal_states_unchanged=True,
                 action_saturation="physical controller clips delivered actions"),
             "lqr_scale": float(args.lqr_scale),
