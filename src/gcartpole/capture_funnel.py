@@ -9,6 +9,7 @@ from typing import Any
 import numpy as np
 from scipy.optimize import minimize
 from scipy.stats import rankdata
+from .angles import wrap_angle
 
 
 MODEL_VERSION = "gcartpole.capture_funnel:polynomial-logistic-v1"
@@ -38,7 +39,7 @@ def effective_state(
     target = np.zeros_like(qpos)
     target[0] = float(cart_target)
     delta = qpos - target
-    delta[1:] = (delta[1:] + np.pi) % (2.0 * np.pi) - np.pi
+    delta[1:] = wrap_angle(delta[1:])
     return target + qpos_scale * delta, qvel_scale * qvel
 
 

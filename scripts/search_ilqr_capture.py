@@ -48,13 +48,17 @@ except ModuleNotFoundError:
 
 
 def lyapunov_value(
-    state: np.ndarray, transform: np.ndarray, lyapunov: np.ndarray
+    state: np.ndarray, transform: np.ndarray, lyapunov: np.ndarray, *,
+    factor: np.ndarray | None = None,
 ) -> float:
     dimensionless = dimensionless_wrapped_state(
         state[: transform.shape[0] // 2],
         state[transform.shape[0] // 2 :],
         transform,
     )
+    if factor is not None:
+        residual = factor @ dimensionless
+        return float(residual @ residual)
     return float(max(0.0, dimensionless @ lyapunov @ dimensionless))
 
 
@@ -233,6 +237,7 @@ def execute_controller(
     phase_adaptive: bool = False,
     phase_window: int = 12,
     continuous_angles: bool = False,
+    lyapunov_factor: np.ndarray | None = None,
 ) -> dict[str, Any]:
     if not 0.0 <= float(progress) <= 1.0:
         raise ValueError("progress must be in [0, 1]")
@@ -241,7 +246,7 @@ def execute_controller(
     trajectory: list[dict[str, Any]] = []
     latched = False
     first_handoff_step: int | None = None
-    minimum_value = lyapunov_value(data_state(env.data), transform, lyapunov)
+    minimum_value = lyapunov_value(data_state(env.data), transform, lyapunov, factor=lyapunov_factor)
     episode_return = 0.0
     terminated = False
     truncated = False
@@ -252,7 +257,7 @@ def execute_controller(
     try:
         while not (terminated or truncated):
             state = data_state(env.data)
-            value = lyapunov_value(state, transform, lyapunov)
+            value = lyapunov_value(state, transform, lyapunov, factor=lyapunov_factor)
             minimum_value = min(minimum_value, value)
             handoff_open = (
                 not defer_handoff_until_horizon
@@ -317,7 +322,7 @@ def execute_controller(
             )
             row["controller_mode"] = mode
             row["dimensionless_lyapunov_value"] = lyapunov_value(
-                data_state(env.data), transform, lyapunov
+                data_state(env.data), transform, lyapunov, factor=lyapunov_factor
             )
             trajectory.append(row)
     finally:

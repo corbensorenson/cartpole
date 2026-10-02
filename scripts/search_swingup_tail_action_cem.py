@@ -100,6 +100,14 @@ def load_tail_center(
         exact_replay = payload.get("exact_replay")
         if isinstance(exact_replay, dict):
             trace_rows = exact_replay.get("trace")
+    if not isinstance(trace_rows, list) or not trace_rows:
+        result = payload.get("result")
+        if isinstance(result, dict):
+            trace_rows = result.get("trajectory")
+    if not isinstance(trace_rows, list) or not trace_rows:
+        best = payload.get("best")
+        if isinstance(best, dict):
+            trace_rows = best.get("trace")
     if isinstance(trace_rows, list):
         rows = [
             row
@@ -201,12 +209,13 @@ def replay_to_tail(
             raise ValueError(
                 "FDDP source controller must contain at least two controls"
             )
-        source_seconds = float(
-            controller.get("horizon_seconds", source_controls.size * env.dt)
-        )
-        source_times = np.linspace(0.0, max(source_seconds, 1e-9), source_controls.size)
-        target_times = np.linspace(0.0, float(tail_start_seconds), horizon)
-        for step, target_time in enumerate(target_times):
+        # A recorded FDDP/iLQR control is applied at policy step i, whose
+        # physical timestamp is i*dt.  Spreading the controls over an
+        # endpoint-inclusive linspace shifts every sample after the first;
+        # that small phase error is enough to change a long-link trajectory.
+        source_times = np.arange(source_controls.size, dtype=np.float64) * float(env.dt)
+        for step in range(horizon):
+            target_time = step * float(env.dt)
             action = float(
                 np.clip(
                     np.interp(float(target_time), source_times, source_controls),
@@ -268,6 +277,27 @@ def load_trace_state(
         exact_replay = payload.get("exact_replay")
         if isinstance(exact_replay, dict):
             rows = exact_replay.get("trace")
+    if not isinstance(rows, list) or not rows:
+        result = payload.get("result")
+        if isinstance(result, dict):
+            rows = result.get("trajectory")
+    if not isinstance(rows, list) or not rows:
+        best = payload.get("best")
+        if isinstance(best, dict):
+            rows = best.get("trace")
+    # State-extraction artifacts intentionally contain only one measured
+    # qpos/qvel record.  Treat that record as a zero-duration trace so the
+    # tail optimizer can consume handoff states without requiring a complete
+    # upstream rollout.
+    if not isinstance(rows, list) or not rows:
+        states = payload.get("states")
+        if isinstance(states, list) and states:
+            rows = [
+                {
+                    **dict(states[0]),
+                    "time_seconds": float(target_time),
+                }
+            ]
     if not isinstance(rows, list) or not rows:
         raise ValueError(f"{path} does not contain a non-empty trace")
     row = min(
@@ -724,8 +754,25 @@ def main() -> None:
         mujoco.MjData(env.model) for _ in range(min(32, max(1, args.population // 16)))
     ]
     rng = np.random.default_rng(args.seed)
+    tail_center_source = args.init_tail_json
+    if tail_center_source is None and args.initial_trace_json:
+        trace_payload = json.loads(
+            Path(args.initial_trace_json).read_text(encoding="utf-8")
+        )
+        has_trace = any(
+            isinstance(trace_payload.get(key), list) and trace_payload.get(key)
+            for key in ("trace", "trajectory")
+        )
+        final_eval = trace_payload.get("final_eval")
+        has_trace = has_trace or (
+            isinstance(final_eval, dict)
+            and isinstance(final_eval.get("trace"), list)
+            and bool(final_eval.get("trace"))
+        )
+        if has_trace:
+            tail_center_source = args.initial_trace_json
     center = load_tail_center(
-        args.init_tail_json or args.initial_trace_json,
+        tail_center_source,
         args.knot_count,
         args.init_tail_key,
         tail_start_seconds=args.tail_start_seconds,

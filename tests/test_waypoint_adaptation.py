@@ -16,6 +16,23 @@ class DoubleIntegrator:
         return np.asarray(first) - np.asarray(second)
 
 
+def test_waypoint_adaptation_can_move_a_saturated_float32_action():
+    class QuantizedIntegrator:
+        def __call__(self, state, action):
+            return state + float(np.float32(action))
+
+        def difference(self, first, second):
+            return first - second
+
+    result = adapt_route_to_waypoints(
+        QuantizedIntegrator(), np.zeros(1), np.ones(1), np.array([[0.0], [0.7]]),
+        segment_steps=1, max_evaluations=30, control_regularization=0.0,
+        rail_soft_limit=2.0, rail_weight=0.0, endpoint_tolerance=1e-6,
+    )
+    assert result.success
+    np.testing.assert_allclose(result.states[-1], [0.7], atol=1e-6)
+
+
 def test_waypoint_adaptation_retargets_each_exact_segment() -> None:
     transition = DoubleIntegrator()
     reference_controls = np.array([0.2, -0.2, 0.1, -0.1])

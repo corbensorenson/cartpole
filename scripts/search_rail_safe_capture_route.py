@@ -36,11 +36,19 @@ except ModuleNotFoundError:
 
 def load_controls(path: Path) -> tuple[np.ndarray, float]:
     payload = json.loads(path.read_text(encoding="utf-8"))
-    record = payload.get("best", payload)
+    record = payload.get("best")
+    if not isinstance(record, dict):
+        controller = payload.get("controller")
+        record = controller if isinstance(controller, dict) else payload
     if not isinstance(record, dict) or "controls" not in record:
         raise ValueError(f"{path} has no saved best controls")
     controls = np.asarray(record["controls"], dtype=np.float64)
-    seconds = float(record.get("horizon_seconds", 0.0))
+    seconds = float(
+        record.get(
+            "horizon_seconds",
+            payload.get("horizon_seconds", 0.0),
+        )
+    )
     if controls.ndim != 1 or controls.size < 2 or seconds <= 0.0:
         raise ValueError(f"{path} has invalid route controls")
     return np.clip(controls, -1.0, 1.0), seconds

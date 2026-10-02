@@ -25,6 +25,27 @@ def test_capture_gate_uses_translated_equilibrium_and_velocity_limits():
     assert not evaluator.capture_gate_satisfied(np.array([np.nan, 0., 0., 0.]), 1, policy, np.eye(4), -.5)
 
 
+def test_physical_capture_metric_reconstructs_the_transported_factor(monkeypatch):
+    from gcartpole.evidence import data_sha256
+    policy = controller()
+    mapping = np.diag([.8, 6.7, 2., 1.3])
+    design_factor = np.diag([1., 2., 3., 4.])
+    physical_factor = design_factor @ mapping
+    policy.update(physical_shooting=True, normalized_cost_mapping=mapping.tolist(),
+                  lqr_decimal_digits=80,
+                  lyapunov_metadata=dict(source="lqr_high_precision_discrete_lyapunov",
+                      factor_sha256=data_sha256(physical_factor.tolist()),
+                      matrix_sha256=data_sha256((physical_factor.T @ physical_factor).tolist())))
+    monkeypatch.setattr(evaluator, "finite_difference_dynamics", lambda *args: (np.eye(4), np.ones((4, 1))))
+    def reconstruct(a, b, gain, transform, **kwargs):
+        np.testing.assert_array_equal(transform, mapping)
+        return design_factor.T @ design_factor, design_factor, {}
+    monkeypatch.setattr(evaluator, "high_precision_lyapunov_factor", reconstruct)
+    metric = evaluator.capture_metric({}, policy, np.zeros(4))
+    np.testing.assert_array_equal(metric, physical_factor.T @ physical_factor)
+    np.testing.assert_array_equal(policy["checked_capture_value_factor"], physical_factor)
+
+
 @pytest.mark.parametrize("defer,expected", [(False, ["swing_route_feedback"] + ["capture_lqr"] * 4),
                                            (True, ["swing_route_feedback"] * 4 + ["capture_lqr"])])
 def test_parked_controller_latches_gate_without_reset_and_preserves_legacy_clock(monkeypatch, defer, expected):

@@ -191,7 +191,6 @@ def command_steps(
         "selected",
         "--initial-controller",
         str(paths.fddp_warm),
-        "--initial-feasible",
         "--initial-feedback-scale",
         str(args.initial_feedback_scale),
         "--iterations",

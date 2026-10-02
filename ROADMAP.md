@@ -55,7 +55,7 @@ Proceed through these checkpoints:
    records, and publish a GitHub release for each new accepted count.
 
 Current campaign artifacts live in `runs/frontier_campaign_20261001/`.
-The active frontier is now **twelve** after the complete eleven-link bundle
+The active frontier is now **thirteen** after the complete twelve-link bundle
 passed. Preparing higher-count configs or finding a component controller
 never advances a count. Earlier diagnostics below retain their claim status
 at the time they were performed.
@@ -76,6 +76,71 @@ This is an internal benchmark promotion with a GitHub result/video release.
 Packaging artifacts retain their original pre-publication provenance.
 The original 7–10 artifacts remain unchanged. The goal
 through twenty remains active.
+
+Twelve follow-up (2026-10-01): the first precision pipeline fails its
+full physical gate. A loader coordinate round trip perturbed an already
+feasible route; preserving its coordinates allows one native optimization
+step, but its improved terminal value still does not predict physical
+success. A matched 400-step map audit shows identity-coordinate shooting
+matching uninterrupted MuJoCo exactly, while scaled-state shooting diverges
+through repeated round trips. New optional physical shooting transports
+the normalized costs and feedback references consistently. QR elimination
+keeps feasible iLQR value/gradient residuals factored. A twenty-iteration
+feedback-rebuilt trial preserves zero checked defects but holds for only
+1.58 s before rail failure. A stronger value-weight 1000, hundred-iteration
+trial also fails its full episode, and canonical parked development replay
+passes 0/4. The explicit-defect QR prototype barely closes its nonzero gaps
+and fails physical replay. Matched physical sparse repairs now compare
+capture value coefficients zero and one during repair, using identical
+defect/reference factors and compute budgets. They show a large saved
+arrival-value improvement with larger gaps; both subsequent physical replays
+fail with zero hold. A matched eight/ten-second inverse discovery comparison
+finds larger missing-force acceleration at ten seconds. Transferring a fit
+of the executed eleven route modestly improves discovery but remains
+infeasible. Next work tests genuine higher-rate re-synthesis and different
+geometry while preserving capture directions. Full 50/100 Hz re-synthesis
+still fails at 1.58/1.55 s hold with zero physical gaps. Structured upright
+identification yields essentially the same gain and fails the same route.
+Matched nonlinear one-step capture also fails, with at most 1.60 s hold.
+Factored per-step capture costs now support a sustained interval in both QR
+optimizers. Reflecting the physical route to the zero winding branch still
+fails at 1.58 s hold. Matched five-second virtual capture-tail trials, with
+capture-value weights zero and ten, both fail at 1.56 s hold and retain
+0.001755 dynamics defects despite excellent nominal terminal values. A fully
+serial zero-action tail has zero defects but falls away from upright. Matched
+feasible five-second refinements also fail, at zero upright hold, and a
+0.2-second extension fails at 1.72 s hold. The former routes preserve exact
+dynamics but exceed the rail even in the nominal trajectory: large directional
+capture costs can overwhelm the soft rail penalty. Hard rail filtering now
+keeps matched thirteen-second nominal trajectories within the rail, and actual
+execution matches every nominal state exactly over that horizon. Both still
+fail at 1.84 s hold. LQR-tail initialization, removal of the directional value
+cost, and freezing the first six seconds also fail; most accepted steps are
+0.0001, with two 0.001 direct-cost suffix steps. The latter preserves its prefix
+states and controls exactly and still reaches only 1.72 s hold. Next work tests
+simultaneous constrained updates of states and controls instead of relying
+on a serial rollout to globalize every update, plus different global geometry
+if this useful source remains outside viable capture. Applied-action secants
+use their actual float32 separation; 359 current tests pass, and the immutable
+eleven release verifier still passes.
+Twelve's reserved seeds remain unused, and no higher count has advanced.
+
+Twelve candidate recovery (2026-10-02): simultaneous residual-form sparse
+SCvx on the full thirteen-second horizon reaches 6.52 s actual upright hold,
+but its late handoff fails the rail at 13.46 s. Unchanged-prefix handoffs at
+8–12 s instead pass the full exact-start episode. The selected nine-second
+source is rebuilt to delivered float32 controls and exactly zero physical
+shooting gaps; every state of the successful thirty-second replay matches.
+Canonical parked development tests then pass noisy20/20 and disjoint
+noisy100/100. A frozen clean source commit and policy now pass reserved
+noisy20/20, noisy100/100, exact20/20 and the held-out video episode at 50 Hz.
+The 1500-frame full video is rendered and inspected, and the final release
+manifest verifier passes. Twelve is the accepted internal canonical frontier;
+its GitHub publication is in progress, and thirteen is active. The first reserved attempt passed physically but failed the clean
+Git provenance check solely because of Finder metadata; it is preserved, and
+identical cohorts were rerun without tuning. All 374 current tests and 103
+focused tests in the frozen source clone pass. See
+[the twelve-link development note](docs/twelve_link_development.md).
 
 Numerical follow-up (2026-10-01): an opt-in 80–100 digit Riccati calculation
 now finds stabilizing designs for the supplied linear matrices through

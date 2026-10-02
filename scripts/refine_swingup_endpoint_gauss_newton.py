@@ -20,6 +20,7 @@ from typing import Any
 
 import numpy as np
 
+from gcartpole.capture_terminal import feedback_horizon_metric
 from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.env import NLinkCartPoleEnv, serial_absolute_angles
 from gcartpole.evidence import (
@@ -427,7 +428,7 @@ def main() -> None:
     parser.add_argument("--absolute-velocity-scale", type=float, default=0.75)
     parser.add_argument(
         "--terminal-metric",
-        choices=("componentwise", "lqr-invariant"),
+        choices=("componentwise", "lqr-invariant", "feedback-horizon"),
         default="componentwise",
         help="terminal residual geometry used by Gauss-Newton",
     )
@@ -444,6 +445,30 @@ def main() -> None:
         type=float,
         default=1.0,
         help="normalized action bound used for the linear invariant ellipsoid",
+    )
+    parser.add_argument(
+        "--feedback-horizon-terminal-weight",
+        type=float,
+        default=1.0e-6,
+        help="overall weight for the actuator-aware finite-horizon terminal residual",
+    )
+    parser.add_argument(
+        "--feedback-horizon-natural-times",
+        type=float,
+        default=1.0,
+        help="length of the modeled feedback tail in gravitational natural times",
+    )
+    parser.add_argument(
+        "--feedback-horizon-action-weight",
+        type=float,
+        default=1.0,
+        help="relative squared-action weight inside the feedback-horizon residual",
+    )
+    parser.add_argument(
+        "--feedback-horizon-state-weight",
+        type=float,
+        default=1.0,
+        help="relative terminal-state weight inside the feedback-horizon residual",
     )
     parser.add_argument(
         "--terminal-feedback-steps",
@@ -480,6 +505,9 @@ def main() -> None:
             args.lqr_feedback_scale,
             args.invariant_action_limit,
             args.rail_soft_limit,
+            args.feedback_horizon_natural_times,
+            args.feedback_horizon_action_weight,
+            args.feedback_horizon_state_weight,
         )
         <= 0.0
     ):
@@ -490,7 +518,7 @@ def main() -> None:
         raise ValueError("knot count must be at least two")
     if args.terminal_feedback_steps < 0:
         raise ValueError("terminal feedback steps must be nonnegative")
-    if args.lqr_action_weight < 0.0:
+    if min(args.lqr_action_weight, args.feedback_horizon_terminal_weight) < 0.0:
         raise ValueError("lqr action weight must be nonnegative")
     if min(args.rail_weight, args.rail_barrier_weight) < 0.0:
         raise ValueError("rail weights must be nonnegative")
@@ -574,6 +602,53 @@ def main() -> None:
             feedback_scale=args.lqr_feedback_scale,
             action_limit=args.invariant_action_limit,
         )
+    elif args.terminal_metric == "feedback-horizon":
+        state_transform = dimensionless_absolute_transform(
+            env.n,
+            StateScales(
+                cart_position=args.cart_position_scale,
+                absolute_angle=args.angle_scale,
+                cart_velocity=args.cart_velocity_scale,
+                hinge_velocity=args.absolute_velocity_scale,
+            ),
+        )
+        physical_transition = MujocoTransition(env)
+        equilibrium = np.zeros(2 * (env.n + 1), dtype=np.float64)
+        state_matrix, input_matrix = physical_transition.linearize(
+            equilibrium,
+            0.0,
+            state_epsilon=1.0e-7,
+            action_epsilon=1.0e-7,
+        )
+        feedback_gain = upright_lqr_gain(env, control_cost=args.lqr_control_cost)
+        natural_time = float(np.sqrt(np.sum(env.morphology.lengths) / 9.81))
+        horizon_steps = max(
+            1,
+            int(np.ceil(args.feedback_horizon_natural_times * natural_time / env.dt)),
+        )
+        metric = feedback_horizon_metric(
+            state_matrix,
+            input_matrix,
+            feedback_gain,
+            state_transform,
+            horizon_steps=horizon_steps,
+            feedback_scale=args.lqr_feedback_scale,
+            action_limit=args.invariant_action_limit,
+            action_weight=args.feedback_horizon_action_weight,
+            terminal_weight=args.feedback_horizon_state_weight,
+        )
+        residual_transform = np.sqrt(args.feedback_horizon_terminal_weight) * metric.residual_map_in_coordinates(
+            state_transform
+        )
+        terminal_metric = metric.to_dict()
+        terminal_metric.update(
+            {
+                "type": "actuator_aware_feedback_horizon_endpoint",
+                "overall_terminal_weight": float(args.feedback_horizon_terminal_weight),
+                "natural_time": natural_time,
+                "policy_dt": float(env.dt),
+            }
+        )
     elif args.lqr_action_weight > 0.0:
         feedback_gain = upright_lqr_gain(env, control_cost=args.lqr_control_cost)
         terminal_metric["lqr_action_residual_weight"] = float(args.lqr_action_weight)
@@ -607,13 +682,19 @@ def main() -> None:
             minus[column] -= args.fd_epsilon
             plus_result = evaluate(plus)
             minus_result = evaluate(minus)
-            if not plus_result["complete"] or not minus_result["complete"]:
+            plus_residual = np.asarray(plus_result["residual"], dtype=np.float64)
+            minus_residual = np.asarray(minus_result["residual"], dtype=np.float64)
+            if (
+                not plus_result["complete"]
+                or not minus_result["complete"]
+                or plus_residual.shape != residual.shape
+                or minus_residual.shape != residual.shape
+            ):
                 jacobian[:, column] = 0.0
             else:
-                jacobian[:, column] = (
-                    np.asarray(plus_result["residual"])
-                    - np.asarray(minus_result["residual"])
-                ) / (2.0 * args.fd_epsilon)
+                jacobian[:, column] = (plus_residual - minus_residual) / (
+                    2.0 * args.fd_epsilon
+                )
         step = damped_minimum_norm_step(jacobian, residual, regularization)
         step = scale_step_to_trust_region(step, args.trust_radius)
         accepted = False

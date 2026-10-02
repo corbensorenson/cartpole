@@ -7,6 +7,48 @@ import numpy as np
 from gcartpole.ilqr import MujocoTransition
 
 
+def test_action_secant_uses_actual_quantized_action_separation():
+    class QuantizedLinearMap(MujocoTransition):
+        def __init__(self):
+            self.nx = 2
+            self.continuous_angles = True
+
+        def __call__(self, state, action):
+            return np.asarray(state) + float(np.float32(action))
+
+    transition = QuantizedLinearMap()
+    for action in (.7, 1.):
+        _, b = transition.linearize(np.zeros(2), action, state_epsilon=1e-5, action_epsilon=1e-4)
+        np.testing.assert_allclose(b, np.ones((2, 1)), atol=1e-12)
+    import pytest
+    with pytest.raises(ValueError, match="vanished"):
+        transition.linearize(np.zeros(2), .7, state_epsilon=1e-5, action_epsilon=1e-12)
+
+
+def test_physical_shooting_matches_uninterrupted_twelve_link_steps_exactly():
+    from gcartpole.config import load_config
+    from gcartpole.env import NLinkCartPoleEnv
+    from gcartpole.ilqr import data_state
+    from scripts.search_capture_sequence import fixed_state_cfg
+
+    cfg = load_config("configs/swingup11_uniform.yaml")
+    cfg["env"]["n_links"] = 12
+    state = dict(qpos=[0., -np.pi] + [0.] * 11, qvel=[0.] * 13)
+    cfg = fixed_state_cfg(cfg, state, 30.)
+    env = NLinkCartPoleEnv(cfg, progress=1., seed=4)
+    env.reset(seed=4)
+    transition = MujocoTransition(env, continuous_angles=True)
+    current = data_state(env.data).copy()
+    try:
+        for step in range(80):
+            action = .05 * np.sin(step / 7.)
+            current = transition(current, action)
+            env.step([action])
+            np.testing.assert_array_equal(current, data_state(env.data))
+    finally:
+        env.close()
+
+
 def test_transformed_state_difference_wraps_angles_before_scaling() -> None:
     transition = MujocoTransition.__new__(MujocoTransition)
     transition.env = SimpleNamespace(n=1)

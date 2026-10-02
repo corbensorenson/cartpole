@@ -151,10 +151,63 @@ def waypoint_command(
     ]
 
 
+def trajectory_integrity(payload: dict[str, Any]) -> bool:
+    """Reject MuJoCo warning/collapse traces that mimic a successful hold."""
+
+    result = payload.get("result", {})
+    trajectory = result.get("trajectory")
+    selected = payload.get("selected_state", {})
+    if not isinstance(trajectory, list) or len(trajectory) < 2:
+        return False
+    selected_qpos = np.asarray(selected.get("qpos", []), dtype=np.float64)
+    if selected_qpos.ndim != 1 or selected_qpos.size < 2 or not np.all(np.isfinite(selected_qpos)):
+        return False
+
+    state_rows: list[np.ndarray] = []
+    for row in trajectory:
+        if not isinstance(row, dict):
+            return False
+        angles = np.asarray(row.get("relative_angles", []), dtype=np.float64)
+        rates = np.asarray(row.get("qvel", []), dtype=np.float64)
+        x = float(row.get("x", np.nan))
+        if (
+            angles.shape != (selected_qpos.size - 1,)
+            or rates.shape != (selected_qpos.size,)
+            or not np.isfinite(x)
+            or not np.all(np.isfinite(angles))
+            or not np.all(np.isfinite(rates))
+            or abs(x) > 1.0e6
+            or np.max(np.abs(angles), initial=0.0) > 1.0e6
+            or np.max(np.abs(rates), initial=0.0) > 1.0e6
+        ):
+            return False
+        state_rows.append(np.r_[x, angles, rates])
+
+    first_angles = state_rows[0][1 : selected_qpos.size]
+    angle_error = (first_angles - selected_qpos[1:] + np.pi) % (2.0 * np.pi) - np.pi
+    if float(np.max(np.abs(angle_error), initial=0.0)) > 1.0:
+        return False
+
+    norms = np.linalg.norm(np.asarray(state_rows, dtype=np.float64), axis=1)
+    zeroish = norms <= 1.0e-10
+    if np.any(zeroish):
+        longest = current = 0
+        for value in zeroish:
+            current = current + 1 if value else 0
+            longest = max(longest, current)
+        if longest >= 10 and norms[0] > 1.0:
+            return False
+    return True
+
+
 def successful(path: Path) -> bool:
     payload = json.loads(path.read_text(encoding="utf-8"))
     result = payload.get("result", {})
-    return bool(result.get("success")) and bool(result.get("latched"))
+    return (
+        bool(result.get("success"))
+        and bool(result.get("latched"))
+        and trajectory_integrity(payload)
+    )
 
 
 def result_summary(path: Path, cfg: dict[str, Any]) -> dict[str, Any]:
@@ -166,6 +219,7 @@ def result_summary(path: Path, cfg: dict[str, Any]) -> dict[str, Any]:
     summary: dict[str, Any] = {
         "success": bool(result.get("success")),
         "latched": bool(result.get("latched")),
+        "trajectory_integrity": trajectory_integrity(payload),
         "termination_reason": result.get("termination_reason"),
         "max_upright_streak_seconds": float(
             result.get("max_upright_streak_seconds", 0.0)

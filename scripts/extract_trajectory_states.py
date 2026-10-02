@@ -33,6 +33,10 @@ def load_rows(path: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         if isinstance(result, dict):
             rows = result.get("trajectory")
     if not isinstance(rows, list) or not rows:
+        replay = payload.get("replay")
+        if isinstance(replay, dict):
+            rows = replay.get("rows")
+    if not isinstance(rows, list) or not rows:
         raise ValueError(f"{path} does not contain non-empty trajectory or trace rows")
     records = [row for row in rows if isinstance(row, dict)]
     if len(records) != len(rows):
@@ -74,9 +78,18 @@ def selection_score(row: dict[str, Any]) -> tuple[float, float, float, float, fl
     )
 
 
-def make_state(row: dict[str, Any], source: str, source_index: int) -> dict[str, Any]:
+def make_state(
+    row: dict[str, Any],
+    source: str,
+    source_index: int,
+    *,
+    wrap_hinge_angles: bool = False,
+) -> dict[str, Any]:
     qpos = np.asarray(row["qpos"], dtype=np.float64)
     qvel = np.asarray(row["qvel"], dtype=np.float64)
+    if wrap_hinge_angles:
+        qpos = qpos.copy()
+        qpos[1:] = (qpos[1:] + np.pi) % (2.0 * np.pi) - np.pi
     metrics = row_metrics(row)
     state = {
         "source": source,
@@ -91,6 +104,8 @@ def make_state(row: dict[str, Any], source: str, source_index: int) -> dict[str,
         "upright_streak_seconds": float(row.get("upright_streak_seconds", 0.0)),
         "max_upright_streak_seconds": float(row.get("max_upright_streak_seconds", 0.0)),
     }
+    if wrap_hinge_angles:
+        state["hinge_coordinates_wrapped"] = True
     return state
 
 
@@ -107,6 +122,11 @@ def main() -> None:
     parser.add_argument("--max-cart-velocity", type=float, default=None)
     parser.add_argument("--stride", type=int, default=1)
     parser.add_argument("--max-states", type=int, default=None)
+    parser.add_argument(
+        "--wrap-hinge-angles",
+        action="store_true",
+        help="wrap measured hinge coordinates into one periodic [-pi, pi) interval",
+    )
     args = parser.parse_args()
 
     if args.min_time < 0.0 or args.max_time is not None and args.max_time < args.min_time:
@@ -145,7 +165,15 @@ def main() -> None:
     selected.sort(key=lambda item: selection_score(item[1]))
     if args.max_states is not None:
         selected = selected[: args.max_states]
-    states = [make_state(row, str(source_path), index) for index, row in selected]
+    states = [
+        make_state(
+            row,
+            str(source_path),
+            index,
+            wrap_hinge_angles=args.wrap_hinge_angles,
+        )
+        for index, row in selected
+    ]
 
     output = {
         "schema_version": 1,
@@ -171,6 +199,7 @@ def main() -> None:
             "max_cart_velocity": None if args.max_cart_velocity is None else float(args.max_cart_velocity),
             "stride": int(args.stride),
             "max_states": None if args.max_states is None else int(args.max_states),
+            "wrap_hinge_angles": bool(args.wrap_hinge_angles),
         },
         "state_count": int(len(states)),
         "states_sha256": data_sha256(states),

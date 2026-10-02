@@ -75,6 +75,12 @@ def load_controller(path: Path, n_links: int, spec: dict[str, Any]) -> dict[str,
             float(distribution["hinge_velocity_rms_max"]),
         ),
     )
+    if controller.get("coordinate_transform") is not None:
+        transform = np.asarray(controller["coordinate_transform"], dtype=np.float64)
+        if transform.shape != (state_dim, state_dim) or not np.all(np.isfinite(transform)):
+            raise ValueError("saved coordinate transform is not a finite state matrix")
+        if np.linalg.matrix_rank(transform) != state_dim:
+            raise ValueError("saved coordinate transform is singular")
     return {
         "source": file_metadata(path),
         "controls": controls,
@@ -83,6 +89,9 @@ def load_controller(path: Path, n_links: int, spec: dict[str, Any]) -> dict[str,
         "transform": transform,
         "lqr_scale": float(controller.get("lqr_scale", 1.0)),
         "lqr_control_cost": float(controller.get("lqr_control_cost", 1000.0)),
+        "lqr_decimal_digits": int(controller.get("lqr_decimal_digits", 0)),
+        "physical_shooting": bool(controller.get("physical_shooting", False)),
+        "normalized_cost_mapping": controller.get("normalized_cost_mapping"),
         "lqr_weights": {
             key: float(value)
             for key, value in controller.get("lqr_weights", {}).items()
@@ -546,6 +555,7 @@ def main() -> None:
         fd_eps=1e-7,
         control_cost=controller["lqr_control_cost"],
         q_weights=controller["lqr_weights"],
+        decimal_digits=controller["lqr_decimal_digits"],
     )
     settle_gain = (
         hanging_lqr_gain(

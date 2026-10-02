@@ -512,6 +512,32 @@ class CaptureEnvelopeTests(unittest.TestCase):
         finally:
             env.close()
 
+    def test_residual_can_take_over_when_lqr_is_saturated(self) -> None:
+        cfg = load_config(ROOT / "configs/swingup6_capture_envelope.yaml")
+        cfg["env"]["init_mode"] = "upright"
+        cfg["env"]["init_angle_noise"] = 0.0
+        cfg["env"]["init_vel_noise"] = 0.0
+        residual = cfg["env"]["action_lqr_residual"]
+        residual["state_gain"] = [2.0] + [0.0] * 13
+        residual["scale_start"] = 1.0
+        residual["scale_end"] = 1.0
+        residual["residual_scale_start"] = 1.0
+        residual["residual_scale_end"] = 1.0
+        residual["policy_on_saturation"] = True
+        residual["saturation_threshold"] = 0.95
+        env = NLinkCartPoleEnv(cfg, progress=1.0, seed=47)
+        try:
+            env.reset()
+            env.data.qpos[0] = 0.75
+            self.assertEqual(env._applied_action_norm(0.3), 0.3)
+            self.assertEqual(env.last_controller_mode, "policy_saturated_lqr")
+
+            env.data.qpos[0] = 0.1
+            self.assertAlmostEqual(env._applied_action_norm(0.3), 0.1)
+            self.assertEqual(env.last_controller_mode, "lqr_residual")
+        finally:
+            env.close()
+
     def test_ilqr_state_difference_wraps_relative_angles(self) -> None:
         first = np.asarray([0.2, 2.0 * np.pi - 0.1, -2.0 * np.pi + 0.2, 0.4, -0.3])
         second = np.zeros(5, dtype=np.float64)
@@ -661,6 +687,51 @@ class CaptureEnvelopeTests(unittest.TestCase):
         self.assertAlmostEqual(float(capture[1]), 1.0, places=5)
         np.testing.assert_allclose(capture[2:8], [1.0, 0.0, 1.0, 0.0, 1.0, 0.0], atol=1e-5)
         np.testing.assert_allclose(capture[8:14], [1.0, -1.0, 1.0, -1.0, 1.0, -1.0], atol=1e-5)
+
+    def test_normalized_reset_observation_preserves_effective_state(self) -> None:
+        cfg = load_config(ROOT / "configs/swingup6_capture_sac_boundary.yaml")
+        cfg["env"]["init_mode"] = "fixed_state"
+        cfg["env"]["obs_normalize_reset_scaling"] = True
+        cfg["env"]["init_qpos"] = [1.25, 0.12, -0.08, 0.04, -0.06, 0.03, -0.02]
+        cfg["env"]["init_qvel"] = [0.5, 0.60, -0.30, 0.15, -0.45, 0.20, -0.10]
+        cfg["env"]["init_angle_noise"] = 0.0
+        cfg["env"]["init_vel_noise"] = 0.0
+        env = NLinkCartPoleEnv(cfg, progress=0.5, seed=14)
+        try:
+            obs, _ = env.reset()
+        finally:
+            env.close()
+        expected_cart = 1.25 / 3.0
+        expected_velocity = 0.5
+        np.testing.assert_allclose(obs[:2], [expected_cart, expected_velocity], atol=1e-6)
+        np.testing.assert_allclose(obs[2 + 2 * 6 : 2 + 3 * 6], [0.12, -0.08, 0.04, -0.06, 0.03, -0.02], atol=1e-6)
+        np.testing.assert_allclose(obs[2 + 3 * 6 : 2 + 4 * 6], [0.60, -0.30, 0.15, -0.45, 0.20, -0.10], atol=1e-6)
+
+    def test_dual_reset_observation_keeps_physical_and_effective_state(self) -> None:
+        cfg = load_config(ROOT / "configs/swingup6_capture_envelope.yaml")
+        cfg["env"]["obs_include_morphology"] = False
+        cfg["env"]["obs_include_capture_features"] = False
+        cfg["env"]["obs_include_reset_scaled_state"] = True
+        cfg["env"]["obs_include_reset_scales"] = True
+        cfg["env"]["init_mode"] = "fixed_state"
+        cfg["env"]["init_qpos"] = [1.0, 0.12, -0.08, 0.04, -0.06, 0.03, -0.02]
+        cfg["env"]["init_qvel"] = [0.5, 0.60, -0.30, 0.15, -0.45, 0.20, -0.10]
+        cfg["env"]["init_angle_noise"] = 0.0
+        cfg["env"]["init_vel_noise"] = 0.0
+        env = NLinkCartPoleEnv(cfg, progress=0.5, seed=15)
+        try:
+            obs, _ = env.reset()
+        finally:
+            env.close()
+        self.assertEqual(obs.shape[0], 54)
+        qpos_scale = 0.5**2
+        qvel_scale = 0.5**3
+        np.testing.assert_allclose(obs[:2], [qpos_scale / 3.0, 0.5 * qvel_scale], atol=1e-6)
+        effective = obs[26:52]
+        np.testing.assert_allclose(effective[:2], [1.0 / 3.0, 0.5], atol=1e-6)
+        np.testing.assert_allclose(effective[14:20], [0.12, -0.08, 0.04, -0.06, 0.03, -0.02], atol=1e-6)
+        np.testing.assert_allclose(effective[20:26], [0.60, -0.30, 0.15, -0.45, 0.20, -0.10], atol=1e-6)
+        np.testing.assert_allclose(obs[52:54], [qpos_scale, qvel_scale], atol=1e-6)
 
     def test_absolute_velocity_observation_exposes_serial_internal_modes(self) -> None:
         cfg = load_config(ROOT / "configs/swingup6_capture_sac_boundary.yaml")

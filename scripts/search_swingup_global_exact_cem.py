@@ -360,6 +360,15 @@ def main() -> None:
             "bounded low-dimensional additive action corrections"
         ),
     )
+    parser.add_argument(
+        "--residual-start-time",
+        type=float,
+        default=0.0,
+        help=(
+            "when using residual mode, freeze the initial controller before "
+            "this time and optimize corrections only after it"
+        ),
+    )
     parser.add_argument("--seed", type=int, default=20260965)
     parser.add_argument("--out", required=True)
     parser.add_argument("--override", action="append", default=[])
@@ -395,6 +404,8 @@ def main() -> None:
         raise ValueError("constraint barrier and handoff limits are invalid")
     if args.residual_around_controller and args.init_controller_json is None:
         raise ValueError("--residual-around-controller requires --init-controller-json")
+    if args.residual_start_time < 0.0 or args.residual_start_time > args.seconds:
+        raise ValueError("--residual-start-time must be within the search horizon")
     if not 0.0 <= args.progress <= 1.0:
         raise ValueError("--progress must be in [0, 1]")
 
@@ -417,11 +428,18 @@ def main() -> None:
             args.init_controller_json, step_count, args.seconds, env
         )
         center = np.zeros(args.knot_count, dtype=np.float64)
+        residual_start_step = min(
+            step_count, max(0, round(args.residual_start_time / env.dt))
+        )
+        residual_interpolation = interpolation.copy()
+        residual_interpolation[:residual_start_step, :] = 0.0
     else:
         base_actions = np.zeros(step_count, dtype=np.float64)
         center = load_initial_center(
             args.init_controller_json, args.knot_count, args.seconds, env
         )
+        residual_start_step = 0
+        residual_interpolation = interpolation
     rng = np.random.default_rng(args.seed)
     sigma = np.full(args.knot_count, args.action_sigma, dtype=np.float64)
     best_record: dict[str, Any] | None = None
@@ -439,7 +457,7 @@ def main() -> None:
         records: list[dict[str, Any]] = []
         for candidate_index, candidate in enumerate(knots):
             actions = np.clip(
-                base_actions + candidate @ interpolation.T,
+                base_actions + candidate @ residual_interpolation.T,
                 -1.0,
                 1.0,
             )
@@ -529,7 +547,8 @@ def main() -> None:
         )
         if best_record is None or float(top["cost"]) < float(best_record["cost"]):
             best_actions = np.clip(
-                base_actions + knots[int(top["index"])] @ interpolation.T,
+                base_actions
+                + knots[int(top["index"])] @ residual_interpolation.T,
                 -1.0,
                 1.0,
             )
@@ -593,6 +612,8 @@ def main() -> None:
             "handoff_cart_limit": float(args.handoff_cart_limit),
             "handoff_cart_velocity_limit": float(args.handoff_cart_velocity_limit),
             "residual_around_controller": bool(args.residual_around_controller),
+            "residual_start_time": float(args.residual_start_time),
+            "residual_start_step": int(residual_start_step),
             "plant_progress": float(args.progress),
             "wall_time_seconds": float(time.time() - started),
         },

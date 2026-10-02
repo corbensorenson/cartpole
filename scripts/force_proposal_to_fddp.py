@@ -60,6 +60,12 @@ def main() -> None:
     )
     parser.add_argument("--seconds", type=float, default=None)
     parser.add_argument(
+        "--time-scale",
+        type=float,
+        default=1.0,
+        help="stretch source control timing before any requested settling tail",
+    )
+    parser.add_argument(
         "--tail-seconds",
         type=float,
         default=0.0,
@@ -105,12 +111,17 @@ def main() -> None:
     )
     if source_seconds <= 0.0:
         raise ValueError("source proposal horizon must be positive")
+    if args.time_scale <= 0.0:
+        raise ValueError("time-scale must be positive")
     if args.tail_seconds < 0.0:
         raise ValueError("tail-seconds must be nonnegative")
     if args.seconds is not None and args.tail_seconds > 0.0:
         raise ValueError("use either seconds or tail-seconds, not both")
+    stretched_source_seconds = source_seconds * float(args.time_scale)
     seconds = float(
-        args.seconds if args.seconds is not None else source_seconds + args.tail_seconds
+        args.seconds
+        if args.seconds is not None
+        else stretched_source_seconds + args.tail_seconds
     )
     if seconds <= 0.0:
         raise ValueError("seconds must be positive")
@@ -218,7 +229,7 @@ def main() -> None:
             step_feedback = np.zeros(2 * (n_links + 1), dtype=np.float64)
             if source_controls is not None:
                 source_step = control_sample_index(
-                    step, policy_dt, source_seconds, source_controls.size
+                    step, policy_dt, stretched_source_seconds, source_controls.size
                 )
                 if args.source_trajectory_feedback and source_step is not None:
                     step_feedback = source_feedback[source_step]
@@ -331,6 +342,8 @@ def main() -> None:
             },
             "proposal_initial_state": bool(args.proposal_initial_state),
             "tail_seconds": float(args.tail_seconds),
+            "time_scale": float(args.time_scale),
+            "stretched_source_seconds": float(stretched_source_seconds),
             "source_trajectory_feedback": bool(args.source_trajectory_feedback),
         },
         "replay": {

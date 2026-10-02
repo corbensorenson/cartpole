@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from scripts.run_generalized_homotopy import (
     backfill_trial_outcomes,
     fddp_command,
     result_summary,
+    successful,
+    trajectory_integrity,
     waypoint_command,
     waypoint_lookaheads,
     waypoint_usable,
@@ -137,6 +140,43 @@ def test_result_summary_records_body_aware_rail_demand(tmp_path: Path) -> None:
     assert summary["success"] is True
     assert summary["rail_requirement"]["max_cart_center_excursion"] == 2.0
     assert summary["rail_requirement"]["required_rail_half_length"] == 2.18
+
+
+def test_success_rejects_zero_collapse_trace(tmp_path: Path) -> None:
+    artifact = tmp_path / "collapsed.json"
+    rows = [
+        {
+            "x": 0.0,
+            "relative_angles": [3.141592653589793, 0.0],
+            "qvel": [0.0, 0.0, 0.0],
+        }
+    ]
+    rows.extend(
+        {
+            "x": 0.0,
+            "relative_angles": [0.0, 0.0],
+            "qvel": [0.0, 0.0, 0.0],
+        }
+        for _ in range(12)
+    )
+    artifact.write_text(
+        json.dumps(
+            {
+                "selected_state": {
+                    "qpos": [0.0, 3.141592653589793, 0.0],
+                },
+                "result": {
+                    "success": True,
+                    "latched": True,
+                    "trajectory": rows,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+    payload = json.loads(artifact.read_text(encoding="utf-8"))
+    assert not trajectory_integrity(payload)
+    assert not successful(artifact)
 
 
 def test_backfill_trial_outcomes_skips_missing_public_traces() -> None:
