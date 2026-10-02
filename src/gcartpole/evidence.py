@@ -70,6 +70,7 @@ def runtime_metadata() -> dict[str, Any]:
             "gymnasium": _package_version("gymnasium"),
             "scipy": _package_version("scipy"),
             "osqp": _package_version("osqp"),
+            "clarabel": _package_version("clarabel"),
             "crocoddyl": _package_version("crocoddyl", module_fallback="crocoddyl"),
             "mpmath": _package_version("mpmath"),
         },

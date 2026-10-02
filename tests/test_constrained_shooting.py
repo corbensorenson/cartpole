@@ -31,6 +31,28 @@ def costs():
     return base, capture
 
 
+def test_small_steps_on_a_curved_plant_contract_the_agreement_trust_region():
+    class CurvedPlant:
+        env = SimpleNamespace(n=1)
+        def __call__(self, x, u):
+            return x+np.array([1.2*u+100*u*u, .1*u])
+        def linearize(self, x, u, **kwargs):
+            return np.eye(2), np.array([[1.2+200*u], [.1]])
+    base = QuadraticTrajectoryCost(np.eye(2), np.eye(2), .01, 1., 2., 3., wrap_angles=False)
+    x0 = np.array([.5, 0.])
+    nodes = np.vstack([x0, np.zeros((2,2))])
+    result = optimize_constrained_shooting(CurvedPlant(), x0, np.zeros(2), nodes, base,
+        max_iterations=4, defect_penalty=1e3, state_trust=1., control_trust=1., trust_policy='agreement')
+    small = [row for row in result.history if row['accepted'] and row['alpha'] <= .1]
+    assert small
+    assert small[0]['maximum_state_trust'] < 1.
+    assert small[0]['regularization'] > 1.
+    assert small[0]['predicted_merit_reduction'] > 0
+    assert np.isfinite(small[0]['model_agreement'])
+    accepted = [row['merit'] for row in result.history if row['accepted']]
+    assert all(after < before for before,after in zip(accepted,accepted[1:]))
+
+
 def test_factored_sparse_jacobians_match_independent_directional_differences_and_cost():
     plant = Plant()
     base, capture = costs()
@@ -47,7 +69,10 @@ def test_factored_sparse_jacobians_match_independent_directional_differences_and
     np.testing.assert_allclose(.5*r@r, trajectory_cost(nodes, np.zeros(4), base, 1, schedule), rtol=1e-14)
 
 
-def test_simultaneous_residual_qp_matches_independent_dense_linear_horizon_solution():
+@pytest.mark.parametrize("qp_solver", ["osqp", "clarabel"])
+def test_simultaneous_residual_qp_matches_independent_dense_linear_horizon_solution(qp_solver):
+    if qp_solver == "clarabel":
+        pytest.importorskip("clarabel")
     plant = Plant()
     base, capture = costs()
     base = replace(base, rail_soft_limit=100., rail_limit=200.)
@@ -74,7 +99,7 @@ def test_simultaneous_residual_qp_matches_independent_dense_linear_horizon_solut
     result = optimize_constrained_shooting(plant, x0, np.zeros(6), nodes, base,
                                           running_costs=schedule, max_iterations=5, initial_regularization=0.,
                                           state_trust=1., control_trust=1., defect_penalty=100.,
-                                          qp_tolerance=1e-10, qp_max_iterations=20000)
+                                          qp_tolerance=1e-10, qp_max_iterations=20000, qp_solver=qp_solver)
     np.testing.assert_allclose(result.controls, expected, atol=2e-6)
     assert np.max(np.abs(trajectory_gaps(plant, result.states, result.controls))) < 1e-7
     assert result.history[0]['accepted'] and result.history[0]['alpha'] == 1.

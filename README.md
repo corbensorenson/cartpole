@@ -1,12 +1,38 @@
-# 12-Link Cart-Pole: Reset-Free Swing-Up and Hold
+# 13-Link Cart-Pole: Reset-Free Swing-Up and Hold
 
-> **A single bounded cart force swings up and holds 7 through 12 passive serial links from noisy hanging starts on a finite rail.**
+> **A single bounded cart force swings up and holds 7 through 13 passive serial links from noisy hanging starts on a finite rail.**
+
+October 2, 2026: **thirteen links** passed the frozen-source reserved noisy
+**20/20** and disjoint **100/100**, exact **20/20**, and held-out full
+30-second video. Every episode holds upright for 7.50 seconds at unchanged
+50 Hz control, ±80 N force and ±3 m rail; maximum cart excursion is
+1.943463 m. Fourteen is the next frontier in the campaign through twenty.
+
+[Watch thirteen](runs/swingup13_uniform/thirteen_link_swingup_success.mp4) ·
+[Experiment appendix](docs/thirteen_link_swingup_paper.md) ·
+[Manifest](runs/swingup13_uniform/thirteen_link_swingup_manifest.json) ·
+[Clean source bundle](runs/swingup13_uniform/thirteen_link_source.bundle)
+
+<p align="center">
+  <a href="runs/swingup13_uniform/thirteen_link_swingup_success.mp4">
+    <img src="assets/thirteen-link-swingup.gif" alt="Thirteen-link canonical noisy hanging-start swing-up and sustained hold; full-episode preview at twice speed" width="760">
+  </a>
+</p>
+
+[Download the thirteen-link release and full video](https://github.com/corbensorenson/cartpole/releases/tag/thirteen-link-canonical-20261002).
+
+The shared repair now compares nonlinear model agreement before updating its
+trust region. This closes trajectory gaps that native QP convergence alone
+left unresolved. An earlier unchanged-prefix maintenance handoff and an exact
+physical feedback rebuild then recover the complete episode. Count-specific
+controllers remain outputs of shared code; independent rediscovery and
+arbitrary morphology generalization remain separate research gates.
 
 October 2, 2026: **twelve links** passed frozen-source reserved noisy
 **20/20** and disjoint **100/100**, exact **20/20**, and a held-out full
 30-second video. Every episode holds upright for 7.50 seconds at unchanged
 50 Hz control, ±80 N force and ±3 m rail; maximum cart excursion is
-1.863891 m. Thirteen is the next frontier in the campaign through twenty.
+1.863891 m. Thirteen was the next frontier at that stage.
 
 [Watch twelve](runs/swingup12_uniform/twelve_link_swingup_success.mp4) ·
 [Experiment appendix](docs/twelve_link_swingup_paper.md) ·

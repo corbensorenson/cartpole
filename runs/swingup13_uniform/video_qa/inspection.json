@@ -1,0 +1,52 @@
+{
+  "frames": 1500,
+  "metadata": {
+    "codec": "h264",
+    "duration": 30.0,
+    "ffmpeg_version": "7.1 built with Apple clang version 13.1.6 (clang-1316.0.21.2.5)",
+    "fps": 50.0,
+    "nframes": Infinity,
+    "pix_fmt": "yuv420p(progressive)",
+    "plugin": "ffmpeg",
+    "rotate": 0,
+    "size": [
+      1280,
+      720
+    ],
+    "source_size": [
+      1280,
+      720
+    ]
+  },
+  "preview": {
+    "bytes": 6313097,
+    "path": "assets/thirteen-link-swingup.gif",
+    "sha256": "8b58f2bab5d4c61a2dad2c1636af0c535891dc9dae6ad6cc11a03a37429d4721"
+  },
+  "preview_frames": 375,
+  "preview_seconds": 15,
+  "preview_speed": 2,
+  "qa_frames": [
+    {
+      "bytes": 48311,
+      "path": "runs/swingup13_uniform/video_qa/frame_20s.png",
+      "sha256": "d0287ecaf2ce5089aa8cb35b3a5a53706058a7ec81f005fad9cba87b198c2ab4"
+    },
+    {
+      "bytes": 39437,
+      "path": "runs/swingup13_uniform/video_qa/frame_30s.png",
+      "sha256": "b1361888dc99b54d3493cf3444a015c6d19de7940e6082cada6ceb6132d02030"
+    },
+    {
+      "bytes": 44873,
+      "path": "runs/swingup13_uniform/video_qa/frame_23s.png",
+      "sha256": "e1a45775fbabe3c2db4ba9eab6a9f55804627128a20d4e6cd11dbf3aeba793ab"
+    }
+  ],
+  "recorded_at": "2026-10-02T08:25:33+00:00",
+  "video": {
+    "bytes": 838241,
+    "path": "runs/swingup13_uniform/thirteen_link_swingup_success.mp4",
+    "sha256": "f20e550d20c03b1d7bbe0274da3bc90c91dfd6c1147919c15f7dd1961160972d"
+  }
+}

@@ -14,6 +14,18 @@ from .simulation import SimulationError
 from .sqrt_ilqr import square_root_backward_pass
 
 
+def update_accepted_trust(trust, regularization, initial_trust, alpha, agreement, policy):
+    """Contract poor nonlinear models even when their tiny step reduces merit."""
+    if policy == 'legacy':
+        return (np.minimum(trust*1.3, initial_trust*10) if alpha == 1. else trust,
+                max(1e-9, regularization/2))
+    if agreement is None or agreement < .25 or alpha <= .1:
+        return trust*.5, min(1e12, max(1e-9, regularization*2))
+    if agreement > .75 and alpha == 1.:
+        return np.minimum(trust*1.3, initial_trust*10), max(1e-9, regularization/2)
+    return trust, regularization
+
+
 def _root(cost, terminal=False):
     factor = cost.terminal_factor if terminal else cost.stage_factor
     matrix = cost.terminal_state if terminal else cost.stage_state
@@ -108,10 +120,14 @@ def optimize_constrained_shooting(
     initial_regularization=1., state_trust=.05, control_trust=.1,
     state_abs_limit=150., state_epsilon=1e-5, action_epsilon=1e-4,
     qp_max_iterations=10000, qp_tolerance=1e-8, qp_initial_tolerance=None,
-    qp_inexact_dual_tolerance=0., callback=None,
+    qp_inexact_dual_tolerance=0., qp_solver="osqp", trust_policy="legacy", callback=None,
     node_constraint_matrix=None, node_lower=None, node_upper=None,
 ):
     import osqp
+    if qp_solver not in ("osqp", "clarabel"):
+        raise ValueError("unknown sparse QP solver")
+    if trust_policy not in ("legacy", "agreement"):
+        raise ValueError("unknown nonlinear trust-region policy")
     if (min(max_iterations, defect_penalty, state_trust, control_trust, state_abs_limit,
             qp_max_iterations, qp_tolerance) <= 0 or initial_regularization < 0
             or not np.all(np.isfinite([defect_penalty, state_trust, control_trust,
@@ -197,21 +213,32 @@ def optimize_constrained_shooting(
         mapped = linear @ values
         bound_lower = np.r_[-scaled, -residual/root_scale, step_lower, linear_lower-mapped, np.zeros(2*m)]
         bound_upper = np.r_[-scaled, -residual/root_scale, step_upper, linear_upper-mapped, np.full(2*m, np.inf)]
-        qp = osqp.OSQP()
         used_qp_tolerance = max(qp_tolerance, min(initial_qp_tolerance, .1*float(np.max(np.abs(scaled)))))
-        qp.setup(P=hessian, q=gradient, A=constraints, l=bound_lower, u=bound_upper,
-                 verbose=False, eps_abs=used_qp_tolerance, eps_rel=used_qp_tolerance,
-                 max_iter=qp_max_iterations, polishing=True)
-        qp.warm_start(x=np.r_[np.zeros(n), np.maximum(scaled, 0.), np.maximum(-scaled, 0.), residual/root_scale])
-        solved = qp.solve(raise_error=False)
+        if qp_solver == 'osqp':
+            qp = osqp.OSQP()
+            qp.setup(P=hessian, q=gradient, A=constraints, l=bound_lower, u=bound_upper,
+                     verbose=False, eps_abs=used_qp_tolerance, eps_rel=used_qp_tolerance,
+                     max_iter=qp_max_iterations, polishing=True)
+            qp.warm_start(x=np.r_[np.zeros(n), np.maximum(scaled, 0.), np.maximum(-scaled, 0.), residual/root_scale])
+            solved = qp.solve(raise_error=False)
+        else:
+            from .qp_backends import solve_clarabel_bounded_qp
+            solved = solve_clarabel_bounded_qp(hessian, gradient, constraints, bound_lower, bound_upper,
+                tolerance=used_qp_tolerance, max_iterations=qp_max_iterations)
         native_ok = solved.info.status_val in (1, 2)
         inexact_primal_tolerance = min(qp_inexact_dual_tolerance, .1*float(np.max(np.abs(scaled))))
-        inexact_candidate = bool(solved.info.status_val == 7 and qp_inexact_dual_tolerance > 0
+        inexact_candidate = bool(qp_solver == "osqp" and solved.info.status_val == 7 and qp_inexact_dual_tolerance > 0
                                  and solved.info.prim_res <= inexact_primal_tolerance
                                  and solved.info.dual_res <= qp_inexact_dual_tolerance)
         usable_step = bool((native_ok or inexact_candidate) and solved.x is not None
                            and np.all(np.isfinite(solved.x)))
+        raw_qp_bound_violation = None
+        if usable_step:
+            qp_mapped = constraints @ solved.x
+            raw_qp_bound_violation = float(max(0., np.max(bound_lower-qp_mapped),
+                                                np.max(qp_mapped-bound_upper)))
         accepted, alpha_used, invalid_trials, bound_rejections = False, None, 0, 0
+        model_agreement, predicted_reduction = None, None
         previous_merit = current_merit
         step = None
         if usable_step:
@@ -229,15 +256,20 @@ def optimize_constrained_shooting(
                     invalid_trials += 1
                     continue
                 if np.isfinite(trial_merit) and trial_merit < current_merit:
+                    delivered_step = candidate-values
+                    model_merit = merit(scaled+dynamics @ delivered_step,
+                                        residual+objective @ delivered_step)
+                    predicted_reduction = current_merit-model_merit
+                    model_agreement = ((current_merit-trial_merit)/predicted_reduction
+                                       if predicted_reduction > 0 else None)
                     values, gaps, scaled, residual = candidate, trial_gaps, trial_scaled, trial_residual
                     current_merit, accepted, alpha_used = trial_merit, True, alpha
                     break
         if accepted:
             cached = None
             consecutive_native_failures = 0
-            regularization = max(1e-9, regularization/2)
-            if alpha_used == 1.:
-                trust = np.minimum(trust*1.3, initial_trust*10)
+            trust, regularization = update_accepted_trust(
+                trust, regularization, initial_trust, alpha_used, model_agreement, trust_policy)
         elif usable_step:
             consecutive_native_failures = 0
             trust *= .5
@@ -252,8 +284,13 @@ def optimize_constrained_shooting(
                    maximum_dynamics_defect=float(np.max(np.abs(gaps))),
                    l1_scaled_dynamics_defect=float(np.sum(np.abs(scaled))),
                    relative_improvement=improvement, regularization=regularization,
+                   trust_policy=trust_policy, model_agreement=model_agreement,
+                   predicted_merit_reduction=predicted_reduction,
                    maximum_state_trust=float(np.max(trust[:m])), maximum_control_trust=float(np.max(trust[m:])),
-                   qp_status=solved.info.status, qp_iterations=int(solved.info.iter),
+                   qp_solver=qp_solver, qp_status=solved.info.status, qp_iterations=int(solved.info.iter),
+                   qp_raw_bound_violation=raw_qp_bound_violation,
+                   qp_residual_definition=('native_osqp_absolute' if qp_solver == 'osqp'
+                                           else 'native_clarabel_normalized'),
                    qp_primal_residual=float(solved.info.prim_res), qp_dual_residual=float(solved.info.dual_res),
                    qp_native_accepted=bool(native_ok), objective_scale=scale,
                    qp_step_usable=usable_step, inexact_qp_candidate=inexact_candidate,
