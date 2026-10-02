@@ -103,6 +103,19 @@ def main() -> None:
     parser.add_argument("--collective-modal-gain", type=float, default=0.0)
     parser.add_argument("--internal-modal-damping-gain", type=float, default=0.0)
     parser.add_argument("--modal-acceleration-limit-ratio", type=float, default=2.0)
+    parser.add_argument("--coherence-position-gain", type=float, default=0.0)
+    parser.add_argument("--coherence-velocity-gain", type=float, default=0.0)
+    parser.add_argument("--coherence-correction-weight", type=float, default=0.0)
+    parser.add_argument("--coherence-acceleration-limit-ratio", type=float, default=2.0)
+    parser.add_argument("--coherence-gate-energy-error", type=float, default=0.0)
+    parser.add_argument("--vcl-position-gain", type=float, default=0.0)
+    parser.add_argument("--vcl-velocity-gain", type=float, default=0.0)
+    parser.add_argument("--vcl-correction-weight", type=float, default=0.0)
+    parser.add_argument("--vcl-acceleration-limit-ratio", type=float, default=2.0)
+    parser.add_argument("--vcl-gate-energy-error", type=float, default=0.0)
+    parser.add_argument("--vcl-pump-gain", type=float, default=0.0)
+    parser.add_argument("--vcl-phase-gain", type=float, default=0.0)
+    parser.add_argument("--vcl-rate-gain", type=float, default=0.0)
     args = parser.parse_args()
     if min(args.n_links, args.episodes) < 1:
         raise ValueError("link count and episode count must be positive")
@@ -124,6 +137,16 @@ def main() -> None:
             args.collective_modal_gain,
             args.internal_modal_damping_gain,
             args.modal_acceleration_limit_ratio,
+            args.coherence_position_gain,
+            args.coherence_velocity_gain,
+            args.coherence_correction_weight,
+            args.coherence_acceleration_limit_ratio,
+            args.coherence_gate_energy_error,
+            args.vcl_position_gain,
+            args.vcl_velocity_gain,
+            args.vcl_correction_weight,
+            args.vcl_acceleration_limit_ratio,
+            args.vcl_gate_energy_error,
         )
         < 0.0
     ):
@@ -132,6 +155,19 @@ def main() -> None:
         collective_modal_gain=args.collective_modal_gain,
         internal_modal_damping_gain=args.internal_modal_damping_gain,
         modal_acceleration_limit_ratio=args.modal_acceleration_limit_ratio,
+        coherence_position_gain=args.coherence_position_gain,
+        coherence_velocity_gain=args.coherence_velocity_gain,
+        coherence_correction_weight=args.coherence_correction_weight,
+        coherence_acceleration_limit_ratio=args.coherence_acceleration_limit_ratio,
+        coherence_gate_energy_error=args.coherence_gate_energy_error,
+        vcl_position_gain=args.vcl_position_gain,
+        vcl_velocity_gain=args.vcl_velocity_gain,
+        vcl_correction_weight=args.vcl_correction_weight,
+        vcl_acceleration_limit_ratio=args.vcl_acceleration_limit_ratio,
+        vcl_gate_energy_error=args.vcl_gate_energy_error,
+        vcl_pump_gain=args.vcl_pump_gain,
+        vcl_phase_gain=args.vcl_phase_gain,
+        vcl_rate_gain=args.vcl_rate_gain,
     )
     episodes = [
         run_episode(
@@ -156,7 +192,7 @@ def main() -> None:
         "dimensionless_setup": dimensionless_setup(setup).to_dict(),
         "controller": {
             "type": "dimensionless_energy_pfl_then_exact_lqr",
-            "parameters": parameters.to_dict(),
+            "parameters": parameters.to_dict(include_extensions=True),
         },
         "episodes": args.episodes,
         "seed_start": args.seed,

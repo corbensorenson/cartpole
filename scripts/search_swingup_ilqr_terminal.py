@@ -17,6 +17,10 @@ from typing import Any
 import numpy as np
 from scipy.linalg import solve_discrete_are
 
+from gcartpole.capture_terminal import (
+    feedback_horizon_metric,
+    minimum_energy_terminal_metric,
+)
 from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.env import NLinkCartPoleEnv, serial_absolute_angles, wrap_angle
 from gcartpole.evidence import data_sha256, file_metadata, git_metadata, runtime_metadata, utc_timestamp
@@ -37,7 +41,14 @@ def absolute_rate_transform(n_links: int, *, cart_position: float, angle: float,
     return transform
 
 
-def load_initial_controls(path: str | None, *, seconds: float, steps: int, dt: float) -> np.ndarray:
+def load_initial_controls(
+    path: str | None,
+    *,
+    seconds: float,
+    steps: int,
+    dt: float,
+    post_source_action: str = "last",
+) -> np.ndarray:
     if path is None:
         return np.zeros(steps, dtype=np.float64)
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -62,9 +73,19 @@ def load_initial_controls(path: str | None, *, seconds: float, steps: int, dt: f
         source_seconds = float(rows[-1].get("time_seconds", seconds)) if rows else seconds
     if source is None or source.ndim != 1 or source.size < 2:
         raise ValueError(f"{path} does not contain force knots or controls")
-    source_t = np.linspace(0.0, max(float(source_seconds), dt), source.size, dtype=np.float64)
+    if post_source_action not in {"last", "zero"}:
+        raise ValueError("post_source_action must be 'last' or 'zero'")
+    # A recorded control is applied at policy step i, not at an
+    # endpoint-inclusive sample.  Preserve that cadence when extending a
+    # finite warm start; otherwise every later action is phase-shifted.
+    source_t = np.arange(source.size, dtype=np.float64) * float(dt)
     target_t = np.arange(steps, dtype=np.float64) * float(dt)
-    return np.clip(np.interp(target_t, source_t, source, left=source[0], right=source[-1]), -1.0, 1.0)
+    right = 0.0 if post_source_action == "zero" else float(source[-1])
+    return np.clip(
+        np.interp(target_t, source_t, source, left=source[0], right=right),
+        -1.0,
+        1.0,
+    )
 
 
 def load_terminal_target(path: str | None, *, scale: float, n_links: int) -> tuple[np.ndarray | None, dict[str, Any] | None]:
@@ -84,8 +105,8 @@ def load_terminal_target(path: str | None, *, scale: float, n_links: int) -> tup
     if qpos.shape != (expected,) or qvel.shape != (expected,):
         raise ValueError(f"{path} state must have qpos/qvel shape {(expected,)}")
     scale = float(scale)
-    if not 0.0 < scale <= 1.0:
-        raise ValueError("terminal target scale must be in (0, 1]")
+    if not 0.0 <= scale <= 1.0:
+        raise ValueError("terminal target scale must be in [0, 1]")
     target_qpos = np.zeros(expected, dtype=np.float64)
     target_qpos[0] = scale * qpos[0]
     target_qpos[1:] = scale * wrap_angle(qpos[1:])
@@ -165,6 +186,12 @@ def main() -> None:
         help="fixed morphology progress for the proposal plant; 1.0 is canonical uniform",
     )
     parser.add_argument("--init-controller-json", default=None)
+    parser.add_argument(
+        "--post-source-action",
+        choices=("last", "zero"),
+        default="last",
+        help="action used after a finite warm-start controller ends",
+    )
     parser.add_argument("--terminal-target-state", default=None)
     parser.add_argument("--terminal-target-scale", type=float, default=1.0)
     parser.add_argument("--seconds", type=float, default=4.56)
@@ -180,9 +207,12 @@ def main() -> None:
     parser.add_argument("--rail-weight", type=float, default=200000.0)
     parser.add_argument(
         "--terminal-value-mode",
-        choices=("quadratic", "lqr"),
+        choices=("quadratic", "lqr", "controllability"),
         default="quadratic",
-        help="Use the configured terminal quadratic or a local upright DARE value matrix",
+        help=(
+            "Use the configured terminal quadratic, a local upright DARE "
+            "value matrix, or a bounded-actuation controllability metric"
+        ),
     )
     parser.add_argument(
         "--terminal-lqr-scale",
@@ -190,15 +220,60 @@ def main() -> None:
         default=1.0,
         help="Scale the DARE value matrix when --terminal-value-mode=lqr",
     )
+    parser.add_argument(
+        "--controllability-horizon",
+        type=int,
+        default=40,
+        help="Number of policy steps used to estimate minimum-energy terminal reachability",
+    )
+    parser.add_argument(
+        "--controllability-regularization",
+        type=float,
+        default=1.0e-8,
+        help="Relative singular-value floor for the controllability Gramian",
+    )
+    parser.add_argument(
+        "--controllability-scale",
+        type=float,
+        default=1.0,
+        help="Strength of the normalized minimum-energy terminal metric",
+    )
+    parser.add_argument(
+        "--feedback-horizon-terminal-weight",
+        type=float,
+        default=0.0,
+        help=(
+            "Add an actuator-aware finite-horizon feedback-tail metric to the "
+            "terminal objective; zero preserves historical behavior"
+        ),
+    )
+    parser.add_argument(
+        "--feedback-horizon-natural-times",
+        type=float,
+        default=1.0,
+        help="Length of the modeled feedback tail in gravitational natural times",
+    )
+    parser.add_argument(
+        "--feedback-horizon-action-weight",
+        type=float,
+        default=1.0,
+        help="Relative squared-action weight inside the feedback-tail metric",
+    )
+    parser.add_argument(
+        "--feedback-horizon-state-weight",
+        type=float,
+        default=1.0,
+        help="Relative terminal-state weight inside the feedback-tail metric",
+    )
     parser.add_argument("--handoff-out", default=None)
     parser.add_argument("--out", required=True)
     parser.add_argument("--override", action="append", default=[])
     args = parser.parse_args()
     if not 0.0 <= args.progress <= 1.0:
         raise ValueError("--progress must be in [0, 1]")
-    if min(args.seconds, args.iterations, args.angle_terminal_weight, args.rate_terminal_weight, args.cart_terminal_weight, args.cart_velocity_terminal_weight, args.control_weight, args.rail_soft_limit, args.rail_weight, args.terminal_lqr_scale) <= 0.0:
+    if min(args.seconds, args.iterations, args.angle_terminal_weight, args.rate_terminal_weight, args.cart_terminal_weight, args.cart_velocity_terminal_weight, args.control_weight, args.rail_soft_limit, args.rail_weight, args.terminal_lqr_scale, args.controllability_horizon, args.controllability_regularization, args.controllability_scale, args.feedback_horizon_natural_times, args.feedback_horizon_action_weight, args.feedback_horizon_state_weight) <= 0.0:
         raise ValueError("duration, weights, and rail bounds must be positive")
-    if min(args.stage_angle_weight, args.stage_rate_weight) < 0.0:
+    if min(args.stage_angle_weight, args.stage_rate_weight, args.feedback_horizon_terminal_weight) < 0.0:
         raise ValueError("stage weights must be nonnegative")
 
     cfg = apply_overrides(load_config(args.config), args.override)
@@ -220,7 +295,13 @@ def main() -> None:
     env = NLinkCartPoleEnv(cfg, progress=args.progress, seed=0)
     env.reset(seed=0)
     steps = max(2, int(round(args.seconds / env.dt)))
-    controls = load_initial_controls(args.init_controller_json, seconds=args.seconds, steps=steps, dt=env.dt)
+    controls = load_initial_controls(
+        args.init_controller_json,
+        seconds=args.seconds,
+        steps=steps,
+        dt=env.dt,
+        post_source_action=args.post_source_action,
+    )
     n = env.n
     d = n + 1
     transform = absolute_rate_transform(n, cart_position=1.25, angle=0.15, cart_velocity=0.50, rate=0.75)
@@ -249,7 +330,9 @@ def main() -> None:
         ]
     )
     terminal_value_mode = str(args.terminal_value_mode)
-    if terminal_value_mode == "lqr":
+    upright_a: np.ndarray | None = None
+    upright_b: np.ndarray | None = None
+    if terminal_value_mode in {"lqr", "controllability"}:
         upright_coordinate_state = np.zeros_like(initial_state)
         upright_a, upright_b = transition.linearize(
             upright_coordinate_state,
@@ -257,15 +340,84 @@ def main() -> None:
             state_epsilon=2e-5,
             action_epsilon=2e-4,
         )
-        try:
-            terminal = float(args.terminal_lqr_scale) * solve_discrete_are(
-                upright_a,
-                upright_b,
-                terminal,
-                np.asarray([[float(args.control_weight)]], dtype=np.float64),
+        if terminal_value_mode == "lqr":
+            try:
+                terminal = float(args.terminal_lqr_scale) * solve_discrete_are(
+                    upright_a,
+                    upright_b,
+                    terminal,
+                    np.asarray([[float(args.control_weight)]], dtype=np.float64),
+                )
+            except np.linalg.LinAlgError as exc:
+                raise RuntimeError("could not solve the upright DARE terminal value") from exc
+    controllability_metadata: dict[str, Any] = {"enabled": False}
+    if terminal_value_mode == "controllability":
+        assert upright_a is not None and upright_b is not None
+        metric, metric_metadata = minimum_energy_terminal_metric(
+            upright_a,
+            upright_b,
+            horizon_steps=args.controllability_horizon,
+            regularization=args.controllability_regularization,
+            normalize=True,
+        )
+        terminal = terminal + float(args.controllability_scale) * metric
+        controllability_metadata = {
+            "enabled": True,
+            "scale": float(args.controllability_scale),
+            **metric_metadata,
+            "metric": metric.astype(float).tolist(),
+        }
+    feedback_horizon_metadata: dict[str, Any] | None = None
+    if args.feedback_horizon_terminal_weight > 0.0:
+        if upright_a is None or upright_b is None:
+            upright_coordinate_state = np.zeros_like(initial_state)
+            upright_a, upright_b = transition.linearize(
+                upright_coordinate_state,
+                0.0,
+                state_epsilon=2e-5,
+                action_epsilon=2e-4,
             )
+        feedback_q = 0.5 * (terminal + terminal.T)
+        feedback_r = np.asarray([[float(args.control_weight)]], dtype=np.float64)
+        try:
+            feedback_p = solve_discrete_are(upright_a, upright_b, feedback_q, feedback_r)
         except np.linalg.LinAlgError as exc:
-            raise RuntimeError("could not solve the upright DARE terminal value") from exc
+            raise RuntimeError("could not solve the feedback-tail DARE") from exc
+        feedback_gain = np.linalg.solve(
+            upright_b.T @ feedback_p @ upright_b + feedback_r,
+            upright_b.T @ feedback_p @ upright_a,
+        ).reshape(-1)
+        natural_time = float(np.sqrt(np.sum(env.morphology.lengths) / 9.81))
+        policy_dt = float(env.dt)
+        feedback_horizon_steps = max(
+            1,
+            int(np.ceil(args.feedback_horizon_natural_times * natural_time / policy_dt)),
+        )
+        feedback_metric = feedback_horizon_metric(
+            upright_a,
+            upright_b,
+            feedback_gain,
+            np.eye(initial_state.size, dtype=np.float64),
+            horizon_steps=feedback_horizon_steps,
+            action_weight=args.feedback_horizon_action_weight,
+            terminal_weight=args.feedback_horizon_state_weight,
+        )
+        terminal = terminal + float(args.feedback_horizon_terminal_weight) * feedback_metric.matrix
+        feedback_horizon_metadata = {
+            "enabled": True,
+            "weight": float(args.feedback_horizon_terminal_weight),
+            "action_weight": float(args.feedback_horizon_action_weight),
+            "state_weight": float(args.feedback_horizon_state_weight),
+            "horizon_steps": int(feedback_horizon_steps),
+            "requested_natural_times": float(args.feedback_horizon_natural_times),
+            "realized_natural_times": float(feedback_horizon_steps * policy_dt / natural_time),
+            "closed_loop_spectral_radius": float(
+                np.max(np.abs(np.linalg.eigvals(feedback_metric.closed_loop)))
+            ),
+            "metric": feedback_metric.to_dict(),
+        }
+    else:
+        feedback_horizon_metadata = {"enabled": False}
     cost = QuadraticTrajectoryCost(
         stage_state=stage,
         terminal_state=terminal,
@@ -319,6 +471,9 @@ def main() -> None:
             "rail_weight": float(args.rail_weight),
             "terminal_value_mode": terminal_value_mode,
             "terminal_lqr_scale": float(args.terminal_lqr_scale),
+            "controllability": controllability_metadata,
+            "feedback_horizon_terminal": feedback_horizon_metadata,
+            "post_source_action": args.post_source_action,
             "wall_time_seconds": float(time.time() - started),
         },
         "controller": {

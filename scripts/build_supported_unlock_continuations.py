@@ -149,6 +149,14 @@ def build_supported_unlock_continuations(
     relaxation = copy.deepcopy(target_cfg)
     relaxation["experiment"]["name"] = "supported_unlock_relaxation"
     _set_profiles(relaxation, supported_unlocked, target)
+    # The target config is normally the legacy free-chain plant, while the
+    # first two stages still rely on the locked split's combined inertia and
+    # impedance schedule. Preserve those topology flags on every emitted
+    # stage; otherwise progress=0 is not the exact locked baseline.
+    for stage in (ramp, release, relaxation):
+        for key in ("rigid_split_inertia", "joint_lock_impedance_schedule"):
+            if key in locked_cfg["env"]:
+                stage["env"][key] = copy.deepcopy(locked_cfg["env"][key])
     metadata = {
         "releasing_joint_indices": np.flatnonzero(releasing).astype(int).tolist(),
         "initial_stiffness_ratio": float(initial_stiffness_ratio),

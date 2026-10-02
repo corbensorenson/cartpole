@@ -12,7 +12,7 @@ import numpy as np
 from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.evidence import data_sha256, git_metadata, runtime_metadata, utc_timestamp
 from gcartpole.env import NLinkCartPoleEnv, wrap_angle
-from gcartpole.lqr_design import checked_discrete_lqr
+from gcartpole.lqr_design import checked_discrete_lqr, high_precision_discrete_lqr
 try:
     from scripts.make_lqr_checkpoint import absolute_angle_cost, finite_difference_dynamics
     from scripts.probe_swingup_trajectory import (
@@ -40,6 +40,7 @@ def lqr_gain(
     fd_eps: float,
     control_cost: float,
     q_weights: dict[str, float] | None = None,
+    decimal_digits: int = 0,
 ) -> np.ndarray:
     a, b = finite_difference_dynamics(cfg, progress, fd_eps)
     n = int(cfg["env"]["n_links"])
@@ -55,7 +56,10 @@ def lqr_gain(
         weights.update({key: float(value) for key, value in q_weights.items()})
     q = absolute_angle_cost(n, weights)
     r = np.array([[float(control_cost)]], dtype=np.float64)
-    gain, _, _ = checked_discrete_lqr(a, b, q, r)
+    if decimal_digits:
+        gain, _, _ = high_precision_discrete_lqr(a, b, q, r, decimal_digits=decimal_digits)
+    else:
+        gain, _, _ = checked_discrete_lqr(a, b, q, r)
     return gain.reshape(-1)
 
 

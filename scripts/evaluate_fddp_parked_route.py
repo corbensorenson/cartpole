@@ -35,6 +35,7 @@ from gcartpole.evidence import (
 )
 from gcartpole.generalized_energy import hanging_lqr_gain
 from gcartpole.ilqr import data_state
+from gcartpole.lqr_design import high_precision_lyapunov_factor
 from gcartpole.modal import closed_loop_lyapunov_matrix, dimensionless_wrapped_state
 
 try:
@@ -62,12 +63,32 @@ def capture_metric(
         if value is None or not np.isfinite(value) or value <= 0:
             raise ValueError(f"invalid saved capture gate: {key}")
     metadata = controller["lyapunov_metadata"]
-    if metadata.get("source") != "lqr_discrete_lyapunov":
+    if metadata.get("source") not in ("lqr_discrete_lyapunov", "lqr_high_precision_discrete_lyapunov"):
         raise ValueError("state-gated replay requires the saved LQR Lyapunov metric")
     a, b = finite_difference_dynamics(cfg, 1.0, 1e-7)
-    matrix, _ = closed_loop_lyapunov_matrix(
-        a, b, gain, controller["transform"], controller["lqr_scale"]
-    )
+    design_transform = controller["transform"]
+    mapping = None
+    if controller.get("physical_shooting", False):
+        mapping = np.asarray(controller["normalized_cost_mapping"], dtype=np.float64)
+        if mapping.shape != design_transform.shape or not np.all(np.isfinite(mapping)):
+            raise ValueError("physical shooting requires its finite normalized cost mapping")
+        design_transform = mapping
+    if metadata.get("source") == "lqr_high_precision_discrete_lyapunov":
+        matrix, factor, _ = high_precision_lyapunov_factor(
+            a, b, gain, design_transform, feedback_scale=controller["lqr_scale"],
+            decimal_digits=controller["lqr_decimal_digits"])
+        if mapping is not None:
+            factor = factor @ mapping
+            matrix = factor.T @ factor
+        if data_sha256(factor.tolist()) != metadata.get("factor_sha256"):
+            raise ValueError("reconstructed capture value factor differs from saved policy")
+        controller["checked_capture_value_factor"] = factor
+    else:
+        matrix, _ = closed_loop_lyapunov_matrix(
+            a, b, gain, design_transform, controller["lqr_scale"]
+        )
+        if mapping is not None:
+            matrix = mapping.T @ matrix @ mapping
     if data_sha256(matrix.astype(float).tolist()) != metadata.get("matrix_sha256"):
         raise ValueError("reconstructed capture metric differs from the saved controller")
     return matrix
@@ -75,7 +96,7 @@ def capture_metric(
 
 def capture_gate_satisfied(
     state: np.ndarray, n_links: int, controller: dict[str, Any],
-    metric: np.ndarray, cart_target: float,
+    metric: np.ndarray, cart_target: float, factor: np.ndarray | None = None,
 ) -> bool:
     # Evaluate the capture gate around the same translated equilibrium as LQR.
     centered = np.asarray(state, dtype=np.float64).copy()
@@ -84,7 +105,7 @@ def capture_gate_satisfied(
     return bool(
         np.all(np.isfinite(centered))
         and abs(centered[0]) <= gate["cart_abs"]
-        and lyapunov_value(centered, controller["transform"], metric) <= gate["lyapunov"]
+        and lyapunov_value(centered, controller["transform"], metric, factor=factor) <= gate["lyapunov"]
         and handoff_bounds_satisfied(
             centered, n_links, angle_abs=gate["angle_abs"],
             cart_velocity_abs=gate["cart_velocity_abs"],
@@ -189,7 +210,8 @@ def run_episode(
 
             if lyapunov is not None and not capture_latched:
                 capture_latched = capture_gate_satisfied(
-                    data_state(env.data), env.n, controller, lyapunov, cart_target
+                    data_state(env.data), env.n, controller, lyapunov, cart_target,
+                    factor=controller.get("checked_capture_value_factor"),
                 )
             in_route = route_elapsed < route_steps and not capture_latched
             if in_route and phase_adaptive:
@@ -365,6 +387,7 @@ def main() -> None:
         fd_eps=1.0e-7,
         control_cost=controller["lqr_control_cost"],
         q_weights=controller["lqr_weights"],
+        decimal_digits=controller["lqr_decimal_digits"],
     )
     lyapunov = capture_metric(cfg, controller, capture_gain)
     probe = NLinkCartPoleEnv(cfg, progress=1.0, seed=args.seed)

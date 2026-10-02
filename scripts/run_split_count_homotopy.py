@@ -372,7 +372,11 @@ def main() -> None:
                 output=baseline_path,
                 iterations=args.iterations,
                 regularization=1e-6,
-                tracking_gain=0.0,
+                # The locked split is the incumbent route, so its baseline
+                # screen must preserve the saved time-varying feedback.  A
+                # feedforward-only replay is a different controller and can
+                # falsely reject a known-good locked baseline.
+                tracking_gain=args.tracking_gain,
                 exact_initial_trajectory=True,
                 rail_soft_margin=args.waypoint_rail_soft_margin,
             )
@@ -521,7 +525,9 @@ def main() -> None:
                 output=replay_path,
                 iterations=args.iterations,
                 regularization=1e-6,
-                tracking_gain=0.0,
+                # Screen the morphology release with the incumbent feedback
+                # route before paying for any local FDDP repair.
+                tracking_gain=args.tracking_gain,
                 exact_initial_trajectory=True,
                 rail_soft_margin=args.waypoint_rail_soft_margin,
             )

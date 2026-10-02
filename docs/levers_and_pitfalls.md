@@ -5340,7 +5340,7 @@ count-agnostic verifier checks the unchanged plant/noise contract, policy,
 gains, source cleanliness, disjoint reserved cohorts, full-episode success,
 actual pose-derived video hold and artifact hashes. It passes without errors.
 The manifest and appendix are under `runs/swingup11_uniform/` and
-`docs/eleven_link_swingup_paper.md`. Nothing has been publicly published.
+`docs/eleven_link_swingup_paper.md`. The result, full video and frozen bundle are now published in the eleven-link GitHub release (tag `eleven-link-canonical-20261001`, merged PR #1).
 
 All 302 root tests pass at release, with 99 focused tests in the clean
 source clone. The existing ten verifier and a new 2/2 noisy regression pass.
@@ -5363,8 +5363,424 @@ gain, and computes values/gradients through the saved factor. A regression
 demonstrates a small direction lost by Gram-matrix rounding but retained
 by the factor. This does not recover lost identification digits or certify
 nonlinear capture. Default production behavior and the frozen eleven source
-remain unchanged. In the ongoing local development checkout, all 304 root tests pass, and a fresh four-seed
+remain unchanged. All 304 current root tests pass, and a fresh four-seed
 eleven replay after these opt-in changes passes 4/4. The first twelve
-adjacent inverse/repair/refinement pipeline is running with 80-digit design,
+adjacent inverse/repair/refinement pipeline ran with 80-digit design,
 the same canonical plant, source eleven release and separate development
 seed 20261048. No twelve release seeds have been used.
+
+
+### Twelve: coordinate reload and backward-pass conditioning
+
+The first bounded twelve-link pipeline fails its exact-start gate. Its best
+feasible route reaches 1.58 seconds upright before rail failure. Changing
+only the capture threshold to 10, 100 or 1000 does not recover a full episode.
+An already aligned source route acquired a maximum 1.44e−13 dynamics defect
+when the loader round-tripped coordinate states through physical units. The
+continuous-angle loader now applies only actual branch corrections, preserving
+aligned coordinate arrays exactly; a regression checks this property.
+
+A native backward-direction probe on the useful feasible route fails at all
+seven regularizations from 1e−6 to 1e12. The saved exceptions identify the
+backward gain/value computation; they do not establish a physical boundary.
+The new opt-in square-root iLQR propagates residual factors and linear terms
+with QR, eliminating scalar controls without forming a Riccati Schur
+difference. Independent dense-horizon, scalar-bound and 80-digit
+ill-conditioned residual comparisons pass, along with 308 repository tests.
+It is a feasible shooting refinement, not an infeasible FDDP replacement:
+its initial serial rollout may reject a poor initializer. The twelve
+strong-value forty-iteration trial completed optimization but failed during
+result serialization; its failed log is retained. Reporting now handles the
+optional optimizer and saves a checkpoint before evaluating the episode.
+All twelve reserved release seeds remain unused.
+
+
+### Shooting state must reproduce uninterrupted physical evolution
+
+A 400-step matched audit applies identical controls to three executions:
+uninterrupted MuJoCo, serial physical-coordinate shooting, and serial
+normalized-coordinate shooting. The physical map agrees exactly at every
+recorded sample. The normalized map is within 1e−13 initially, grows to
+1.99e−4 at step 226, and differs by more than 110 coordinate units at step
+400. Each normalized shooting step round-trips through the inverse transform;
+zero defects in that map therefore do not prove an identical uninterrupted
+physical trajectory. This does not invalidate eleven's full physical release
+evaluations, which were already independently required.
+
+The new opt-in physical shooting path preserves physical integration states
+and expresses the normalized objective through transported cost factors.
+Source references and gains are converted once. Parked replay now reads
+the artifact's declared transform, and state gates reconstruct/hash-check
+the transported precision factor. An eighty-step twelve-link regression
+checks exact agreement with an uninterrupted plant, and a separate gate
+regression checks factor transport. Two bounded twenty-iteration twelve
+trials compare a serial feedforward initializer with offline feedback
+rebuilding from the same useful source. The feedback-rebuilt trial accepts cost-decreasing steps and preserves zero
+checked gaps. It still fails the rail after 1.58 s hold; the serial
+feedforward initializer is substantially worse. The next bounded run raises
+the capture value weight from 10 to 1000 and allocates 100 iterations,
+starting at regularization 10000 from the consistent physical reference.
+
+
+The action secant now divides by the difference between the two applied
+float32 actions. The old denominator used ideal pre-quantization increments
+and could introduce a relative derivative error around 1e−4 at ordinary
+controls. A quantized linear plant regression checks interior and saturated
+actions and rejects a vanished increment. This estimates the smooth plant
+response in delivered action units; the quantized policy itself is not a
+smooth function. Frozen released gains/evidence remain unchanged.
+
+
+### Twelve: matched arrival, derivative and cadence follow-ups
+
+The strong feasible hundred-iteration trial completes in 623.08 s. Arrival
+value falls only from 83.5732 to 82.4388, and the full physical episode
+still fails the rail after 1.58 s upright. Changing only the static LQR
+control penalty to 100 or 10000 also fails, with 1.56/1.58 s hold.
+
+Five pose-local derivative audits show competing truncation and roundoff:
+central differences at 1e−6 can be worse than 1e−5. A fourth-order stencil
+uses paired state differences and interpolates through the actual unequal
+float32 action knots, including one-sided stencils at the force bounds.
+Analytic polynomial/trigonometric regressions pass. Increment convergence
+at 2e−4 versus 1e−4 near capture improves substantially over the coarse
+fourth-order 1e−3 stencil; these are differences, not exact error bounds.
+Yet a matched thirty-iteration refinement yields cost 9524.8536 versus
+9524.8890 for the two-point trial at thirty, and still only 1.58 s hold.
+Derivative accuracy alone does not recover this tested route.
+
+A separate 100 Hz replay preserves the 0.005 s RK4 grid, repeated
+feedforward controls and eight-second duration. Its half-step physical
+reference agrees exactly at the original 50 Hz ticks. It reuses the saved
+tracking gains twice per old tick and redesigns upright LQR at 100 Hz.
+It also fails the rail after 1.55 s hold. This specific replay is component
+evidence; it does not rule out re-synthesis at a different cadence.
+
+The next prototype retains the pre-restored inverse curve instead of
+replacing it with an immediate serial rollout. Its QR backward system
+includes the affine dynamics defects. A unit forward step is an actual
+serial rollout; fractional steps keep explicit virtual-node defects, and
+a declared L1 merit penalty tracks both objective and gap closure. Independent
+linear-horizon tests verify that a defective reference reaches the dense
+constrained-dynamics solution in one unit step and that zero defects reduce
+to the existing feasible direction. This is a defect-aware local quadratic
+prototype, not a claim of fully replicating Crocoddyl globalization. A
+bounded twenty-iteration physical-coordinate twelve trial is running.
+Virtual nodes are optimization variables and never overwrite the runtime
+plant; final independent gap checks and full episode gates still govern
+promotion. All 317 repository tests pass. Twelve reserved seeds remain unused.
+
+### Twelve: preserve capture directions during sparse repair
+
+The defect-aware QR prototype finishes with a maximum physical gap of
+3.93257e-5, versus 3.93729e-5 initially. It only accepts fractional 0.0001
+steps and fails physical replay at 4.64 s with zero upright hold. The
+parked canonical development cohort for the feasible strong-value route
+passes 0/4, with at most 1.58 s hold. Neither is a twelve-link solution.
+
+The next controlled comparison starts from the same raw inverse curve,
+whose clamped endpoint has capture value exactly zero before repair.
+Both runs integrate physical states, retain the predecessor's normalized
+units only in defect/reference residual factors, and use fourth-order
+linearizations, fifteen residual evaluations and at most 3000 LSMR
+iterations per least-squares solve. Both retain the same diagonal terminal
+angle/rate residual. Only one adds coefficient one on the factored,
+precision-checked directional capture value. This tests whether preserving
+arrival directions during repair helps, rather than adding that objective
+only after feasibility recovery has changed the endpoint. Virtual nodes
+remain optimization variables; their residuals alone establish no physical
+capture or deployment claim.
+
+The first two launches fail before optimization because angle-branch lifting
+assumed an explicit coordinate transform. Their failed snapshots remain
+intact. The loader now also accepts the transition's documented identity
+representation (None); a regression checks branch correction and exact
+preservation of the other state entries. Corrected matched runs use distinct
+`_branchfix` directories. All 319 tests pass. Twelve's reserved cohorts
+remain unused; eleven's frozen source and result bundle remain unchanged.
+
+The matched repairs finish in 232.59/233.09 s, with fifteen residual
+evaluations each. Without capture value the endpoint value is 256463.7341,
+maximum physical gap 4.86044e-5 and median gap 1.71737e-6. With coefficient
+one on capture value the endpoint value is 0.00226115, maximum gap
+1.16404e-4 and median gap 2.74922e-5. Ordinary terminal errors remain small
+in both. This is a controlled optimization-level result: preserving a
+specific arrival direction improves the saved endpoint metric by roughly
+113 million-fold while leaving larger dynamics gaps. It does not establish
+that the second endpoint is reachable by the uninterrupted plant.
+Matched ten-iteration defect-aware QR refinements and physical replay are
+running from both saved repairs, with the same objective and budgets.
+
+Both ten-iteration refinements fail independent physical replay with zero
+upright hold. The ordinary repair accepts five 0.0001 steps and terminates
+at 6.44 s on the rail; the capture-preserving repair accepts no step and
+terminates at 4.82 s. Thus endpoint value is not a sufficient feasibility
+criterion. The controlled comparison and source hashes are retained in
+`n12_precision80_capture_repair_comparison_report/result.json`, with
+`capture_repair_comparison.png` showing the arrival/gap tradeoff.
+
+A separate matched duration test now retimes the same validated eleven-link
+spline geometry to eight and ten seconds before twelve-link inverse discovery.
+It allocates 100 evaluations at each duration, retaining the 0.02 s inverse
+sample interval, canonical plant and release gates. The shared transfer tool
+supports an explicit optional duration; the adjacent-count runner forwards
+it consistently. Identical durations preserve the knot array exactly.
+Analytic B-spline regressions check geometric equality and the corresponding
+velocity/acceleration scaling, and invalid or inconsistent time domains are
+rejected. All 321 tests pass. This changes discovery timing, not the 30 s
+full episode, five-second continuous hold requirement or control frequency.
+
+The matched duration results are both infeasible. Eight seconds exactly
+reproduces the earlier inverse cost 29.822363341696104 and dense maximum
+missing-force acceleration 2.28277. Ten seconds ends at cost 83.95210 and
+missing-force acceleration 3.17879. The different numbers of inverse sample
+nodes also change raw summed objective scale; the dense acceleration metric
+and physical replay are the relevant comparisons. Both feedforward prefix
+replays hold for zero seconds. Neither constitutes a thirty-second gate.
+This particular retimed initialization does not show an advantage for the
+longer duration; it does not exclude other geometry at ten seconds.
+
+Source geometry is the next controlled lever. The completed twelve pipeline
+and repeated timing baseline inherit eleven's inverse-discovery curve,
+although eleven's accepted physical trajectory includes subsequent feedback
+rebuilding, FDDP refinement and capture. The already retained
+`n11_passed_physical_route_spline_fit` fits the successfully executed frozen
+eleven route at eight seconds; its maximum absolute-link angle fitting
+error is 0.001783 rad and relative joint-rate RMS fitting error 0.01208.
+That fit has not yet been used by a twelve inverse experiment. A bounded
+100-evaluation trial now transfers it at the same duration, sample interval
+and objective as the raw-geometry baseline. The fit is only a warm start
+and inherits no exact dynamics feasibility, especially across link counts.
+
+The executed-eleven geometry trial completes in 133.47 s. At the same
+hundred-evaluation budget it reaches inverse cost 29.37173 versus 29.82236
+for the raw source and dense maximum missing-force acceleration 2.26192
+versus 2.28277. Its feedforward physical prefix still has zero hold, and
+its curve remains infeasible. This is a modest discovery improvement,
+not a solution or proof that actual-route transfer is sufficient.
+Next directions are genuine 100 Hz re-synthesis (distinct from the failed
+repeated-control replay), exact gap closure that preserves capture directions,
+and different swing geometry/count continuation. The active frontier stays
+at twelve; publication is reserved for fully validated records.
+
+### Twelve: full cadence re-synthesis and structured identification
+
+Two twenty-iteration physical, factored iLQR runs optimize the same feasible
+source at 50 and 100 Hz. At 100 Hz, the original controls are initially held
+for two half ticks on the same 0.005 s RK4 grid; the initial states agree
+exactly at every original tick. Both initializers and final trajectories
+have zero independently checked physical gaps. Both redesign their tracking
+and upright feedback. Running state/control costs, rail coefficient and
+initial regularization scale inversely with cadence; the unit-stage capture
+value gate scales with cadence. The shared rail coefficient also affects the
+terminal rail term, so this is a declared approximation to equal cost per
+second, not exact objective equality. Each trial uses its own capture factor.
+The 50 Hz run costs 9530.8573 and holds 1.58 s before rail failure; 100 Hz
+costs 9295.5577 and holds 1.55 s before rail failure. Both take about 3.96
+million physics substeps in optimization/verification. This is genuine
+re-synthesis evidence that higher frequency alone does not recover this
+source under the tested budget, rather than only replaying old gains.
+
+The new opt-in structured upright model uses the compiled planar serial-chain
+masses, centers, transverse inertias, joint armature and damping to form
+mass/gravity matrices and compose the held-input RK4 map at MP precision.
+It rejects other axes, equality constraints, active contacts, nonzero
+friction/stiffness and unsupported dynamics/options. Independent tests check
+mass and gravity against MuJoCo and transition derivatives at 50/100/200 Hz.
+For twelve, decreasing the finite-difference perturbation from 1e-4 to 1e-7
+reduces maximum A disagreement from 1.37e-6 to 3.57e-12; at 1e-8 it remains
+3.56e-12. This is a numerical identification comparison, not a claim that
+the nonlinear runtime has arbitrary precision. Compiled model scalars still
+originate in binary64, and MuJoCo's runtime arithmetic remains unchanged.
+
+The precision design/value routines now optionally retain MP matrices or
+decimal-string inputs without an intervening binary64 cast. Their default
+promoted-input behavior remains. A scalar regression demonstrates that a
+1e-20 unstable drift changes the ideal gain from 1 to 1+sqrt(2), while a
+binary64 input cast loses that drift. The scalar mpmath eig special case is
+handled explicitly. Structured twelve design produces gain norm
+10425889.95447 and endpoint value 83.57316, essentially the old values.
+Replaying only its new upright gain on the unchanged physical route still
+holds 1.58 s before rail failure. It does not close twelve, nor establish
+higher-count nonlinear capture.
+
+### Twelve: direct nonlinear one-step capture value
+
+A separate predictor evaluates delivered float32 actions without touching the
+live plant. A coarse bounded grid and scalar refinement minimize the actual
+next-step checked capture-factor value; the current LQR action always remains
+a candidate. This guarantees no worse value than that baseline among the
+finite tested previews, not a global minimum, a value contraction, or stability.
+Every candidate also predicts whether the next cart state exceeds the rail.
+
+Full hanging-start comparisons follow the identical tracked physical route
+until fixed 6.5 or 8 s capture switches. With the original LQR action function,
+the 8 s baseline reproduces every source physical state until its rail exit
+at 10.22 s and holds for 1.58 s. The greedy nonlinear variant exits at 9.48 s
+and holds for 1.60 s. At 6.5 s both hold for 0.30 s; baseline exits at 7.50 s,
+greedy at 9.02 s. All four fail. A two-hundredth-second difference in hold is
+not evidence of successful capture. This does not rule out longer-horizon MPC
+or a nonlinear value function.
+
+The first two greedy runs stopped when every preview predicted a rail exit;
+their failed snapshots remain. The evaluation now records that failure and
+uses an explicit LQR fallback for the actual terminating step, preserving the
+complete failed rollout. Mean planning takes 16–19 ms and maxima 30–70 ms in
+the four-job matched runs. These are simulated 50 Hz episodes and do not prove
+a real-time deadline guarantee. No live state was overwritten, and no twelve
+reserved seed was used. All 333 repository tests pass; the frozen eleven
+release verifier still passes. The next trajectory work should optimize a
+sustained physical capture interval, rather than expecting one endpoint value
+or a one-step controller to establish reachability and balance.
+
+### Twelve: factored capture intervals and declared virtual tails
+
+Reflecting the useful twelve-link physical route maps its first-joint endpoint
+from the negative full-turn branch to zero. Controls and states change sign,
+with a constant reference branch shift; linear feedback gains stay unchanged.
+An actual feedback rebuilding rollout records the delivered controls and
+states and has exactly zero checked defects. Its terminal capture value is
+83.57318, and it still fails at 1.58 s hold, exiting the rail at 9.68 s.
+This reflection is a numerical/reference experiment, not a live-state reset
+or a solution. Changing winding has not rescued this route.
+
+Both square-root optimizers now accept an explicit per-step running cost.
+Capture intervals can stack diagonal physical state factors and the checked
+directional Lyapunov factor, retaining residuals through QR elimination.
+Independent dense linear-quadratic solutions verify the phase-dependent
+rollout and backward pass, including explicit defects. A weak-mode regression
+checks that factored running cost survives Gram-matrix precision loss.
+When a physical zero-action tail is appended, its spinning endpoint must not
+redefine the desired upright winding branch: the inherited route endpoint
+selects that branch before appending the tail.
+
+Matched twenty-iteration explicit-defect trials append 250 declared virtual
+zero-equilibrium nodes after the eight-second physical prefix. They optimize
+a five-second capture interval at canonical 50 Hz, using diagonal capture
+weight 1000 and capture-value weights zero and ten. The starting maximum gap
+is about 0.001758; both retain 0.001755 after twenty iterations, accepting
+only steps of 0.0001. Nominal terminal values fall below 3e-7, yet both real
+episodes fail with 1.56 s hold and rail exit at 8.64 s. The apparent five-second
+quiet tail is not dynamically realized. A large defect penalty does not
+itself make gap restoration efficient, and a tiny virtual terminal value
+cannot certify the physical trajectory.
+
+A separate serial zero-action-tail probe is exactly feasible and stays within
+1.912 m of the cart origin over thirteen seconds, but joint motion becomes
+large as it falls. This is a valid optimizer initializer, not successful
+capture. Matched feasible five-second refinements both fail with zero upright
+hold, exiting at 2.82 and 4.76 s. They retain exactly zero dynamics gaps but
+their nominal cart excursions reach 3.068 and 3.057 m: the enormous capture
+cost overwhelms the soft rail penalty. Exact dynamics feasibility therefore
+does not establish admissibility under the rail bound. These trials should
+motivate enforcing rail feasibility within optimization, not relaxing the
+benchmark. A 0.2-second feasible extension still fails, with 1.72 s hold and
+rail exit at 8.66 s; its directional terminal value is about 8.184e9. The small
+hold improvement is diagnostic and does not advance the frontier. Future
+iLQR histories now record accepted step sizes explicitly, to support
+automatic stall detection in a capture-duration continuation procedure.
+
+The complete comparison and inspected nominal-versus-physical figure are in
+`runs/frontier_campaign_20261001/n12_precision80_sustained_capture_comparison_report/`.
+Every outcome remains negative; the next direction combines hard rail
+feasibility with gradual interval growth or different global swing geometry.
+Two early probe setup errors
+(import location and missing seed field) are preserved as failed snapshots;
+the corrected probe uses the saved selected state and a declared development
+seed. All 338 tests pass and the immutable eleven release verifier passes.
+No reserved twelve cohort has been used.
+
+### Twelve: hard rails remove inadmissible optima but do not fix tiny-step stalls
+
+The QR optimizers now optionally reject any nominal intermediate or terminal
+cart state outside the declared rail. The initializer must already satisfy
+the rail bounds; an inadmissible input is rejected explicitly. For the
+defect-aware optimizer this constrains its virtual nodes, not a certificate
+of physical feasibility. Rail rejections are counted separately from invalid
+simulation transitions. Counterexamples with cheaper unsafe linear trajectories
+verify both optimizers, phase-dependent limits and terminal-node checks.
+
+Matched twenty-iteration physical five-second-tail runs now remain in rail
+over thirteen seconds. Capture-value coefficients zero and ten both hold
+upright for 1.84 s, then fail the full physical episode at 13.70 s. The
+first accepts nine steps of 0.0001; the second accepts none. Every physical
+state matches its nominal state exactly over the saved thirteen-second route.
+The zero-action tail allows the links to fall even though the cart stays
+inside the rail. This is an admissible physical route, not sustained capture.
+The corresponding soft-penalty runs had zero hold and early rail exits.
+
+A genuine LQR-generated 0.2-second initializer also fails after refinement,
+at 1.58 s hold and 9.00 s rail exit. Its saved tail actions are the delivered
+float32 values, and all nodes come from serial physical transitions without
+projection. Removing directional capture value from both stage and terminal
+costs does not rescue either the five-second or the 0.2-second trial: holds
+remain 1.84 and 1.72 s. Zero terminal value weight is now explicitly allowed
+as an objective ablation, without changing the physical success gate. Early
+attempts rejected by the old positive-only argument check remain frozen and
+are distinguished from physical negatives.
+
+Freezing the first six seconds reduces the optimization horizon to 110
+steps, preserves the inherited prefix states and controls exactly, and still
+deploys continuously from the hanging start. Both direct-cost and directional
+capture suffix refinements fail at 1.72 s hold and 8.66 s rail exit. Most
+accepted steps are 0.0001; the direct-cost suffix also accepts two 0.001 steps.
+Suffix costs exclude the fixed prefix and must not be compared directly to
+full-route costs. The first comparison report incorrectly described all
+accepted steps as 0.0001; the next report correctly counted them but incorrectly
+described one rather than two 0.001 steps in prose. Both reports are preserved.
+The final step audit counts 83 accepted steps at 0.0001 and two at 0.001:
+`runs/frontier_campaign_20261001/n12_precision80_hardrail_and_suffix_comparison_final_step_audit/`.
+
+Across these controlled variants, exactly feasible nominal routes replay
+without any state mismatch, yet the serial nonlinear forward pass rejects
+larger useful-looking updates. This supports testing simultaneous constrained
+state/control updates in multiple shooting; it does not prove that such a
+method will solve twelve or that the canonical plant is infeasible. The
+inspected report figure, exact commands and hashes retain every negative.
+All 359 tests and the frozen eleven release verifier pass. No twelve reserved
+seed has been used, and no count above eleven is promoted.
+
+
+### Twelve: full-horizon residual shooting and maintenance timing recover actual capture
+
+Sparse residual SCvx retains factored stage/terminal objectives, explicit
+L1 dynamics slack, hard virtual-node cart/angle bounds, and simultaneous
+state/control increments. All virtual-node proposals receive actual MuJoCo
+merit checks, then independent uninterrupted physical evaluation. Adaptive
+native tolerances and explicitly marked inexact proposals repair suffix-only
+gaps by about 294-fold, but their physical hold falls to 0.28 s. Native solver
+status or smaller defects alone do not certify a route.
+
+Freeing the complete thirteen-second horizon accepts thirteen updates in
+twenty outer iterations and produces a 6.52-second actual upright streak.
+The full episode still fails at 13.46 s. Its end-of-route feedback gain has
+collapsed to norm 1.655; the geometrically small physical pose at thirteen
+seconds has capture value about 7.18e7, and the upright regulator saturates
+immediately at handoff. Unchanged-prefix handoffs at 8, 9, 10, 11 and 12 s
+instead pass all thirty seconds with 23.50 s hold. Final planned time is
+therefore an unsafe default for selecting maintenance handoff on this source.
+
+The selected nine-second controller is rebuilt using serial physical
+feedback transitions and actual delivered float32 actions. It has exactly
+zero gaps and reproduces every state of the successful episode. Its parked
+noisy development20/20 and disjoint100/100 both pass with the same 16-second
+contraction, cart costs10/5, and unchanged50 Hz benchmark as eleven. The
+frozen-source reserved cohorts, full video and final manifest verifier all
+pass. Twelve is promoted internally; GitHub publication is in progress. The first reserved attempt is
+retained separately because untracked .DS_Store made its Git provenance
+dirty; identical-policy/cohort reruns from a clean clone pass.
+
+Independent pure tracking feedback does not rescue the tested routes and
+worsens the full-horizon source to1.34 s hold. A small periodic-upright motion
+hypothesis also fails the tested perturbation probes, despite tracking its
+unperturbed orbit for30 s. With R1000, the stationary control passes4/4 at
+1e-11, while all three tested periodic variants pass0/4. No component probe
+starts from hanging or advances a count. Binary64 offline orbit defects are
+reported separately from physical execution. The first component's raw
+counter includes the initial upright sample; later results independently
+count post-step physical samples and preserve both metrics.
+
+Commands and frozen snapshots accompany every trial; 374 current tests pass.
+The experiment chronology and the manually selected nine-second handoff are
+disclosed in docs/twelve_link_development.md. Automatic re-synthesis and
+arbitrary morphology generalization remain separate research gates.

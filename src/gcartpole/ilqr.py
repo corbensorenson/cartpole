@@ -23,6 +23,8 @@ class QuadraticTrajectoryCost:
     wrap_angles: bool = True
     terminal_target: Array | None = None
     stage_target: Array | None = None
+    terminal_factor: Array | None = None
+    stage_factor: Array | None = None
 
 
 @dataclass(frozen=True)
@@ -212,9 +214,16 @@ class MujocoTransition:
             plus = self(state + offset, action)
             minus = self(state - offset, action)
             a[:, column] = self.difference(plus, minus) / (2.0 * state_epsilon)
-        plus = self(state, min(1.0, action + action_epsilon))
-        minus = self(state, max(-1.0, action - action_epsilon))
-        denominator = min(1.0, action + action_epsilon) - max(-1.0, action - action_epsilon)
+        upper = min(1.0, action + action_epsilon)
+        lower = max(-1.0, action - action_epsilon)
+        plus = self(state, upper)
+        minus = self(state, lower)
+        # The policy interface applies float32 actions. Measure this secant
+        # in the action units actually delivered to the plant, rather than
+        # dividing by an ideal increment that may differ after quantization.
+        denominator = float(np.float32(upper)) - float(np.float32(lower))
+        if denominator <= 0:
+            raise ValueError("action difference vanished at the applied action precision")
         b = (self.difference(plus, minus) / denominator)[:, None]
         return a, b
 
@@ -235,8 +244,10 @@ def stage_cost(state: Array, action: float, cost: QuadraticTrajectoryCost, n_lin
     state_x = wrapped_state(state, n_links) if cost.wrap_angles else np.asarray(state, dtype=np.float64)
     x = state_x if cost.stage_target is None else state_x - np.asarray(cost.stage_target)
     rail, _, _ = _rail_cost_derivatives(float(state_x[0]), cost)
+    state_value = (x @ cost.stage_state @ x if cost.stage_factor is None else
+                   np.sum((cost.stage_factor @ x) ** 2))
     return float(
-        0.5 * x @ cost.stage_state @ x
+        0.5 * state_value
         + 0.5 * cost.control * float(action) ** 2
         + rail
     )
@@ -248,6 +259,9 @@ def terminal_cost(state: Array, cost: QuadraticTrajectoryCost, n_links: int) -> 
     if cost.terminal_target is not None:
         x = x - np.asarray(cost.terminal_target, dtype=np.float64)
     rail, _, _ = _rail_cost_derivatives(float(state_x[0]), cost)
+    if cost.terminal_factor is not None:
+        residual = cost.terminal_factor @ x
+        return float(0.5 * (residual @ residual) + rail)
     return float(0.5 * x @ cost.terminal_state @ x + rail)
 
 
@@ -257,18 +271,29 @@ def rollout(
     controls: Array,
     cost: QuadraticTrajectoryCost,
     n_links: int,
+    *,
+    running_costs=None,
 ) -> tuple[Array, float]:
     controls = np.asarray(controls, dtype=np.float64)
+    costs = resolve_running_costs(cost, len(controls), running_costs)
     states = np.empty((len(controls) + 1, len(initial_state)), dtype=np.float64)
     states[0] = initial_state
     total = 0.0
     for step, action in enumerate(controls):
-        total += stage_cost(states[step], float(action), cost, n_links)
+        total += stage_cost(states[step], float(action), costs[step], n_links)
         states[step + 1] = transition(states[step], float(action))
         if not np.all(np.isfinite(states[step + 1])):
             return states, 1e30
     total += terminal_cost(states[-1], cost, n_links)
     return states, float(total)
+
+
+def resolve_running_costs(cost, steps, running_costs=None):
+    """Freeze a stage schedule shared by rollout and quadratic refinement."""
+    costs = (cost,) * steps if running_costs is None else tuple(running_costs)
+    if len(costs) != steps or not all(isinstance(item, QuadraticTrajectoryCost) for item in costs):
+        raise ValueError("running cost schedule must contain one trajectory cost per action")
+    return costs
 
 
 def _cost_derivatives(
@@ -279,7 +304,8 @@ def _cost_derivatives(
 ) -> tuple[Array, float, Array, float]:
     state_x = wrapped_state(state, n_links) if cost.wrap_angles else np.asarray(state, dtype=np.float64)
     x = state_x if cost.stage_target is None else state_x - np.asarray(cost.stage_target)
-    lx = cost.stage_state @ x
+    lx = (cost.stage_state @ x if cost.stage_factor is None else
+          cost.stage_factor.T @ (cost.stage_factor @ x))
     lxx = cost.stage_state.copy()
     _, rail_gradient, rail_hessian = _rail_cost_derivatives(float(state_x[0]), cost)
     lx[0] += rail_gradient
@@ -296,7 +322,8 @@ def _terminal_derivatives(
     x = state_x
     if cost.terminal_target is not None:
         x = x - np.asarray(cost.terminal_target, dtype=np.float64)
-    vx = cost.terminal_state @ x
+    vx = (cost.terminal_state @ x if cost.terminal_factor is None else
+          cost.terminal_factor.T @ (cost.terminal_factor @ x))
     vxx = cost.terminal_state.copy()
     _, rail_gradient, rail_hessian = _rail_cost_derivatives(float(state_x[0]), cost)
     vx[0] += rail_gradient

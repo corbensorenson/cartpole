@@ -30,6 +30,7 @@ from gcartpole.generalized_solver import (
     recover_homotopy_failed_upper_bounds,
     setup_from_config,
 )
+from gcartpole.morphology import build_morphology
 
 try:
     from scripts.run_generalized_homotopy import (
@@ -90,7 +91,45 @@ def config_at(
         progress,
     )
     cfg = explicit_config(target_cfg, lengths, masses, name)
-    cfg["env"]["rail_limit"] = float(rail_ratio * np.sum(lengths))
+    # ``explicit_config`` freezes the link geometry but intentionally removes
+    # scheduled profiles.  That is correct for a direct target replay, but it
+    # silently unlocks a ghost-link curriculum at every continuation point.
+    # Materialize all scheduled physical profiles at this same point and then
+    # freeze them so the downstream solver's default progress=1.0 sees the
+    # intended intermediate plant.
+    staged = build_morphology(
+        target_cfg["env"], target_cfg["morphology"], progress=progress
+    )
+    morphology = cfg["morphology"]
+    for name_, values in (
+        ("damping", staged.damping),
+        ("frictionloss", staged.frictionloss),
+        ("joint_stiffness", staged.joint_stiffness),
+        ("joint_lock", staged.joint_lock),
+    ):
+        values_list = values.astype(float).tolist()
+        morphology[f"{name_}_start"] = values_list
+        morphology[f"{name_}_end"] = values_list
+    morphology.setdefault("start", {})["total_damping"] = float(
+        np.sum(staged.damping)
+    )
+    morphology.setdefault("end", {})["total_damping"] = float(
+        np.sum(staged.damping)
+    )
+    morphology.setdefault("start", {})["total_frictionloss"] = float(
+        np.sum(staged.frictionloss)
+    )
+    morphology.setdefault("end", {})["total_frictionloss"] = float(
+        np.sum(staged.frictionloss)
+    )
+    # Freeze the rail at the same continuation coordinate.  Leaving a
+    # start/end rail schedule in place would make the downstream solver's
+    # default progress=1.0 evaluate this morphology on the target rail,
+    # invalidating the staged plant and its recorded rail ratio.
+    rail_limit = float(rail_ratio * np.sum(lengths))
+    cfg["env"]["rail_limit"] = rail_limit
+    cfg["env"]["rail_limit_start"] = rail_limit
+    cfg["env"]["rail_limit_end"] = rail_limit
     return cfg
 
 

@@ -1,0 +1,265 @@
+{
+  "comparisons": [
+    {
+      "accepted_inexact_steps": 0,
+      "accepted_step_sizes": [],
+      "artifact": {
+        "bytes": 2510628,
+        "path": "runs/frontier_campaign_20261001/n12_precision80_residual_scvx_capture5s_frozen6s_penalty1e5_iter10/result.json",
+        "sha256": "1d604831e83d7a3c1784d5c74dad544d8186419975bdb455b186179cacface7f"
+      },
+      "defect_penalty": 100000,
+      "exactly_dynamics_feasible": false,
+      "final_l1_scaled_gap": 0.04045111400979277,
+      "final_maximum_physical_gap": 0.0017574170009443761,
+      "inexact_candidates": 0,
+      "initial_maximum_physical_gap": 0.0017574170009443761,
+      "initial_qp_accuracy": null,
+      "maximum_gap_improvement_factor": 1.0,
+      "mode": "fixed",
+      "name": "n12_precision80_residual_scvx_capture5s_frozen6s_penalty1e5_iter10",
+      "native_statuses": [
+        "maximum iterations reached",
+        "maximum iterations reached",
+        "maximum iterations reached"
+      ],
+      "nominal_capture_maximum_absolute_angle": 0.00034059091236411903,
+      "nominal_maximum_cart_excursion": 1.9115417340669867,
+      "outer_iterations": 3,
+      "physical_hold_seconds": 1.56,
+      "physical_success": false,
+      "physical_termination": "rail_violation",
+      "physical_termination_seconds": 8.64,
+      "prefix_controls_identical": true,
+      "prefix_states_identical": true,
+      "qp_accuracy_floor": 1e-08,
+      "qp_constraint_rows": 49615,
+      "qp_variables": 37503,
+      "search_seconds": 79.00845003128052
+    },
+    {
+      "accepted_inexact_steps": 0,
+      "accepted_step_sizes": [],
+      "artifact": {
+        "bytes": 2510639,
+        "path": "runs/frontier_campaign_20261001/n12_precision80_residual_scvx_capture5s_frozen6s_penalty1e8_iter10/result.json",
+        "sha256": "a9194d39b85519d0ef7974743e4d983951b0b0c644b5d9ff9cfc44408856113b"
+      },
+      "defect_penalty": 100000000,
+      "exactly_dynamics_feasible": false,
+      "final_l1_scaled_gap": 0.04045111400979277,
+      "final_maximum_physical_gap": 0.0017574170009443761,
+      "inexact_candidates": 0,
+      "initial_maximum_physical_gap": 0.0017574170009443761,
+      "initial_qp_accuracy": null,
+      "maximum_gap_improvement_factor": 1.0,
+      "mode": "fixed",
+      "name": "n12_precision80_residual_scvx_capture5s_frozen6s_penalty1e8_iter10",
+      "native_statuses": [
+        "maximum iterations reached",
+        "maximum iterations reached",
+        "maximum iterations reached"
+      ],
+      "nominal_capture_maximum_absolute_angle": 0.00034059091236411903,
+      "nominal_maximum_cart_excursion": 1.9115417340669867,
+      "outer_iterations": 3,
+      "physical_hold_seconds": 1.56,
+      "physical_success": false,
+      "physical_termination": "rail_violation",
+      "physical_termination_seconds": 8.64,
+      "prefix_controls_identical": true,
+      "prefix_states_identical": true,
+      "qp_accuracy_floor": 1e-08,
+      "qp_constraint_rows": 49615,
+      "qp_variables": 37503,
+      "search_seconds": 78.90842127799988
+    },
+    {
+      "accepted_inexact_steps": 0,
+      "accepted_step_sizes": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "artifact": {
+        "bytes": 2518405,
+        "path": "runs/frontier_campaign_20261001/n12_precision80_residual_scvx_capture5s_frozen6s_penalty1e5_adaptive_qp_iter10/result.json",
+        "sha256": "4774b69e2a3a1b1e0e168c8cf42b0d99b176546a70dacfe4a53f20dbea64f4b1"
+      },
+      "defect_penalty": 100000,
+      "exactly_dynamics_feasible": false,
+      "final_l1_scaled_gap": 0.0014810371106977218,
+      "final_maximum_physical_gap": 3.831973546885789e-05,
+      "inexact_candidates": 0,
+      "initial_maximum_physical_gap": 0.0017574170009443761,
+      "initial_qp_accuracy": 0.001,
+      "maximum_gap_improvement_factor": 45.86192935419957,
+      "mode": "adaptive",
+      "name": "n12_precision80_residual_scvx_capture5s_frozen6s_penalty1e5_adaptive_qp_iter10",
+      "native_statuses": [
+        "solved",
+        "solved inaccurate",
+        "solved inaccurate",
+        "maximum iterations reached",
+        "maximum iterations reached",
+        "maximum iterations reached"
+      ],
+      "nominal_capture_maximum_absolute_angle": 0.0008570296214097281,
+      "nominal_maximum_cart_excursion": 1.9115417340669867,
+      "outer_iterations": 6,
+      "physical_hold_seconds": 0.34,
+      "physical_success": false,
+      "physical_termination": "rail_violation",
+      "physical_termination_seconds": 7.7,
+      "prefix_controls_identical": true,
+      "prefix_states_identical": true,
+      "qp_accuracy_floor": 1e-08,
+      "qp_constraint_rows": 49615,
+      "qp_variables": 37503,
+      "search_seconds": 141.12857699394226
+    },
+    {
+      "accepted_inexact_steps": 0,
+      "accepted_step_sizes": [
+        1.0
+      ],
+      "artifact": {
+        "bytes": 2454949,
+        "path": "runs/frontier_campaign_20261001/n12_precision80_residual_scvx_capture5s_frozen6s_penalty1e8_adaptive_qp_iter10/result.json",
+        "sha256": "909e1664b88abf82bdb834fabb677ff91d880c06c4d1ab3b37e4523c4f0f4a8b"
+      },
+      "defect_penalty": 100000000,
+      "exactly_dynamics_feasible": false,
+      "final_l1_scaled_gap": 0.027998782085844724,
+      "final_maximum_physical_gap": 3.277614766589165e-05,
+      "inexact_candidates": 0,
+      "initial_maximum_physical_gap": 0.0017574170009443761,
+      "initial_qp_accuracy": 0.001,
+      "maximum_gap_improvement_factor": 53.61877847448265,
+      "mode": "adaptive",
+      "name": "n12_precision80_residual_scvx_capture5s_frozen6s_penalty1e8_adaptive_qp_iter10",
+      "native_statuses": [
+        "solved",
+        "maximum iterations reached",
+        "maximum iterations reached",
+        "maximum iterations reached"
+      ],
+      "nominal_capture_maximum_absolute_angle": 0.0009826681497762824,
+      "nominal_maximum_cart_excursion": 1.9115417340669867,
+      "outer_iterations": 4,
+      "physical_hold_seconds": 0.3,
+      "physical_success": false,
+      "physical_termination": "rail_violation",
+      "physical_termination_seconds": 7.4,
+      "prefix_controls_identical": true,
+      "prefix_states_identical": true,
+      "qp_accuracy_floor": 1e-08,
+      "qp_constraint_rows": 49615,
+      "qp_variables": 37503,
+      "search_seconds": 86.84635281562805
+    },
+    {
+      "accepted_inexact_steps": 1,
+      "accepted_step_sizes": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "artifact": {
+        "bytes": 2423831,
+        "path": "runs/frontier_campaign_20261001/n12_precision80_residual_scvx_capture5s_frozen6s_penalty1e5_inexact_qp_iter20/result.json",
+        "sha256": "11ed0b8b6d834a2323ff224a17a2c6990734f7dbe1fbb4294023132bdbb51f47"
+      },
+      "defect_penalty": 100000,
+      "exactly_dynamics_feasible": false,
+      "final_l1_scaled_gap": 0.0006769664615029957,
+      "final_maximum_physical_gap": 5.969583325882155e-06,
+      "inexact_candidates": 1,
+      "initial_maximum_physical_gap": 0.0017574170009443761,
+      "initial_qp_accuracy": 0.001,
+      "maximum_gap_improvement_factor": 294.395254242418,
+      "mode": "inexact",
+      "name": "n12_precision80_residual_scvx_capture5s_frozen6s_penalty1e5_inexact_qp_iter20",
+      "native_statuses": [
+        "solved",
+        "solved inaccurate",
+        "solved inaccurate",
+        "maximum iterations reached",
+        "maximum iterations reached",
+        "maximum iterations reached",
+        "maximum iterations reached"
+      ],
+      "nominal_capture_maximum_absolute_angle": 0.0009511386506210924,
+      "nominal_maximum_cart_excursion": 1.9115417340669867,
+      "outer_iterations": 7,
+      "physical_hold_seconds": 0.28,
+      "physical_success": false,
+      "physical_termination": "rail_violation",
+      "physical_termination_seconds": 6.88,
+      "prefix_controls_identical": true,
+      "prefix_states_identical": true,
+      "qp_accuracy_floor": 1e-08,
+      "qp_constraint_rows": 49615,
+      "qp_variables": 37503,
+      "search_seconds": 388.7408540248871
+    },
+    {
+      "accepted_inexact_steps": 0,
+      "accepted_step_sizes": [
+        1.0
+      ],
+      "artifact": {
+        "bytes": 2455554,
+        "path": "runs/frontier_campaign_20261001/n12_precision80_residual_scvx_capture5s_frozen6s_penalty1e8_inexact_qp_iter20/result.json",
+        "sha256": "95d0f8b8e8231a64eff4302adbe3930df092143e42b6f87a0d15ca495c6c1cd7"
+      },
+      "defect_penalty": 100000000,
+      "exactly_dynamics_feasible": false,
+      "final_l1_scaled_gap": 0.027998782085844724,
+      "final_maximum_physical_gap": 3.277614766589165e-05,
+      "inexact_candidates": 0,
+      "initial_maximum_physical_gap": 0.0017574170009443761,
+      "initial_qp_accuracy": 0.001,
+      "maximum_gap_improvement_factor": 53.61877847448265,
+      "mode": "inexact",
+      "name": "n12_precision80_residual_scvx_capture5s_frozen6s_penalty1e8_inexact_qp_iter20",
+      "native_statuses": [
+        "solved",
+        "maximum iterations reached",
+        "maximum iterations reached",
+        "maximum iterations reached"
+      ],
+      "nominal_capture_maximum_absolute_angle": 0.0009826681497762824,
+      "nominal_maximum_cart_excursion": 1.9115417340669867,
+      "outer_iterations": 4,
+      "physical_hold_seconds": 0.3,
+      "physical_success": false,
+      "physical_termination": "rail_violation",
+      "physical_termination_seconds": 7.4,
+      "prefix_controls_identical": true,
+      "prefix_states_identical": true,
+      "qp_accuracy_floor": 1e-08,
+      "qp_constraint_rows": 49615,
+      "qp_variables": 37503,
+      "search_seconds": 260.9288160800934
+    }
+  ],
+  "figure": {
+    "bytes": 123329,
+    "path": "runs/frontier_campaign_20261001/n12_precision80_residual_scvx_fixed_adaptive_inexact_comparison/sparse_gap_repair_vs_physical_hold.png",
+    "sha256": "63bab50e684204ddc6b1b44efcd4bd867e8b4cbdb4f8e9189e9c819c5e484a5c"
+  },
+  "generated_at": "2026-10-02T06:09:35+00:00",
+  "initial": {
+    "bytes": 1176734,
+    "path": "runs/frontier_campaign_20261001/n12_precision80_sustained_capture5s_value0_sqrt_fddp20/initial_controller.json",
+    "sha256": "4f633782e1ea93bd4ca6d5e17a4255b4f667b5e2ab8000c60997c93a0ac98606"
+  },
+  "n_links": 12,
+  "not_solution": true,
+  "note": "Maximum component reduction and total scaled gap reduction are distinct. These are explicitly virtual-node optimization diagnostics with independent uninterrupted physical failures. Comparisons to earlier QR runs differ in objectives and frozen prefix and are not matched optimizer ablations.",
+  "reserved_twelve_seeds_used": false,
+  "schema_version": 1,
+  "tests_passed": 368
+}

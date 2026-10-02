@@ -52,26 +52,50 @@ def checked_discrete_lqr(
     return gain, p, diagnostics
 
 
-def high_precision_discrete_lqr(a, b, q, r, *, decimal_digits=80, max_iterations=50):
+def _precision_input_matrices(values, ctx, preserve_input_precision):
+    if preserve_input_precision:
+        matrices = [ctx.matrix(value.tolist() if hasattr(value, "tolist") else value)
+                    for value in values]
+        if not all(ctx.isfinite(entry) for matrix in matrices for entry in matrix):
+            raise ValueError("finite precision inputs required")
+        arrays = [np.asarray(matrix.tolist(), dtype=np.float64) for matrix in matrices]
+    else:
+        arrays = [np.asarray(value, dtype=np.float64) for value in values]
+        matrices = [ctx.matrix(value.tolist()) for value in arrays]
+    return matrices, arrays
+
+
+def _precision_eigenvalues(matrix, ctx):
+    # mpmath's scalar special case returns a tuple even with both eigenvector
+    # flags disabled. Its sole eigenvalue is the scalar itself.
+    if matrix.rows == matrix.cols == 1:
+        return [matrix[0, 0]]
+    return ctx.eig(matrix, left=False, right=False)
+
+
+def high_precision_discrete_lqr(a, b, q, r, *, decimal_digits=80, max_iterations=50,
+                              preserve_input_precision=False):
     """Diagnostic SDA solve; binary64 inputs are promoted without recovering lost digits.
 
     Implements the doubling recurrence in Poloni (2020), equation 33:
     https://arxiv.org/html/2005.08903. This does not certify the nonlinear plant.
-    The returned gain is rounded for the existing binary64 runtime.
+    The returned gain is rounded for the existing binary64 runtime. The
+    opt-in precision-input path accepts MP matrices or decimal strings
+    without first rounding the plant to binary64.
     """
     import mpmath
 
     if decimal_digits < 30 or max_iterations < 1:
         raise ValueError("high-precision design needs at least 30 digits and a positive iteration budget")
-    arrays = [np.asarray(value, dtype=np.float64) for value in (a, b, q, r)]
+    ctx = mpmath.mp.clone()
+    ctx.dps = decimal_digits
+    matrices, arrays = _precision_input_matrices((a, b, q, r), ctx, preserve_input_precision)
     a, b, q, r = arrays
     n, nu = a.shape[0], b.shape[1]
     if (a.shape != (n, n) or b.shape != (n, nu) or q.shape != (n, n)
             or r.shape != (nu, nu) or not all(np.all(np.isfinite(x)) for x in arrays)):
         raise ValueError("LQR matrices must have compatible dimensions and finite entries")
-    ctx = mpmath.mp.clone()
-    ctx.dps = decimal_digits
-    am, bm, qm, rm = [ctx.matrix(value.tolist()) for value in arrays]
+    am, bm, qm, rm = matrices
     ctx.cholesky(qm)
     ctx.cholesky(rm)
     current_a = am.copy()
@@ -101,12 +125,15 @@ def high_precision_discrete_lqr(a, b, q, r, *, decimal_digits=80, max_iterations
     rounded_km = ctx.matrix(gain.tolist())
     exact_closed_loop = am - bm * km
     rounded_closed_loop = am - bm * rounded_km
-    eigenvalues = ctx.eig(exact_closed_loop, left=False, right=False)
-    rounded_eigenvalues = ctx.eig(rounded_closed_loop, left=False, right=False)
+    eigenvalues = _precision_eigenvalues(exact_closed_loop, ctx)
+    rounded_eigenvalues = _precision_eigenvalues(rounded_closed_loop, ctx)
     residual = am.T * h * am - h - am.T * h * bm * km + qm
     diagnostics = dict(
         method="arbitrary_precision_structure_preserving_doubling",
-        input_precision="binary64 matrices promoted exactly; input errors remain",
+        input_precision=("precision inputs retained; model scalar errors and runtime gain rounding remain"
+                         if preserve_input_precision
+                         else "binary64 matrices promoted exactly; input errors remain"),
+        preserved_input_precision=bool(preserve_input_precision),
         decimal_digits=decimal_digits, iterations=iteration,
         relative_riccati_residual=str(ctx.norm(residual) / max(ctx.norm(h), ctx.mpf(1))),
         high_precision_spectral_radius=str(max(abs(value) for value in eigenvalues)),
@@ -119,4 +146,62 @@ def high_precision_discrete_lqr(a, b, q, r, *, decimal_digits=80, max_iterations
         raise ValueError("high-precision design cannot be represented in binary64")
     if max(abs(value) for value in eigenvalues) >= 1:
         raise ValueError("high-precision design is not stabilizing for its input matrices")
+    if max(abs(value) for value in rounded_eigenvalues) >= 1:
+        raise ValueError("rounded high-precision gain is not stabilizing for its input matrices")
     return gain, p, diagnostics
+
+
+def high_precision_lyapunov_factor(a, b, gain, transform, *, feedback_scale=1., decimal_digits=100,
+                                  preserve_input_precision=False):
+    """Factor the unit-cost Lyapunov value for the actually rounded gain.
+
+    Binary64 inputs are promoted exactly. The factor improves value and
+    gradient evaluation; it does not improve identification or certify the
+    bounded nonlinear plant. Return P as the Gram matrix of the saved factor.
+    """
+    import mpmath
+    if decimal_digits < 30 or not np.isfinite(feedback_scale) or feedback_scale <= 0:
+        raise ValueError("Lyapunov design requires >=30 digits and a positive finite feedback scale")
+    ctx = mpmath.mp.clone(); ctx.dps = decimal_digits
+    if preserve_input_precision:
+        gain_input = gain if hasattr(gain, "rows") else np.atleast_2d(gain)
+        matrices, arrays = _precision_input_matrices((a, b, gain_input, transform), ctx, True)
+    else:
+        arrays = [np.atleast_2d(np.asarray(value, dtype=float)) for value in (a, b, gain, transform)]
+        matrices = [ctx.matrix(v.tolist()) for v in arrays]
+    am, bm, km, tm = arrays
+    nx = am.shape[0]
+    if (am.shape != (nx, nx) or bm.shape != (nx, 1)
+            or km.shape != (1, nx) or tm.shape != (nx, nx)
+            or not all(np.all(np.isfinite(v)) for v in arrays)):
+        raise ValueError("finite compatible plant, single-input gain and transform required")
+    am, bm, km, tm = matrices
+    closed = tm*(am-bm*(ctx.mpf(float(feedback_scale))*km))*(tm**-1)
+    radius = max(abs(value) for value in _precision_eigenvalues(closed, ctx))
+    if radius >= 1:
+        raise ValueError(f"rounded-gain promoted-input closed loop is unstable: {radius}")
+    power, value = closed.copy(), ctx.eye(nx)
+    tolerance = ctx.mpf(10)**(-decimal_digits//2)
+    for iteration in range(40):
+        value = value+power.T*value*power
+        power = power*power
+        if max(abs(v) for v in power) < tolerance:
+            break
+    else:
+        raise ValueError("Lyapunov doubling did not converge")
+    residual = value-closed.T*value*closed-ctx.eye(nx)
+    relative_residual = ctx.norm(residual)/max(ctx.norm(value), ctx.mpf(1))
+    if relative_residual > ctx.sqrt(tolerance):
+        raise ValueError(f"high-precision Lyapunov residual too large: {relative_residual}")
+    root = np.asarray(ctx.cholesky(value).T.tolist(), dtype=float)
+    if not np.all(np.isfinite(root)):
+        raise ValueError("Lyapunov factor cannot be represented in binary64")
+    matrix = root.T@root
+    return matrix, root, dict(method="promoted_rounded_gain_lyapunov_doubling_cholesky",
+        input_precision=("precision plant inputs retained; model scalar and gain rounding errors remain"
+                         if preserve_input_precision else
+                         "binary64 inputs promoted exactly; identification and gain rounding errors remain"),
+        preserved_input_precision=bool(preserve_input_precision),
+        decimal_digits=decimal_digits, doubling_iterations=iteration+1,
+        spectral_radius=str(radius), relative_equation_residual=str(relative_residual),
+        absolute_equation_residual=str(max(abs(v) for v in residual)), nonlinear_certified=False)

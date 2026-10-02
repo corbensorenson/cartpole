@@ -94,6 +94,7 @@ def test_pipeline_can_preserve_transferred_nominal_for_exact_refinement(
     by_label = {label: command for label, command, _output in steps}
     assert "scripts/package_generalized_route.py" in by_label["make_fddp_warm"]
     assert "--rebuild-initial-feedback" in by_label["optimize"]
+    assert "--initial-feasible" not in by_label["optimize"]
 
 
 def test_pipeline_stops_on_unlatched_optimizer_and_failed_gate(tmp_path: Path) -> None:

@@ -25,8 +25,13 @@ import numpy as np
 from mujoco import rollout as mujoco_rollout
 
 from gcartpole.config import apply_overrides, dump_json, load_config
-from gcartpole.env import NLinkCartPoleEnv, serial_absolute_angles
+from gcartpole.env import NLinkCartPoleEnv, serial_absolute_angles, wrap_angle
 from gcartpole.evidence import data_sha256, git_metadata, runtime_metadata, utc_timestamp
+
+try:
+    from search_swingup_capture import lqr_gain
+except ModuleNotFoundError:
+    from scripts.search_swingup_capture import lqr_gain
 
 
 def physical_metrics(
@@ -76,6 +81,59 @@ def interpolation_matrix(knot_count: int, step_count: int) -> np.ndarray:
     return matrix
 
 
+def lqr_tail_quality(
+    env: NLinkCartPoleEnv,
+    states: np.ndarray,
+    *,
+    gain: np.ndarray,
+    scale: float,
+    tail_steps: int,
+) -> np.ndarray:
+    """Score the actual local stabilizer from each predicted terminal state."""
+
+    qualities = np.full(states.shape[0], 1.0e9, dtype=np.float64)
+    for index, state in enumerate(states):
+        if not np.all(np.isfinite(state)):
+            continue
+        data = mujoco.MjData(env.model)
+        mujoco.mj_setState(
+            env.model,
+            data,
+            np.asarray(state, dtype=np.float64),
+            mujoco.mjtState.mjSTATE_FULLPHYSICS.value,
+        )
+        mujoco.mj_forward(env.model, data)
+        tail_rows: list[float] = []
+        for _ in range(max(1, tail_steps)):
+            qpos = np.asarray(data.qpos, dtype=np.float64)
+            qvel = np.asarray(data.qvel, dtype=np.float64)
+            absolute = serial_absolute_angles(qpos[1 : 1 + env.n])
+            absolute_rate = np.cumsum(qvel[1 : 1 + env.n])
+            quality = (
+                (float(np.max(np.abs(absolute))) / 0.15) ** 2
+                + (float(np.sqrt(np.mean(qvel[1:] ** 2))) / 0.75) ** 2
+                + (float(np.sqrt(np.mean(absolute_rate**2))) / 0.75) ** 2
+                + (abs(float(qpos[0])) / 1.25) ** 2
+                + (abs(float(qvel[0])) / 0.50) ** 2
+            )
+            tail_rows.append(quality)
+            state_vector = np.r_[
+                qpos[0],
+                wrap_angle(qpos[1 : 1 + env.n]),
+                qvel,
+            ]
+            action = float(np.clip(-scale * (gain @ state_vector), -1.0, 1.0))
+            data.ctrl[0] = action * env.force_limit
+            for _ in range(env.frame_skip):
+                mujoco.mj_step(env.model, data)
+            if not np.all(np.isfinite(data.qpos)) or not np.all(np.isfinite(data.qvel)):
+                break
+        if tail_rows:
+            tail_rows = tail_rows[-max(1, len(tail_rows) // 2) :]
+            qualities[index] = float(np.mean(tail_rows))
+    return qualities
+
+
 def score_sequences(
     env: NLinkCartPoleEnv,
     initial_state: np.ndarray,
@@ -91,6 +149,10 @@ def score_sequences(
     capture_potential_threshold: float,
     potential_weight: float,
     capture_weight: float,
+    capture_gain: np.ndarray | None,
+    capture_lqr_scale: float,
+    capture_tail_steps: int,
+    capture_tail_weight: float,
 ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
     profile_actions = np.clip(actions @ interpolation.T, -action_limit, action_limit)
     controls = np.repeat(profile_actions, env.frame_skip, axis=1)[:, :, None] * env.force_limit
@@ -134,10 +196,29 @@ def score_sequences(
     # so the planner does not select a zero-force equilibrium at the hanging
     # start.
     top_cost = np.min(capture_cost[:, late:], axis=1)
+    tail_quality = np.zeros(len(profile_actions), dtype=np.float64)
+    tail_gate = np.zeros(len(profile_actions), dtype=np.float64)
+    if capture_gain is not None and capture_tail_steps > 0:
+        tail_quality = lqr_tail_quality(
+            env,
+            states[:, -1],
+            gain=capture_gain,
+            scale=capture_lqr_scale,
+            tail_steps=capture_tail_steps,
+        )
+        peak_potential = np.max(potential[:, late:], axis=1)
+        tail_gate = np.clip(
+            (peak_potential - float(capture_potential_threshold))
+            / max(1.0e-9, 1.0 - float(capture_potential_threshold)),
+            0.0,
+            1.0,
+        )
+    tail_cost = tail_quality * tail_gate
     rail_penalty = 3.0e4 * np.maximum(0.0, metrics["cart_abs"] / rail_soft_limit - 1.0) ** 2
     cost = (
         swing_cost
         + float(capture_weight) * top_cost
+        + float(capture_tail_weight) * tail_cost
         + np.mean(rail_penalty, axis=1)
         + float(action_weight) * np.mean(profile_actions**2, axis=1)
         + float(action_slew_weight) * np.mean(np.diff(profile_actions, axis=1) ** 2, axis=1)
@@ -147,6 +228,9 @@ def score_sequences(
             "states": states,
             "profile_actions": profile_actions,
             "capture_quality": capture_quality,
+            "capture_tail_quality": tail_cost,
+            "capture_tail_raw_quality": tail_quality,
+            "capture_tail_gate": tail_gate,
             "cost": cost,
         }
     )
@@ -173,6 +257,10 @@ def plan(
     capture_potential_threshold: float,
     potential_weight: float,
     capture_weight: float,
+    capture_gain: np.ndarray | None,
+    capture_lqr_scale: float,
+    capture_tail_steps: int,
+    capture_tail_weight: float,
 ) -> tuple[np.ndarray, dict[str, float], np.ndarray]:
     pool = [mujoco.MjData(env.model) for _ in range(min(32, max(1, population // 16)))]
     current = np.asarray(center, dtype=np.float64).copy()
@@ -201,6 +289,10 @@ def plan(
             capture_potential_threshold=capture_potential_threshold,
             potential_weight=potential_weight,
             capture_weight=capture_weight,
+            capture_gain=capture_gain,
+            capture_lqr_scale=capture_lqr_scale,
+            capture_tail_steps=capture_tail_steps,
+            capture_tail_weight=capture_tail_weight,
         )
         order = np.argsort(costs)
         elite = candidates[order[:elites]]
@@ -222,6 +314,9 @@ def plan(
                 "best_cart_abs": float(metrics["qpos"][top, capture_index, 0]),
                 "best_cart_velocity": float(metrics["qvel"][top, capture_index, 0]),
                 "best_time_seconds": float((capture_index + 1) * env.dt),
+                "capture_tail_quality": float(metrics["capture_tail_quality"][top]),
+                "capture_tail_raw_quality": float(metrics["capture_tail_raw_quality"][top]),
+                "capture_tail_gate": float(metrics["capture_tail_gate"][top]),
             }
     return current, best_metrics, best_actions
 
@@ -255,6 +350,15 @@ def main() -> None:
     parser.add_argument("--capture-potential-threshold", type=float, default=0.72)
     parser.add_argument("--potential-weight", type=float, default=900.0)
     parser.add_argument("--capture-weight", type=float, default=0.35)
+    parser.add_argument(
+        "--capture-tail-steps",
+        type=int,
+        default=0,
+        help="simulate the exact upright LQR from each predicted terminal state",
+    )
+    parser.add_argument("--capture-tail-weight", type=float, default=0.0)
+    parser.add_argument("--lqr-control-cost", type=float, default=1000.0)
+    parser.add_argument("--lqr-scale", type=float, default=1.0)
     parser.add_argument("--seed", type=int, default=20732)
     parser.add_argument("--out", required=True)
     parser.add_argument("--override", action="append", default=[])
@@ -263,6 +367,8 @@ def main() -> None:
         raise ValueError("horizon, knot count, and replan steps must be positive")
     if args.elites < 1 or args.elites > args.population:
         raise ValueError("elites must be in 1..population")
+    if args.capture_tail_steps < 0 or args.capture_tail_weight < 0.0:
+        raise ValueError("capture-tail steps and weight must be nonnegative")
 
     cfg = apply_overrides(load_config(args.config), args.override)
     cfg["env"] = {
@@ -284,6 +390,14 @@ def main() -> None:
         cfg["env"][f"{noise_key}_end"] = 0.0
     env = NLinkCartPoleEnv(cfg, progress=args.progress, seed=0)
     env.reset(seed=0)
+    capture_gain = None
+    if args.capture_tail_steps > 0:
+        capture_gain = lqr_gain(
+            cfg,
+            progress=args.progress,
+            fd_eps=1.0e-7,
+            control_cost=args.lqr_control_cost,
+        )
     weights = potential_weights(env)
     interpolation = interpolation_matrix(args.knot_count, args.horizon_steps)
     state_size = mujoco.mj_stateSize(env.model, mujoco.mjtState.mjSTATE_FULLPHYSICS.value)
@@ -321,6 +435,10 @@ def main() -> None:
                 capture_potential_threshold=args.capture_potential_threshold,
                 potential_weight=args.potential_weight,
                 capture_weight=args.capture_weight,
+                capture_gain=capture_gain,
+                capture_lqr_scale=args.lqr_scale,
+                capture_tail_steps=args.capture_tail_steps,
+                capture_tail_weight=args.capture_tail_weight,
             )
             best_actions = np.clip(best_profile @ interpolation.T, -1.0, 1.0)
             buffer = best_actions.copy()
@@ -386,6 +504,10 @@ def main() -> None:
             "capture_potential_threshold": float(args.capture_potential_threshold),
             "potential_weight": float(args.potential_weight),
             "capture_weight": float(args.capture_weight),
+            "capture_tail_steps": int(args.capture_tail_steps),
+            "capture_tail_weight": float(args.capture_tail_weight),
+            "lqr_control_cost": float(args.lqr_control_cost),
+            "lqr_scale": float(args.lqr_scale),
             "seed": int(args.seed),
             "wall_time_seconds": float(time.time() - started),
         },

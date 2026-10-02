@@ -65,8 +65,23 @@ def controller_from_json(path: str | None) -> dict[str, Any] | None:
         payload = json.load(f)
     if isinstance(payload, dict) and "best_by" in payload and "score" in payload["best_by"]:
         return dict(payload["best_by"]["score"]["controller"])
-    if isinstance(payload, dict) and "best" in payload:
-        return dict(payload["best"]["controller"])
+    if isinstance(payload, dict) and isinstance(payload.get("best"), dict):
+        best = payload["best"]
+        if isinstance(best.get("controller"), dict):
+            return dict(best["controller"])
+        if "action_knots" in best or "knots" in best or "controls" in best:
+            return {
+                key: best[key]
+                for key in ("action_knots", "knots", "controls")
+                if key in best
+            } | {
+                "seconds": float(
+                    payload.get("search", {}).get(
+                        "seconds",
+                        payload.get("search", {}).get("horizon_seconds", 0.0),
+                    )
+                ),
+            }
     if isinstance(payload, dict) and "controller" in payload:
         return dict(payload["controller"])
     if isinstance(payload, dict) and ("action_knots" in payload or "knots" in payload):
@@ -110,6 +125,12 @@ def initial_actions(
     controller = controller_from_json(init_controller_json)
     if controller is None:
         return center_actions_from_cart_pd(cfg, progress=progress, seed=seed, seconds=seconds, action_count=action_count)
+    if "controls" in controller:
+        src = np.asarray(controller["controls"], dtype=np.float64)
+        src_seconds = float(controller.get("seconds", seconds))
+        src_times = np.linspace(0.0, max(src_seconds, 1e-9), len(src), dtype=np.float64)
+        dst_times = np.linspace(0.0, seconds, action_count, dtype=np.float64)
+        return np.interp(dst_times, src_times, src)
     if "action_knots" in controller:
         src = np.asarray(controller["action_knots"], dtype=np.float64)
         src_times = np.linspace(0.0, float(controller.get("seconds", seconds)), len(src), dtype=np.float64)

@@ -1,0 +1,102 @@
+{
+  "claim_status": "released_internal_canonical_frontier",
+  "evaluation": {
+    "exact20": {
+      "bytes": 155470,
+      "path": "runs/swingup12_uniform/eval_swingup12_exact20.json",
+      "sha256": "e1d2d1f0294685ca371daaf928465320c534c01229e827ff7029f892e4078848"
+    },
+    "gate100": {
+      "bytes": 764445,
+      "path": "runs/swingup12_uniform/eval_swingup12_100.json",
+      "sha256": "bf0662cffba12772b1273caf33b2a3e050a0d500595d30c3cb1ae906ac2d3a69"
+    },
+    "gate20": {
+      "bytes": 155242,
+      "path": "runs/swingup12_uniform/eval_swingup12_20.json",
+      "sha256": "283477843747e95a9f4cb8e1e20ca3a838c09245225b5a95ad3abab5b0513641"
+    },
+    "video_episode": {
+      "bytes": 2961778,
+      "path": "runs/swingup12_uniform/twelve_link_video_episode.json",
+      "sha256": "14579d7630296d2d08092001d4003fcb87784f288b3a410c70a7222a1cab5d6a"
+    }
+  },
+  "generated_at": "2026-10-02T06:45:13+00:00",
+  "limitations": [
+    "Internal repository benchmark; no external world-record claim.",
+    "Declared MuJoCo full-state initial-noise benchmark; hardware, sensor noise, delay and model mismatch are not evaluated.",
+    "Linear Riccati and Lyapunov checks are not nonlinear capture certificates."
+  ],
+  "method": "Hanging-state contraction, physical-coordinate factored residual sparse SCvx on a sustained capture interval, development-selected earlier handoff, exact delivered-action feedback rebuild, and upright LQR maintenance.",
+  "metrics": {
+    "exact20": {
+      "all_full_episode": true,
+      "episodes": 20,
+      "maximum_cart_excursion": 1.8638627740928635,
+      "minimum_hold": 7.5,
+      "seed_start": 212200,
+      "successes": 20
+    },
+    "gate100": {
+      "all_full_episode": true,
+      "episodes": 100,
+      "maximum_cart_excursion": 1.8638906255134113,
+      "minimum_hold": 7.5,
+      "seed_start": 212100,
+      "successes": 100
+    },
+    "gate20": {
+      "all_full_episode": true,
+      "episodes": 20,
+      "maximum_cart_excursion": 1.8638690667257147,
+      "minimum_hold": 7.5,
+      "seed_start": 212000,
+      "successes": 20
+    },
+    "video_episode": {
+      "all_full_episode": true,
+      "episodes": 1,
+      "maximum_cart_excursion": 1.8638461516333584,
+      "minimum_hold": 7.5,
+      "seed_start": 212500,
+      "successes": 1
+    }
+  },
+  "n_links": 12,
+  "not_solution": false,
+  "policy": {
+    "bytes": 23105,
+    "path": "runs/swingup12_uniform/twelve_link_policy.json",
+    "sha256": "f197f827c93733b95c1b74dc45d0f94345cc7c0b0e46423c72fc41d86c788cab"
+  },
+  "reproduction": {
+    "commands": {
+      "bytes": 3778,
+      "path": "runs/swingup12_uniform/reserved_commands.json",
+      "sha256": "08e7a014d92d21952b03567ce6b59a6942ff5d1c3a48aa9338aa16e4c212bff5"
+    },
+    "focused_source_tests_passed": 103,
+    "fresh_clone": "runs/frontier_campaign_20261001/n12_release_fresh_clone",
+    "full_working_tree_tests_passed": 374,
+    "source_bundle": {
+      "bytes": 2361232,
+      "path": "runs/swingup12_uniform/twelve_link_source.bundle",
+      "sha256": "5caf981d91fe7ceba67e5a0d2ceac71378182291378c358c8624d63a33b388e1"
+    },
+    "source_commit": "f24c66ce849881e37252dcab0ca9a8633f672c34",
+    "verifier": "scripts/verify_frontier_release.py"
+  },
+  "schema_version": 1,
+  "tuning_disclosure": "Development data selected synthesis and handoff parameters. Reserved cohorts remained unused until the policy and clean source commit were frozen. Independent automatic re-synthesis and arbitrary morphology generalization remain separate research gates.",
+  "video": {
+    "bytes": 851167,
+    "path": "runs/swingup12_uniform/twelve_link_swingup_success.mp4",
+    "sha256": "6f4fbb2202ed58ffb5e4f2c8cbdb92617a768d4adb200bae304ba4c0a3aeaccd"
+  },
+  "video_metadata": {
+    "bytes": 5509,
+    "path": "runs/swingup12_uniform/twelve_link_swingup_success.video.json",
+    "sha256": "6861dcbfa8f4fce52b49045c8444f680e721dff195b6c8a9fd5adca965cc7eaa"
+  }
+}

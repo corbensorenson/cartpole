@@ -42,6 +42,17 @@ def test_restoration_closes_gaps_and_reaches_a_bounded_reachable_target():
     np.testing.assert_allclose(actual, states[-1], atol=1e-7)
 
 
+def test_factored_residual_units_preserve_the_sparse_directional_jacobian():
+    p = problem()
+    p.defect_factor = np.array([[2., .3], [0., .4]])
+    p.reference_factor = np.array([[.5, 0.], [.2, 3.]])
+    p.reference_weight = .1
+    values = np.r_[p.reference_states[1:].ravel(), p.reference_controls]
+    direction = np.random.default_rng(8).normal(size=values.size)
+    finite = (p.residual(values + 1e-6 * direction) - p.residual(values - 1e-6 * direction)) / 2e-6
+    np.testing.assert_allclose(p.jacobian(values) @ direction, finite, atol=2e-7)
+
+
 def test_l1_restoration_reaches_target_without_virtual_dynamics_gaps():
     p = problem()
     result, states, controls = restore_trajectory(

@@ -84,17 +84,24 @@ def source_action(
     controller: dict[str, Any],
     t: float,
     step: int | None = None,
+    post_source_action: str = "last",
 ) -> float:
     if controller.get("controls") is not None:
         controls = np.asarray(controller["controls"], dtype=np.float64)
         if controls.ndim != 1 or controls.size < 2:
             raise ValueError("FDDP source controls must be a one-dimensional sequence")
         seconds = float(controller.get("horizon_seconds", controls.size * env.dt))
-        source_times = np.linspace(0.0, max(seconds, env.dt), controls.size)
+        query_time = step * env.dt if step is not None else t
+        if post_source_action == "zero" and query_time >= seconds:
+            return 0.0
+        # The source producer applies one control at each policy step.  Do not
+        # spread the array over an inclusive horizon: in a chaotic swing that
+        # shifts every action after the first by a measurable phase error.
+        source_times = np.arange(controls.size, dtype=np.float64) * float(env.dt)
         return float(
             np.clip(
                 np.interp(
-                    step * env.dt if step is not None else t,
+                    query_time,
                     source_times,
                     controls,
                     left=controls[0],
@@ -158,11 +165,10 @@ def initial_tail_problem(
     tail_steps: int,
     zero_noise: bool,
     initial_tail_actions: np.ndarray | None,
+    post_source_action: str,
 ) -> tuple[np.ndarray, np.ndarray, float]:
     cfg = {**cfg, "env": {**cfg["env"]}}
     if zero_noise:
-        cfg["env"]["init_angle_noise"] = 0.0
-        cfg["env"]["init_vel_noise"] = 0.0
         for noise_key in (
             "init_angle_noise",
             "init_vel_noise",
@@ -176,7 +182,9 @@ def initial_tail_problem(
     env.reset(seed=0)
     pre_steps = int(round(tail_start_seconds / env.dt))
     for step in range(pre_steps):
-        action = source_action(env, controller, step * env.dt, step)
+        action = source_action(
+            env, controller, step * env.dt, step, post_source_action
+        )
         _, _, terminated, truncated, info = env.step([action])
         if terminated or truncated:
             env.close()
@@ -189,7 +197,13 @@ def initial_tail_problem(
         return start, np.asarray(initial_tail_actions[:tail_steps], dtype=np.float64), env.dt
     initial_controls: list[float] = []
     for offset in range(tail_steps):
-        action = source_action(env, controller, (pre_steps + offset) * env.dt, pre_steps + offset)
+        action = source_action(
+            env,
+            controller,
+            (pre_steps + offset) * env.dt,
+            pre_steps + offset,
+            post_source_action,
+        )
         initial_controls.append(float(action))
         _, _, terminated, truncated, info = env.step([action])
         if terminated or truncated:
@@ -214,11 +228,19 @@ def replay_controller(
     lqr_scale: float,
     seconds: float,
     zero_noise: bool,
+    post_source_action: str,
 ) -> dict[str, Any]:
     cfg = {**cfg, "env": {**cfg["env"]}}
     if zero_noise:
-        cfg["env"]["init_angle_noise"] = 0.0
-        cfg["env"]["init_vel_noise"] = 0.0
+        for noise_key in (
+            "init_angle_noise",
+            "init_vel_noise",
+            "init_cart_noise",
+            "init_cart_vel_noise",
+        ):
+            cfg["env"][noise_key] = 0.0
+            cfg["env"][f"{noise_key}_start"] = 0.0
+            cfg["env"][f"{noise_key}_end"] = 0.0
     env = NLinkCartPoleEnv(cfg, progress=1.0, seed=0)
     obs, _ = env.reset(seed=0)
     del obs
@@ -232,7 +254,9 @@ def replay_controller(
     for step in range(total_steps):
         t = step * env.dt
         if step < tail_start_step:
-            action = source_action(env, source_controller, t, step)
+            action = source_action(
+                env, source_controller, t, step, post_source_action
+            )
             mode = "source_swing"
         elif step < tail_start_step + len(tail_controls):
             tail_step = step - tail_start_step
@@ -310,6 +334,12 @@ def main() -> None:
     parser.add_argument("--control-cost", type=float, default=0.05)
     parser.add_argument("--rail-soft-limit", type=float, default=2.4)
     parser.add_argument("--rail-weight", type=float, default=1e8)
+    parser.add_argument(
+        "--post-source-action",
+        choices=("last", "zero"),
+        default="last",
+        help="initializer action after a finite source route ends",
+    )
     parser.add_argument("--out", required=True)
     parser.add_argument("--zero-noise", action="store_true")
     parser.add_argument("--override", action="append", default=[])
@@ -332,6 +362,7 @@ def main() -> None:
         tail_steps=tail_steps,
         zero_noise=args.zero_noise,
         initial_tail_actions=initial_tail_actions,
+        post_source_action=args.post_source_action,
     )
     env = NLinkCartPoleEnv(base_cfg, progress=1.0, seed=0)
     transition = MujocoTransition(
@@ -379,6 +410,7 @@ def main() -> None:
         lqr_scale=args.lqr_scale,
         seconds=args.seconds,
         zero_noise=args.zero_noise,
+        post_source_action=args.post_source_action,
     )
     env.close()
     physical_states = np.asarray([transition.to_physical(row) for row in search.states], dtype=np.float64)
@@ -405,6 +437,7 @@ def main() -> None:
             "feedback_gains": search.feedback_gains.astype(float).tolist(),
             "nominal_coordinate_states": search.states.astype(float).tolist(),
             "lqr_scale": float(args.lqr_scale),
+            "post_source_action": args.post_source_action,
         },
         "search": {
             "cost": float(search.cost),

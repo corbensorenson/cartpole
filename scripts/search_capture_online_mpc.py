@@ -52,6 +52,13 @@ def load_state(path: str, index: str) -> dict[str, Any]:
         return dict(payload["best"]["endpoint"])
     if (
         isinstance(payload, dict)
+        and index in {"best", "endpoint", "best_endpoint"}
+        and isinstance(payload.get("best"), dict)
+        and isinstance(payload["best"].get("best_state"), dict)
+    ):
+        return dict(payload["best"]["best_state"])
+    if (
+        isinstance(payload, dict)
         and index in {"terminal", "terminal_state"}
         and isinstance(payload.get("terminal_state"), dict)
     ):

@@ -1,13 +1,37 @@
-# 11-Link Cart-Pole: Reset-Free Swing-Up and Hold
+# 12-Link Cart-Pole: Reset-Free Swing-Up and Hold
 
-> **A single bounded cart force swings up and holds 7 through 11 passive serial links from noisy hanging starts on a finite rail.**
+> **A single bounded cart force swings up and holds 7 through 12 passive serial links from noisy hanging starts on a finite rail.**
+
+October 2, 2026: **twelve links** passed frozen-source reserved noisy
+**20/20** and disjoint **100/100**, exact **20/20**, and a held-out full
+30-second video. Every episode holds upright for 7.50 seconds at unchanged
+50 Hz control, ±80 N force and ±3 m rail; maximum cart excursion is
+1.863891 m. Thirteen is the next frontier in the campaign through twenty.
+
+[Watch twelve](runs/swingup12_uniform/twelve_link_swingup_success.mp4) ·
+[Experiment appendix](docs/twelve_link_swingup_paper.md) ·
+[Manifest](runs/swingup12_uniform/twelve_link_swingup_manifest.json) ·
+[Clean source bundle](runs/swingup12_uniform/twelve_link_source.bundle)
+
+<p align="center">
+  <a href="runs/swingup12_uniform/twelve_link_swingup_success.mp4">
+    <img src="assets/twelve-link-swingup.gif" alt="Twelve-link canonical noisy hanging-start swing-up and sustained hold; preview runs at twice speed" width="760">
+  </a>
+</p>
+
+[Download the twelve-link release and full video](https://github.com/corbensorenson/cartpole/releases/tag/twelve-link-canonical-20261002).
+
+The recovery combines full-horizon factored residual multiple shooting with
+an earlier maintenance handoff and an exact physical feedback rebuild.
+Count-specific controllers are outputs of the shared phased procedure;
+automatic re-synthesis and morphology generalization remain separate tests.
 
 October 1, 2026: eleven links passed the internal canonical noisy `20/20`
 and disjoint `100/100` gates, exact `20/20`, and a reset-free 30-second
 held-out video at the unchanged 50 Hz, ±80 N and ±3 m rail. Every accepted
 episode holds upright for 7.50 seconds. The frozen eleven source bundle,
 evidence and full video are included here. Twelve
-is the next frontier in the campaign through twenty.
+was the next frontier at that stage.
 
 [Watch eleven](runs/swingup11_uniform/eleven_link_swingup_success.mp4) ·
 [Experiment appendix](docs/eleven_link_swingup_paper.md) ·
@@ -86,7 +110,8 @@ negative controls, manifests, and reproduction commands are public.
 
 | Result | Noisy 20-episode gate | Disjoint noisy 100-episode gate | Held-out video | Method |
 |---|---:|---:|---|---|
-| **11 links — highest verified internal count, local bundle** | **20/20** | **100/100** | [MP4](runs/swingup11_uniform/eleven_link_swingup_success.mp4) | [appendix](docs/eleven_link_swingup_paper.md) |
+| **12 links — highest verified internal count** | **20/20** | **100/100** | [MP4](runs/swingup12_uniform/twelve_link_swingup_success.mp4) | [appendix](docs/twelve_link_swingup_paper.md) |
+| **11 links — preserved public predecessor** | **20/20** | **100/100** | [MP4](runs/swingup11_uniform/eleven_link_swingup_success.mp4) | [appendix](docs/eleven_link_swingup_paper.md) |
 | **10 links — frozen public predecessor** | **20/20** | **100/100** | [MP4](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4) | [paper](docs/seven_link_swingup_paper.md) |
 | **9 links** | **20/20** | **100/100** | [MP4](runs/generalized_solver/nine_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |
 | **8 links** | **20/20** | **100/100** | [MP4](runs/generalized_solver/eight_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |

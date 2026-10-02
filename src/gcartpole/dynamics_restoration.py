@@ -23,10 +23,18 @@ class RestorationProblem:
     control_weight: float
     state_epsilon: float = 1e-5
     action_epsilon: float = 1e-4
+    defect_factor: np.ndarray | None = None
+    reference_factor: np.ndarray | None = None
 
     def __post_init__(self):
         self.steps = len(self.reference_controls)
         self.nx = len(self.initial_state)
+        for name in ("defect_factor", "reference_factor"):
+            factor = getattr(self, name)
+            factor = np.eye(self.nx) if factor is None else np.asarray(factor, dtype=float)
+            if factor.shape != (self.nx, self.nx) or not np.all(np.isfinite(factor)):
+                raise ValueError(f"{name} must be a finite square state matrix")
+            setattr(self, name, factor)
         if self.reference_states.shape != (self.steps + 1, self.nx):
             raise ValueError("reference state/control dimensions do not match")
         if self.terminal_target.shape != (self.nx,) or self.terminal_factor.shape[1] != self.nx:
@@ -61,9 +69,9 @@ class RestorationProblem:
         defects = self.defects(states, controls)
         terminal = self.terminal_factor @ (states[-1] - self.terminal_target)
         residual = np.r_[
-            np.sqrt(self.defect_weight) * defects.ravel(),
+            np.sqrt(self.defect_weight) * (defects @ self.defect_factor.T).ravel(),
             np.sqrt(self.terminal_weight) * terminal,
-            np.sqrt(self.reference_weight) * (states[1:] - self.reference_states[1:]).ravel(),
+            np.sqrt(self.reference_weight) * ((states[1:] - self.reference_states[1:]) @ self.reference_factor.T).ravel(),
             np.sqrt(self.control_weight) * (controls - self.reference_controls),
         ]
         self.history.append(dict(evaluation=len(self.history) + 1,
@@ -80,7 +88,7 @@ class RestorationProblem:
         states, controls = self.unpack(values)
         jacobian = sparse.lil_matrix((self.residual_size, len(values)))
         sqrt_defect = np.sqrt(self.defect_weight)
-        identity = np.eye(self.nx)
+        identity = self.defect_factor
         for step, action in enumerate(controls):
             a, b = self.transition.linearize(
                 states[step], float(action), state_epsilon=self.state_epsilon,
@@ -88,13 +96,13 @@ class RestorationProblem:
             )
             rows = slice(step * self.nx, (step + 1) * self.nx)
             if step > 0:
-                jacobian[rows, (step - 1) * self.nx:step * self.nx] = sqrt_defect * a
+                jacobian[rows, (step - 1) * self.nx:step * self.nx] = sqrt_defect * self.defect_factor @ a
             jacobian[rows, step * self.nx:(step + 1) * self.nx] = -sqrt_defect * identity
-            jacobian[rows, self.state_values + step] = sqrt_defect * b.reshape(self.nx, 1)
+            jacobian[rows, self.state_values + step] = sqrt_defect * self.defect_factor @ b.reshape(self.nx, 1)
         jacobian[self.defect_rows:self.reference_start,
                  self.state_values - self.nx:self.state_values] = np.sqrt(self.terminal_weight) * self.terminal_factor
         jacobian[self.reference_start:self.control_start, :self.state_values] = (
-            np.sqrt(self.reference_weight) * sparse.eye(self.state_values)
+            np.sqrt(self.reference_weight) * sparse.kron(sparse.eye(self.steps), self.reference_factor)
         )
         jacobian[self.control_start:, self.state_values:] = np.sqrt(self.control_weight) * sparse.eye(self.steps)
         return jacobian.tocsr()

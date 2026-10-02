@@ -12,6 +12,7 @@ from gcartpole.capture_funnel import CaptureFunnelModel
 from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.evidence import data_sha256, file_metadata, git_metadata, runtime_metadata, utc_timestamp
 from gcartpole.env import NLinkCartPoleEnv
+from evaluate_fddp_two_expert import hanging_lqr_action_from_state, hanging_lqr_gain
 from evaluate_expert_chain import hinge_velocity_rms, load_checkpoint_policy
 from probe_swingup_trajectory import (
     DEFAULT_KD,
@@ -82,11 +83,23 @@ def load_initial_controller(path: str | None) -> dict[str, Any]:
     raise ValueError(f"Could not load swing controller from {path}")
 
 
-def row_from_env(env: NLinkCartPoleEnv, *, step: int, stage: str, action: float, reward: float, info: dict[str, Any]) -> dict[str, Any]:
+def row_from_env(
+    env: NLinkCartPoleEnv,
+    *,
+    step: int,
+    stage: str,
+    action: float,
+    reward: float,
+    info: dict[str, Any],
+    time_offset_seconds: float = 0.0,
+) -> dict[str, Any]:
     rel, abs_angles = env._angles()
+    absolute_angular_velocity = np.cumsum(
+        np.asarray(env.data.qvel[1 : 1 + env.n], dtype=np.float64)
+    )
     return {
         "step": int(step),
-        "time_seconds": float(step * env.dt),
+        "time_seconds": float(time_offset_seconds + step * env.dt),
         "stage": stage,
         "reward": float(reward),
         "action": float(action),
@@ -97,6 +110,8 @@ def row_from_env(env: NLinkCartPoleEnv, *, step: int, stage: str, action: float,
         "max_abs_angle": float(info["max_abs_angle"]),
         "mean_abs_angle": float(info["mean_abs_angle"]),
         "hinge_velocity_rms": float(info.get("hinge_velocity_rms", hinge_velocity_rms(env))),
+        "absolute_angular_velocity_rms": float(np.sqrt(np.mean(absolute_angular_velocity**2))),
+        "max_absolute_angular_velocity": float(np.max(np.abs(absolute_angular_velocity))),
         "capture_quality": float(info.get("capture_quality", 0.0)),
         "relative_angles": rel.astype(float).tolist(),
         "absolute_angles": abs_angles.astype(float).tolist(),
@@ -113,6 +128,7 @@ def handoff_quality(row: dict[str, Any], rail_limit: float) -> float:
         + 0.75 * row["hinge_velocity_rms"]
         + 0.50 * abs(row["x"]) / rail_limit
         + 0.35 * abs(row["cart_velocity"])
+        + 0.50 * row.get("absolute_angular_velocity_rms", 0.0)
         + 5.0 * np.log1p(row.get("capture_funnel_domain_distance", 0.0))
         - 2.0 * row["capture_quality"]
         - 4.0 * row.get("capture_funnel_probability", 0.0)
@@ -126,6 +142,7 @@ def evaluate_controller(
     progress: float,
     seed: int,
     seconds: float,
+    conditioning_seconds: float,
     zero_noise: bool,
     swing_controller: dict[str, Any],
     capture_model: ActorCritic | None,
@@ -136,13 +153,19 @@ def evaluate_controller(
     stabilize_enter_angle: float,
     stabilize_enter_streak: float,
     stabilize_hinge_rms: float,
+    capture_enter_hinge_rms: float | None,
+    capture_enter_absolute_rate_rms: float | None,
+    capture_enter_cart_velocity: float | None,
+    capture_enter_cart_abs: float | None,
     lqr_capture_scale: float,
     lqr_stabilize_scale: float,
     funnel_distance_weight: float,
+    conditioning_gain: np.ndarray | None,
     collect_states: bool = False,
     state_min_time: float = 0.0,
     state_max_angle: float = 0.60,
     state_max_hinge_rms: float | None = None,
+    state_max_absolute_rate_rms: float | None = None,
     state_stride: int = 1,
 ) -> dict[str, Any]:
     cfg = {**cfg, "env": {**cfg["env"]}}
@@ -154,6 +177,27 @@ def evaluate_controller(
     obs, reset_info = env.reset()
     del reset_info
 
+    conditioning_steps = int(round(float(conditioning_seconds) / env.dt))
+    if conditioning_steps > 0:
+        if conditioning_gain is None:
+            raise ValueError("conditioning_gain is required when conditioning_seconds > 0")
+        for _ in range(conditioning_steps):
+            qpos = np.asarray(env.data.qpos, dtype=np.float64).copy()
+            qvel = np.asarray(env.data.qvel, dtype=np.float64).copy()
+            action = hanging_lqr_action_from_state(qpos, qvel, conditioning_gain, scale=1.0)
+            obs, _, terminated, truncated, _ = env.step([action])
+            if terminated or truncated:
+                raise RuntimeError("settled launch conditioning terminated before swing route")
+    _, conditioning_abs_angles = env._angles()
+    conditioning_state = {
+        "qpos": np.asarray(env.data.qpos, dtype=np.float64).astype(float).tolist(),
+        "qvel": np.asarray(env.data.qvel, dtype=np.float64).astype(float).tolist(),
+        "x": float(env.data.qpos[0]),
+        "cart_velocity": float(env.data.qvel[0]),
+        "max_abs_angle": float(np.max(np.abs(conditioning_abs_angles))),
+        "hinge_velocity_rms": float(hinge_velocity_rms(env)),
+    }
+
     knots = np.asarray(swing_controller["knots"], dtype=np.float64)
     trajectory_seconds = float(swing_controller["trajectory_seconds"])
     kp = float(swing_controller["kp"])
@@ -164,15 +208,32 @@ def evaluate_controller(
     stage = "swing"
     stage_enter_time = 0.0
     stage_counts = {"swing": 0, "capture": 0, "stabilize": 0}
-    stage_events: list[dict[str, Any]] = [{"time_seconds": 0.0, "stage": stage, "reason": "reset"}]
+    stage_events: list[dict[str, Any]] = []
+    if conditioning_steps > 0:
+        stage_events.append(
+            {
+                "time_seconds": 0.0,
+                "stage": "conditioning",
+                "reason": "settled_launch",
+                "conditioning_seconds": float(conditioning_steps * env.dt),
+            }
+        )
+    stage_events.append(
+        {
+            "time_seconds": float(conditioning_steps * env.dt),
+            "stage": stage,
+            "reason": "reset" if conditioning_steps == 0 else "conditioning_complete",
+        }
+    )
     best_any: dict[str, Any] | None = None
+    best_handoff: dict[str, Any] | None = None
     best_capture: dict[str, Any] | None = None
     best_funnel: dict[str, Any] | None = None
     done_events: list[dict[str, Any]] = []
-    max_cart_abs = 0.0
+    max_cart_abs = abs(float(env.data.qpos[0]))
     action_abs_max = 0.0
     selected_states: list[dict[str, Any]] = []
-    steps = min(env.max_steps, int(seconds / env.dt))
+    steps = min(max(0, env.max_steps - env.step_count), int(seconds / env.dt))
     final_info: dict[str, Any] = {}
     threshold = float(cfg["env"].get("success_upright_threshold", cfg["env"].get("reward", {}).get("upright_threshold", 0.10)))
 
@@ -181,23 +242,69 @@ def evaluate_controller(
         _, abs_angles = env._angles()
         max_abs_angle = float(np.max(np.abs(abs_angles)))
         hinge_rms = hinge_velocity_rms(env)
+        absolute_angular_velocity = np.cumsum(
+            np.asarray(env.data.qvel[1 : 1 + env.n], dtype=np.float64)
+        )
+        absolute_rate_rms = float(np.sqrt(np.mean(absolute_angular_velocity**2)))
         funnel_probability = 0.0
         funnel_ready = False
         if capture_funnel is not None:
             funnel_probability = capture_funnel.predict_probability(env.data.qpos, env.data.qvel)
             funnel_ready = funnel_probability >= capture_funnel.acceptance_threshold
         angle_ready = max_abs_angle <= capture_enter_angle
-        if stage == "swing" and t >= capture_min_time and (funnel_ready if capture_funnel is not None else angle_ready):
+        hinge_ready = capture_enter_hinge_rms is None or hinge_rms <= capture_enter_hinge_rms
+        absolute_rate_ready = (
+            capture_enter_absolute_rate_rms is None
+            or absolute_rate_rms <= capture_enter_absolute_rate_rms
+        )
+        cart_velocity_ready = (
+            capture_enter_cart_velocity is None
+            or abs(float(env.data.qvel[0])) <= capture_enter_cart_velocity
+        )
+        cart_position_ready = (
+            capture_enter_cart_abs is None
+            or abs(float(env.data.qpos[0])) <= capture_enter_cart_abs
+        )
+        capture_gate_ready = funnel_ready if capture_funnel is not None else angle_ready
+        capture_gate_ready = (
+            capture_gate_ready
+            and hinge_ready
+            and absolute_rate_ready
+            and cart_velocity_ready
+            and cart_position_ready
+        )
+        pre_handoff_row: dict[str, Any] | None = None
+        if stage == "swing" and t >= capture_min_time and capture_gate_ready:
+            pre_info = env._info()
+            pre_handoff_row = row_from_env(
+                env,
+                step=step,
+                stage="swing_handoff",
+                action=0.0,
+                reward=0.0,
+                info=pre_info,
+                time_offset_seconds=conditioning_steps * env.dt,
+            )
+            if capture_funnel is not None:
+                pre_handoff_row["capture_funnel_probability"] = float(funnel_probability)
+                pre_handoff_row["capture_funnel_domain_distance"] = float(
+                    capture_funnel.domain_distance(env.data.qpos, env.data.qvel)
+                )
+            if best_handoff is None or handoff_quality(
+                pre_handoff_row, float(cfg["env"]["rail_limit"])
+            ) < handoff_quality(best_handoff, float(cfg["env"]["rail_limit"])):
+                best_handoff = pre_handoff_row
             stage = "capture"
             stage_enter_time = t
             stage_events.append(
                 {
-                    "time_seconds": float(t),
+                    "time_seconds": float(conditioning_steps * env.dt + t),
                     "stage": stage,
-                    "reason": "capture_funnel" if capture_funnel is not None else "capture_enter_angle",
+                    "reason": "capture_funnel_and_state" if capture_funnel is not None else "capture_state_gate",
                     "max_abs_angle": max_abs_angle,
                     "hinge_velocity_rms": hinge_rms,
                     "x": float(env.data.qpos[0]),
+                    "cart_velocity": float(env.data.qvel[0]),
                     "capture_funnel_probability": float(funnel_probability),
                 }
             )
@@ -212,7 +319,7 @@ def evaluate_controller(
             stage_enter_time = t
             stage_events.append(
                 {
-                    "time_seconds": float(t),
+                    "time_seconds": float(conditioning_steps * env.dt + t),
                     "stage": stage,
                     "reason": "stabilize_gate",
                     "max_abs_angle": max_abs_angle,
@@ -238,24 +345,53 @@ def evaluate_controller(
         action_abs_max = max(action_abs_max, abs(float(action)))
         obs, reward, terminated, truncated, info = env.step([action])
         max_cart_abs = max(max_cart_abs, abs(float(info["x"])))
-        row = row_from_env(env, step=step + 1, stage=stage, action=action, reward=reward, info=info)
+        row = row_from_env(
+            env,
+            step=step + 1,
+            stage=stage,
+            action=action,
+            reward=reward,
+            info=info,
+            time_offset_seconds=conditioning_steps * env.dt,
+        )
         if capture_funnel is not None:
             row["capture_funnel_probability"] = capture_funnel.predict_probability(env.data.qpos, env.data.qvel)
             row["capture_funnel_domain_distance"] = capture_funnel.domain_distance(env.data.qpos, env.data.qvel)
         if (
             collect_states
-            and stage in {"capture", "stabilize"}
+            # Save the crossing state before the first capture action.  The
+            # downstream expert must be trained on the state actually handed
+            # over by the swing expert, not only on states after capture has
+            # already perturbed it.
+            and stage in {"swing", "capture", "stabilize"}
             and row["time_seconds"] >= state_min_time
             and row["max_abs_angle"] <= state_max_angle
             and (state_max_hinge_rms is None or row["hinge_velocity_rms"] <= state_max_hinge_rms)
+            and (
+                state_max_absolute_rate_rms is None
+                or row["absolute_angular_velocity_rms"] <= state_max_absolute_rate_rms
+            )
             and int(step + 1) % max(1, state_stride) == 0
         ):
             selected_states.append(row)
+        if (
+            collect_states
+            and pre_handoff_row is not None
+            and pre_handoff_row["time_seconds"] >= state_min_time
+            and pre_handoff_row["max_abs_angle"] <= state_max_angle
+            and (state_max_hinge_rms is None or pre_handoff_row["hinge_velocity_rms"] <= state_max_hinge_rms)
+            and (
+                state_max_absolute_rate_rms is None
+                or pre_handoff_row["absolute_angular_velocity_rms"] <= state_max_absolute_rate_rms
+            )
+            and int(step) % max(1, state_stride) == 0
+        ):
+            selected_states.append(pre_handoff_row)
         if best_any is None or handoff_quality(row, float(cfg["env"]["rail_limit"])) < handoff_quality(
             best_any, float(cfg["env"]["rail_limit"])
         ):
             best_any = row
-        if row["time_seconds"] >= capture_min_time:
+        if t >= capture_min_time:
             funnel_rank = (
                 row.get("capture_funnel_domain_distance", 0.0),
                 -row.get("capture_funnel_probability", 0.0),
@@ -278,7 +414,7 @@ def evaluate_controller(
             done_events.append(
                 {
                     "step": int(step + 1),
-                    "time_seconds": float((step + 1) * env.dt),
+                    "time_seconds": float(conditioning_steps * env.dt + (step + 1) * env.dt),
                     "terminated": bool(terminated),
                     "truncated": bool(truncated),
                     "success": bool(info.get("success", False)),
@@ -291,10 +427,13 @@ def evaluate_controller(
 
     env.close()
     assert best_any is not None
+    if best_handoff is None:
+        best_handoff = best_any
     if best_funnel is None:
         best_funnel = best_any
     best = best_capture or best_any
     best_quality = handoff_quality(best, float(cfg["env"]["rail_limit"]))
+    best_handoff_quality = handoff_quality(best_handoff, float(cfg["env"]["rail_limit"]))
     success = bool(final_info.get("success", False))
     max_streak = float(final_info.get("max_upright_streak_seconds", 0.0))
     ever_upright = final_info.get("time_to_first_upright") is not None
@@ -326,19 +465,22 @@ def evaluate_controller(
         "success": success,
         "ever_upright": bool(ever_upright),
         "capture_reached": bool(capture_reached),
+        "conditioning_seconds": float(conditioning_steps * env.dt),
         "simulated_steps": int(step + 1),
         "simulated_seconds": float((step + 1) * env.dt),
+        "total_simulated_seconds": float(conditioning_steps * env.dt + (step + 1) * env.dt),
+        "conditioning_state": conditioning_state,
         "stage_counts": stage_counts,
         "stage_events": stage_events,
         "max_cart_abs": float(max_cart_abs),
         "action_abs_max": float(action_abs_max),
-        "best_handoff": best,
+        "best_handoff": best_handoff,
         "best_any": best_any,
         "best_capture": best_capture,
         "best_funnel": best_funnel,
         "best_funnel_probability": best_funnel_probability,
         "best_funnel_domain_distance": best_funnel_domain_distance,
-        "best_handoff_quality": float(best_quality),
+        "best_handoff_quality": float(best_handoff_quality),
         "selected_states": selected_states,
         "done_events": done_events,
         "final_info": final_info,
@@ -351,6 +493,12 @@ def main() -> None:
     parser.add_argument("--progress", type=float, default=1.0)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--seconds", type=float, default=12.0)
+    parser.add_argument(
+        "--conditioning-seconds",
+        type=float,
+        default=0.0,
+        help="settled hanging-LQR launch before local swing time starts",
+    )
     parser.add_argument("--out", default="runs/swingup6_chain_search/search.json")
     parser.add_argument("--zero-noise", action="store_true")
     parser.add_argument("--capture-config", default=None)
@@ -361,6 +509,7 @@ def main() -> None:
     parser.add_argument("--state-min-time", type=float, default=0.0)
     parser.add_argument("--state-max-angle", type=float, default=0.60)
     parser.add_argument("--state-max-hinge-rms", type=float, default=None)
+    parser.add_argument("--state-max-absolute-rate-rms", type=float, default=None)
     parser.add_argument("--state-stride", type=int, default=1)
     parser.add_argument("--iterations", type=int, default=8)
     parser.add_argument("--population", type=int, default=16)
@@ -376,6 +525,10 @@ def main() -> None:
     parser.add_argument("--stabilize-enter-angle", type=float, default=0.15)
     parser.add_argument("--stabilize-enter-streak", type=float, default=0.02)
     parser.add_argument("--stabilize-hinge-rms", type=float, default=1.0)
+    parser.add_argument("--capture-enter-hinge-rms", type=float, default=None)
+    parser.add_argument("--capture-enter-absolute-rate-rms", type=float, default=None)
+    parser.add_argument("--capture-enter-cart-velocity", type=float, default=None)
+    parser.add_argument("--capture-enter-cart-abs", type=float, default=None)
     parser.add_argument("--lqr-control-cost", type=float, default=1000.0)
     parser.add_argument("--lqr-capture-scale", type=float, default=1.0)
     parser.add_argument("--lqr-stabilize-scale", type=float, default=1.0)
@@ -388,6 +541,8 @@ def main() -> None:
         raise ValueError("--population must be >= 1")
     if args.elites < 1 or args.elites > args.population:
         raise ValueError("--elites must be between 1 and --population")
+    if args.conditioning_seconds < 0.0:
+        raise ValueError("--conditioning-seconds must be nonnegative")
 
     cfg = apply_overrides(load_config(args.config), args.override)
     capture_model = None
@@ -404,6 +559,16 @@ def main() -> None:
 
     capture_gain = lqr_gain(cfg, progress=args.progress, fd_eps=args.fd_eps, control_cost=args.lqr_control_cost)
     stabilize_gain = capture_gain
+    conditioning_gain = (
+        hanging_lqr_gain(
+            cfg,
+            progress=args.progress,
+            fd_eps=args.fd_eps,
+            control_cost=args.lqr_control_cost,
+        )
+        if args.conditioning_seconds > 0.0
+        else None
+    )
     rng = np.random.default_rng(args.seed)
     knot_count = len(DEFAULT_KNOTS)
     center_controller = load_initial_controller(args.init_controller_json)
@@ -439,6 +604,7 @@ def main() -> None:
                 progress=args.progress,
                 seed=args.seed,
                 seconds=args.seconds,
+                conditioning_seconds=args.conditioning_seconds,
                 zero_noise=args.zero_noise,
                 swing_controller=controller,
                 capture_model=capture_model,
@@ -449,9 +615,14 @@ def main() -> None:
                 stabilize_enter_angle=args.stabilize_enter_angle,
                 stabilize_enter_streak=args.stabilize_enter_streak,
                 stabilize_hinge_rms=args.stabilize_hinge_rms,
+                capture_enter_hinge_rms=args.capture_enter_hinge_rms,
+                capture_enter_absolute_rate_rms=args.capture_enter_absolute_rate_rms,
+                capture_enter_cart_velocity=args.capture_enter_cart_velocity,
+                capture_enter_cart_abs=args.capture_enter_cart_abs,
                 lqr_capture_scale=args.lqr_capture_scale,
                 lqr_stabilize_scale=args.lqr_stabilize_scale,
                 funnel_distance_weight=args.funnel_distance_weight,
+                conditioning_gain=conditioning_gain,
             )
             records.append({"score": metrics["score"], "controller": controller, "metrics": metrics})
 
@@ -479,6 +650,9 @@ def main() -> None:
                 "best_handoff_quality": float(top_metrics["best_handoff_quality"]),
                 "best_handoff_angle": float(top_handoff["max_abs_angle"]),
                 "best_handoff_hinge_rms": float(top_handoff["hinge_velocity_rms"]),
+                "best_handoff_absolute_rate_rms": float(
+                    top_handoff.get("absolute_angular_velocity_rms", 0.0)
+                ),
                 "best_handoff_x": float(top_handoff["x"]),
                 "capture_reached": bool(top_metrics["capture_reached"]),
                 "best_funnel_probability": float(top_metrics["best_funnel_probability"]),
@@ -490,6 +664,7 @@ def main() -> None:
             f"streak={top_metrics['final_info'].get('max_upright_streak_seconds', 0.0):.3f}s "
             f"angle={top_handoff['max_abs_angle']:.6f} "
             f"hinge={top_handoff['hinge_velocity_rms']:.3f} "
+            f"abs_rate={top_handoff.get('absolute_angular_velocity_rms', 0.0):.3f} "
             f"x={top_handoff['x']:.3f} "
             f"funnel={top_metrics['best_funnel_probability']:.3f} "
             f"domain_distance={top_metrics['best_funnel_domain_distance']:.3f} "
@@ -518,9 +693,14 @@ def main() -> None:
             "population": int(args.population),
             "elites": int(args.elites),
             "seconds": float(args.seconds),
+            "conditioning_seconds": float(args.conditioning_seconds),
             "rail_target_limit": float(args.rail_target_limit),
             "sigma_decay": float(args.sigma_decay),
             "funnel_distance_weight": float(args.funnel_distance_weight),
+            "capture_enter_hinge_rms": args.capture_enter_hinge_rms,
+            "capture_enter_absolute_rate_rms": args.capture_enter_absolute_rate_rms,
+            "capture_enter_cart_velocity": args.capture_enter_cart_velocity,
+            "capture_enter_cart_abs": args.capture_enter_cart_abs,
         },
         "experts": {
             "swing": {"type": "searched_cart_position_pd"},
@@ -542,6 +722,7 @@ def main() -> None:
             progress=args.progress,
             seed=args.seed,
             seconds=args.seconds,
+            conditioning_seconds=args.conditioning_seconds,
             zero_noise=args.zero_noise,
             swing_controller=best["controller"],
             capture_model=capture_model,
@@ -552,13 +733,19 @@ def main() -> None:
             stabilize_enter_angle=args.stabilize_enter_angle,
             stabilize_enter_streak=args.stabilize_enter_streak,
             stabilize_hinge_rms=args.stabilize_hinge_rms,
+            capture_enter_hinge_rms=args.capture_enter_hinge_rms,
+            capture_enter_absolute_rate_rms=args.capture_enter_absolute_rate_rms,
+            capture_enter_cart_velocity=args.capture_enter_cart_velocity,
+            capture_enter_cart_abs=args.capture_enter_cart_abs,
             lqr_capture_scale=args.lqr_capture_scale,
             lqr_stabilize_scale=args.lqr_stabilize_scale,
             funnel_distance_weight=args.funnel_distance_weight,
+            conditioning_gain=conditioning_gain,
             collect_states=True,
             state_min_time=args.state_min_time,
             state_max_angle=args.state_max_angle,
             state_max_hinge_rms=args.state_max_hinge_rms,
+            state_max_absolute_rate_rms=args.state_max_absolute_rate_rms,
             state_stride=args.state_stride,
         )
         states = state_metrics.pop("selected_states")
@@ -571,6 +758,7 @@ def main() -> None:
                 "state_min_time": float(args.state_min_time),
                 "state_max_angle": float(args.state_max_angle),
                 "state_max_hinge_rms": args.state_max_hinge_rms,
+                "state_max_absolute_rate_rms": args.state_max_absolute_rate_rms,
                 "state_stride": int(args.state_stride),
             },
             "controller": best["controller"],

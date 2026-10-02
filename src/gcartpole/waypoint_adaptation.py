@@ -39,6 +39,7 @@ def adapt_route_to_waypoints(
     rail_soft_limit: float,
     rail_weight: float = 1_000.0,
     endpoint_tolerance: float = 0.05,
+    control_diff_step: float = 1e-4,
 ) -> WaypointAdaptationResult:
     """Retarget a route through short exact-model waypoint solves.
 
@@ -59,6 +60,7 @@ def adapt_route_to_waypoints(
         endpoint_weight,
         rail_soft_limit,
         endpoint_tolerance,
+        control_diff_step,
     ) <= 0.0:
         raise ValueError("counts, weights, rail limit, and tolerance must be positive")
     if min(control_regularization, rail_weight) < 0.0:
@@ -97,6 +99,10 @@ def adapt_route_to_waypoints(
             "args": (current.copy(), target.copy(), base.copy()),
             "bounds": (-1.0, 1.0),
             "jac": "2-point",
+            # The exact policy map casts actions to float32. A default
+            # float64-sized perturbation can leave the applied action
+            # unchanged, especially at the normalized force limits.
+            "diff_step": control_diff_step,
             "max_nfev": max_evaluations,
             "ftol": 1.0e-10,
             "xtol": 1.0e-10,

@@ -39,6 +39,13 @@ class CanonicalBenchmarkTests(unittest.TestCase):
         self.assertTrue(all(abs(value - 1.0 / 7.0) < 1e-12 for value in snapshot["masses"]))
         self.assertTrue(all(value == 0.0 for value in snapshot["frictionloss"]))
 
+    def test_canonical_xml_matches_released_fixture(self) -> None:
+        snapshot = benchmark_snapshot(self.cfg)
+        self.assertEqual(
+            snapshot["generated_xml_sha256"],
+            file_sha256(ROOT / "runs/swingup7_uniform/model.xml"),
+        )
+
     def test_rejects_training_wheels_and_wrong_plant(self) -> None:
         cfg = copy.deepcopy(self.cfg)
         cfg["env"]["rail_limit"] = 10.0

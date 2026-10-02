@@ -1,0 +1,109 @@
+{
+  "comparisons": [
+    {
+      "artifact": {
+        "bytes": 3263082,
+        "path": "runs/frontier_campaign_20261001/n12_precision80_residual_scvx_capture5s_full_horizon_penalty1e5_inexact_qp_iter20/result.json",
+        "sha256": "f05df267010fd5ce18759fa5a58437dd83010dd3911566d7e163a91e153a33ce"
+      },
+      "handoff_seconds": null,
+      "hold_seconds": 6.5200000000000005,
+      "length": 673,
+      "local_gap": 9.938657587194033e-08,
+      "max_cart_excursion": 3.055232438246438,
+      "name": "n12_precision80_residual_scvx_capture5s_full_horizon_penalty1e5_inexact_qp_iter20",
+      "physical_prefix_identical": null,
+      "success": false,
+      "termination": "rail_violation"
+    },
+    {
+      "artifact": {
+        "bytes": 4714407,
+        "path": "runs/frontier_campaign_20261001/n12_precision80_residual_scvx_full_horizon_handoff8_replay_unused_cost_removed/result.json",
+        "sha256": "b610d4275bff4583dbd2ef1ebbb777b7c9941d6f557f0775ef7ce521365a25b7"
+      },
+      "handoff_seconds": 8.0,
+      "hold_seconds": 23.5,
+      "length": 1500,
+      "local_gap": 9.938657587194033e-08,
+      "max_cart_excursion": 1.9138637559348224,
+      "name": "n12_precision80_residual_scvx_full_horizon_handoff8_replay_unused_cost_removed",
+      "physical_prefix_identical": true,
+      "success": true,
+      "termination": "time_limit"
+    },
+    {
+      "artifact": {
+        "bytes": 4837665,
+        "path": "runs/frontier_campaign_20261001/n12_precision80_residual_scvx_full_horizon_handoff9_replay/result.json",
+        "sha256": "e56688eddcc503503f25caab548bbc2bacff5e5842541e6da6c46212dd99d42f"
+      },
+      "handoff_seconds": 9.0,
+      "hold_seconds": 23.5,
+      "length": 1500,
+      "local_gap": 9.938657587194033e-08,
+      "max_cart_excursion": 1.9138637559348224,
+      "name": "n12_precision80_residual_scvx_full_horizon_handoff9_replay",
+      "physical_prefix_identical": true,
+      "success": true,
+      "termination": "time_limit"
+    },
+    {
+      "artifact": {
+        "bytes": 4955157,
+        "path": "runs/frontier_campaign_20261001/n12_precision80_residual_scvx_full_horizon_handoff10_replay/result.json",
+        "sha256": "7d12228c3e81e043cad71615713e3fff492d600ace9467c8db4ee58d20e84855"
+      },
+      "handoff_seconds": 10.0,
+      "hold_seconds": 23.5,
+      "length": 1500,
+      "local_gap": 9.938657587194033e-08,
+      "max_cart_excursion": 1.9138637559348224,
+      "name": "n12_precision80_residual_scvx_full_horizon_handoff10_replay",
+      "physical_prefix_identical": true,
+      "success": true,
+      "termination": "time_limit"
+    },
+    {
+      "artifact": {
+        "bytes": 5071556,
+        "path": "runs/frontier_campaign_20261001/n12_precision80_residual_scvx_full_horizon_handoff11_replay/result.json",
+        "sha256": "88cfe10a45c26801fd798d08d150f096f6603081b7dbdf650cee5334568c28e1"
+      },
+      "handoff_seconds": 11.0,
+      "hold_seconds": 23.5,
+      "length": 1500,
+      "local_gap": 9.938657587194033e-08,
+      "max_cart_excursion": 1.9138637559348224,
+      "name": "n12_precision80_residual_scvx_full_horizon_handoff11_replay",
+      "physical_prefix_identical": true,
+      "success": true,
+      "termination": "time_limit"
+    },
+    {
+      "artifact": {
+        "bytes": 5191096,
+        "path": "runs/frontier_campaign_20261001/n12_precision80_residual_scvx_full_horizon_handoff12_replay/result.json",
+        "sha256": "2f6ffcdfe55d4a4305ac43cd42f7d85d243c3f2230c11b498a3e6c1bc7d6e3e0"
+      },
+      "handoff_seconds": 12.0,
+      "hold_seconds": 23.5,
+      "length": 1500,
+      "local_gap": 9.938657587194033e-08,
+      "max_cart_excursion": 1.9138637559348224,
+      "name": "n12_precision80_residual_scvx_full_horizon_handoff12_replay",
+      "physical_prefix_identical": true,
+      "success": true,
+      "termination": "time_limit"
+    }
+  ],
+  "figure": {
+    "bytes": 153226,
+    "path": "runs/frontier_campaign_20261001/n12_precision80_scvx_full_horizon_handoff_recovery_report/earlier_handoff_physical_recovery.png",
+    "sha256": "06b4893cc2989c4acfc952bc07e68d9755a7be384f48f03595c22c5725df3477"
+  },
+  "generated_at": "2026-10-02T06:37:46+00:00",
+  "not_solution": true,
+  "note": "Same thirteen-second optimized source; shorter route retains all prefix controls, gains and physical states. The virtual source has nonzero gaps. A separately rebuilt candidate has zero gaps and complete noisy development gates.",
+  "reserved_twelve_seeds_used": false
+}

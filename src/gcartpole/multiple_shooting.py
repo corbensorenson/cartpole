@@ -205,6 +205,7 @@ def optimize_multiple_shooting(
             segment_steps=segment_steps,
             terminal_rows=terminal_factor_array.shape[0],
         ),
+        diff_step=np.r_[np.full(segments * nx, 1e-7), np.full(horizon_steps, 1e-4)],
         bounds=(lower, upper),
         x_scale="jac",
         tr_solver="lsmr",

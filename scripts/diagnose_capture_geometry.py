@@ -20,7 +20,7 @@ import numpy as np
 from scipy.linalg import solve_discrete_are
 
 from gcartpole.capture_terminal import feedback_horizon_metric
-from gcartpole.config import dump_json, load_config
+from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.env import NLinkCartPoleEnv, serial_absolute_angles, wrap_angle
 from gcartpole.evidence import (
     data_sha256,
@@ -720,6 +720,12 @@ def main() -> None:
         default=1.0,
         help="natural-time duration used to derive the optimizer-facing feedback metric",
     )
+    parser.add_argument(
+        "--override",
+        action="append",
+        default=[],
+        help="Override a resolved config value, for example env.frame_skip=1",
+    )
     parser.add_argument("--out", required=True)
     args = parser.parse_args()
     if not 0.0 <= args.progress <= 1.0:
@@ -738,7 +744,7 @@ def main() -> None:
         parser.error("capture-ray grid points must be >=2 and bisection steps >=0")
     config_path = Path(args.config)
     state_path = Path(args.state_json)
-    cfg = load_config(config_path)
+    cfg = apply_overrides(load_config(config_path), args.override)
     coordinate_transform = None
     coordinate_spec = None
     if args.coordinate_spec:

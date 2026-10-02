@@ -39,12 +39,16 @@ def validate_increment(source_spline, source_controller, cfg):
 
 
 def fddp_command(python, config, source, output, iterations, seed, *,
-                 defer_handoff=True, handoff_lyapunov=1800):
+                 defer_handoff=True, handoff_lyapunov=1800,
+                 terminal_weight=1e-14, initial_regularization=1e-6,
+                 rebuild_feedback=False, lqr_decimal_digits=0):
     command = [python, "scripts/search_fddp_capture.py", "--config", str(config),
             "--state-json", str(source), "--state-index", "selected", "--initial-controller", str(source),
             "--iterations", str(iterations), "--solver-verbose", "--continuous-angles",
             "--tracking-gain-scale", "1", "--lqr-scale", "1", "--lqr-control-cost", "1000",
-            "--terminal-weight", "1e-14", "--terminal-state-weight", "1000",
+            "--terminal-weight", str(terminal_weight), "--terminal-state-weight", "1000",
+            "--initial-regularization", str(initial_regularization),
+            "--lqr-decimal-digits", str(lqr_decimal_digits),
             "--terminal-angle-factor", "20", "--terminal-hinge-velocity-factor", "4",
             "--stage-weight", ".01", "--control-cost", ".01",
             "--rail-soft-limit", "2.85", "--rail-weight", "5000000",
@@ -54,6 +58,8 @@ def fddp_command(python, config, source, output, iterations, seed, *,
             "--seed", str(seed), "--out", str(output)]
     if defer_handoff:
         command.append("--defer-handoff-until-horizon")
+    if rebuild_feedback:
+        command += ["--rebuild-initial-feedback", "--initial-feasible"]
     return command
 
 
@@ -70,6 +76,8 @@ def main():
     parser.add_argument("--config", required=True)
     parser.add_argument("--source-spline", required=True)
     parser.add_argument("--source-controller", required=True)
+    parser.add_argument("--horizon-seconds", type=float,
+                        help="Optional swing duration; retime the transferred spline before discovery.")
     parser.add_argument("--out-directory", required=True)
     parser.add_argument("--inverse-evaluations", type=int, default=100)
     parser.add_argument("--fddp-iterations", type=int, default=100)
@@ -86,6 +94,11 @@ def main():
                         default=[5., 10., 25., 100., 1800.],
                         help="Bounded development-only capture thresholds tried after a feasible candidate fails.")
     parser.add_argument("--seed", type=int, default=20261015)
+    parser.add_argument("--terminal-value-coefficients", nargs="*", type=float,
+                        default=[.01, .01, 1.],
+                        help="Bounded recovery refinements on P after earlier recipes fail; pass no values to disable.")
+    parser.add_argument("--lqr-decimal-digits", type=int, default=0,
+                        help="Zero retains the standard design; >=30 opts into precision-checked gain/value design.")
     args = parser.parse_args()
     if min(args.inverse_evaluations, args.fddp_iterations, args.restoration_evaluations,
            args.restoration_lsmr_iterations) < 1:
@@ -94,10 +107,20 @@ def main():
         raise ValueError("positive finite capture threshold required")
     if any(not np.isfinite(value) or value <= 0 for value in args.handoff_threshold_grid):
         raise ValueError("capture threshold grid requires positive finite values")
+    if any(not np.isfinite(value) or value <= 0 for value in args.terminal_value_coefficients):
+        raise ValueError("terminal value coefficients must be finite and positive")
+    if args.lqr_decimal_digits != 0 and args.lqr_decimal_digits < 30:
+        raise ValueError("precision design requires zero or at least thirty digits")
     cfg = load_config(args.config)
     source_spline = json.loads(Path(args.source_spline).read_text())
     source_controller = json.loads(Path(args.source_controller).read_text())
     validate_increment(source_spline, source_controller, cfg)
+    horizon = (float(source_spline["controller"]["horizon_seconds"])
+               if args.horizon_seconds is None else args.horizon_seconds)
+    dt = cfg["env"]["timestep"] * cfg["env"]["frame_skip"]
+    if (not np.isfinite(horizon) or not 0 < horizon <= 25.
+            or not np.isclose(horizon/dt, round(horizon/dt), rtol=0., atol=1e-10)):
+        raise ValueError("swing duration must be positive, at most 25 seconds and aligned to control ticks")
     directory = Path(args.out_directory)
     directory.mkdir(parents=True, exist_ok=False)
     target_config = directory/"target.yaml"
@@ -110,6 +133,8 @@ def main():
                   note="Adjacent-count discovery with exact fixed hanging-start replay only. No noisy held-out gate, release promotion, or automated advancement beyond this count.")
     dump_json(record, journal)
     python = sys.executable
+    def refine_command(*arguments, **options):
+        return fddp_command(python, *arguments, lqr_decimal_digits=args.lqr_decimal_digits, **options)
 
     def run_stage(name, command, inputs):
         stage = directory/name
@@ -128,9 +153,10 @@ def main():
     try:
         transferred = run_stage("transfer", [python, "scripts/transfer_inverse_spline.py",
             "--config", str(target_config), "--source", args.source_spline,
+            "--seconds", str(horizon),
             "--out", str(directory/"transfer/result.json")], [target_config, args.source_spline])
         inverse = run_stage("inverse", [python, "scripts/search_inverse_spline.py", "--config", str(target_config),
-            "--seconds", str(source_spline["controller"]["horizon_seconds"]), "--initial-spline", str(transferred),
+            "--seconds", str(horizon), "--initial-spline", str(transferred),
             "--sample-dt", ".02", "--max-evaluations", str(args.inverse_evaluations),
             "--dynamics-residual", "acceleration", "--reference-weight", "1e-12", "--effort-weight", "1e-12",
             "--out", str(directory/"inverse/result.json")], [target_config, transferred])
@@ -139,7 +165,7 @@ def main():
             warm_start = run_stage("pre_restoration", restoration_command(python, target_config, inverse,
                 directory/"pre_restoration/result.json", args.restoration_evaluations,
                 args.restoration_lsmr_iterations), [target_config, inverse])
-        candidate = run_stage("fddp", fddp_command(python, target_config, warm_start,
+        candidate = run_stage("fddp", refine_command(target_config, warm_start,
             directory/"fddp/result.json", args.fddp_iterations, args.seed,
             defer_handoff=not args.state_gated_handoff,
             handoff_lyapunov=args.handoff_lyapunov), [target_config, warm_start])
@@ -148,7 +174,7 @@ def main():
             restored = run_stage("restoration", restoration_command(python, target_config, candidate,
                 directory/"restoration/result.json", args.restoration_evaluations,
                 args.restoration_lsmr_iterations), [target_config, candidate])
-            candidate = run_stage("restored_fddp", fddp_command(python, target_config, restored,
+            candidate = run_stage("restored_fddp", refine_command(target_config, restored,
                 directory/"restored_fddp/result.json", args.fddp_iterations, args.seed,
                 defer_handoff=not args.state_gated_handoff,
                 handoff_lyapunov=args.handoff_lyapunov), [target_config, restored])
@@ -156,7 +182,7 @@ def main():
         if (not exact_candidate_passed(data, cfg)
                 and data["controller"]["final_trajectory_diagnostics"]["is_feasible"]
                 and not args.state_gated_handoff and not args.no_handoff_recovery):
-            candidate = run_stage("state_capture_replay", fddp_command(python, target_config, candidate,
+            candidate = run_stage("state_capture_replay", refine_command(target_config, candidate,
                 directory/"state_capture_replay/result.json", args.fddp_iterations, args.seed,
                 defer_handoff=False, handoff_lyapunov=args.handoff_lyapunov)+["--replay-only"],
                 [target_config, candidate])
@@ -181,12 +207,30 @@ def main():
                     dump_json(record, journal)
                     continue
                 name = f"state_capture_grid_{index:02d}_replay"
-                candidate = run_stage(name, fddp_command(python, target_config, reference,
+                candidate = run_stage(name, refine_command(target_config, reference,
                     directory/name/"result.json", args.fddp_iterations, args.seed,
                     defer_handoff=False, handoff_lyapunov=args.handoff_lyapunov)
                     + ["--switch-lyapunov", str(threshold), "--replay-only"],
                     [target_config, reference])
                 data = json.loads(candidate.read_text())
+                if exact_candidate_passed(data, cfg):
+                    break
+        if not exact_candidate_passed(data, cfg):
+            # Restart from the useful repaired inverse curve, not a feasible
+            # route that already sacrificed capture. This bounded schedule
+            # records the recovery discovered at eleven as count-agnostic
+            # policy; it does not imply independent re-synthesis has passed.
+            reference = warm_start
+            for index, coefficient in enumerate(args.terminal_value_coefficients):
+                name = f"capture_value_refinement_{index:02d}"
+                candidate = run_stage(name, refine_command(target_config, reference,
+                    directory/name/"result.json", args.fddp_iterations, args.seed,
+                    defer_handoff=True, handoff_lyapunov=args.handoff_lyapunov,
+                    terminal_weight=coefficient*args.handoff_lyapunov,
+                    initial_regularization=1e-6 if index == 0 else 10.,
+                    rebuild_feedback=index >= 2), [target_config, reference])
+                data = json.loads(candidate.read_text())
+                reference = candidate
                 if exact_candidate_passed(data, cfg):
                     break
         passed = exact_candidate_passed(data, cfg)

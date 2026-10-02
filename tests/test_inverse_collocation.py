@@ -2,13 +2,14 @@ from pathlib import Path
 
 import mujoco
 import numpy as np
+import pytest
 from scipy.interpolate import BSpline
 
 from gcartpole.config import load_config
 from gcartpole.env import NLinkCartPoleEnv
 from gcartpole.inverse_collocation import SplineInverseProblem
 from scripts.search_inverse_spline import refine_saved_spline
-from scripts.transfer_inverse_spline import transfer_coefficients
+from scripts.transfer_inverse_spline import transfer_coefficients, retime_spline_knots
 
 
 def make_problem():
@@ -110,3 +111,26 @@ def test_spline_material_transfer_preserves_cart_and_constant_absolute_orientati
     mapped = transfer_coefficients(points, 11)
     np.testing.assert_array_equal(mapped[:, 0], points[:, 0])
     np.testing.assert_allclose(np.cumsum(mapped[:, 1:], axis=1), np.repeat(points[:, 1:2], 11, axis=1))
+
+
+def test_spline_retiming_preserves_geometry_and_scales_velocity_acceleration():
+    env, problem = make_problem()
+    knots, points = problem.knots, problem.unpack(problem.initial_values)
+    old = BSpline(knots, points, 5)
+    new_knots = retime_spline_knots(knots, 8., 10.)
+    new = BSpline(new_knots, points, 5)
+    times = np.linspace(0., 8., 101)
+    for order in (0, 1, 2):
+        np.testing.assert_allclose(new.derivative(order)(times*1.25),
+                                   old.derivative(order)(times)/1.25**order,
+                                   rtol=1e-12, atol=1e-12)
+    np.testing.assert_array_equal(retime_spline_knots(knots, 8., 8.), knots)
+    env.close()
+
+
+def test_spline_retiming_rejects_inconsistent_time_domains():
+    for knots, old, new in (([0., 1.], 2., 3.), ([0., float('nan')], 1., 2.),
+                            ([0., 1.], 1., 0.), ([0., 1.], 1., float('inf')),
+                            ([0., 1., .5], .5, 1.)):
+        with pytest.raises(ValueError):
+            retime_spline_knots(knots, old, new)

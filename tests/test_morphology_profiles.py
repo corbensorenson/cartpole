@@ -103,6 +103,35 @@ class ExplicitMorphologyProfileTests(unittest.TestCase):
         finally:
             logarithmic_middle.close()
 
+    def test_rigid_split_mass_floor_is_configurable_and_target_mass_is_preserved(self) -> None:
+        cfg = load_config(ROOT / "configs/swingup11_ghost_continuation_rail6.yaml")
+        default = NLinkCartPoleEnv(cfg, progress=0.0, seed=0)
+        floored_cfg = copy.deepcopy(cfg)
+        floored_cfg["env"]["rigid_split_mass_fraction"] = 1.0e-3
+        floored = NLinkCartPoleEnv(floored_cfg, progress=0.0, seed=0)
+        try:
+            # The floor changes only the numerical split representation. The
+            # cart-plus-chain mass must remain the same at the curriculum start.
+            self.assertAlmostEqual(
+                float(np.sum(default.model.body_mass)),
+                float(np.sum(floored.model.body_mass)),
+            )
+            self.assertNotAlmostEqual(
+                float(default.model.body_mass[-1]),
+                float(floored.model.body_mass[-1]),
+            )
+            self.assertIn('mass="1e-10"', default.xml)
+            self.assertIn('mass="1e-05"', floored.xml)
+        finally:
+            default.close()
+            floored.close()
+
+        for invalid in (0.0, -1.0e-3, 1.0001):
+            invalid_cfg = copy.deepcopy(cfg)
+            invalid_cfg["env"]["rigid_split_mass_fraction"] = invalid
+            with self.assertRaises(ValueError):
+                NLinkCartPoleEnv(invalid_cfg, progress=0.0, seed=0)
+
     def test_uniform_locked_stage_reaches_uniform_geometry_before_unlock(self) -> None:
         cfg = load_config(ROOT / "configs/swingup8_uniform_locked_morphology.yaml")
         start = NLinkCartPoleEnv(cfg, progress=0.0, seed=0)
