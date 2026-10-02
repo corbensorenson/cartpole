@@ -1,0 +1,102 @@
+{
+  "claim_status": "released_internal_canonical_frontier",
+  "evaluation": {
+    "exact20": {
+      "bytes": 174123,
+      "path": "runs/swingup14_uniform/eval_swingup14_exact20.json",
+      "sha256": "d54653a712e4db10c647bc112b920ebc83405ea155dcab7b25b86b835b5885dd"
+    },
+    "gate100": {
+      "bytes": 858915,
+      "path": "runs/swingup14_uniform/eval_swingup14_100.json",
+      "sha256": "9f4cfb200bf77e569ed452c19a6ac7000e7f8f85111fad3c1b6dbb6fc0521816"
+    },
+    "gate20": {
+      "bytes": 174172,
+      "path": "runs/swingup14_uniform/eval_swingup14_20.json",
+      "sha256": "d4e29a9847bd5f456f329f64f2b82a64c94f15af50a39dac1d331d2361d2af69"
+    },
+    "video_episode": {
+      "bytes": 3274669,
+      "path": "runs/swingup14_uniform/fourteen_link_video_episode.json",
+      "sha256": "8816bfa13688862c59c92f8162a7fa9c14d82ed4dc88f41285e52cdd463665cc"
+    }
+  },
+  "generated_at": "2026-10-02T10:34:27+00:00",
+  "limitations": [
+    "Internal repository benchmark; no external world-record claim.",
+    "Declared MuJoCo full-state initial-noise benchmark; hardware, sensor noise, delay and model mismatch are not evaluated.",
+    "Linear Riccati and Lyapunov checks are not nonlinear capture certificates."
+  ],
+  "method": "Shared material transfer from the accepted thirteen-link physical route; declared eight-second initializer retiming; 20 OSQP/legacy residual shooting iterations followed by 40 Clarabel/nonlinear-agreement iterations; earliest passing unchanged-prefix nine-second maintenance handoff; exact delivered-action physical rebuild; unchanged parked launch; frozen-source reserved validation at 50 Hz.",
+  "metrics": {
+    "exact20": {
+      "all_full_episode": true,
+      "episodes": 20,
+      "maximum_cart_excursion": 1.8630973918570881,
+      "minimum_hold": 8.16,
+      "seed_start": 214200,
+      "successes": 20
+    },
+    "gate100": {
+      "all_full_episode": true,
+      "episodes": 100,
+      "maximum_cart_excursion": 1.8631687146015137,
+      "minimum_hold": 8.16,
+      "seed_start": 214100,
+      "successes": 100
+    },
+    "gate20": {
+      "all_full_episode": true,
+      "episodes": 20,
+      "maximum_cart_excursion": 1.8631356272754112,
+      "minimum_hold": 8.16,
+      "seed_start": 214000,
+      "successes": 20
+    },
+    "video_episode": {
+      "all_full_episode": true,
+      "episodes": 1,
+      "maximum_cart_excursion": 1.8630833309480503,
+      "minimum_hold": 8.16,
+      "seed_start": 214500,
+      "successes": 1
+    }
+  },
+  "n_links": 14,
+  "not_solution": false,
+  "policy": {
+    "bytes": 27278,
+    "path": "runs/swingup14_uniform/fourteen_link_policy.json",
+    "sha256": "f30c75c89b1c85cc4d22e8b41a4fa8dac635c98ee29c4c999b6d4f57f07289af"
+  },
+  "reproduction": {
+    "commands": {
+      "bytes": 3787,
+      "path": "runs/swingup14_uniform/reserved_commands.json",
+      "sha256": "d52788e8aacbea3279324f7873e5c3921b7b83940786c3cc76d7f74d9df79f8c"
+    },
+    "focused_source_tests_passed": 119,
+    "fresh_clone": "runs/frontier_campaign_20261001/n14_release_fresh_clone",
+    "full_working_tree_tests_passed": 419,
+    "source_bundle": {
+      "bytes": 2573661,
+      "path": "runs/swingup14_uniform/fourteen_link_source.bundle",
+      "sha256": "23335958906e74f3f8d9752a93f3d03ad726113b8e8c494845d27bd803f5ddef"
+    },
+    "source_commit": "3277b4173a9333819bf35acb848e384f52a227ec",
+    "verifier": "scripts/verify_frontier_release.py"
+  },
+  "schema_version": 1,
+  "tuning_disclosure": "Development data selected synthesis and handoff parameters. Reserved cohorts remained unused until the policy and clean source commit were frozen. Independent automatic re-synthesis and arbitrary morphology generalization remain separate research gates.",
+  "video": {
+    "bytes": 808408,
+    "path": "runs/swingup14_uniform/fourteen_link_swingup_success.mp4",
+    "sha256": "26f93fd2ff0b87db2bd6e7e429b8d1d4d3169fbbc328bb3831e22ea35214b7c3"
+  },
+  "video_metadata": {
+    "bytes": 6025,
+    "path": "runs/swingup14_uniform/fourteen_link_swingup_success.video.json",
+    "sha256": "30615961c57b65049139ec99a94852dca323993ef1fc63462ce7caacac21c127"
+  }
+}

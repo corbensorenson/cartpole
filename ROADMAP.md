@@ -55,8 +55,9 @@ Proceed through these checkpoints:
    records, and publish a GitHub release for each new accepted count.
 
 Current campaign artifacts live in `runs/frontier_campaign_20261001/`.
-The active frontier is now **fourteen** after the complete thirteen-link bundle
-passed. Thirteen GitHub publication is in progress. Preparing higher-count configs or finding a component controller
+Fourteen has passed the complete canonical bundle and full video. Fifteen is
+the next research frontier after fourteen publication verification. Preparing
+higher-count configs or finding a component controller
 never advances a count. Earlier diagnostics below retain their claim status
 at the time they were performed.
 
@@ -1986,3 +1987,17 @@ pass. The source bundle, complete positive and negative synthesis evidence,
 controller and video are preserved under `runs/swingup13_uniform/`.
 Fourteen is active; its source is the accepted thirteen-link controller.
 The control rate remains 50 Hz. Higher counts must pass the same gates.
+
+
+Fourteen canonical promotion (2026-10-02): frozen source
+`3277b4173a9333819bf35acb848e384f52a227ec` passes reserved noisy 20/20,
+disjoint noisy 100/100, exact 20/20 and a held-out full video. All 141 episodes
+complete 1500 physical steps and hold for 8.16 s; maximum cart excursion is
+1.863169 m. All 419 publication-source tests and 119 focused frozen-source
+tests pass. The full video and all eleven-through-fourteen manifests verify.
+The eight-second initializer's nine-second delivered route succeeds under the
+unchanged 50 Hz benchmark, while the original nine-second and declared ten-
+and eleven-second alternatives fail. Complete negative evidence is preserved
+in the ledger and synthesis archive; the large archive is a release asset.
+Fifteen begins from the accepted fourteen physical controller. Each later
+count must satisfy the same frozen-source gates and video publication.

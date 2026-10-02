@@ -49,12 +49,18 @@ if '--sparse-capture-angle-limit' in command:
     del command[i:i+2]
 if '--enforce-rail-during-search' in command:
     command.remove('--enforce-rail-during-search')
+if '--recompute-tracking-feedback' in command:
+    command.remove('--recompute-tracking-feedback')  # Preserve the inherited gains in a handoff-only comparison.
+if '--export-tracking-value-factors' in command:
+    i = command.index('--export-tracking-value-factors')
+    del command[i:i+2]
 for flag in ('--capture-start-seconds', '--capture-stage-weight', '--capture-value-weight'):
     if flag not in command:
         continue
     i = command.index(flag)
     del command[i:i+2]  # Objective is unused when replaying inherited gains.
-command.append('--replay-only')
+if '--replay-only' not in command:
+    command.append('--replay-only')
 subprocess.run(['.conda-aligator/bin/python', 'scripts/run_frontier_experiment.py',
                 '--directory', str(out/'synthesis'), '--input', str(warm_path), '--input', str(source),
                 '--input', str(reference), '--', *command], check=True)

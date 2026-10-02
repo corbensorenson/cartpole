@@ -238,6 +238,7 @@ def execute_controller(
     phase_window: int = 12,
     continuous_angles: bool = False,
     lyapunov_factor: np.ndarray | None = None,
+    tracking_action_selector=None,
 ) -> dict[str, Any]:
     if not 0.0 <= float(progress) <= 1.0:
         raise ValueError("progress must be in [0, 1]")
@@ -256,6 +257,7 @@ def execute_controller(
         raise ValueError("phase window must be nonnegative")
     try:
         while not (terminated or truncated):
+            preview = None
             state = data_state(env.data)
             value = lyapunov_value(state, transform, lyapunov, factor=lyapunov_factor)
             minimum_value = min(minimum_value, value)
@@ -311,6 +313,8 @@ def execute_controller(
                 action = float(
                     np.clip(controls[step] + feedback_gains[step] @ error, -1.0, 1.0)
                 )
+                if tracking_action_selector is not None:
+                    action, preview = tracking_action_selector(step, coordinate_state.copy(), action)
                 mode = tracking_mode
             else:
                 action = lqr_action(env, gain, scale=lqr_scale, cart_target=0.0)
@@ -321,6 +325,8 @@ def execute_controller(
                 env, step=env.step_count, action=action, reward=reward, info=info
             )
             row["controller_mode"] = mode
+            if preview is not None:
+                row["tracking_preview"] = preview
             row["dimensionless_lyapunov_value"] = lyapunov_value(
                 data_state(env.data), transform, lyapunov, factor=lyapunov_factor
             )

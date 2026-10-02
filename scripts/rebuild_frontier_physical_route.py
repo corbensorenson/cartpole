@@ -46,6 +46,11 @@ command[command.index('--config')+1] = args.config
 command[command.index('--state-json')+1] = str(warm_path)
 command[command.index('--initial-controller')+1] = str(warm_path)
 command[command.index('--out')+1] = str(out/'synthesis/result.json')
+if '--recompute-tracking-feedback' in command:
+    command.remove('--recompute-tracking-feedback')  # Rebuild the delivered route while retaining its saved feedback.
+if '--export-tracking-value-factors' in command:
+    i = command.index('--export-tracking-value-factors')
+    del command[i:i+2]
 subprocess.run(['.conda-aligator/bin/python', 'scripts/run_frontier_experiment.py', '--directory', str(out/'synthesis'),
                 '--input', str(warm_path), '--input', str(source), '--input', str(reference), '--', *command], check=True)
 d = json.loads((out/'synthesis/result.json').read_text())
