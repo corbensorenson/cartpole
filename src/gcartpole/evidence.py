@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import importlib
 import importlib.metadata
 import json
 import platform
@@ -42,11 +43,18 @@ def text_sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def _package_version(name: str) -> str | None:
+def _package_version(name: str, *, module_fallback: str | None = None) -> str | None:
     try:
         return importlib.metadata.version(name)
     except importlib.metadata.PackageNotFoundError:
-        return None
+        if module_fallback is None:
+            return None
+        # Conda's Crocoddyl bindings can be importable without dist-info.
+        try:
+            version = getattr(importlib.import_module(module_fallback), "__version__", None)
+        except (ImportError, OSError):
+            return None
+        return version if isinstance(version, str) and version else None
 
 
 def runtime_metadata() -> dict[str, Any]:
@@ -60,6 +68,10 @@ def runtime_metadata() -> dict[str, Any]:
             "mlx": _package_version("mlx"),
             "numpy": _package_version("numpy"),
             "gymnasium": _package_version("gymnasium"),
+            "scipy": _package_version("scipy"),
+            "osqp": _package_version("osqp"),
+            "crocoddyl": _package_version("crocoddyl", module_fallback="crocoddyl"),
+            "mpmath": _package_version("mpmath"),
         },
     }
 

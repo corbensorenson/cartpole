@@ -7,6 +7,7 @@ import mujoco
 import numpy as np
 
 from gcartpole.env import NLinkCartPoleEnv, wrap_angle
+from gcartpole.simulation import advance_checked
 
 Array = np.ndarray
 
@@ -21,6 +22,7 @@ class QuadraticTrajectoryCost:
     rail_weight: float
     wrap_angles: bool = True
     terminal_target: Array | None = None
+    stage_target: Array | None = None
 
 
 @dataclass(frozen=True)
@@ -123,8 +125,16 @@ def data_state(data: mujoco.MjData) -> Array:
 
 
 class MujocoTransition:
-    def __init__(self, env: NLinkCartPoleEnv, coordinate_transform: Array | None = None) -> None:
+    def __init__(
+        self,
+        env: NLinkCartPoleEnv,
+        coordinate_transform: Array | None = None,
+        *,
+        continuous_angles: bool = False,
+    ) -> None:
         self.env = env
+        self.continuous_angles = bool(continuous_angles)
+        self.evaluations = 0
         self.data = mujoco.MjData(env.model)
         self.nx = int(env.model.nq + env.model.nv)
         self.coordinate_transform = (
@@ -144,7 +154,11 @@ class MujocoTransition:
         )
 
     def to_coordinates(self, physical_state: Array) -> Array:
-        physical = wrapped_state(physical_state, self.env.n)
+        physical = (
+            np.asarray(physical_state, dtype=np.float64).copy()
+            if self.continuous_angles
+            else wrapped_state(physical_state, self.env.n)
+        )
         if self.coordinate_transform is None:
             return physical
         return self.coordinate_transform @ physical
@@ -156,6 +170,8 @@ class MujocoTransition:
         return self.inverse_transform @ coordinates
 
     def difference(self, first: Array, second: Array) -> Array:
+        if self.continuous_angles:
+            return np.asarray(first, dtype=np.float64) - np.asarray(second, dtype=np.float64)
         if self.coordinate_transform is None:
             return state_difference(first, second, self.env.n)
         physical_first = self.to_physical(first)
@@ -168,6 +184,7 @@ class MujocoTransition:
         return self.coordinate_transform @ physical_delta
 
     def __call__(self, state: Array, action: float) -> Array:
+        self.evaluations += 1
         state = self.to_physical(state)
         nq = int(self.env.model.nq)
         policy_action = float(np.clip(np.asarray(action, dtype=np.float32), -1.0, 1.0))
@@ -176,8 +193,7 @@ class MujocoTransition:
         self.data.qvel[:] = state[nq:]
         self.data.ctrl[0] = policy_action * self.env.force_limit
         mujoco.mj_forward(self.env.model, self.data)
-        for _ in range(self.env.frame_skip):
-            mujoco.mj_step(self.env.model, self.data)
+        advance_checked(self.env.model, self.data, self.env.frame_skip)
         return self.to_coordinates(data_state(self.data))
 
     def linearize(
@@ -216,8 +232,9 @@ def _rail_cost_derivatives(x: float, cost: QuadraticTrajectoryCost) -> tuple[flo
 
 
 def stage_cost(state: Array, action: float, cost: QuadraticTrajectoryCost, n_links: int) -> float:
-    x = wrapped_state(state, n_links) if cost.wrap_angles else np.asarray(state, dtype=np.float64)
-    rail, _, _ = _rail_cost_derivatives(float(x[0]), cost)
+    state_x = wrapped_state(state, n_links) if cost.wrap_angles else np.asarray(state, dtype=np.float64)
+    x = state_x if cost.stage_target is None else state_x - np.asarray(cost.stage_target)
+    rail, _, _ = _rail_cost_derivatives(float(state_x[0]), cost)
     return float(
         0.5 * x @ cost.stage_state @ x
         + 0.5 * cost.control * float(action) ** 2
@@ -260,10 +277,11 @@ def _cost_derivatives(
     cost: QuadraticTrajectoryCost,
     n_links: int,
 ) -> tuple[Array, float, Array, float]:
-    x = wrapped_state(state, n_links) if cost.wrap_angles else np.asarray(state, dtype=np.float64)
+    state_x = wrapped_state(state, n_links) if cost.wrap_angles else np.asarray(state, dtype=np.float64)
+    x = state_x if cost.stage_target is None else state_x - np.asarray(cost.stage_target)
     lx = cost.stage_state @ x
     lxx = cost.stage_state.copy()
-    _, rail_gradient, rail_hessian = _rail_cost_derivatives(float(x[0]), cost)
+    _, rail_gradient, rail_hessian = _rail_cost_derivatives(float(state_x[0]), cost)
     lx[0] += rail_gradient
     lxx[0, 0] += rail_hessian
     return lx, cost.control * float(action), lxx, float(cost.control)

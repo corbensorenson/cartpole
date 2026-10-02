@@ -7,11 +7,12 @@ from typing import Any
 
 import mujoco
 import numpy as np
-from scipy.linalg import solve_discrete_are
 
 from gcartpole.config import apply_overrides, dump_json, load_config, save_config
 from gcartpole.evidence import data_sha256, git_metadata, runtime_metadata, utc_timestamp
 from gcartpole.env import NLinkCartPoleEnv
+from gcartpole.lqr_design import checked_discrete_lqr
+from gcartpole.simulation import advance_checked
 
 
 def finite_difference_dynamics(cfg: dict[str, Any], progress: float, eps: float) -> tuple[np.ndarray, np.ndarray]:
@@ -32,8 +33,7 @@ def finite_difference_dynamics(cfg: dict[str, Any], progress: float, eps: float)
     def step_map(x: np.ndarray, action_norm: float) -> np.ndarray:
         set_state(x)
         env.data.ctrl[0] = float(np.clip(action_norm, -1.0, 1.0)) * env.force_limit
-        for _ in range(env.frame_skip):
-            mujoco.mj_step(env.model, env.data)
+        advance_checked(env.model, env.data, env.frame_skip)
         return get_state()
 
     x0 = np.zeros(state_dim, dtype=np.float64)
@@ -139,8 +139,8 @@ def main() -> None:
     }
     q = absolute_angle_cost(n, q_weights)
     r = np.array([[float(args.control_cost)]], dtype=np.float64)
-    p = solve_discrete_are(a, b, q, r)
-    gain = np.linalg.solve(b.T @ p @ b + r, b.T @ p @ a).reshape(-1)
+    gain, _, lqr_diagnostics = checked_discrete_lqr(a, b, q, r)
+    gain = gain.reshape(-1)
     gain[0] += float(args.cart_position_gain_add)
     gain[n + 1] += float(args.cart_velocity_gain_add)
 
@@ -180,6 +180,7 @@ def main() -> None:
         "policy_scale": float(args.policy_scale),
         "cart_target": float(args.cart_target),
         "q_weights": q_weights,
+        "lqr_design_diagnostics": lqr_diagnostics,
         "cart_position_gain_add": float(args.cart_position_gain_add),
         "cart_velocity_gain_add": float(args.cart_velocity_gain_add),
         "state_gain": gain.astype(float).tolist(),

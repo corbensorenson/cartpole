@@ -6,6 +6,7 @@ from typing import Any
 import mujoco
 import numpy as np
 from mujoco import rollout as mujoco_rollout
+from .angles import wrap_angle
 
 
 Array = np.ndarray
@@ -170,7 +171,7 @@ class PredictiveSamplingPlanner:
         qvel = np.asarray(qvel, dtype=np.float64)
         if qpos.shape != (self.nq,) or qvel.shape != (self.nv,):
             raise ValueError("qpos or qvel does not match the planner model")
-        qpos[1:] = (qpos[1:] + np.pi) % (2.0 * np.pi) - np.pi
+        qpos[1:] = wrap_angle(qpos[1:])
         coordinates = self.transform @ np.r_[qpos, qvel]
         value = float(max(0.0, coordinates @ self.lyapunov @ coordinates))
         accepted = (
@@ -203,7 +204,7 @@ class PredictiveSamplingPlanner:
     def _coordinate_states(self, rollout_states: Array) -> tuple[Array, Array]:
         qpos = rollout_states[..., 1 : 1 + self.nq].copy()
         qvel = rollout_states[..., 1 + self.nq : 1 + self.nq + self.nv]
-        qpos[..., 1:] = (qpos[..., 1:] + np.pi) % (2.0 * np.pi) - np.pi
+        qpos[..., 1:] = wrap_angle(qpos[..., 1:])
         physical = np.concatenate((qpos, qvel), axis=-1)
         coordinates = np.einsum("ij,btj->bti", self.transform, physical)
         return coordinates, qpos[..., 0]

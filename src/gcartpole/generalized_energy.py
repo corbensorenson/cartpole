@@ -15,6 +15,7 @@ from gcartpole.generalized_modes import (
 )
 from gcartpole.generalized_solver import dimensionless_setup, setup_from_config
 from gcartpole.ilqr import MujocoTransition, data_state
+from gcartpole.lqr_design import checked_discrete_lqr
 
 
 def absolute_state_cost(n_links: int) -> np.ndarray:
@@ -46,19 +47,20 @@ def upright_lqr_gain(
     )
     state_cost = absolute_state_cost(env.n)
     input_cost = np.array([[float(control_cost)]], dtype=np.float64)
-    riccati = solve_discrete_are(state_matrix, input_matrix, state_cost, input_cost)
-    return np.linalg.solve(
-        input_matrix.T @ riccati @ input_matrix + input_cost,
-        input_matrix.T @ riccati @ state_matrix,
-    ).reshape(-1)
+    gain, _, _ = checked_discrete_lqr(state_matrix, input_matrix, state_cost, input_cost)
+    return gain.reshape(-1)
 
 
 def hanging_lqr_gain(
-    env: NLinkCartPoleEnv, *, control_cost: float = 1000.0
+    env: NLinkCartPoleEnv, *, control_cost: float = 1000.0,
+    cart_position_cost: float = 0.1, cart_velocity_cost: float = 0.1,
 ) -> np.ndarray:
     """Compute an exact local regulator without wrapping across the pi branch."""
 
     n = env.n
+    if any(not np.isfinite(value) or value <= 0.0 for value in
+           (control_cost, cart_position_cost, cart_velocity_cost)):
+        raise ValueError("hanging regulator costs must be finite and positive")
     d = n + 1
     state_size = 2 * d
     equilibrium = np.zeros(state_size, dtype=np.float64)
@@ -88,6 +90,8 @@ def hanging_lqr_gain(
         :, None
     ] / (2.0 * epsilon)
     state_cost = absolute_state_cost(n)
+    state_cost[0, 0] = float(cart_position_cost)
+    state_cost[d, d] = float(cart_velocity_cost)
     input_cost = np.array([[float(control_cost)]], dtype=np.float64)
     riccati = solve_discrete_are(state_matrix, input_matrix, state_cost, input_cost)
     gain = np.linalg.solve(
@@ -124,14 +128,49 @@ class EnergySwingParameters:
     collective_modal_gain: float = 0.0
     internal_modal_damping_gain: float = 0.0
     modal_acceleration_limit_ratio: float = 2.0
+    coherence_position_gain: float = 0.0
+    coherence_velocity_gain: float = 0.0
+    coherence_correction_weight: float = 0.0
+    coherence_acceleration_limit_ratio: float = 2.0
+    coherence_gate_energy_error: float = 0.0
+    vcl_position_gain: float = 0.0
+    vcl_velocity_gain: float = 0.0
+    vcl_correction_weight: float = 0.0
+    vcl_acceleration_limit_ratio: float = 2.0
+    vcl_gate_energy_error: float = 0.0
+    vcl_pump_gain: float = 0.0
+    vcl_phase_gain: float = 0.0
+    vcl_rate_gain: float = 0.0
     enter_angle: float = 0.20
     enter_absolute_rate_ratio: float = 0.67
     enter_cart_velocity_ratio: float = 0.14
     lqr_control_cost: float = 10.0
     lqr_scale: float = 1.0
 
-    def to_dict(self) -> dict[str, float]:
-        return {key: float(value) for key, value in asdict(self).items()}
+    def to_dict(self, *, include_extensions: bool = False) -> dict[str, float]:
+        values = asdict(self)
+        if not include_extensions:
+            values = {
+                key: values[key]
+                for key in (
+                    "energy_gain",
+                    "cart_position_gain",
+                    "cart_velocity_gain",
+                    "kick_acceleration_ratio",
+                    "kick_frequency_ratio",
+                    "kick_duration_ratio",
+                    "kick_phase",
+                    "collective_modal_gain",
+                    "internal_modal_damping_gain",
+                    "modal_acceleration_limit_ratio",
+                    "enter_angle",
+                    "enter_absolute_rate_ratio",
+                    "enter_cart_velocity_ratio",
+                    "lqr_control_cost",
+                    "lqr_scale",
+                )
+            }
+        return {key: float(value) for key, value in values.items()}
 
 
 def chain_energy_features(env: NLinkCartPoleEnv) -> dict[str, float]:
@@ -187,6 +226,191 @@ def force_for_desired_cart_acceleration(
         + mass_matrix[0, 1:] @ joint_acceleration
         + generalized_bias[0]
     )
+
+
+def _vcl_state(
+    absolute_angles: np.ndarray,
+    absolute_rates: np.ndarray,
+    lengths: np.ndarray,
+    masses: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Return tail virtual-composite-link angles, rates, and weights.
+
+    VCL ``i`` is the center-of-mass vector of links ``i..n`` measured from
+    joint ``i``.  The construction is deliberately kinematic: it gives the
+    controller a recursive shape coordinate for every distal sub-chain while
+    the live MuJoCo mass matrix supplies the exact acceleration response.
+    """
+
+    angles = np.asarray(absolute_angles, dtype=np.float64)
+    rates = np.asarray(absolute_rates, dtype=np.float64)
+    lengths = np.asarray(lengths, dtype=np.float64)
+    masses = np.asarray(masses, dtype=np.float64)
+    n_links = int(angles.size)
+    joint_positions = np.zeros((n_links + 1, 2), dtype=np.float64)
+    joint_velocities = np.zeros((n_links + 1, 2), dtype=np.float64)
+    com_positions = np.zeros((n_links, 2), dtype=np.float64)
+    com_velocities = np.zeros((n_links, 2), dtype=np.float64)
+    for index in range(n_links):
+        direction = np.asarray(
+            [np.sin(angles[index]), np.cos(angles[index])], dtype=np.float64
+        )
+        direction_rate = np.asarray(
+            [
+                np.cos(angles[index]) * rates[index],
+                -np.sin(angles[index]) * rates[index],
+            ],
+            dtype=np.float64,
+        )
+        com_positions[index] = joint_positions[index] + 0.5 * lengths[index] * direction
+        com_velocities[index] = (
+            joint_velocities[index] + 0.5 * lengths[index] * direction_rate
+        )
+        joint_positions[index + 1] = joint_positions[index] + lengths[index] * direction
+        joint_velocities[index + 1] = (
+            joint_velocities[index] + lengths[index] * direction_rate
+        )
+
+    vcl_angles = np.zeros(n_links, dtype=np.float64)
+    vcl_rates = np.zeros(n_links, dtype=np.float64)
+    weights = np.zeros(n_links, dtype=np.float64)
+    for index in range(n_links):
+        tail_mass = max(float(np.sum(masses[index:])), 1e-12)
+        vector = np.sum(
+            masses[index:, None]
+            * (com_positions[index:] - joint_positions[index]),
+            axis=0,
+        ) / tail_mass
+        velocity = np.sum(
+            masses[index:, None]
+            * (com_velocities[index:] - joint_velocities[index]),
+            axis=0,
+        ) / tail_mass
+        radius_squared = max(float(vector @ vector), 1e-12)
+        vcl_angles[index] = float(np.arctan2(vector[0], vector[1]))
+        vcl_rates[index] = float(
+            (vector[1] * velocity[0] - vector[0] * velocity[1]) / radius_squared
+        )
+        weights[index] = tail_mass * np.sqrt(radius_squared)
+    weights /= max(float(np.sum(weights)), 1e-12)
+    return vcl_angles, vcl_rates, weights
+
+
+def vcl_coherence_acceleration(
+    env: NLinkCartPoleEnv,
+    base_acceleration: float,
+    *,
+    position_gain: float,
+    velocity_gain: float,
+    correction_weight: float = 1.0,
+    max_correction_ratio: float = 2.0,
+) -> tuple[float, dict[str, float]]:
+    """Project tail-composite-link damping through the cart input channel.
+
+    This is a cart-pole adaptation of the virtual-composite-link idea: the
+    target is not each raw hinge angle, but the orientation and rate of every
+    distal composite mass.  The one available cart acceleration is chosen by a
+    weighted least-squares projection, then bounded before it is converted to
+    force.  It is a discovery primitive and must be validated by exact replay.
+    """
+
+    if min(position_gain, velocity_gain, correction_weight, max_correction_ratio) < 0.0:
+        raise ValueError("VCL gains and bounds must be nonnegative")
+    setup = setup_from_config(env.cfg, progress=env.plant_progress)
+    relative_angles = wrap_angle(np.asarray(env.data.qpos[1:], dtype=np.float64))
+    absolute_angles = serial_absolute_angles(relative_angles)
+    absolute_rates = np.cumsum(np.asarray(env.data.qvel[1:], dtype=np.float64))
+    lengths = np.asarray(env.morphology.lengths, dtype=np.float64)
+    masses = np.asarray(env.morphology.masses, dtype=np.float64)
+    vcl_angles, vcl_rates, weights = _vcl_state(
+        absolute_angles, absolute_rates, lengths, masses
+    )
+    angle_error = wrap_angle(vcl_angles)
+
+    mass_matrix = np.zeros((env.model.nv, env.model.nv), dtype=np.float64)
+    mujoco.mj_fullM(env.model, mass_matrix, env.data.qM)
+    generalized_bias = np.asarray(
+        env.data.qfrc_bias - env.data.qfrc_passive, dtype=np.float64
+    )
+    joint_mass = mass_matrix[1:, 1:]
+
+    def absolute_acceleration(cart_acceleration: float) -> np.ndarray:
+        joint = np.linalg.solve(
+            joint_mass,
+            -generalized_bias[1:] - mass_matrix[1:, 0] * float(cart_acceleration),
+        )
+        return np.cumsum(joint)
+
+    zero_acceleration = absolute_acceleration(0.0)
+    response_acceleration = absolute_acceleration(1.0) - zero_acceleration
+    response_rate = _vcl_state(
+        absolute_angles,
+        response_acceleration,
+        lengths,
+        masses,
+    )[1]
+    zero_rate = _vcl_state(
+        absolute_angles,
+        zero_acceleration,
+        lengths,
+        masses,
+    )[1]
+    # The position-dependent part of VCL rate acceleration is the directional
+    # derivative of its kinematic rate along the current angular velocity.
+    epsilon = 1.0e-6
+    rate_plus = _vcl_state(
+        absolute_angles + epsilon * absolute_rates,
+        absolute_rates,
+        lengths,
+        masses,
+    )[1]
+    rate_minus = _vcl_state(
+        absolute_angles - epsilon * absolute_rates,
+        absolute_rates,
+        lengths,
+        masses,
+    )[1]
+    drift = (rate_plus - rate_minus) / (2.0 * epsilon)
+    predicted = drift + zero_rate + response_rate * float(base_acceleration)
+    desired = (
+        -float(position_gain) * angle_error / (setup.natural_time**2)
+        - float(velocity_gain) * vcl_rates / setup.natural_time
+    )
+    residual = desired - predicted
+    denominator = float(weights @ (response_rate**2))
+    raw_correction = 0.0
+    if denominator > 1.0e-12:
+        raw_correction = float(weights @ (response_rate * residual) / denominator)
+    limit = float(max_correction_ratio * setup.gravity)
+    correction = float(np.clip(correction_weight * raw_correction, -limit, limit))
+    return float(base_acceleration + correction), {
+        "vcl_angle_rms": float(np.sqrt(weights @ (angle_error**2))),
+        "vcl_rate_rms_ratio": float(
+            np.sqrt(weights @ (vcl_rates**2)) * setup.natural_time
+        ),
+        "vcl_acceleration_correction_ratio": float(correction / setup.gravity),
+    }
+
+
+def vcl_phase_features(
+    env: NLinkCartPoleEnv,
+) -> tuple[float, float]:
+    """Return weighted VCL phase and natural-time-scaled phase rate."""
+
+    setup = setup_from_config(env.cfg, progress=env.plant_progress)
+    relative_angles = wrap_angle(np.asarray(env.data.qpos[1:], dtype=np.float64))
+    absolute_angles = serial_absolute_angles(relative_angles)
+    absolute_rates = np.cumsum(np.asarray(env.data.qvel[1:], dtype=np.float64))
+    lengths = np.asarray(env.morphology.lengths, dtype=np.float64)
+    masses = np.asarray(env.morphology.masses, dtype=np.float64)
+    vcl_angles, vcl_rates, weights = _vcl_state(
+        absolute_angles, absolute_rates, lengths, masses
+    )
+    phase = float(weights @ np.sin(vcl_angles))
+    phase_rate = float(
+        weights @ (np.cos(vcl_angles) * vcl_rates) * setup.natural_time
+    )
+    return phase, phase_rate
 
 
 def modal_coherence_acceleration(
@@ -357,6 +581,88 @@ class GeneralizedEnergyController:
             acceleration_ratio += modal_ratio
             modal_diagnostics["limited_modal_acceleration_ratio"] = modal_ratio
         desired_acceleration = self.setup.gravity * float(acceleration_ratio)
+        vcl_phase_diagnostics: dict[str, object] = {}
+        if (
+            self.parameters.vcl_pump_gain != 0.0
+            or self.parameters.vcl_phase_gain != 0.0
+            or self.parameters.vcl_rate_gain != 0.0
+        ):
+            vcl_phase, vcl_phase_rate = vcl_phase_features(env)
+            vcl_acceleration_ratio = (
+                self.parameters.vcl_pump_gain
+                * features["energy_error"]
+                * vcl_phase_rate
+                + self.parameters.vcl_phase_gain * vcl_phase
+                + self.parameters.vcl_rate_gain * vcl_phase_rate
+            )
+            desired_acceleration += self.setup.gravity * float(vcl_acceleration_ratio)
+            vcl_phase_diagnostics = {
+                "vcl_phase": float(vcl_phase),
+                "vcl_phase_rate_ratio": float(vcl_phase_rate),
+                "vcl_pump_acceleration_ratio": float(vcl_acceleration_ratio),
+            }
+        coherence_diagnostics: dict[str, object] = {}
+        if (
+            self.parameters.coherence_correction_weight > 0.0
+            and (
+                self.parameters.coherence_position_gain > 0.0
+                or self.parameters.coherence_velocity_gain > 0.0
+            )
+        ):
+            coherence_gate = 1.0
+            if self.parameters.coherence_gate_energy_error > 0.0:
+                coherence_gate = float(
+                    np.clip(
+                        (
+                            self.parameters.coherence_gate_energy_error
+                            - abs(float(features["energy_error"]))
+                        )
+                        / self.parameters.coherence_gate_energy_error,
+                        0.0,
+                        1.0,
+                    )
+                )
+            desired_acceleration, coherence_diagnostics = modal_coherence_acceleration(
+                env,
+                desired_acceleration,
+                position_gain=self.parameters.coherence_position_gain,
+                velocity_gain=self.parameters.coherence_velocity_gain,
+                correction_weight=(
+                    self.parameters.coherence_correction_weight * coherence_gate
+                ),
+                max_correction_ratio=self.parameters.coherence_acceleration_limit_ratio,
+            )
+            coherence_diagnostics["coherence_gate"] = coherence_gate
+        vcl_diagnostics: dict[str, object] = {}
+        if (
+            self.parameters.vcl_correction_weight > 0.0
+            and (
+                self.parameters.vcl_position_gain > 0.0
+                or self.parameters.vcl_velocity_gain > 0.0
+            )
+        ):
+            vcl_gate = 1.0
+            if self.parameters.vcl_gate_energy_error > 0.0:
+                vcl_gate = float(
+                    np.clip(
+                        (
+                            self.parameters.vcl_gate_energy_error
+                            - abs(float(features["energy_error"]))
+                        )
+                        / self.parameters.vcl_gate_energy_error,
+                        0.0,
+                        1.0,
+                    )
+                )
+            desired_acceleration, vcl_diagnostics = vcl_coherence_acceleration(
+                env,
+                desired_acceleration,
+                position_gain=self.parameters.vcl_position_gain,
+                velocity_gain=self.parameters.vcl_velocity_gain,
+                correction_weight=self.parameters.vcl_correction_weight * vcl_gate,
+                max_correction_ratio=self.parameters.vcl_acceleration_limit_ratio,
+            )
+            vcl_diagnostics["vcl_gate"] = vcl_gate
         force = force_for_desired_cart_acceleration(env, desired_acceleration)
         action = float(np.clip(force / env.force_limit, -1.0, 1.0))
         return action, {
@@ -364,5 +670,8 @@ class GeneralizedEnergyController:
             "mode": self.mode,
             "desired_acceleration_ratio": float(acceleration_ratio),
             "unclipped_action": float(force / env.force_limit),
+            **vcl_phase_diagnostics,
             **modal_diagnostics,
+            **coherence_diagnostics,
+            **vcl_diagnostics,
         }

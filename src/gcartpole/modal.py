@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import numpy as np
 from scipy.linalg import eig, schur, solve_discrete_lyapunov
+from .angles import wrap_angle
 
 
 @dataclass(frozen=True)
@@ -100,7 +101,7 @@ def dimensionless_wrapped_state(
         raise ValueError("qpos and qvel must be equal-length vectors")
     if transform.shape != (state_size, state_size):
         raise ValueError("transform shape does not match qpos and qvel")
-    qpos[1:] = (qpos[1:] + np.pi) % (2.0 * np.pi) - np.pi
+    qpos[1:] = wrap_angle(qpos[1:])
     return transform @ np.r_[qpos, qvel]
 
 

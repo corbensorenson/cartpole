@@ -1,6 +1,26 @@
-# 10-Link Cart-Pole Record: Reset-Free Swing-Up and Hold
+# 11-Link Cart-Pole: Reset-Free Swing-Up and Hold
 
-> **A single bounded cart force swings up and holds 7, 8, 9, and 10 passive serial links from noisy hanging starts on a finite rail.**
+> **A single bounded cart force swings up and holds 7 through 11 passive serial links from noisy hanging starts on a finite rail.**
+
+October 1, 2026: eleven links passed the internal canonical noisy `20/20`
+and disjoint `100/100` gates, exact `20/20`, and a reset-free 30-second
+held-out video at the unchanged 50 Hz, ±80 N and ±3 m rail. Every accepted
+episode holds upright for 7.50 seconds. The frozen eleven source bundle,
+evidence and full video are included here. Twelve
+is the next frontier in the campaign through twenty.
+
+[Watch eleven](runs/swingup11_uniform/eleven_link_swingup_success.mp4) ·
+[Experiment appendix](docs/eleven_link_swingup_paper.md) ·
+[Manifest](runs/swingup11_uniform/eleven_link_swingup_manifest.json) ·
+[Clean source bundle](runs/swingup11_uniform/eleven_link_source.bundle)
+
+<p align="center">
+  <a href="runs/swingup11_uniform/eleven_link_swingup_success.mp4">
+    <img src="assets/eleven-link-swingup.gif" alt="Eleven-link canonical noisy hanging-start swing-up followed by a 7.5-second upright hold" width="760">
+  </a>
+</p>
+
+[Download the eleven-link release and full video](https://github.com/corbensorenson/cartpole/releases/tag/eleven-link-canonical-20261001).
 
 <p align="center">
   <strong><a href="output/pdf/seven_to_ten_link_swingup_paper.pdf">Read the consolidated 7-10 link technical paper (PDF)</a></strong>
@@ -66,7 +86,8 @@ negative controls, manifests, and reproduction commands are public.
 
 | Result | Noisy 20-episode gate | Disjoint noisy 100-episode gate | Held-out video | Method |
 |---|---:|---:|---|---|
-| **10 links — highest released count** | **20/20** | **100/100** | [MP4](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4) | [paper](docs/seven_link_swingup_paper.md) |
+| **11 links — highest verified internal count, local bundle** | **20/20** | **100/100** | [MP4](runs/swingup11_uniform/eleven_link_swingup_success.mp4) | [appendix](docs/eleven_link_swingup_paper.md) |
+| **10 links — frozen public predecessor** | **20/20** | **100/100** | [MP4](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4) | [paper](docs/seven_link_swingup_paper.md) |
 | **9 links** | **20/20** | **100/100** | [MP4](runs/generalized_solver/nine_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |
 | **8 links** | **20/20** | **100/100** | [MP4](runs/generalized_solver/eight_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |
 | **7 links** | **20/20** | **100/100** | [MP4](runs/swingup7_uniform/seven_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |
@@ -183,8 +204,8 @@ handoff. See the [nine-link method paper](docs/nine_link_swingup_paper.md).
 ## The ten-link record extension
 
 The same settled-launch, feedback-route, and delayed-capture architecture now
-passes the repository's uniform ten-link benchmark. This is the highest
-verified internal result in the project, not a claim about an external
+passes the repository's uniform ten-link benchmark. This remains the frozen
+public predecessor to the new local eleven-link result, not a claim about an external
 competition record.
 
 | Benchmark property | Result |
@@ -462,13 +483,13 @@ make that promotion boundary inspectable. The newer
 and [exact replay](runs/generalized_solver/n3_unequal_p036214_exact1.json) keep
 the continuing deterministic frontier separate from the robust claim.
 
-## Next frontier: eleven links
+## Next frontier: twelve links
 
-Ten links has passed the repository's internal evidence bundle. The next
-active frontier is **eleven links**, and it must use the same discipline: start
+Eleven links has passed the repository's internal evidence bundle. The next
+active frontier is **twelve links**, and it must use the same discipline: start
 hanging, apply the settled-cart launch, swing with saved feedback, capture in
 the same episode, and pass fresh exact and noisy gates on the canonical rail.
-The ten-link route is a warm start for target-plant re-optimization, not a
+The eleven-link route is a warm start for target-plant re-optimization, not a
 literal dimension-lifted controller. Earlier transfer, tail-search, and
 training-wheel artifacts remain preserved as negative controls in the
 experiment ledger.
@@ -479,8 +500,8 @@ experiment ledger.
 - [`docs/ten_link_swingup_paper.md`](docs/ten_link_swingup_paper.md)
 - [`ROADMAP.md`](ROADMAP.md)
 
-The project advances one link only after the same evidence bundle passes. Ten
-links is the highest verified internal benchmark; eleven links is now the
+The project advances one link only after the same evidence bundle passes. Eleven
+links is the highest verified internal benchmark; twelve links is now the
 active frontier. The provisional public record claim remains scoped to the
 frozen ten-link benchmark; no broader universal record is claimed.
 

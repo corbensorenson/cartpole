@@ -12,6 +12,7 @@ from gcartpole.ilqr import (
     stage_cost,
     terminal_cost,
 )
+from gcartpole.simulation import SimulationError
 
 try:
     import crocoddyl
@@ -48,6 +49,7 @@ class MujocoActionModel(crocoddyl.ActionModelAbstract):
         self.terminal = bool(terminal)
         self.state_epsilon = float(state_epsilon)
         self.action_epsilon = float(action_epsilon)
+        self.invalid_transition_count = 0
         self.u_lb = np.asarray([-1.0], dtype=np.float64)
         self.u_ub = np.asarray([1.0], dtype=np.float64)
 
@@ -65,7 +67,17 @@ class MujocoActionModel(crocoddyl.ActionModelAbstract):
             )
             return
         action = float(np.asarray(control, dtype=np.float64)[0])
-        data.xnext[:] = self.transition(state, action)
+        try:
+            data.xnext[:] = self.transition(state, action)
+        except SimulationError:
+            # Reject an invalid line-search trial. Raising through the Python
+            # binding aborts the whole solver instead of trying a smaller
+            # step. Infinity prevents this placeholder transition being
+            # accepted; final candidate replay still uses checked dynamics.
+            self.invalid_transition_count += 1
+            data.xnext[:] = state
+            data.cost = np.inf
+            return
         data.cost = stage_cost(
             state, action, self.trajectory_cost, self.transition.env.n
         )

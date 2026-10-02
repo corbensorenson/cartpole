@@ -1,16 +1,17 @@
 # Levers And Pitfalls
 
-This is the living experiment ledger for the seven-link and arbitrary-`n`
-program. It records what was tried, the exact mechanism, the observed result,
-and the decision that follows. It is development evidence, not benchmark
-completion evidence. Canonical claims still require the verifier and artifacts
-listed in `ROADMAP.md`.
+This is the living experiment ledger and working playbook for the seven-link
+and arbitrary-`n` program. It records what was tried, the exact mechanism, the
+observed result, and the decision that follows. It is development evidence, not
+benchmark completion evidence. Canonical claims still require the verifier and
+artifacts listed in `ROADMAP.md`.
 
 ## Operating Goal
 
-Solve the canonical uniform seven-link MuJoCo cart-pole from the hanging
-initial distribution, swing it up, capture it, and hold it upright for the
-required horizon. The dependency order is:
+Solve the canonical uniform cart-pole at the active frontier, currently eleven
+links, from the hanging initial distribution, swing it up, capture it, and
+hold it upright for the required horizon. Promote one link at a time only
+after the full evidence contract passes. The dependency order is:
 
 1. Maintain an upright seven-link chain from exact upright and progressively
    larger disturbances.
@@ -20,11 +21,11 @@ required horizon. The dependency order is:
    without resetting or overwriting simulator state.
 
 The public six-link result is a calibration target, not the project endpoint.
-The current active frontier is eleven links. The same evidence contract applies
-at every rung: hanging-start launch, saved real-state feedback route,
-reset-free capture, noisy 20/100 gates, exact replay, and inspectable video.
-The seven-link result remains the reference release; ten links is now the
-highest verified internal result and eleven links is the next experiment.
+The same evidence contract applies at every rung: hanging-start launch, saved
+real-state feedback route, reset-free capture, noisy 20/100 gates, exact
+replay, and inspectable video. The seven-link result remains the reference
+release; ten links is the highest verified internal result, and eleven links is
+the active experiment.
 
 ## Literature Transfer
 
@@ -2107,6 +2108,16 @@ against the ten-link release or a proof that eleven links is impossible.
 The next experiment must shape the newly inserted mode before it reaches the
 capture phase, then remove every lock and wider-rail allowance before a claim.
 
+The current-release re-run is recorded separately in
+`runs/generalized_solver/n11_from_current_n10_pipeline.json`. It used the
+published ten-link route, the same `16.0 s` parked launch, a dimension-lifted
+11-link transfer, and an 80-iteration exact target-plant Box-FDDP refinement.
+The transfer replay was `0/5` on held-out target-plant seeds. Refinement
+stopped after `8` iterations with `min_v=7.666e6`, terminal
+`v=5.787e15`, and a live `3.004 m` rail exit. The pipeline correctly stopped
+before packaging a route or running a gate. This is the current eleven-link
+frontier, not a promotion and not evidence that the ten-link release regressed.
+
 ## Independent Ten-Link Release Audit (2026-09-14)
 
 The frozen ten-link release was replayed in a fresh process using the recorded
@@ -2185,6 +2196,80 @@ is not a P1 pass because the policy has not reached `p=1.0`, the frozen 1000-
 state test split has not passed, and successful rail safety is still not
 established.
 
+## Exact Six-Link Discovery Route (2026-09-14)
+
+The saved mirrored six-link Box-FDDP route was replayed from the canonical
+hanging distribution with an exact MuJoCo hanging-LQR conditioning phase. A
+new evaluator, `scripts/evaluate_global_discovery_route.py`, keeps route
+selection in isolated forward predictions but executes the selected route,
+capture LQR, and stabilization in one live episode. The four held-out seeds
+`90001` through `90004` all reached the five-second hold requirement on the
+`+/-3 m` rail, with full `qpos`/`qvel`/action traces and `post_launch_reset_count
+= 0` in `runs/goal_global_discovery/global_route_evidence.json`.
+
+This closes the narrow global-discovery feasibility checkpoint. It does not
+close P1: the route starts after a 15-second conditioning phase and is not a
+reusable capture policy for the frozen synthetic envelope. It also does not
+close P2 or P3. The existing negative local-capture results remain relevant:
+launching the route before internal hinge rates are quiet causes rail loss,
+and direct full-envelope LQR, linear MPC, nonlinear MPC, open-loop CEM, and
+simple gain scaling did not recover the hard states.
+
+Reproduction command:
+
+```text
+PYTHONPATH=src:scripts ./.conda-aligator/bin/python scripts/evaluate_global_discovery_route.py --config configs/swingup6_uniform.yaml --controller runs/generalized_solver/n6_rail300_route.json --controller runs/generalized_solver/n6_rail300_route_mirror.json --episodes 4 --seed 90001 --conditioning-seconds 15 --tracking-gain-scale 1.0 --phase-window 12 --hold-seconds 5 --out runs/goal_global_discovery/global_route_evidence.json --fail-on-gate
+```
+
+The same route was then replayed for 100 disjoint seeds with trace storage
+disabled but measured handoffs retained in
+`runs/goal_global_discovery/global_route_100_handoff_evidence.json`. It scored
+`100/100` live successes, `100/100` five-second holds, and `100/100`
+independent capture-expert replays. Every episode ended by the time limit and
+the measured handoff relative-rate RMS stayed between `0.0017907` and
+`0.0017911 rad/s`. This cohort is useful for the next capture/swing teacher
+loop, but it is not a P1 pass: the launch includes the route's 15-second
+hanging conditioning phase and the P1 envelope is still not solved at
+`progress=1.0`.
+
+The measured handoffs are exported as
+`runs/swingup6_policy_handoff/route_handoffs_100.json` with disjoint `80/10/10`
+train/validation/test membership. Each row preserves the source seed, route
+choice, exact `qpos/qvel`, handoff time, absolute-link rate metrics, and the
+independent capture replay result. The exporter records the artifact as
+`not_solution`; it is a real-state training dataset, not a replacement for
+the frozen P1 envelope or a claim that conditioning can be hidden inside a
+capture expert.
+
+**Reverse-time route diagnostic (2026-09-14).** The saved swing route was
+reversed with velocities sign-flipped, controls reversed, and the feedback
+coordinates transformed accordingly, then replayed from five full-scale
+near-upright P1 states with phase windows `0/2/6/12`. All trials exited the
+canonical rail before reaching a controlled hanging state. This rejects the
+time-reversed route as a down-swing recovery method; it did not provide a
+shorter alternative to passive settling.
+
+**Shared endpoint feedback search (2026-09-14).** A common `tanh`-squashed
+full-state law over cart state, absolute angles/rates, relative angles/rates
+was optimized against eight full-scale held-out endpoint states for twelve
+exact-MuJoCo CEM iterations. The best law achieved `0/8` sustained successes
+and `5/8` rail exits in the ten-second diagnostic. The stationary linear
+feature family is rejected as the capture expert; the artifact is
+`runs/p1_capture_shared_feedback_endpoint8.json`.
+
+**Shortened launch and recovery diagnostic (2026-09-14).** The saved exact
+six-link route still passed `8/8` noisy hanging-start episodes after reducing
+the hanging-LQR prelude from `15 s` to `4 s` (`runs/goal_global_discovery/
+global_route_cond4_8.json`). This is useful for the eventual episode budget,
+but it does not generalize to the P1 envelope. On the first 32 frozen P1 test
+states, a reset-free four-second recovery followed by route selection produced
+`0/32` successes and `32/32` rail exits. A passive cart-centering fall with
+gains `(0.1, 0.05)` also produced `0/32`; higher gains only increased internal
+rates and rail exposure. The detailed diagnostics are under
+`runs/goal_global_discovery/p1_fall_route_cond4_test32.json` and
+`p1_fall_route_pd_*_test32.json`. The shorter launch is accepted as a route
+optimization, while passive fall-to-route is rejected as a P1 recovery expert.
+
 Artifacts:
 
 - `runs/swingup6_capture_validation_lqr_scale13_fullgate_0001/checkpoints/frontier.safetensors`
@@ -2229,3 +2314,3057 @@ Artifacts:
 - `runs/p1_capture_envelope/eval_lqr_saturation_switch_p00595_validation256.json`
 - `runs/p1_capture_envelope/eval_lqr_saturation_switch999_p00595_validation256.json`
 - `runs/p1_capture_envelope/eval_lqr_tanh_p00595_validation256.json`
+
+## Eleven-Link Count-Continuation Playbook (2026-09-15)
+
+The 11-link campaign is now constrained to the same settled launch, saved
+time-varying swing feedback, measured terminal capture, and sustained-hold
+method used for the 7-10 link development releases. No 11-link claim is
+permitted until the canonical hanging-start, exact/noisy episode gates,
+reset-free video, hashes, and independent replay all pass.
+
+The first locked-split route audit found two bookkeeping hazards. The custom
+`scripts/embed_locked_split_route.py` diagnostic duplicated the distal source
+hinge rate at both sides of the inserted joint; that is not the physical
+locked split, whose new internal joint starts at zero rate. The algebraic lift
+in `scripts/generalized_swingup_solver.py split` was therefore used for the
+controlled run because it preserves the source route and feedback exactly.
+The adaptive driver also screened its baseline and release replays with
+`tracking_gain=0`, which silently converted the two-expert controller into a
+feedforward waveform. `scripts/run_split_count_homotopy.py` now preserves the
+configured tracking gain for those screens.
+
+The corrected locked-start route is a real development success: the exact
+11-coordinate locked split reproduces a `22.12 s` hold with a `2.023 m` peak
+cart excursion on the `+/-3 m` rail. It is not an 11-link result because the
+last internal joint remains locked and the two half-links are not yet the
+uniform target chain.
+
+The first release probe keeps the route unchanged while freezing the plant at
+each morphology progress value. The inherited route passes through
+`p=0.000017` with the same `22.12 s` hold and `2.023 m` peak cart excursion;
+raw replay fails between `p=0.000017` and `p=0.000018`, then reaches the rail
+after only `0.28-2.0 s` for `p=0.000018-0.0001`. Reconditioning from the
+stable locked route with Box-FDDP recovered full `22.12 s` holds at
+`p=0.000018`, `0.000020`, `0.000025`, and `0.000035-0.000039`, with peak cart
+excursions near `2.070-2.071 m`. The same repair failed at `p=0.000040` and
+`p=0.000050`. The current development frontier is therefore the accepted
+`p=0.000039` checkpoint, not a canonical 11-link solve.
+
+Current decision rules:
+
+- Keep the last complete-hold controller as the incumbent at every release
+  step; never promote a terminally quiet but rail-unsafe trajectory.
+- Use logarithmic or bisected release steps near the measured `4.0e-5`
+  boundary. Directly transferring a repaired controller between nearby
+  frozen plants was unstable, so controller transfer and morphology transfer
+  must be reconditioned together from the stable locked seed.
+- Treat a locked split, wider rail, ghost link, altered mass/length gradient,
+  or diagnostic hold as a curriculum instrument only. None can update the
+  public link count.
+- When an unlocked uniform 11-link controller finally passes exact replay,
+  run the full 20/100 noisy gates, held-out video, manifest/hash audit, paper,
+  README/About update, and public push before starting 12 links.
+
+Primary artifacts:
+
+- `runs/generalized_solver/n11_locked_split_warm_start.json`
+- `runs/generalized_solver/n11_locked_split_algebraic_replay.json`
+- `runs/generalized_solver/n11_algebraic_split_release_probe/`
+- `runs/generalized_solver/n11_algebraic_split_release_probe/p3.90e-05_fddp_from_locked.json`
+
+The current campaign has not solved 11 links. The playbook remains the
+controlling record for what was tried, what passed, what failed, and which
+intermediate states are admissible as the next incumbent.
+
+### Follow-up continuation diagnostics
+
+The next bridge experiments narrowed the failure modes further:
+
+- The linear lock-impedance path was not a bridge. Replay-only release failed
+  at `p=0.01` and `p=0.05`; Box-FDDP repairs from the stable locked seed also
+  failed immediately with MuJoCo instability warnings. Do not interpret a
+  linear spring/damper schedule as a smoother version of the logarithmic
+  locked split.
+- A geometry-first path kept the final split locked while changing only the
+  embedded lengths and masses toward uniform 11-link geometry. Its first
+  nonzero trial at `p=0.0125` failed replay and both local repairs, with peak
+  cart motion at the rail and numerical-instability warnings. This means the
+  current issue is not only the equality release; even the rigid-split
+  geometry perturbation has a very narrow basin.
+- The supported-unlock ramp using unit-scale stiffness and `0.01` damping
+  produced an invalid all-zero trace after MuJoCo instability warnings. Its
+  apparent 30-second holds are rejected as a numerical-collapse false
+  positive, and the support curriculum is not evidence for 11 links.
+
+The current defensible development frontier remains the logarithmic rigid-split
+route at `p=3.90e-05`, which holds for 22.12 seconds but is not uniform 11-link
+evidence. Any next curriculum must preserve a nonzero, physically evolving
+trace, retain the exact rail constraint, and pass an independent replay before
+it can replace that incumbent.
+
+### Forced split-position and numerical-integrity follow-up
+
+To test whether the location of the inserted split was the limiting factor, the
+corrected adapter was forced to split the locked route at links `1`, `3`, `5`,
+`7`, `9`, and `10`. Positions `7`, `9`, and `10` reproduce the real locked
+`22.12 s` development hold at `p=0`; positions `1`, `3`, and `5` do not. This
+only maps the locked-route basin. Release attempts from the successful
+positions still failed at the first useful nonzero values (`p=0.001` and then
+successively bisected values), so there is no evidence that choosing a better
+split position has widened the uniform-chain basin.
+
+The adapter itself is now physically conservative: an inserted internal hinge
+starts with zero rate, and the source split angle/rate feedback is projected
+onto the proximal target coordinate instead of being duplicated onto both sides
+of the split. Older forced-split artifacts made with the duplicating adapter
+must not be used as evidence.
+
+Two additional checks closed a verification gap. A `rail=12` ghost-link route
+still became unstable at `p=0.00003`, and a damping-only support curriculum
+reported apparent holds only because MuJoCo had already collapsed the simulated
+state to zeros after instability warnings. `scripts/run_generalized_homotopy.py`
+now requires finite, dimensionally correct, physically evolving traces that
+start near the declared selected state and rejects long zero-collapse suffixes.
+The previously reported damping-only holds are therefore explicitly rejected.
+
+The playbook rule is now: a continuation result is admissible only when the
+numerical-integrity gate, the rail/hold gate, and independent replay all pass.
+This prevents a solver warning from being promoted as a new link count.
+
+Additional artifacts:
+
+- `runs/generalized_solver/n11_forced_split_link7_homotopy/`
+- `runs/generalized_solver/n11_forced_split_link9_homotopy/`
+- `runs/generalized_solver/n11_ghost_continuation_rail12.yaml`
+- `runs/generalized_solver/n11_locked_damped_support_homotopy/`
+- `scripts/embed_locked_split_route.py`
+- `scripts/run_generalized_homotopy.py`
+- `tests/test_generalized_homotopy.py`
+
+### Standardized locked-route continuation audit (2026-09-15)
+
+The corrected continuation driver was rerun from the exact locked 11-link
+baseline with the same acceptance settings used for the current development
+route: `lqr_scale=1`, full feedback tracking, finite-trace integrity checks,
+the canonical `rail=3` constraint, and independent replay/FDDP passes. The
+exact locked baseline passed with a `22.12 s` hold and `2.023 m` maximum cart
+excursion, confirming that the audit itself can reproduce the incumbent.
+
+The first accepted release was only `p=0.00003125`, with a real `22.12 s`
+hold and `2.0704 m` maximum cart excursion. The neighboring release attempts
+at `p=0.0000625`, `0.000046875`, `0.000039063`, `0.000035156`, and
+`0.000033203` all failed by rail violation despite reconditioning. The
+continuation therefore reached a narrow locked-route frontier below the
+previous `p=0.000039` checkpoint; it did not produce an unlocked, uniform
+11-link controller.
+
+This audit is admissible development evidence because the accepted trace is
+finite, starts near the selected state, remains physically nonzero, passes the
+rail/hold gate, and is independently replayed. It is not a public release:
+the canonical 11-link system still has no exact 20/100 noisy-episode result,
+reset-free held-out video, or public evidence bundle. Keep the README and
+GitHub About at 10 links until those gates pass.
+
+Primary audit record:
+
+- `runs/generalized_solver/n11_locked_split_homotopy_retry/continuation.json`
+- `runs/generalized_solver/n11_locked_split_homotopy_retry/trials/trial_0006_p0.000031250_pass1.json`
+- `runs/generalized_solver/n11_locked_split_homotopy_retry/trials/trial_0006_p0.000031250_pass2.json`
+
+### Rail-margin unlock probe (2026-09-15)
+
+The rail hypothesis was tested with the same locked-split controller and
+release schedule, but with the rail staged from `6.0` to the canonical `3.0`
+as the final split unlocked. The exact locked baseline passed on the six-unit
+rail for `22.12 s` with `2.023 m` maximum cart excursion. The first four
+release attempts (`p=0.001`, `0.0005`, `0.00025`, and `0.000125`) all failed
+with finite, non-collapsed traces; the cart reached `6.02-6.14 m` and exited
+the expanded rail before capture. The run was stopped after this bracket
+because the failure was already at the first unlock, not at the rail
+contraction endpoint.
+
+Conclusion: more rail is useful as a diagnostic margin and confirms that the
+locked route itself is not rail-limited, but it does not supply the missing
+feedback transfer across the first unlocked split. Do not describe this as an
+11-link result or continue spending compute on the same rail-only variation
+without changing the controller handoff or curriculum coordinate.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_locked_split_rail6_to3_continuation.yaml`
+- `runs/generalized_solver/n11_locked_split_rail6_to3_homotopy/continuation.json`
+
+### Free-chain two-expert capture probe (2026-09-15)
+
+To test the proposed swing-up/capture split directly, 24 handoff states were
+extracted from the best split-route trajectory after `7.0 s`, filtered to
+`max_angle <= 0.20`, hinge and absolute-rate RMS below `0.75`, cart position
+within `1.5 m`, and cart speed below `0.5`. These are real visited positions,
+not synthetic upright samples. A reset-free two-mode affine CEM actor was then
+optimized on the exact uniform 11-link target for `4.0 s` per state.
+
+The search achieved zero full successes on every iteration and every state.
+The best candidates produced only brief `0.20-0.56 s` upright windows before
+the free distal mode diverged; the final evaluation also had zero successes.
+This isolates the capture expert as an unresolved problem: the split-route
+controller can create a quiet handoff on its assisted plant, but that handoff
+does not transfer to the free uniform plant. The result is diagnostic only and
+cannot be used for a link-count claim.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_p39_low_momentum_handoff_states.json`
+- `runs/generalized_solver/n11_uniform_capture_mixture_from_p39.json`
+- `runs/generalized_solver/n11_uniform_from_p39_fddp100.json`
+
+### Split-mass-floor and ghost-damping probes (2026-09-15)
+
+The rigid-split XML path now exposes the bounded development-only lever
+`env.rigid_split_mass_fraction`. While a split is locked, the numerical child
+bodies retain this fraction of the aggregate group mass instead of using the
+previous `1e-8` floor. The released target plant is unchanged: the floor is
+irrelevant when the split lock and morphology continuation reach the canonical
+uniform endpoint, and the total cart-plus-chain mass is preserved at every
+stage. The default remains `1e-8`.
+
+The lever was tested on the real `p=3e-5` ghost handoff route with floors from
+`1e-6` through `1e-1`. None produced a complete capture. Floors from `1e-6` to
+`1e-4` reached at most `0.70 s` of upright streak before a finite physical
+rail violation at approximately `6.03-6.09 m`; larger floors reduced the
+streak further, and `0.1` also produced an unstable rail exit. This is a
+negative result for the numerical mass-floor hypothesis, not evidence that
+the canonical plant is solved.
+
+The same handoff was replayed with added distal damping from `0.001` through
+`0.03`, with and without unit stiffness. These variants also reached at most
+`0.70 s` before rail exit near `6.03 m`; damping `0.1` and the stiff variant
+went numerically unstable and are rejected by the trace-integrity gate.
+
+Decision: retain the mass floor as a controlled diagnostic because it makes the
+lock-to-free representation explicit and testable, but do not promote it as a
+capture method. The next experiment must improve the feedback handoff itself
+and must use real saved swing states, exact canonical dynamics, finite evolving
+traces, the physical rail, and independent replay. The playbook rule remains:
+every new lever gets a named configuration, an artifact, a failure or pass
+metric, and a disposition before the next lever is changed.
+
+Artifacts:
+
+- `src/gcartpole/mjxml.py` (`rigid_split_mass_fraction`)
+- `runs/generalized_solver/n11_ghost_p3e-5_floor_f1e-6.json`
+- `runs/generalized_solver/n11_ghost_p3e-5_floor_f1e-4.json`
+- `runs/generalized_solver/n11_ghost_p3e-5_floor_f1e-3.json`
+- `runs/generalized_solver/n11_ghost_p3e-5_floor_f1e-2.json`
+- `runs/generalized_solver/n11_ghost_p3e-5_floor_f5e-2.json`
+- `runs/generalized_solver/n11_ghost_p3e-5_floor_f1e-1.json`
+- `runs/generalized_solver/n11_ghost_p3e-5_d001_replay.json`
+- `runs/generalized_solver/n11_ghost_p3e-5_d003_replay.json`
+- `runs/generalized_solver/n11_ghost_p3e-5_d01_replay.json`
+- `runs/generalized_solver/n11_ghost_p3e-5_d03_replay.json`
+- `runs/generalized_solver/n11_ghost_p3e-5_d1_replay.json`
+- `runs/generalized_solver/n11_ghost_p3e-5_d03k1_replay.json`
+- `runs/generalized_solver/n11_ghost_p3e-5_d1k1_replay.json`
+
+### Real-handoff PPO capture probe (2026-09-15)
+
+The next inherited-method test trained a bounded Torch PPO capture policy on
+the exact uniform 11-link target, initialized only from 26 real states visited
+by the `p=3e-5` ghost swing route. The states were filtered to `t=8.0-8.6 s`,
+`max_angle <= 0.20`, hinge and absolute-rate RMS `<= 0.75`, cart position
+within `1.0 m`, and cart speed within `1.0 m/s`; their hinge coordinates were
+wrapped into `[-pi, pi)` without changing `qvel`. The canonical rail stayed at
+`+/-3 m`, and the run used one uninterrupted 12-second episode per state.
+
+The `600`-update run remained finite and produced real, nonzero traces. Its
+best checkpoint improved the selected-state transient to a `0.28 s` maximum
+upright streak, but the independent all-state replay scored `0/26` successes.
+Every state reached an upright crossing, yet the mean maximum upright streak
+was only `0.204 s` (range `0.16-0.28 s`), the mean maximum cart excursion was
+`2.62 m`, and the run ended in rail violations or time limits. This is a
+stronger learned local response than the affine CEM probe, but it is still not
+a capture/stabilize expert and cannot be joined to the swing route.
+
+The PPO run initially exposed a runtime reproducibility pitfall: the bundled
+MuJoCo environment is Python 3.12 while the prior helper assumed a mixed
+Python version. `scripts/torch_runtime.py` now imports system NumPy/PyTorch
+first and appends the matching Python 3.12 MuJoCo site-packages afterward,
+avoiding the duplicate OpenMP initialization that aborted the first attempt.
+
+Decision: do not promote the PPO checkpoint. The result says the difficulty
+is not merely discovering an upright crossing; the policy needs a stability-
+preserving representation or a staged maintenance/capture teacher that
+keeps the distal modes inside a viable basin. The next run must retain the
+real-state bank, exact target dynamics, finite-trace gate, and independent
+all-state replay while changing the capture architecture explicitly.
+
+Artifacts:
+
+- `configs/swingup11_capture_real_handoff.yaml`
+- `runs/generalized_solver/n11_p3e-5_real_capture_states.json`
+- `runs/generalized_solver/n11_capture_real_handoff_ppo/train_log.csv`
+- `runs/generalized_solver/n11_capture_real_handoff_ppo/checkpoints/best.pt`
+- `runs/generalized_solver/n11_capture_real_handoff_ppo/checkpoints/best.meta.json`
+- `runs/generalized_solver/n11_capture_real_handoff_ppo/eval_all_26.json`
+- `scripts/extract_trajectory_states.py`
+- `scripts/torch_runtime.py`
+
+### Frozen-start maintenance curriculum probe (2026-09-15)
+
+Before attempting another swing/capture handoff, the maintenance prerequisite
+was isolated with `configs/swingup11_ghost_maintenance_ppo_frozenstart.yaml`.
+The actor was held at its zero-output initialization during the exact upright
+stage so that the gate measured the known equilibrium, not accidental PPO
+drift. It passed that diagnostic stage on `8/8` episodes with an `8.02 s`
+upright streak and then advanced to the first nonzero morphology/noise stage,
+`progress=0.025`.
+
+The policy never passed that first nonzero stage in `600` updates. The held-out
+evaluation was `0/8` at updates `150`, `200`, `250`, `300`, `350`, `400`,
+`450`, `500`, `550`, and `600`; the final evaluation return was `88.2` but
+success remained `0.00`. Rollouts became less negative late in training, but
+that shaped-return improvement did not produce a sustained upright state. A
+zero-action probe at the same stage also scored `0/8`, so the failure is a real
+active-stabilization requirement rather than a bookkeeping artifact.
+
+Decision: do not advance the morphology curriculum and do not treat the exact
+upright gate as a maintenance solve. The current PPO observation/action
+representation can preserve the trivial equilibrium but has no demonstrated
+robust basin at the first disturbed stage. The next maintenance or capture
+experiment must add an explicit stabilizing teacher, residual/teacher policy,
+or another named feedback representation, and must retain the `0.025` held-out
+gate, finite-trace checks, canonical rail, and independent replay. The
+playbook rule is unchanged: a curriculum checkpoint is evidence only for the
+exact stage and state distribution it actually passes.
+
+Artifacts:
+
+- `configs/swingup11_ghost_maintenance_ppo_frozenstart.yaml`
+- `runs/generalized_solver/n11_ghost_maintenance_ppo_frozenstart/train_log.csv`
+- `runs/generalized_solver/n11_ghost_maintenance_ppo_frozenstart/checkpoints/update_000600.pt`
+- `runs/generalized_solver/n11_ghost_maintenance_ppo_frozenstart/checkpoints/latest.meta.json`
+
+### Longer-rail residual search and Box-FDDP refinement (2026-09-15)
+
+To test the rail-length hypothesis without changing the acceptance contract, a
+`16 s` exact serial-MuJoCo CEM searched a bounded residual force waveform on a
+`+/-12 m` discovery rail, centered on the released 10-link force route. The
+candidate was scored against the canonical `+/-3 m` handoff limits rather than
+being allowed to claim the discovery rail. The search stayed finite and its
+best candidate stayed inside the canonical rail (`2.4108 m` peak cart
+excursion), but its best late state was still `1.2353 rad` maximum angle,
+`3.1929 rad/s` hinge RMS, and `3.9650 rad/s` absolute-rate RMS. The full
+candidate therefore had no valid low-momentum handoff.
+
+The exact saved waveform was then replayed into a target-plant Box-FDDP
+refinement with angle, rate, cart, terminal, and canonical-rail penalties. The
+optimizer stopped after `11` iterations without convergence; the refined
+replay produced a finite-or-warning-invalid unstable trace, reached the
+canonical rail at `3.018 m`, and held for `0 s`. The solver warning and the
+large terminal Lyapunov value reject it as a route improvement.
+
+Decision: a longer discovery rail can help explore the force waveform, but it
+did not supply the missing 11-link capture basin in this controlled test. Keep
+the longer rail available only as a search condition, and require a complete
+canonical-rail replay plus independent integrity check before any candidate can
+replace the current `p=3.90e-05` development incumbent.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_residual_cem_n10center_16s.json`
+- `runs/generalized_solver/n11_residual_cem_n10center_16s_fddp_warm.json`
+- `runs/generalized_solver/n11_cem16_fddp_refined.json`
+
+### Near-locked release boundary and wide-rail curriculum (2026-09-15)
+
+The accepted split-release incumbent at `p=3.125e-5` was carried into the
+next frozen plant at `p=3.3203125e-5` with stronger terminal cart, velocity,
+angle, and rail penalties. The exact-MuJoCo Box-FDDP refinement became
+numerically unstable after `14` iterations and ended at `3.088 m` cart
+excursion with no upright hold. This does not improve the incumbent and does
+not establish a free-chain result. The accepted `p=3.125e-5` artifact remains
+an assisted, near-locked development result only.
+
+The rail-length hypothesis was then isolated as a two-stage curriculum. A
+`+/-12 m` rail was used for the split-release continuation, while the locked
+baseline retained the known feedback replay rather than being re-optimized.
+The replay baseline passed (`22.12 s` hold, `2.0233 m` peak cart excursion),
+but the first releases at `p=0.001` and `p=0.0005` both drove the cart to the
+wide rail (`12.02-12.09 m`) and failed capture. Waypoint repair at `24` and
+`48` segment steps could not preserve the endpoint, and the subsequent FDDP
+traces produced MuJoCo instability warnings. The run was stopped after the
+same failure signature repeated; it is not evidence for any link count.
+
+Decision: a longer rail is not sufficient to release the 11th joint. Preserve
+the replay-protected baseline rule because re-optimizing a known-good route
+can create a false negative, but do not spend more compute on rail widening
+alone. The next valid lever must change the release/capture representation or
+the continuation geometry, and must still finish on the canonical `+/-3 m`
+uniform plant with independent replay. This is now a playbook hard negative:
+wide-rail discovery cannot substitute for a canonical capture basin.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_split_boundary_000033203_fddp_rail20k.json`
+- `runs/generalized_solver/n11_locked_split_rail12_continuation.yaml`
+- `runs/generalized_solver/n11_locked_split_rail12_homotopy/continuation.json`
+- `runs/generalized_solver/n11_locked_split_rail12_homotopy/trials/locked_split_baseline_pass1.json`
+- `runs/generalized_solver/n11_locked_split_rail12_replay_homotopy/continuation.json`
+- `runs/generalized_solver/n11_locked_split_rail12_replay_homotopy/trials/trial_0001_p0.001000000_replay_only.json`
+- `runs/generalized_solver/n11_locked_split_rail12_replay_homotopy/trials/trial_0002_p0.000500000_replay_only.json`
+
+### Adjacent local repair at the `p=3.90e-5` boundary (2026-09-15)
+
+The strongest assisted release controller at `p=3.90e-5` was replayed on the
+adjacent `p=4.00e-5` plant before any optimizer was allowed to change it. The
+feedback replay reached `3.042 m` and held for `0 s`. A `300`-iteration
+Box-FDDP repair with rate-heavy terminal penalties improved the peak to
+`3.021 m`, but stopped after `19` iterations with MuJoCo instability warnings
+and no hold. A bounded `50`-iteration residual CEM around the same force route
+also failed to produce a capture state: its best point at `6.64 s` had
+`1.334 rad` maximum angle, `4.033 rad/s` hinge RMS, `3.754 rad/s` absolute-rate
+RMS, `0.873 m/s` cart speed, and capture-constraint violation `98.0`.
+
+Decision: the release cliff is not solved by simply reusing the preceding
+route, increasing local FDDP iterations, or adding a low-dimensional force
+residual. The `p=3.90e-5` route remains a curriculum incumbent only. The next
+attempt must provide a new capture basin or a new continuation coordinate while
+retaining the exact replay and trace-integrity gates.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_algebraic_split_release_probe/p4.00e-05_replay_from_p3p9.json`
+- `runs/generalized_solver/n11_algebraic_split_release_probe/p4.00e-05_fddp_from_p3p9.json`
+- `runs/generalized_solver/n11_algebraic_split_release_probe/p4.00e-05_residual_cem_from_p3p9.json`
+
+### Real-handoff prefix plus LQR capture probe (2026-09-15)
+
+To isolate the capture expert from the release boundary, a saved near-settled
+state from `n11_p39_low_momentum_handoff_states.json` was replayed on the free
+uniform target. A `2.0 s` bounded prefix CEM was followed by the exact upright
+LQR for a total of `8.0 s`; all candidates were evaluated in one uninterrupted
+MuJoCo episode. The search did not improve after `50` iterations. Its best
+candidate held upright for only `0.62 s`, reached `3.052 m`, ended in a rail
+violation, and still had terminal maximum angle `2.827 rad` with absolute rate
+RMS `47.354 rad/s`.
+
+Decision: even a genuinely quiet handoff from the assisted route does not make
+the free uniform 11-link LQR tail usable. The capture expert remains the
+primary unresolved dependency; future work should learn or optimize a
+nonlinear modal stabilizer before switching to LQR, and must evaluate it from
+the real saved state bank rather than from synthetic upright states.
+
+Artifact:
+
+- `runs/generalized_solver/n11_uniform_prefix_lqr_state0.json`
+
+### Modal partial-feedback-linearization probe (2026-09-15)
+
+The repository's count-independent partial-feedback-linearization controller
+was tested on the canonical uniform 11-link plant with its normal-mode energy
+and internal-mode damping terms enabled. A `24`-iteration, `32`-member CEM ran
+for `20 s` on the canonical `+/-3 m` rail and used the modal handoff objective
+plus exact upright LQR capture. The best exact replay never entered the upright
+set, reached `3.031 m`, and terminated by rail violation with `0 s` upright
+streak.
+
+Decision: modal energy shaping is not a sufficient 11-link swing-up/capture
+expert in its current parameterization. Keep the implementation as a bounded
+diagnostic, but do not combine it with the accepted route or use its shaped
+score as evidence. A future mode-aware method needs a better release-aware
+terminal objective and a demonstrated nonlinear capture basin.
+
+Artifact:
+
+- `runs/generalized_solver/n11_modal_pfl_cem.json`
+
+### Fine release-boundary retries, modal phase seed, and sparse shooting (2026-09-15)
+
+The split-count continuation was resumed below the previously recorded
+`p=3.125e-5` frontier with steps down to `1e-7`. The inherited route was
+tested at `p=3.3203125e-5`, `3.22265625e-5`, `3.173828125e-5`,
+`3.1494140625e-5`, and `3.13720703125e-5`; each replay reached a rail
+violation with `0 s` upright hold. The last trial required approximately
+`3.219 m` of half-rail while the canonical plant provides `3.0 m`. The
+manifest is therefore closed at a minimum-step frontier, not promoted as a
+solution. This sharpens the result: reducing the continuation step does not
+cross the free-capture basin.
+
+An analytic first-mode phase seed was then materialized as a diagnostic warm
+start. It had linear residual `1.44e-5`, but its exact replay reached
+`3.073 rad` maximum angle, `3.020 m` cart excursion, and `0 s` upright hold.
+The modal seed is useful for interpreting the phase geometry, not as a
+controller or a solution artifact.
+
+The free-target Box-FDDP route was also given an explicit running penalty on
+the newly inserted relative angle and hinge rate. Both a fresh warm start and
+the `p=3.90e-5` route were tried, including an initially feasible variant.
+All three runs stopped early with MuJoCo instability warnings, no upright
+hold, and cart excursions between roughly `3.01` and `3.07 m`. A sparse
+multiple-shooting repair from the same `p=3.90e-5` route was bounded to `80`
+evaluations; it ended with node norm `33.764`, maximum defect `9.46e-3`,
+terminal value `4.18e18`, and `0 s` hold. These are numerical diagnostics,
+not evidence of an 11-link capture route.
+
+Decision: the playbook now rejects three tempting shortcuts at this boundary:
+smaller homotopy steps alone, an analytic modal phase seed alone, and a local
+running-cost or sparse-shooting repair around the assisted route. The
+accepted near-locked route remains useful only as a curriculum source. The
+next experiment must create a materially different free-chain capture basin
+or transfer a longer, settled 10-link route with a new release-aware terminal
+representation. Every candidate still requires canonical-rail replay,
+trace-integrity checks, disjoint noisy gates, held-out video, and fresh-clone
+reproduction before promotion.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_locked_split_homotopy_retry/continuation.json`
+- `runs/generalized_solver/n11_locked_split_homotopy_retry/trials/trial_0016_p0.000031372_pass2.json`
+- `runs/generalized_solver/n11_modal_phase_seed_16s.json`
+- `runs/generalized_solver/n11_free_split_cost_a10_r1.json`
+- `runs/generalized_solver/n11_free_split_cost_a10_r1_feasible.json`
+- `runs/generalized_solver/n11_free_split_cost_p39_a100_r10.json`
+- `runs/generalized_solver/n11_free_multiple_shooting_p39_seg20.json`
+
+### Settling-tail transfer and interior split-position probe (2026-09-15)
+
+The distinct ten-link endpoint-tail refinement was transferred into the
+locked distal-split 11-link plant and replayed on the canonical uniform
+target. The first quick replay was discarded because it omitted saved
+feedback (`tracking_gain=0`). The corrected replay with
+`tracking_gain=1` reached `3.037 m` and held for `0 s`. A
+four-second appended settling/capture tail with target-plant feedback rebuild,
+relative inserted-angle/rate stage penalties, and a deferred horizon handoff
+stopped after `18` Box-FDDP iterations with a terminal value of approximately
+`6.82e15`, `3.015 m` cart excursion, and `0 s` hold. Extra time after the
+10-link arrival is therefore not sufficient by itself.
+
+The geometry lever was then changed: the additional joint was inserted at
+source link `5` instead of the distal link. A config-aware transfer was added
+in `scripts/embed_split_position_route.py`, using the same physical lift,
+absolute-coordinate transform, feedback projection, and resampling math as
+the validated generalized split path. This avoids treating a distal-only
+adapter as proof for an interior split. The corrected locked-start replay
+with saved feedback reached `3.023 m` and held only `0.84 s`; one exact
+Box-FDDP repair stopped after `27` iterations with MuJoCo instability
+warnings, `3.010 m` cart excursion, and `0.20 s` hold.
+
+Decision: the longer-tail hypothesis and this interior split geometry are
+rejected as 11-link capture routes. The interior result is now a valid
+negative control because it survives the config-aware embedding and a bounded
+target-plant repair. Keep the new helper for future split-position studies,
+but return the active search to release-aware distal continuation or another
+materially different free-chain capture representation. The optional split
+angle/rate weights in `scripts/search_fddp_capture.py` are now explicitly
+allowed to be zero in replay-only runs; the required solver thresholds remain
+strictly positive.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_n10_tail100_route_embedded.json`
+- `runs/generalized_solver/n11_n10_tail100_direct_replay.json`
+- `runs/generalized_solver/n11_n10_tail100_direct_replay_feedback1.json`
+- `runs/generalized_solver/n11_n10_tail100_fddp_tail4.json`
+- `configs/swingup11_split_link5_continuation.yaml`
+- `runs/generalized_solver/n11_split_link5_n10_route_embedded_correct.json`
+- `runs/generalized_solver/n11_split_link5_baseline_replay_correct.json`
+- `runs/generalized_solver/n11_split_link5_baseline_replay_feedback1.json`
+- `runs/generalized_solver/n11_split_link5_locked_fddp_repair.json`
+- `scripts/embed_split_position_route.py`
+
+### Capture dependency isolated with the real handoff bank (2026-09-15)
+
+The saved `n11_p39_low_momentum_handoff_states.json` bank contains `24`
+states selected from a real assisted swing-up rollout, not synthetic upright
+states. Every one of those states was evaluated on the canonical uniform
+11-link target with the exact upright LQR for `8 s`: `24/24` reached the full
+tail, with `8.02 s` maximum upright/low-momentum hold and only `0.012 m`
+maximum cart excursion. The repeatable artifact is
+`runs/generalized_solver/n11_uniform_handoff_bank_lqr8s.json`.
+
+This isolates the dependency cleanly. The canonical 11-link capture expert
+can hold the real handoff-state bank; the unresolved problem is producing one
+of those states from the hanging start on the uniform plant. This is a useful
+positive component result, but it is not a swing-up claim.
+
+The exact FDDP tool now accepts `--terminal-target-json` and
+`--terminal-target-index`, so a swing-up route can optimize toward a measured
+handoff state rather than only an abstract zero/Lyapunov endpoint. Three
+targeted attempts were retained. A saved-feedback rebuild became unstable
+before optimization; an open-loop rebuild stopped after `15` iterations at
+`3.013 m` with `0 s` hold; and an eight-second appended horizon stopped after
+`15` iterations at `3.004 m` with `0 s` hold and a MuJoCo instability warning.
+The endpoint target is therefore useful for evaluation and future global
+search, but it does not repair the transferred p39 swing route locally.
+
+Decision: keep the two-expert decomposition. Treat the 24-state bank plus
+LQR as the capture reference and focus the next search on a genuinely new
+canonical swing-up expert that reaches this bank. Do not substitute this
+component gate for the hanging-start 20/100 benchmark.
+
+Artifacts:
+
+- `scripts/evaluate_handoff_bank_lqr.py`
+- `runs/generalized_solver/n11_uniform_handoff_bank_lqr8s.json`
+- `runs/generalized_solver/n11_fddp_measured_handoff_target.json`
+- `runs/generalized_solver/n11_fddp_measured_handoff_target_openloop_init.json`
+- `runs/generalized_solver/n11_fddp_measured_handoff_target_h16_openloop.json`
+- `runs/generalized_solver/n11_p39_uniform_replay_feedback1.json`
+
+### Phase-scheduled inserted-mode feedback and ordered morphology gradient (2026-09-15)
+
+The split-joint residual diagnostic was extended from an always-on/start-only
+correction to an explicit `[start_step, end_step)` phase window. Five
+canonical uniform replay variants and three adjacent `p=4.00e-5` release-cliff
+variants were tested. The best canonical replay reached `3.003 m` but held for
+`0 s`; the best local FDDP repair stopped after `17` iterations at `3.066 m`
+with `0 s` hold. On the release cliff, the strongest variant reached only
+`3.042 m`, and the bounded repair stopped after `20` iterations at `3.063 m`
+with `0 s` hold. Phase-scheduled active support does not cross the boundary
+under these gains.
+
+The morphology-gradient order was then changed so the distal split remained
+locked while lengths and masses moved to the uniform 11-link endpoint. The
+locked baseline still reproduced `22.12 s` at `2.023 m`, but a `12.5%`
+morphology jump collapsed into a trace-integrity failure and immediate FDDP
+`QACC` instability. A direct `1%` replay reached `3.081 m` with `0 s` hold;
+its `80`-iteration repair stopped after `20` iterations at `3.043 m` with a
+MuJoCo warning. The adaptive ledger was operator-stopped and marked
+`interrupted_invalid_trial`, not left as a running or accepted campaign.
+
+Decision: phase-scheduled residual feedback and “morphology first, release
+second” are recorded as negative controls for this implementation. The
+positive handoff-bank screen remains the guide for the next global swing-up
+search. The playbook rule is unchanged: every route must be trace-integrity
+clean on the canonical rail before it can influence public evidence.
+
+Artifacts:
+
+- `scripts/add_split_joint_feedback.py`
+- `runs/generalized_solver/early_a-1_r1_replay.json`
+- `runs/generalized_solver/early_a-5_r5_replay.json`
+- `runs/generalized_solver/early_a-20_r20_replay.json`
+- `runs/generalized_solver/full_a-1_r1_replay.json`
+- `runs/generalized_solver/late_a-5_r5_replay.json`
+- `runs/generalized_solver/n11_phase_feedback_fddp_repair.json`
+- `runs/generalized_solver/p4_release_early_a-5_r5_replay.json`
+- `runs/generalized_solver/p4_release_early_a-20_r20_replay.json`
+- `runs/generalized_solver/p4_release_full_a-1_r1_replay.json`
+- `runs/generalized_solver/n11_p4_phase_feedback_fddp.json`
+- `configs/swingup11_locked_morphology_only.yaml`
+- `runs/generalized_solver/n11_locked_morphology_only_homotopy/continuation.json`
+- `runs/generalized_solver/n11_locked_morphology_only_p001_replay.json`
+- `runs/generalized_solver/n11_locked_morphology_only_p001_fddp.json`
+
+### Measured-handoff-bank CEM and full-trace warm-start audit (2026-09-15)
+
+The positive 24-state LQR bank was used as an explicit terminal manifold for
+a new serial exact-MuJoCo CEM swing search. A fresh hanging-start search stayed
+at the hanging equilibrium, confirming that a terminal target alone does not
+create swing energy. Residual searches around the assisted route improved the
+nearest-bank distance to roughly `5.60` on a temporary `+/-6 m` rail, but the
+best state still had large angle/rate error and the canonical replay exited at
+`3.055 m` during the LQR tail with `0 s` hold.
+
+The search then exposed and fixed a warm-start bookkeeping issue: the p39
+artifact's `controller.controls` contains only the eight-second swing phase,
+while its complete `result.trajectory` contains the later LQR actions. Earlier
+residual runs appended zeros after the swing phase. The corrected loader now
+prefers the full recorded trace and has a regression test. A corrected
+full-trace CEM on the `+/-6 m` discovery rail still failed its canonical
+replay at `3.008 m` with `0 s` hold. Restoring the canonical rail inside the
+optimizer did not retain a viable population.
+
+Decision: target-bank scoring is retained as the right terminal diagnostic,
+but open-loop CEM plus a temporary rail is not the missing 11-link swing or
+capture expert. The next direct-policy probe must be judged on the canonical
+plant and may not promote any discovery-rail score.
+
+Artifacts:
+
+- `scripts/search_swingup_handoff_bank_cem.py`
+- `scripts/evaluate_handoff_bank_route.py`
+- `tests/test_search_swingup_handoff_bank_cem.py`
+- `runs/generalized_solver/n11_handoff_bank_cem_fresh16.json`
+- `runs/generalized_solver/n11_handoff_bank_cem_residual_p39_rail6.json`
+- `runs/generalized_solver/n11_handoff_bank_cem_residual_p39_rail6_canonical_replay.json`
+- `runs/generalized_solver/n11_handoff_bank_cem_fulltrace_rail6.json`
+- `runs/generalized_solver/n11_handoff_bank_cem_fulltrace_rail6_canonical_replay.json`
+- `runs/generalized_solver/n11_handoff_bank_cem_rail6_to_canonical.json`
+
+### Direct uniform PPO policy-capacity probe (2026-09-15)
+
+Two bounded PPO probes were run against the canonical uniform 11-link plant
+from the hanging start. The first used the configured curriculum for `200`
+updates and reached the full target morphology only at the end; its final
+eight-episode target evaluation was `0/8` with mean return `-827.8`. The second
+removed that confounder and trained directly at target morphology for `600`
+updates (`1,228,800` environment steps, evaluation every `25` updates). Every
+recorded target evaluation remained at `0.00` success. By the final update the
+mean episode length had collapsed to `18.8` steps, with mean evaluation return
+`-293.6`, indicating an early-failure policy rather than a swing-up policy.
+
+Decision: archive both PPO runs as negative controls for the current generic
+policy/objective setup. They do not weaken the positive capture result: exact
+upright LQR still holds all `24/24` real handoff states on the canonical
+uniform plant. They do show that a fresh direct PPO learner is not discovering
+the missing hanging-start reachability problem at this scale. The next search
+must therefore preserve the solved 7-to-10-link two-expert structure and add an
+explicit reachability/teacher signal for entering the measured handoff bank;
+another uninitialized full-target PPO run is not justified without a material
+change to the observation, reward, or initialization.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_uniform_ppo_probe/train_log.csv`
+- `runs/generalized_solver/n11_uniform_ppo_direct_p1/train_log.csv`
+- `runs/generalized_solver/n11_uniform_ppo_direct_p1/config.resolved.yaml`
+
+### Recorded-state route distillation and PPO warm start (2026-09-15)
+
+The near-locked p39 artifact was used as a teacher in a state-feedback
+experiment. The first implementation replayed the saved action list through
+the current source XML to reconstruct pre-action observations. That replay
+matched the beginning of the trace but accumulated `0.212 m` of cart error by
+the end, so `n11_route_imitation_teacher` is superseded bookkeeping and is not
+clean route evidence.
+
+The loader was corrected to use the artifact's recorded states directly:
+selected initial state plus each recorded post-action state paired with the
+next action. The corrected teacher has `1,500` labels and a best validation MSE
+of about `0.0211`, but its canonical hanging-start rollout still reached
+`0/1` success, no upright event, and a `3.028 m` rail exit at `5.46 s`.
+
+A low-exploration direct-target PPO continuation was also run from the
+superseded replay-based teacher (`600` updates, `1,228,800` environment steps,
+time-aware observation). Its target evaluation remained `0.00` success; the
+final evaluation return was `-381.8` with a `61`-step mean episode length.
+Because its initializer was later invalidated by the trace-reconstruction
+audit, this run is retained only as a diagnostic, not as a clean teacher
+result.
+
+Decision: recorded route imitation does not by itself bridge the free-chain
+release. Do not spend another long PPO run on the same setup. The next route
+search must optimize closed-loop reachability into the measured handoff bank
+on the canonical plant, with the bank distance and exact capture replay kept
+as separate gates.
+
+Artifacts:
+
+- `scripts/distill_swing_route_policy.py`
+- `tests/test_distill_swing_route_policy.py`
+- `runs/generalized_solver/n11_route_imitation_teacher/`
+- `runs/generalized_solver/n11_route_imitation_teacher_recorded/`
+- `runs/generalized_solver/n11_route_imitation_ppo_p1/`
+
+### Wider-rail route-teacher PPO diagnostic (2026-09-15)
+
+The corrected recorded-state teacher was retrained and continued with a
+`+/-12 m` discovery rail, time-aware observations, zero curriculum advance,
+`300` updates, `16` environments, and `614,400` environment steps. The final
+held-out evaluation remained `0.00` success with a return of `-1343.0`; no
+upright event or canonical evidence was produced. The wider rail therefore
+did not repair the teacher's closed-loop mismatch. This is a bounded
+discovery diagnostic, not a canonical failure attributable to the rail size.
+
+Decision: preserve the wide rail only as a training-wheel option. The next
+experiment must put the route in the action loop as a closed-loop residual and
+score whether it reaches the measured handoff bank, rather than applying more
+unstructured PPO updates to the same actor.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_route_imitation_ppo_rail12/`
+
+### Closed-loop route-residual CEM and energy/modal probes (2026-09-15)
+
+The route was then kept in the action loop instead of being distilled into a
+free actor. A serial exact-MuJoCo CEM searched a 48-knot additive residual
+around the saved p39 time-varying feedback route, scoring the real handoff
+bank. On the `+/-12 m` rail, `60` iterations with `32` candidates each still
+rail-terminated every elite; the best late bank distance was `8.35` and the
+maximum cart excursion was `12.01 m`. A second run added a per-step
+cart-centering cost, used a `+/-20 m` rail and half-strength route feedback,
+and found full-horizon candidates, but the best bank distance was still `8.34`
+(`8.22` at the terminal state), with `18.52 m` maximum cart excursion and no
+upright event. Its exact canonical replay rail-terminated after `52` steps at
+`3.034 m`.
+
+As an independent controller-family probe, the low-dimensional exact
+mass-matrix energy-shaping CEM ran `31` generations (`48` candidates per
+generation) for `20 s` on the `+/-20 m` rail. Its best score was `3166.5`; the
+best recorded state had `1.172 rad` maximum absolute angle and a centered
+endpoint, but the run used `12.49 m` of rail and never entered upright hold.
+Eight existing modal-coherence gain pairs were also screened; none produced
+an upright event. These probes support the current diagnosis: cart centering
+and energy injection help individually, but neither has yet synchronized the
+11 internal modes into the measured capture basin.
+
+Decision: keep the route-residual objective and exact replay utility as
+reusable diagnostics, but do not promote either family. The next search must
+couple route reachability to a terminal capture value or a staged, measured
+handoff curriculum; another generic PPO or unshaped open-loop search is not
+justified.
+
+Artifacts:
+
+- `scripts/search_swingup_handoff_bank_cem.py`
+- `scripts/evaluate_route_residual_candidate.py`
+- `tests/test_search_swingup_handoff_bank_cem.py`
+- `runs/generalized_solver/n11_route_feedback_residual_cem_rail12.json`
+- `runs/generalized_solver/n11_route_feedback_residual_cem_rail20_centered.json`
+- `runs/generalized_solver/n11_route_feedback_residual_cem_rail20_centered_replay.json`
+- `runs/generalized_solver/n11_route_feedback_residual_cem_rail20_centered_canonical_replay.json`
+- `runs/generalized_solver/n11_energy_shaping_cem_rail20.json`
+
+### Staged handoff-bank route-residual PPO (2026-09-15)
+
+The measured handoff bank was then exposed as an explicit curriculum signal.
+The actor received a residual around the saved p39 feedback route, plus route
+phase and the normalized distance to the nearest real handoff state. Training
+used a `+/-20 m` discovery rail, `16` environments, `600` updates, and
+`1,228,800` environment steps. This was a direct test of the two-expert idea:
+learn the missing swing-up/reachability behavior while retaining the already
+verified capture basin.
+
+The run completed without numerical failure, but every target evaluation was
+`0.00` success. The selected best checkpoint was replayed deterministically.
+On the development rail it reached `0/1` success, never became upright, and
+terminated at `122` steps on a `20.028 m` rail excursion. Replaying the same
+weights on the canonical `+/-3 m` rail reached `0/1` success and terminated at
+`52` steps with `x=3.013 m`; it never entered upright or capture. The final
+training evaluation was `0.00` success with return `-1395.4`, and the best
+checkpoint replay was `return=-811.5` on the wide rail. This closes the
+staged residual-PPO variant as a negative result: a bank-distance reward and
+route residual did not provide enough reachability signal for the free
+11-link plant, and widening the rail only allowed the policy to spend more
+distance before failure.
+
+Decision: keep the handoff-bank evaluator, route wrapper, and exact replay
+artifacts as reusable infrastructure, but do not treat this as an 11-link
+result or as evidence for a public-frontier update. The next method must make
+the swing-up phase itself more controllable or identify a genuinely reachable
+terminal funnel; repeatedly increasing PPO duration, rail width, or bank
+reward would repeat a falsified setup.
+
+Artifacts:
+
+- `configs/swingup11_route_residual_handoff.yaml`
+- `src/gcartpole/route_feedback.py`
+- `tests/test_route_feedback.py`
+- `runs/generalized_solver/n11_route_residual_handoff_ppo_rail20/train_log.csv`
+- `runs/generalized_solver/n11_route_residual_handoff_ppo_rail20/checkpoints/best.safetensors`
+- `runs/generalized_solver/n11_route_residual_handoff_ppo_rail20/eval_rail20.json`
+- `runs/generalized_solver/n11_route_residual_handoff_ppo_rail20/eval_canonical_rail3.json`
+
+### LQR saturation and morphology-gradient curriculum probes (2026-09-15)
+
+The next tests returned to the mechanism used by the 7-to-10 campaign: an
+upright finite-difference LQR teacher, with a `policy_on_saturation` escape so
+the learned actor receives full authority when the local stabilizer clips.
+The first uniform-plant run used a quadratic hanging-angle curriculum and a
+`+/-12 m` rail. It passed the `progress=0.05` stage (`1.00` evaluation
+success and a `20.02 s` upright streak), but the `progress=0.10` evaluation
+fell to `0/8` success with only a `0.20 s` maximum upright streak. A separate
+route-residual schedule with the same LQR warm start showed the same narrow
+basin: the LQR-only handoff failed at `progress=0.10`, and switching to the
+route at `progress=0.05` produced `0/8` after `100` updates.
+
+The morphology-gradient variant copied the 7-link training wheels: heavier
+base links, higher damping, nonzero friction, and a longer rail annealed back
+to the uniform target. It did not repair the mismatch. A deterministic zero
+policy replay of the fixed uniform LQR gain already failed on the easier
+gradient plant at `progress=0.025`, and the PPO run remained at
+`progress=0.05` with `0/8` success at update `150`. The target-plant direct
+probe remains useful evidence: the same gain holds the uniform plant through
+`progress=0.05`, but not `0.10`.
+
+Decision: the inherited LQR-plus-saturation architecture is valid near the
+upright equilibrium but does not, by itself, bridge the n=11 nonlinear basin.
+Do not present any of these curriculum checkpoints as swing-up evidence. The
+route scheduler, LQR warm-start selector, and gradient configs remain
+available for future work, but the next serious search needs a better
+full-state swing-up teacher or a model-based reachable funnel rather than
+more PPO updates around this same local anchor.
+
+Artifacts:
+
+- `configs/swingup11_route_residual_angle_curriculum.yaml`
+- `configs/swingup11_lqr_saturation_curriculum.yaml`
+- `configs/swingup11_lqr_saturation_gradient.yaml`
+- `runs/generalized_solver/n11_route_residual_angle_curriculum_ppo_rail12/`
+- `runs/generalized_solver/n11_lqr_saturation_curriculum_ppo_rail12/`
+- `runs/generalized_solver/n11_lqr_saturation_gradient_ppo_rail12/`
+
+### Capture-chain route CEM, direct-force CEM, and parked-route transfer (2026-09-15)
+
+The next route search coupled the cart-position swing expert to the actual
+capture/stabilize chain. This was intended to prevent a transient upright
+angle from being mistaken for a usable handoff. A two-iteration smoke test on
+a `+/-12 m` discovery rail confirmed that the unmodified lower-count route
+never reached the 11-link capture gate. A subsequent exact-MuJoCo trajectory
+CEM (`16` generations, `48` candidates, `24 s`) improved the late handoff
+candidate to `0.2575 rad` maximum angle, `1.065 rad/s` hinge RMS,
+`2.148 rad/s` cumulative absolute-rate RMS, `0.758 m/s` cart speed, and
+`2.880 m` maximum cart excursion. It did not hold.
+
+Initializing the coupled capture-chain CEM from that candidate produced an
+angle-only crossing at `0.1179 rad` and entered the capture phase, but the
+actual handoff had `4.454 rad/s` hinge RMS, `1.806 m/s` cart speed, and the
+rollout used `12.139 m` of rail. The LQR capture expert held for only `0.02 s`.
+This is a hard negative for angle-only chain gating: the route reached the
+visual top while carrying too much internal motion.
+
+A direct force-knot CEM was then initialized from the same route (`14`
+generations, `40` candidates, `101` action knots, `20 s`) with an absolute
+velocity-aware cold-handoff score. Its best late point was only `1.492 rad`
+from upright, with `1.374 rad/s` hinge RMS, `1.428 rad/s` absolute-rate RMS,
+`3.057 m/s` cart speed, and `12.089 m` exploratory-rail use. A higher-weight
+cart-route refinement also regressed to `0.779 rad` and never entered a
+usable handoff. The extra cart-position layer is not the only problem, but
+direct open-loop force knots do not solve it either.
+
+The 10-link inheritance test was run at the highest-fidelity architecture:
+the 10-link feedback route was transferred to 11 links, followed by target-
+plant Box-FDDP and the same parked-target LQR contract. The transferred-
+nominal pipeline became unstable after `13` FDDP iterations and replayed to a
+`3.108 m` rail violation. Rebuilding the target-plant feedback warm start at
+`0.2` scale did not help; the replay violated at `3.084 m` after `14`
+iterations. Neither route was packaged or promoted.
+
+Decision: retain the coupled-chain evaluator and the late handoff metrics,
+but reject angle-only capture, direct force knots, and unrefined 10-to-11
+transfer as solutions. The next free-chain method must reduce internal rate
+before the capture switch, not merely reach a smaller maximum angle or spend
+more exploratory rail.
+
+Artifacts:
+
+- `scripts/search_swingup_chain.py`
+- `scripts/search_swingup_trajectory.py`
+- `scripts/search_swingup_action_sequence.py`
+- `runs/generalized_solver/n11_chain_capture_cem_smoke/`
+- `runs/generalized_solver/n11_trajectory_capture_ready_cem_rail12/`
+- `runs/generalized_solver/n11_chain_capture_cem_from_trajectory_rail12/`
+- `runs/generalized_solver/n11_direct_force_cold_handoff_cem_rail12/`
+- `runs/generalized_solver/n11_trajectory_cold_handoff_refine_rail12/`
+- `runs/generalized_solver/n11_nominal_transfer_pipeline_v2/`
+- `runs/generalized_solver/n11_rebuilt_transfer_pipeline_v3/`
+
+### Release-aware split curriculum resume (2026-09-15)
+
+The strongest existing teacher was the exact locked split-link route, so its
+adaptive release ledger was resumed rather than replaced. The ninth source
+link split configuration starts with the inserted joint locked and releases
+it through the exact MuJoCo target plant. Each proposed progress value uses
+waypoint repair, Box-FDDP, full-state replay, rail checks, and the existing
+`22.12 s` hold gate.
+
+The resumed ledger retained `19` trials. It accepted
+`p=2.05078125e-5`, `p=2.0751953125e-5`, and `p=2.08740234375e-5`, each with a
+`22.12 s` exact hold and approximately `2.077 m` maximum cart excursion. The
+next value, `p=2.099609375e-5`, failed repeatedly: waypoint repair could make
+an endpoint, but exact Box-FDDP replay lost the hold and crossed the `+/-3 m`
+rail (`3.039 m` in the final retry). The ledger stopped at its configured
+minimum step with accepted progress `2.08740234375e-5` and failed upper bound
+`2.099609375e-5`.
+
+This is useful evidence that the release boundary is real and reproducible,
+but it is not a canonical 11-link result. The inserted joint is still almost
+fully supported at this progress, and the run has not reached the free
+uniform endpoint `p=1`. Do not use its hold, route, or video as public
+11-link evidence. The next attempt should change the release parameterization
+or add a full-state reachable funnel before resuming another expensive
+bisection; repeating the same step below the current boundary has already
+been tested.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_forced_split_link9.yaml`
+- `runs/generalized_solver/n11_forced_split_link9_warm.json`
+- `runs/generalized_solver/n11_forced_split_link9_homotopy/continuation.json`
+- `runs/generalized_solver/n11_forced_split_link9_homotopy/trials/trial_0016_p0.000020752_waypoint_x4_fddp.json`
+- `runs/generalized_solver/n11_forced_split_link9_homotopy/trials/trial_0018_p0.000020874_waypoint_x4_fddp.json`
+- `runs/generalized_solver/n11_forced_split_link9_homotopy/trials/trial_0019_p0.000020996_pass2.json`
+
+The playbook rule remains: a curriculum state may become a teacher seed, but
+the frontier advances only after a free uniform hanging-start route passes the
+canonical 20/100 gates, exact replay, hashes, and reset-free video.
+
+### Settled-launch audit of inserted-joint feedback (2026-09-15)
+
+The first 81-point inserted-joint angle/rate feedback screen was replayed from
+the raw noisy hanging reset with `conditioning_seconds=0`. That is not the
+7-to-10 controller contract: the released method first parks the cart and lets
+the chain settle under the hanging-equilibrium LQR. The raw-start screen is
+therefore retained as a diagnostic, not used as a settled-launch comparison.
+
+The comparison was corrected by adding the full `16 s` hanging-LQR conditioning
+phase, while keeping the target plant uniform n=11, the canonical `+/-3 m`
+rail, the same inherited 10-to-11 route, `tracking_gain_scale=1`, and the
+same exact replay evaluator. The exact locked-split route and representative
+constant inserted-joint residuals (`angle/rate` pairs including
+`(0.5,1)`, `(0,1)`, `(1,1)`, `(5,5)`, and `(0.5,5)`) all remained at `0/1`:
+they never reached the upright/capture gate and exited at roughly
+`3.06-3.29 m` required rail. The full grid cannot be promoted; the corrected
+subset is sufficient to close the constant-feedback family because the result
+does not change from the raw-start screen after the actual launch contract is
+restored.
+
+Decision: keep the constant residual utility as a regression diagnostic, but do
+not spend more search budget on one fixed angle/rate pair. The missing n=11
+mode needs phase-dependent authority or a new target-plant swing trajectory.
+The next experiment is an exact serial MuJoCo action-route search initialized
+from the inherited route, with zero reset noise inside the optimizer and a
+separate settled-launch replay afterward. Any discovery-rail or raw-search
+candidate remains development-only until the canonical replay passes.
+
+Artifacts:
+
+- `scripts/add_split_joint_feedback.py`
+- `tests/test_add_split_joint_feedback.py`
+- `runs/generalized_solver/n11_inserted_joint_feedback_grid/`
+- `runs/generalized_solver/n11_locked_split_exact_embed_warm.json`
+- `tmp/n11_exact_split9_settled_eval.json`
+- `tmp/n11_grid_settled_a0p5m1.json`
+- `tmp/n11_grid_settled_a0m1.json`
+- `tmp/n11_grid_settled_a1m1.json`
+- `tmp/n11_grid_settled_a5m5.json`
+- `tmp/n11_grid_settled_a0p5m5.json`
+
+### Rate-heavy exact CEM and target-plant refinement (2026-09-15)
+
+To test phase-varying action authority without another policy-learning run, a
+serial exact-MuJoCo CEM searched a 16-second route around the best existing n11
+force proposal. It used `64` action knots, `32` candidates, `48` iterations,
+canonical uniform morphology, and a `+/-3 m` rail preference with strong
+terminal angle, hinge-rate, absolute-rate, cart, and capture-barrier terms.
+The best measured transient stayed inside the rail and reached `1.0587 rad`
+maximum angle at `15.48 s`, but still carried `3.0004 rad/s` hinge RMS,
+`4.3268 rad/s` absolute-rate RMS, `0.8906 m/s` cart speed, and capture
+constraint violation `36.26`. It was not a handoff.
+
+The exact route was converted into a dynamically consistent Box-FDDP warm
+start. Target-plant refinement stopped at iteration `16` with terminal cost
+`2.46e14`; exact replay exited at `3.055 m` with no upright or capture event.
+A separate six-second Box-FDDP solve from the CEM's best measured transient
+also stopped at iteration `16` and exited at `3.036 m` with no latch. Thus the
+best CEM transient is an angle/rate diagnostic, not a swing-up-plus-capture
+controller.
+
+Decision: close this particular residual-CEM-to-FDDP branch. The next
+permitted search must change the route representation or provide a measured
+reachable funnel; increasing CEM generations around the same force route or
+refining the same high-rate transient repeats a falsified basin. No n=11
+frontier advancement, README/About change, video, or public push is justified.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_global_cem_from_residual16_rateheavy.json`
+- `runs/generalized_solver/n11_global_cem_from_residual16_rateheavy_warm.json`
+- `runs/generalized_solver/n11_global_cem_from_residual16_rateheavy_fddp.json`
+- `runs/generalized_solver/n11_global_cem_best_state_capture_fddp.json`
+
+### Free split with temporary distal damping (2026-09-15)
+
+The next morphology-gradient test used a physically free n=11 split rather
+than a locked or supported ghost. At progress `p=0`, the last two links were
+`0.15 m`/`0.05 kg` each, all eleven joints had zero lock and zero stiffness,
+and only the final joint received temporary damping `0.01`; the target
+endpoint is the canonical uniform n=11 plant. The inherited split route was
+first evaluated after the normal `16 s` hanging-LQR conditioning phase. It
+hit the `+/-3 m` rail at `3.0593 m`, with no upright or handoff event.
+
+A bounded target-plant Box-FDDP repair was then attempted with explicit
+inserted-joint angle/rate stage costs, `8 s` horizon, and the same physical
+rail. The first invocation omitted `--progress 0` and therefore optimized the
+uniform endpoint because `search_fddp_capture.py` defaults to progress `1.0`;
+that artifact is rejected as evidence and retained only as a provenance
+regression example. The corrected run pinned both plant and LQR progress to
+`0.0`: Box-FDDP stopped after `7` iterations, exact replay exited at
+`3.0261 m`, reached `0 s` upright hold, and recorded `30.77 rad/s` hinge-rate
+RMS and `48.47 rad/s` absolute-rate RMS. No continuation step was accepted.
+
+Decision: close this specific free-damping branch. Temporary damping without
+a reachable target-plant swing route does not preserve the 10-link incumbent,
+and the inserted mode becomes violently unstable under local repair. Keep the
+configuration as a negative-control curriculum artifact, but do not use its
+route, replay, or any wider-rail variant as n=11 evidence. Future morphology
+experiments must pin `--progress` and `--lqr-progress` explicitly and must
+pass the free p=0 replay before spending budget on a homotopy.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_damped_unlock_relax.yaml`
+- `tmp/n11_damped_unlock_relax_p0_eval.json`
+- `runs/generalized_solver/n11_damped_unlock_relax_p0_fddp.json` (rejected: defaulted to target progress)
+- `runs/generalized_solver/n11_damped_unlock_relax_p0_fddp_correct.json`
+
+### Late-tail iLQR on the rate-heavy n=11 route (2026-09-15)
+
+The next route representation kept the inherited exact force route through
+`12 s`, then optimized only the final `4 s` with exact-MuJoCo iLQR. The tail
+used the canonical uniform n=11 plant, zero reset noise, a `+/-3 m` rail
+soft limit of `2.85 m`, and a `5,000,000` rail penalty. This tested whether
+the late high-rate approach could be made capturable without reopening the
+whole swing search.
+
+The `50`-iteration solve did not converge. Its cost was `17,883.96`, the
+replay hit the rail at `3.0271 m` around `16.2 s`, and it produced no upright
+streak or handoff. The last recorded state was still `2.0849 rad` from the
+top with `23.42 rad/s` hinge-rate RMS and saturated action. The tail cannot
+repair the inherited route's high-rate basin.
+
+Decision: close late-tail iLQR for this source route. The next route search
+must change the approach trajectory or optimize against a measured reachable
+capture funnel from earlier in the swing; adding more terminal iterations to
+this tail would only repeat rail saturation. No n=11 advancement or public
+artifact update follows from this branch.
+
+Artifact:
+
+- `runs/generalized_solver/n11_rateheavy_tail_ilqr_12to16.json`
+
+### Measured n=11 handoff target in full-route iLQR (2026-09-15)
+
+The maintenance component already provides 24 real n=11 low-momentum upright
+states that hold under exact target-plant LQR. To make the swing objective
+explicitly downstream-aware, the first state in
+`n11_p39_low_momentum_handoff_states.json` was supplied as the terminal
+`qpos/qvel` target for a new exact hanging-start iLQR route. The run used the
+uniform n=11 plant, zero reset noise, the inherited 16-second force route as
+the warm start, a controllability terminal metric, a finite feedback-horizon
+terminal metric, and the canonical rail penalty.
+
+After `12` iLQR iterations the terminal state was still `2.9599 rad` from
+upright, with `16.7868 rad/s` hinge-rate RMS and `14.1253 rad/s` absolute-rate
+RMS. The best intermediate composite state occurred at `15.2 s` with
+`1.1605 rad` angle, `4.3523 rad/s` hinge-rate RMS, and `4.1074 rad/s`
+absolute-rate RMS. The run had no usable capture state and did not approach
+the measured handoff target.
+
+Decision: keep the saved maintenance states as the correct capture target and
+close this particular full-route iLQR warm start. The result separates the
+problem cleanly: the capture/stabilize expert has a measured basin, while the
+current n=11 swing route cannot reach it. The next swing experiment must use a
+different approach policy or a staged reachable-funnel objective; more weight
+on this already-diverging terminal solve is not justified.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_p39_low_momentum_handoff_states.json`
+- `runs/generalized_solver/n11_handoff_target_ilqr.json`
+- `runs/generalized_solver/n11_handoff_target_ilqr_handoff.json`
+
+### Long-windup, wide-rail, and closed-loop modal tests (2026-09-15)
+
+The next batch tested the physical hypothesis that an 11-link swing needs a
+longer rail and a longer, slower wind-up. The corrected exact-MuJoCo CEM used
+the canonical uniform n=11 plant, a +/-12 m discovery rail, a 32 s route, 96
+action knots, 24 candidates, 30 iterations, and no handoff before 20 s. The
+first invocation was correctly rejected before evidence collection because its
+32 s route exceeded the 30 s episode cap. With the cap raised to 35 s, the
+best candidate reached only `2.2409 rad` from upright at `21.36 s`, with
+`1.1907 rad/s` hinge RMS, cart position `-6.3553 m`, and capture-constraint
+violation `109.2861`. A longer wind-up and wider discovery rail alone did not
+produce a reachable handoff.
+
+A closed-loop energy/modal policy was also tested on the +/-12 m rail for 24 s
+with 30 CEM iterations and 32 candidates. Its best angle was `1.1077 rad`,
+but the run eventually reached `12.1736 m`, had no upright or capture event,
+and ended in a rail violation. The low-dimensional policy was not a valid
+replacement for the route-plus-capture experts.
+
+Decision: keep the long-rail relationship as a real design variable, but do
+not treat discovery-rail success or an angle crossing as evidence. Any future
+long-rail route must replay on the canonical rail and satisfy the full
+low-momentum handoff gate.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_global_cem_long32_rail12.json`
+- `runs/generalized_solver/n11_energy_modal_policy_rail12.json`
+
+### Terminal-feedback transfer and capture-ready route refinement (2026-09-15)
+
+To test whether the 10-link transfer failed only because the added distal mode
+was left unactuated, the 10-link terminal absolute-angle feedback and terminal
+relative-rate feedback columns were copied into the new n=11 distal mode. The
+settled-launch evaluation was `0/5`: every episode ended in a rail violation,
+with maximum cart excursion `3.0431 m`, required-rail ratio `1.0744`, and no
+upright interval. Copying predecessor terminal feedback into the added mode
+is closed as a transfer rule.
+
+A separate exact-MuJoCo capture-ready CEM optimized the route for angle,
+hinge rate, absolute rate, cart speed, and cart position on a +/-12 m
+discovery rail. Its best composite transient was `0.2987 rad` with
+`0.8913 rad/s` hinge RMS, `2.3218 rad/s` absolute-rate RMS, cart speed
+`0.2909 m/s`, and position `1.9994 m`; it never held. The lowest-angle
+transient reached `0.1666 rad` but still carried `1.5972 rad/s` hinge RMS and
+`3.0048 rad/s` absolute-rate RMS. These are useful diagnostics, not capture
+states.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_n10_terminal_feedback_copy_warm.json`
+- `runs/generalized_solver/n11_n10_terminal_feedback_copy_eval5.json`
+- `runs/generalized_solver/n11_trajectory_capture_ready_refine_rail12.json`
+
+### Expert-chain gate audit and local capture basin test (2026-09-15)
+
+The best capture-ready transient was fed into the actual expert-chain search.
+The chain reached an angle-only capture event at about `0.128 rad`, but the
+handoff still had `1.9503 rad/s` hinge RMS, `1.5402 m/s` cart speed, and only
+`0.02 s` of upright streak before the cart exited the +/-12 m discovery rail
+at `12.0518 m`. This is a direct failure of an angle-only capture gate: visual
+upright is not a stable handoff.
+
+A local Box-FDDP capture solve was then initialized from the measured
+trajectory state. The requested LQR scale `1.3` was rejected by the spectral
+stability check (`rho=3.5276`). At the stable bank scale `1.0`, the solve was
+feasible on paper but diverged numerically (`min_v=7.79e12`, terminal
+`v=1.06e15`); exact replay exited at `3.022 m` with zero hold. The measured
+state is outside the usable capture basin, so it must not be promoted as a
+handoff example.
+
+Decision: the next chain search must require low angle, low internal rate, low
+cart velocity, and bounded cart position before it switches to capture. The
+playbook's active expert contract is now explicit: the swing expert hands off
+only a state that the stabilizer can actually retain; a brief top crossing is
+not sufficient.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_chain_capture_refine_from_low_streak.json`
+- `runs/generalized_solver/n11_trajectory_capture_ready_refine_state.json`
+- `runs/generalized_solver/n11_capture_from_trajectory_refine_state_fddp.json`
+
+### Explicit low-momentum capture gate (2026-09-15)
+
+The chain evaluator now supports an optional state gate that must be satisfied
+before the swing expert can hand control to capture: the searched angle limit,
+hinge-velocity RMS, absolute cart velocity, and absolute cart position. The
+legacy angle-only behavior remains the default for old artifacts; the new
+thresholds are recorded in each gated search result.
+
+The first n=11 gated CEM used hinge RMS `<=0.90 rad/s`, cart speed `<=0.50
+m/s`, and `|x|<=2.0 m` on a +/-12 m discovery rail. It found a visual crossing
+at `0.0677 rad` with cart speed `0.2377 m/s`, but hinge RMS was `2.6078 rad/s`.
+The gate therefore never switched to capture (`capture_reached=false`), even
+though the cart stayed within `2.5994 m` of center and the run did not hit a
+rail. This validates the gate as a diagnostic: it prevents an internally
+violent crossing from being mislabeled as a handoff.
+
+Decision: retain the gate in the expert-chain tool and use it for subsequent
+searches. A threshold sweep may be useful for mapping the reachable basin, but
+every candidate must still be replayed with the measured LQR retention test
+and the canonical rail before it can advance the n=11 frontier.
+
+Artifacts:
+
+- `scripts/search_swingup_chain.py`
+- `runs/generalized_solver/n11_chain_low_momentum_gate_rail12.json`
+
+### Capture-gate threshold sweep (2026-09-15)
+
+Relaxing only the hinge threshold to `2.5 rad/s` while retaining cart speed
+`<=0.50 m/s` and `|x|<=2.0 m` still produced no handoff. The closest state
+was `0.0786 rad`, `2.5916 rad/s`, and `0.5504 m/s` at `x=1.8698 m`, so it
+missed both the hinge and cart-speed conditions by a small amount.
+
+Replaying that exact controller with hinge `<=3.0 rad/s` and cart speed
+`<=0.75 m/s` did activate capture, but it immediately exposed why the tighter
+gate matters. The switch occurred at the state above; the best later capture
+state had already degraded to `0.2431 rad`, `3.8084 rad/s`, and `0.8643 m/s`.
+The LQR run exited at `12.0452 m`, with final hinge RMS `64.54 rad/s` and zero
+upright hold. This is not a near miss and is not a valid capture state.
+
+Decision: do not widen the capture gate to manufacture a transition. The
+approach expert must reduce internal and cart momentum before the switch. The
+threshold sweep is closed as a basin map and the strict gate remains the
+working contract.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_chain_gate_hinge25_rail12.json`
+- `runs/generalized_solver/n11_chain_gate_hinge30_replay.json`
+
+### Closed-loop receding tail after the near-top crossing (2026-09-15)
+
+The measured near-top state was also handed to the exact-MuJoCo receding
+horizon CEM tail controller. It replanned `43` times from the live state with
+an 80-step horizon and 10-step application window on the +/-12 m discovery
+rail. The run first reached upright at `11.10 s`, but held only `0.02 s` and
+then exited at `x=12.0091 m`; final hinge RMS was `4.7711 rad/s` and the
+maximum continuous hold was zero beyond the brief crossing.
+
+Decision: feedback replanning alone does not arrest the n=11 internal modes
+from this approach state. Preserve the receding controller as a diagnostic,
+but move the next search upstream and force a slower late wind-up.
+
+Artifact:
+
+- `runs/generalized_solver/n11_gate25_receding_mpc_tail_rail12.json`
+
+### Capture-arrest residual policy and maintenance-preservation test (2026-09-15)
+
+The capture expert was trained as an MLX PPO residual around the analytic LQR
+teacher, using a frozen bank of 24 measured quiet n=11 handoffs plus four
+scaled copies of the measured high-rate crossing (`0.25x`, `0.50x`, `0.75x`,
+and `1.00x` velocity). The first Torch invocation was invalid in this runtime
+because PyTorch is unavailable; the equivalent MLX run completed 300 updates
+and 614,400 environment steps.
+
+The aggregate training evaluation showed `0/28` full successes. A deterministic
+indexed replay of the best checkpoint made the failure more specific: all 28
+states reached the upright neighborhood, but the learned residual destroyed
+the known maintenance basin. On the 24 quiet states, the longest upright hold
+was only `0.20--0.36 s` and the mean was `0.2843 s`, versus multi-second holds
+from the analytic LQR bank. The four high-rate states still failed as well;
+one exited the rail and the other three never held. The run therefore learned
+an upright crossing signal, not a capture-arrest controller.
+
+Decision: do not promote this checkpoint or use it as evidence of capture.
+The next capture-policy experiment must stage the curriculum so the residual
+first preserves the proven quiet-state maintenance behavior, then introduces
+incoming rate in small increments. Every stage remains subject to the real
+five-second hold and rail gates; a high `ever_upright_rate` is insufficient.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_capture_arrest_high_rate_ppo/config.resolved.yaml`
+- `runs/generalized_solver/n11_capture_arrest_high_rate_ppo/checkpoints/best.safetensors`
+- `runs/generalized_solver/n11_capture_arrest_high_rate_ppo/checkpoints/best.meta.json`
+- `runs/generalized_solver/n11_capture_arrest_high_rate_ppo/train_log.csv`
+
+### Capture interface curriculum and failed local basins (2026-09-15)
+
+The next experiments kept the same measured n=11 handoff states and changed
+only the capture interface. The purpose was to separate three questions that
+had been getting conflated: whether a policy can preserve the quiet LQR bank,
+whether it can arrest incoming velocity, and whether the measured state is
+locally reachable by a model-based force sequence.
+
+The strict action-LQR switch PPO run used the four scaled high-rate states
+(`0.25x`, `0.50x`, `0.75x`, `1.00x`) with tight switch thresholds. It completed
+500 updates and 1,024,000 steps. Direct deterministic replay of every saved
+checkpoint produced `0/4` successes; the maximum hold was only `0.02--0.08 s`,
+with no low-momentum interval and no useful LQR takeover. The trainer's
+inherited evaluation path also pointed at an older p=3e-5 bank, so the direct
+high-rate replay is the authoritative result.
+
+An exact-MuJoCo CEM capture actor initialized from the quarter-rate state held
+for only `0.06 s` and never reached centered low-momentum capture. A cold
+Box-FDDP force trajectory from the same state stopped after eight iterations
+with a rail exit and terminal Lyapunov value `6.03e15`; its minimum value
+reported during the solve was `5.77e12`. These are local-basin failures, not
+evidence that a permissive capture threshold is acceptable.
+
+Two curriculum variants made the required anchor explicit. Restoring the real
+position with zero velocity was already outside the usable LQR basin, so the
+velocity-only curriculum stayed at `p=0` and was stopped. Restoring position
+and velocity together passed the centered p=0 anchor (`4/4`, `8.02 s` hold,
+zero cart excursion), then failed at `p=0.1`; the inherited relative-coordinate
+LQR gain became numerically ill-conditioned, switched for one step, saturated,
+and exited the rail. A finite-difference absolute-angle Riccati diagnostic
+still required impractically large gains and was not promoted as a fix.
+
+Raw PPO with reset-state normalization and no analytic teacher also failed at
+the exact upright anchor: it never exceeded roughly `0.3 s` deterministic hold
+and could not advance the curriculum. This confirms that random-action PPO is
+not a sufficient maintenance teacher for this high-dimensional upright.
+
+The follow-up exact-teacher run kept the analytic switch active only at the
+exact p=0 equilibrium (`1e-5` angle/rate thresholds) and handed every nonzero
+state scale to raw PPO. It completed 600 updates and 1,228,800 steps. The p=0
+teacher passed `4/4` with `8.02 s` hold and zero excursion; the first nonzero
+band, p=0.025, never advanced and ended at `0/4` with `1.0` ever-upright rate,
+`0.28 s` maximum upright hold, and `0.22 s` maximum low-momentum hold. The
+high return during the p=0 anchor is therefore teacher validation, not a
+capture result.
+
+Decision: the capture expert still lacks a demonstrated arrest basin. Do not
+claim n=11, do not promote any of these policies, and do not widen the gate to
+turn a violent crossing into a handoff. The next useful lever is a smaller,
+explicitly supervised maintenance-to-capture curriculum or a teacher that
+controls the incoming modal energy while preserving the proven quiet bank.
+The playbook contract remains: real measured state, reset-free handoff,
+canonical rail, five-second hold, disjoint noisy replay, and saved artifacts.
+
+Artifacts:
+
+- `configs/swingup11_capture_switch_high_rate.yaml`
+- `runs/generalized_solver/n11_capture_switch_high_rate_ppo/train_log.csv`
+- `runs/generalized_solver/n11_capture_switch_high_rate_ppo/checkpoints/best.meta.json`
+- `configs/swingup11_capture_real_handoff.yaml`
+- `runs/generalized_solver/n11_capture_high_rate_cem_state0.json`
+- `runs/generalized_solver/n11_capture_high_rate_fddp_state0.json`
+- `configs/swingup11_capture_switch_velocity_curriculum.yaml`
+- `runs/generalized_solver/n11_capture_switch_velocity_curriculum_ppo/train_log.csv`
+- `configs/swingup11_capture_switch_full_state_curriculum.yaml`
+- `runs/generalized_solver/n11_capture_switch_full_state_curriculum_ppo/train_log.csv`
+- `configs/swingup11_raw_capture_full_state_curriculum.yaml`
+- `runs/generalized_solver/n11_raw_capture_full_state_curriculum_ppo/train_log.csv`
+- `configs/swingup11_capture_exact_teacher_curriculum.yaml`
+- `runs/generalized_solver/n11_capture_exact_teacher_curriculum_ppo/checkpoints/best.meta.json`
+- `runs/generalized_solver/n11_capture_exact_teacher_curriculum_ppo/train_log.csv`
+
+### Rich local capture laws and explicit two-expert arrest (2026-09-15)
+
+The measured quarter-rate high-momentum state was used to test two additional
+state-feedback interfaces. A CEM over a static affine controller with the
+complete absolute-plus-relative angle/rate feature vector completed 21
+generations on a +/-12 m discovery rail. Its best deterministic hold was
+`0.06 s`, with zero centered and zero low-momentum hold. A second CEM gave the
+controller two independent affine experts, an explicit `0.50 s` arrest phase,
+and a fixed stabilizer phase. After 25 generations it still held only
+`0.06 s` and never produced a centered or low-momentum interval.
+
+Decision: a richer static feature map and a hard two-expert time split do not
+solve the incoming modal energy. Keep the two-expert idea in the architecture
+roadmap, but the switch must be reached by a trajectory that has already
+cooled the internal modes; local capture policy search alone is not enough.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_capture_affine_full_state_cem_state0_rail12.json`
+- `runs/generalized_solver/n11_capture_two_phase_affine_state0_rail12.json`
+
+### Long-rail slow-windup and late handoff-bank residual tests (2026-09-15)
+
+The long-rail hypothesis was tested directly on the canonical uniform n=11
+plant with a +/-20 m discovery rail and a 20--32 second cart-position
+wind-up. The first exact-MuJoCo CEM reached late candidates around
+`0.66--0.96 rad` from upright with hinge-rate RMS around `1.33--1.50
+rad/s`; it never produced an upright event. A lower-variance refinement kept
+the best angle near `0.633 rad` and reduced hinge-rate RMS only to about
+`1.255 rad/s`. Both searches completed their intended 36 second horizons and
+were rejected because no capture or hold occurred.
+
+A second search kept the long wind-up as the center waveform and optimized a
+late residual against the measured quiet handoff bank. It ran 24 exact CEM
+iterations with residual action beginning at 14 seconds and the handoff
+window beginning at 20 seconds. The best terminal distance remained `3.846`
+in the handoff metric, the best state distance was `4.261`, and the cart
+reached `13.611 m` on the +/-20 m discovery rail. The run therefore did not
+find a capture-ready state; matching a bank objective without a feasible
+terminal state is not evidence of a handoff.
+
+Decision: retain the longer rail and slow wind-up as legitimate discovery
+settings, but do not treat them as a solution or silently transfer their
+metrics to the canonical rail. The next route must improve the full terminal
+state together: absolute angle, internal hinge rates, absolute rates, cart
+velocity, and cart position. A visually closer top crossing remains a failed
+approach until the actual stabilizer can retain it.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_long_rail_slow_windup_cem_rail20.json`
+- `runs/generalized_solver/n11_long_rail_slow_windup_refine_cem_rail20.json`
+- `runs/generalized_solver/n11_long_windup_handoff_bank_residual_rail20.json`
+
+### Playbook operating rule for the 11-link frontier (2026-09-15)
+
+`docs/levers_and_pitfalls.md` is the living experiment ledger and the
+project's working playbook. Every new route or controller branch must add a
+dated entry with: the physical/controller lever changed, the exact command or
+artifact, the rail and episode conditions, the strongest quantitative result,
+the failure reason when applicable, and the decision that follows. Discovery
+results on widened rails, altered morphology, or curriculum plants stay
+explicitly labeled as development evidence. Only a reset-free replay on the
+canonical uniform plant, canonical rail, required hold, and disjoint noisy
+gates can advance the link-count claim in `README.md`, `ROADMAP.md`, or the
+GitHub About text.
+
+This rule is intentionally part of the playbook rather than a side note: it
+prevents a promising trajectory, a near-top crossing, or a curriculum
+checkpoint from being promoted as a solved link count before the capture and
+maintenance experts have both been demonstrated.
+
+### Widened-rail replay of the near-locked split-link boundary (2026-09-15)
+
+The failed upper-bound continuation trial at split-link progress
+`p=0.000020996` was replayed with its exact saved feedback controller on a
+diagnostic +/-20 m rail. This separates rail clearance from the morphology
+continuation itself. The controller did not reach its capture phase: the cart
+ran to `20.0798 m`, the minimum whole-chain angle was still about `0.767 rad`,
+and the replay had zero upright time and zero hold. The canonical replay of
+the same trial had already failed at `3.0386 m`, so the wider rail changes the
+termination point but not the underlying capture failure.
+
+One preliminary replay command attempted to rewrite the rail with a BSD
+`sed` range expression that did not match; its reported 3 m limit was retained
+as a setup check and is not evidence for this experiment. The corrected
+artifact records the actual 20 m plant. This is a useful tooling pitfall:
+every widened-rail diagnostic must report and verify the instantiated
+`rail_limit` before its metrics enter the ledger.
+
+Decision: a near-locked split-link route cannot be promoted by widening the
+rail. The continuation must produce a better terminal trajectory and a valid
+capture basin as the split is unlocked; otherwise it is only a morphology
+escape hatch, not an 11-link solution.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_forced_split_link9_p0.000020996_widerail20_replay_v2.json`
+- `runs/generalized_solver/n11_forced_split_link9_p0.000020996_widerail20_replay.json` (setup-check artifact; reported rail remained 3 m)
+
+### Distal split-position release probe (2026-09-15)
+
+The alternate split at source link `10` was tested with the same 10-to-11
+locked-start teacher, exact MuJoCo replay, waypoint repair, and target-plant
+Box-FDDP contract used for the link-9 branch. The locked distal split is a
+valid development baseline: `22.12 s` hold and `2.023 m` maximum cart
+excursion. The first two unlock brackets were then completed:
+
+| Release progress | Strongest completed result | Decision |
+| --- | --- | --- |
+| `p=0.001` | Waypoint endpoint at `2.023 m`, but target-plant refinement exited at `3.066 m` with `0 s` hold | Rejected |
+| `p=0.0005` | Waypoint endpoint at `2.024 m`, but target-plant refinement exited at `3.034 m` with `0 s` hold | Rejected |
+
+The repaired endpoints were physically finite and close to the incumbent,
+which is useful evidence that waypoint construction itself is not the only
+obstacle. Every exact target-plant refinement became unstable or left the
+canonical rail before a sustained capture. A third `p=0.00025` waypoint
+search was interrupted during its longest lookahead; because it did not
+complete its refinement/replay gate, it is explicitly not counted as a
+result.
+
+Decision: the distal split does not materially widen the release basin. Keep
+the link-10 variant as a negative split-position control, and return compute
+to a controller/interface change that addresses full-chain modal energy and
+capture, rather than testing more split locations with the same fragile local
+repair.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_forced_split_link10.yaml`
+- `runs/generalized_solver/n11_forced_split_link10_warm.json`
+- `runs/generalized_solver/n11_forced_split_link10_homotopy/continuation.json`
+- `runs/generalized_solver/n11_forced_split_link10_homotopy/trials/trial_0001_p0.001000000_pass2.json`
+- `runs/generalized_solver/n11_forced_split_link10_homotopy/trials/trial_0002_p0.000500000_pass2.json`
+
+### Free-added-mode support sweep (2026-09-15)
+
+The next support hypothesis was tested on the canonical uniform n=11 plant:
+start with the added mode physically unlocked, but temporarily give that mode
+small damping and stiffness while replaying the best locked-route teacher. This
+keeps the added joint free at progress zero; it is not the invalid shortcut of
+locking the mode and calling the result an 11-link solve. The teacher was the
+exact saved n=11 locked-route controller, replayed for 8 seconds with a
+diagnostic +/-6 m rail.
+
+The baseline free-mode replay reached `6.028 m` and produced `0 s` of hold.
+The support sweep also produced `0 s` of hold for all four tested settings:
+
+| Temporary added-mode support | Maximum cart excursion | Hold | Decision |
+| --- | ---: | ---: | --- |
+| stiffness `3`, damping `0.03` | `6.043 m` | `0 s` | Rejected |
+| stiffness `10`, damping `0.03` | `6.016 m` | `0 s` | Rejected |
+| stiffness `30`, damping `0.03` | `6.039 m` | `0 s` | Rejected |
+| stiffness `10`, damping `0.10` | `6.076 m` | `0 s` | Rejected |
+
+These are diagnostic replays, not canonical evidence. The result closes the
+simple “copy the locked route and let the new mode become free gradually” path:
+temporary local support does not preserve the teacher's capture basin. A
+successful curriculum must re-optimize the route while the new mode is free,
+and must replay the final route with every temporary support removed.
+
+Artifacts:
+
+- `tmp/n11_free_ghost_support/config.yaml`
+- `tmp/n11_free_ghost_support/p0_replay.json`
+- `tmp/n11_free_ghost_support/k3d03/replay.json`
+- `tmp/n11_free_ghost_support/k10d03/replay.json`
+- `tmp/n11_free_ghost_support/k30d03/replay.json`
+- `tmp/n11_free_ghost_support/k10d10/replay.json`
+
+### Online literature triage for the next route (2026-09-15)
+
+The next controller interface is informed by three primary references, but
+none of them is evidence for this project. The MIT Underactuated Robotics
+cart-pole notes describe energy shaping followed by local LQR capture. Xin,
+She, and Yamasaki describe virtual composite-link coordinates for an n-link
+planar robot with one passive joint. Shkolnik et al. describe searching in a
+low-dimensional task space while simulating the complete joint dynamics, with
+an objective that combines energy error and weighted joint-space distance.
+Xin et al. also show why rail length belongs in the controller objective by
+using a coupling-energy/barrier formulation for a cart-pole with limited-track
+length.
+
+Use these as design prompts for the 11-link experiments: score the full
+absolute-angle shape, internal rates, cart state, energy, and rail barrier
+together; keep a local upright stabilizer; and validate every candidate on the
+full plant. Do not copy their results into the project claim, since their
+models, link counts, and evaluation contracts differ.
+
+References:
+
+- [MIT Underactuated Robotics: Acrobot and cart-pole control](https://underactuated.csail.mit.edu/acrobot.html)
+- [Xin, She, and Yamasaki, Swing-up Control for n-Link Planar Robot with Single Passive Joint](https://www.jstage.jst.go.jp/article/sicetr/45/5/45_5_251/_article/-char/en)
+- [Shkolnik et al., High-Dimensional Underactuated Motion Planning](https://groups.csail.mit.edu/robotics-center/public_papers/Shkolnik08.pdf)
+- [Xin et al., Coupling-energy-based swing-up control for a pendulum-cart system with limited-track length](https://journals.sagepub.com/doi/10.1177/10775463251405631)
+
+### Hanging-start free-mode FDDP continuation (2026-09-15)
+
+The p=0 ghost continuation was re-optimized from the actual hanging state,
+not from a previously captured upright state. The starting state was the
+canonical eleven-link hanging configuration with zero velocity. The teacher
+was the saved locked-route controller that holds the supported p=0 plant for
+`22.12 s`; the continuation then optimized on a diagnostic `+/-6 m` rail with
+the added mode physically free. This is the relevant test for whether the
+locked route can be made into a genuine hanging-start route by a small release
+and local FDDP repair.
+
+| Release progress | Initial-feedback treatment | FDDP result | Live replay | Decision |
+| --- | --- | --- | --- | --- |
+| `p=0.001` | Saved locked-route feedback | `23` iterations; terminal value about `9722` | `6.002 m` cart excursion, `0.180 s` hold | Rejected |
+| `p=0.01` | Saved locked-route feedback | `14` iterations; terminal value about `0.01` | `6.046 m` cart excursion, `0 s` hold | Rejected |
+| `p=0.1` | Saved locked-route feedback | `14` iterations; terminal value about `1.52` | `5.727 m` cart excursion, `0 s` hold | Rejected |
+| `p=0.001` | Rebuilt initial feedback, scale `.25` | `21` iterations; terminal value about `3.05e6` | `6.076 m` cart excursion, `0 s` hold | Rejected |
+| `p=0.001` | Rebuilt initial feedback, scale `.50` | `17` iterations; terminal value about `3.63e6` | `6.015 m` cart excursion, `0 s` hold | Rejected |
+| `p=0.001` | Rebuilt initial feedback, scale `.75` | `40` iterations; terminal value about `1293` | `6.032 m` cart excursion, `0.180 s` hold | Rejected |
+
+Several runs emitted MuJoCo instability warnings. The exact saved route and
+the feedback-rebuild variants all left the diagnostic rail before producing a
+repeatable capture basin. This closes the simple warm-start explanation: the
+failure is not just that the old feedback matrix was stale. A successful
+continuation needs a new trajectory/interface or a more global search, not
+another minor p-step or feedback-scale sweep around this seed.
+
+Decision: keep the ghost route as a development boundary and do not promote
+any of these runs to an 11-link result. The canonical uniform hanging-start
+plant, canonical rail, reset-free replay, and held-out gates remain unmet.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_ghost_hanging_route_p0001_fddp.json`
+- `runs/generalized_solver/n11_ghost_hanging_route_p001_fddp.json`
+- `runs/generalized_solver/n11_ghost_hanging_route_p01_fddp.json`
+- `runs/generalized_solver/n11_ghost_hanging_route_p0001_rebuildfb025_fddp.json`
+- `runs/generalized_solver/n11_ghost_hanging_route_p0001_rebuildfb050_fddp.json`
+- `runs/generalized_solver/n11_ghost_hanging_route_p0001_rebuildfb075_fddp.json`
+
+### Modal-coherence and VCL tail-composite probe (2026-09-15)
+
+Two state-shape corrections were screened on the canonical uniform eleven-link
+plant using the generalized energy controller. The first used absolute-angle
+and rate coherence. The second used virtual composite-link (VCL) angles and
+rates: each VCL is the center-of-mass direction of a distal tail. The VCL
+implementation is a representation and feedback probe inspired by the
+literature cited above; the cited robot and actuation assumptions are not the
+cart-pole evidence contract.
+
+The coherence branch did not produce an upright switch in any tested setting.
+Ungated gains either consumed the diagnostic rail (about `3.00 m`) or reduced
+the excursion without reaching capture. Energy-proximity gates softened the
+rail behavior, but still produced no upright hold. The strongest gated
+coherence replay reached about `2.375 m` without a capture event.
+
+The VCL branch was similarly non-solving. The mildest useful setting reduced
+the rail ratio below one and reached a minimum VCL angle RMS of about `0.294`
+rad, but produced no upright switch or hold. Larger gains consumed the rail;
+the strongest rail-safe setting still produced no capture.
+
+| Branch / setting | Maximum cart or rail ratio | Upright/hold result | Decision |
+| --- | ---: | --- | --- |
+| Coherence, gated `g=.08`, `p=.02`, `v=.02`, `w=1` | `2.375 m` | No switch, no hold | Rejected |
+| VCL, gated `g=.08`, `p=.25`, `v=.5`, `w=.25`, limit `1` | rail ratio `.890` | No switch, no hold; min VCL RMS `.294 rad` | Rejected |
+| VCL, gated `g=.08`, `p=.2`, `v=.2`, `w=1`, limit `.5` | rail ratio `.892` | No switch, no hold; min VCL RMS `1.15 rad` | Rejected |
+| VCL, higher-gain settings | rail ratio `1.06-1.07` | Rail violation, no hold | Rejected |
+
+Decision: VCL coordinates are useful diagnostics for tail shape, but a late
+least-squares coherence correction is not the missing swing-up mechanism. Keep
+the code available as a measurement/control primitive, but do not add it to
+the active claim route until it is paired with a genuine energy-pumping and
+capture strategy that survives the canonical rail and held-out gates.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_coherence_base.json`
+- `runs/generalized_solver/n11_coherence_p025v05w025l1.json`
+- `runs/generalized_solver/n11_coherence_p05v1w05l1.json`
+- `runs/generalized_solver/n11_coherence_p1v2w05l2.json`
+- `runs/generalized_solver/n11_coherence_p02v02w1l05.json`
+- `runs/generalized_solver/n11_coherence_g08_p025v05w025.json`
+- `runs/generalized_solver/n11_coherence_g06_p05v1w05.json`
+- `runs/generalized_solver/n11_coherence_g08_p05v1w05.json`
+- `runs/generalized_solver/n11_coherence_g10_p1v2w05.json`
+- `runs/generalized_solver/n11_coherence_g08_p02v02w1.json`
+- `runs/generalized_solver/n11_vcl_g08_p025v05w025.json`
+- `runs/generalized_solver/n11_vcl_g08_p05v1w05.json`
+- `runs/generalized_solver/n11_vcl_g06_p05v1w05.json`
+- `runs/generalized_solver/n11_vcl_g10_p1v2w05.json`
+- `runs/generalized_solver/n11_vcl_g08_p02v02w1.json`
+
+### VCL phase/rate energy-pump screen (2026-09-15)
+
+The VCL probe was extended from a late coherence correction to an opt-in
+swing-phase signal. The controller added signed weighted VCL phase, natural-
+time-scaled VCL phase rate, and energy-error times VCL-rate terms to the same
+exact mass-matrix energy pump. The upright LQR handoff and canonical
+`+/-3 m` rail were unchanged. This directly tests whether the VCL coordinates
+can supply the missing swing phase rather than merely damp the tail near the
+top.
+
+Eight one-episode canonical screens all failed the swing-up/hold gate. The
+most rail-efficient candidate (`vcl_pump_gain=-2`) stayed at `0.647` required
+rail ratio, but ended with about `2.83 rad` maximum final angle and no upright
+event. The positive pump candidates either left the rail (`1.06-1.08` ratio)
+or remained far from the top. Phase/rate combinations changed the rail use
+but did not produce capture; the best rail-safe combination still had about
+`2.68 rad` final angle and zero hold.
+
+Decision: VCL tail phase/rate is not, by itself, the missing energy-pumping
+interface for the uniform 11-link plant. Keep the feature and diagnostics
+available for a future trajectory-conditioned controller, but stop tuning this
+low-dimensional additive screen. The active route returns to a measured
+handoff-reaching swing expert, with the capture bank and playbook gates kept
+separate.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_vclpump_p2.json`
+- `runs/generalized_solver/n11_vclpump_m2.json`
+- `runs/generalized_solver/n11_vclpump_p5.json`
+- `runs/generalized_solver/n11_vclpump_m5.json`
+- `runs/generalized_solver/n11_vclphase_p2_rate1.json`
+- `runs/generalized_solver/n11_vclphase_m2_ratem1.json`
+- `runs/generalized_solver/n11_vclmix_p2_phm1_ratem05.json`
+- `runs/generalized_solver/n11_vclmix_m2_php1_rate05.json`
+
+### Receding-horizon swing planner and measured LQR-tail audit (2026-09-15)
+
+The next two-expert experiment used a live exact-MuJoCo receding-horizon CEM
+as the swing expert. It replanned from the state emitted by the previous
+action, rather than replaying an open-loop force trace. A canonical-rail probe
+reached only `0.522` potential fraction before a `3.035 m` excursion. On a
+diagnostic `+/-12 m` rail, the same planner reached `0.973` potential fraction
+and a `0.699 rad` best angle, but produced no upright hold and emitted
+instability warnings.
+
+A quieter-action/capture-weight screen on the wide rail reached `0.996`
+potential fraction and a `0.254 rad` angle crossing at `6.561 m` maximum cart
+excursion. The state was not capture-ready: hinge RMS was `8.27 rad/s`,
+absolute-rate RMS was `15.57 rad/s`, and cart speed was `10.77 m/s`. The exact
+upright LQR was then replayed from the twelve best recorded near-top states;
+all `12/12` failed, with `0 s` hold. The best-angle state eventually reached
+the wide rail boundary and ended at about `2.97 rad`.
+
+| Planner interface | Rail / settings | Strongest result | Decision |
+| --- | --- | --- | --- |
+| Height-scored receding CEM | Canonical `+/-3 m` | Height `.522`, angle `1.986 rad`, `3.035 m` excursion | Rejected |
+| Height-scored receding CEM | Diagnostic `+/-12 m` | Height `.973`, angle `.699 rad`, `12.050 m` excursion | Development only |
+| Quiet-action capture-weight CEM | Diagnostic `+/-12 m` | Height `.996`, angle `.254 rad`, `6.561 m` excursion, zero hold | Rejected as handoff |
+| Exact LQR from twelve near-top states | Diagnostic `+/-12 m`, `8 s` | `0/12` success, `0 s` hold | Rejected |
+
+The planner was then upgraded so every candidate can be scored by simulating
+the actual upright LQR for a short terminal tail. The first implementation
+incorrectly applied that tail cost while candidates were still near the
+hanging state; the gate was corrected to activate it only above the predicted
+capture-height threshold. The corrected tail-scored runs reached heights
+`.787` and `.895` with best angles `1.598` and `1.298 rad`, maximum excursions
+`9.048 m` and `8.150 m`, and zero hold. A lighter tail penalty recovered more
+height but still did not enter a capture basin.
+
+Decision: this closes the current receding-CEM interface as an 11-link
+solution path. It establishes a useful quantitative target for the next
+swing expert: reach the measured capture manifold with low cart velocity and
+low absolute rates, not merely high potential or a visually vertical chain.
+The planner and LQR-tail scorer remain reusable diagnostics, but all wide-rail
+and near-top results stay explicitly outside the public link-count claim.
+
+Artifacts:
+
+- `scripts/search_swingup_online_mpc.py`
+- `runs/generalized_solver/n11_online_mpc_swing_canonical_probe.json`
+- `runs/generalized_solver/n11_online_mpc_swing_rail12_probe.json`
+- `runs/generalized_solver/n11_online_mpc_swing_rail12_quietcapture.json`
+- `runs/generalized_solver/n11_online_mpc_swing_rail12_strictcapture.json`
+- `runs/generalized_solver/n11_online_mpc_swing_rail12_captureweight12.json`
+- `runs/generalized_solver/n11_online_mpc_swing_rail12_captureweight30.json`
+- `runs/generalized_solver/n11_online_mpc_swing_rail12_capture_candidates.json`
+- `runs/generalized_solver/n11_online_mpc_swing_rail12_capture_lqr_screen.json`
+- `runs/generalized_solver/n11_online_mpc_swing_lqr_tail_rail12.json`
+- `runs/generalized_solver/n11_online_mpc_swing_lqr_tail_rail12_gated.json`
+- `runs/generalized_solver/n11_online_mpc_swing_lqr_tail_rail12_light.json`
+
+### Nonlinear capture tail from the best wide-rail crossing (2026-09-15)
+
+The best recorded wide-rail crossing (`0.254 rad` maximum angle) was handed
+to the exact-MuJoCo nonlinear receding-horizon capture search. This removes
+the possibility that the failure was caused only by using a linear LQR tail.
+The capture planner ran for `4 s` with `50` replans on the `+/-12 m` diagnostic
+rail. It produced no upright or low-momentum streak; the final state was
+about `1.433 rad` maximum angle, `4.77 rad/s` hinge RMS, `5.996 rad/s`
+absolute-rate RMS, and `7.264 m` cart position.
+
+Decision: the near-top crossing is not a usable capture handoff for either
+the linear or nonlinear capture expert tested here. The next swing search
+must target the measured quiet handoff manifold directly, including cart
+position/velocity and internal rates, instead of treating angle or potential
+height as sufficient.
+
+Artifact:
+
+- `runs/generalized_solver/n11_online_capture_from_mpc_top_state_rail12.json`
+
+### MPC residual and whole-route FDDP warm-start probes (2026-09-15)
+
+The recorded quiet-action MPC route was tested as a route-level initialization
+for the handoff-bank CEM and for Box-FDDP. The residual CEM was constrained to
+the route after the nominal handoff window and used the diagnostic `+/-12 m`
+rail. Its best bank-distance score was about `7.22`, terminal distance about
+`13.59`, and maximum cart position about `7.28 m`; it produced no capture or
+hold. This is a negative result for local correction around the MPC route, not
+evidence against the measured capture bank itself.
+
+The same route was serialized as a 500-action, 10-second warm start with
+nominal states. The first whole-route FDDP continuation used the measured
+handoff target, rebuilt initial states from the route, and kept the diagnostic
+rail. It diverged almost immediately: `7` iterations, `converged=false`,
+minimum value about `7.67e6`, terminal value about `1.30e18`, maximum cart
+position `12.03 m`, and zero hold. The initial route feedback gains were zero,
+so this is specifically a failed open-loop route warm start rather than a
+proper feedback-route test.
+
+Decision: reject the current residual and zero-gain route initialization. The
+next route-level test must construct feedback gains along the recorded path
+before asking FDDP to refine it. Keep the rail and canonical replay gates
+separate from these diagnostic probes.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_online_mpc_quietcapture_center.json`
+- `runs/generalized_solver/n11_online_mpc_quietcapture_handoff_residual_rail12.json`
+- `runs/generalized_solver/n11_hanging_state_exact.json`
+- `runs/generalized_solver/n11_online_mpc_quietcapture_feedback_warm.json`
+- `runs/generalized_solver/n11_online_mpc_quietcapture_fddp_terminal_target_rail12.json`
+
+### LTV route-feedback warm start and rail-rescue probe (2026-09-15)
+
+The recorded MPC trajectory was converted into a reusable finite-horizon
+linear-time-varying feedback route. Exact MuJoCo finite differences and a
+backward Riccati sweep were used to compute a gain at every route step. The
+late MPC path is too far outside a local tracking neighborhood for this to be
+well-conditioned: the default route reached a maximum feedback-gain norm of
+about `4.75e4` and a local closed-loop spectral radius of about `214`. A
+`0.05`-scaled exact replay on the diagnostic `+/-12 m` rail still became
+unstable at the start and exited at `12.01 m`; no hold occurred. This closes
+the route-feedback construction as a rescue for the existing MPC path.
+
+The near-release rigid-split route was then replayed at the next release
+trial with diagnostic rail half-lengths `3.30 m` and `3.50 m`. The first
+replay reached `3.376 m` and the second `3.578 m`, with zero upright hold in
+both cases. The excursion increased with the allowance instead of converging
+to a bounded swing, so this is boundary chasing rather than evidence that a
+longer rail solved the release. The canonical `3.0 m` rail and uniform free
+plant remain unchanged.
+
+Decision: reject both the current LTV warm start and simple rail rescue. A
+future longer-rail experiment must include a new controller objective that
+reduces the required rail and must return through rail contraction; replaying
+the same route on a larger rail is not sufficient.
+
+Artifacts:
+
+- `scripts/build_route_ltv_feedback.py`
+- `runs/generalized_solver/n11_online_mpc_quietcapture_ltv_feedback_default.json`
+- `runs/generalized_solver/n11_online_mpc_quietcapture_ltv_r1000_t01.json`
+- `runs/generalized_solver/n11_online_mpc_quietcapture_ltv_replay_g005_rail12.json`
+- `runs/generalized_solver/n11_forced_split_link9_p000020996_rail330_replay.json`
+- `runs/generalized_solver/n11_forced_split_link9_p000020996_rail350_replay.json`
+
+### Measured quiet-target and transferred 10-link-route replay (2026-09-15)
+
+The terminal target was replaced with an actual quiet upright state measured
+from the assisted 11-link handoff bank, then the current dimension-lifted
+10-link route was used as the whole-route warm start. The measured bank state
+was from source row `1495` at `t=29.92 s`: angle about `1.9e-6 rad`, hinge-rate
+RMS about `4.4e-7 rad/s`, cart position about `-0.00054 m`, and cart velocity
+about `7.3e-5 m/s`. Whole-route FDDP still diverged after `7` iterations:
+minimum value about `7.67e6`, terminal value about `2.78e15`, replay maximum
+cart position `3.094 m`, and zero hold.
+
+The transferred route was also replayed directly on a diagnostic `+/-12 m`
+rail. The open-loop replay reached `|x|=12.031 m`; the feedback replay reached
+`|x|=12.077 m`. Both had zero hold. These wide-rail replays show that the
+failure is not just the canonical `+/-3 m` boundary.
+
+Decision: the measured quiet target and settled launch contract are not the
+missing ingredient until a free-chain swing trajectory can reach them. Reject
+the transferred 10-link route as an 11-link warm start, keep it as a negative
+control, and do not advance the 11-link status, README, GitHub About, or public
+evidence. The next route search must use a materially different
+parameterization with an explicit low-rate capture objective.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_measured_quiet_terminal_target.json`
+- `runs/generalized_solver/n11_n10_transfer_targeted_quiet_fddp.json`
+- `runs/generalized_solver/n11_n10_transfer_open_replay_rail12.json`
+- `runs/generalized_solver/n11_n10_transfer_feedback_replay_rail12.json`
+
+### Mode chirp, retiming, aggregate-tail transfer, and longer MPC screens (2026-09-15)
+
+The measured hanging normal modes were used to screen a compact frequency
+chirp before adding another learned policy. The eleven mode frequencies were
+approximately `0.346`, `0.794`, `1.211`, `1.512`, `1.896`, `2.329`, `2.757`,
+`3.186`, `3.616`, `4.054`, and `4.498 Hz`. Eight exact serial replays varied
+the chirp amplitude (`0.02` or `0.05`) and end frequency (`2.5` or `4.5 Hz`)
+from the exact hanging state on a diagnostic `+/-12 m` rail. The best case
+reached only `2.876 rad` from upright, with zero upright streak; all cases
+remained in the hanging basin. This closes a blind measured-mode chirp as a
+standalone swing expert.
+
+The transferred ten-link route was then retimed in the opposite direction
+from the earlier slow-windup tests. A `0.50x` route used `1.80 m` of cart
+excursion during its 4-second materialization, while a `0.75x` route used
+`3.94 m` during its 6-second materialization. On the matched `+/-20 m`
+diagnostic replay both ran to the rail (`20.17 m` and `20.02 m`) with zero
+upright streak; the faster timing did not reveal a capture basin.
+
+A structural transfer was also tested. The last two target links were
+aggregated into a physically matched ten-link surrogate with the final body
+length `0.5454545 m` and mass `0.1818182 kg`, preserving the target chain's
+total length and link mass. The ten-link route transferred into this surrogate
+with a bounded `2.06 m` open replay, but its aligned 8-second replay never
+got closer than `2.03 rad` to upright. Splitting that aggregate body back into
+two locked target links reached `3.052 m` on the canonical rail with zero
+hold. Targeted FDDP toward the measured quiet handoff stopped after `7`
+iterations and reached `12.064 m` on the diagnostic rail; a force-limit
+training-wheel run at `120 N` stopped after `9` iterations, emitted MuJoCo
+instability warnings, and reached `12.020 m`. The aggregate-tail route is a
+better-conditioned transfer seed than the ordinary lift, but it is not a
+swing-up route.
+
+Finally, a longer-horizon receding CEM was scored by simulating the exact
+upright LQR tail from every predicted terminal state. With a `3.2 s` planning
+horizon, `80`-step tail, and `10 s` replay on the `+/-12 m` rail, the best
+potential fraction was `0.626`, the best angle was `1.692 rad`, maximum cart
+excursion was `7.775 m`, and upright streak was `0 s`. This does not improve
+the existing wide-rail MPC boundary.
+
+Decision: close measured-mode chirps, faster global retiming, aggregate-tail
+transfer, force-authority FDDP, and the longer tail-scored MPC as current
+11-link solution paths. The active requirement is unchanged: a free uniform
+11-link hanging-start route must reach the measured quiet handoff manifold on
+the canonical rail before the capture expert can be credited. Keep the
+aggregate-tail config as a reusable control experiment, but do not promote
+any of its diagnostic routes, wide-rail runs, or surrogate holds.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_mode_chirp_screen.json`
+- `configs/swingup10_aggregate_tail.yaml`
+- `configs/swingup11_aggregate_split_continuation.yaml`
+- `runs/generalized_solver/n10_aggregate_tail_transfer_warm.json`
+- `runs/generalized_solver/n10_aggregate_tail_fddp.json`
+- `runs/generalized_solver/n10_aggregate_tail_fddp_aligned.json`
+- `runs/generalized_solver/n10_aggregate_tail_replay_aligned8.json`
+- `runs/generalized_solver/n11_aggregate_tail_transfer_warm.json`
+- `runs/generalized_solver/n11_aggregate_tail_exact_replay_rail20.json`
+- `runs/generalized_solver/n11_aggregate_tail_replay_rail20.json`
+- `runs/generalized_solver/n11_aggregate_tail_target_fddp.json`
+- `runs/generalized_solver/n11_aggregate_split_warm.json`
+- `runs/generalized_solver/n11_aggregate_split_replay_p0.json`
+- `runs/generalized_solver/n11_aggregate_tail_force120_fddp.json`
+- `runs/generalized_solver/n11_n10_transfer_retime050_open_wide_warm.json`
+- `runs/generalized_solver/n11_n10_transfer_retime050_open_replay_rail20.json`
+- `runs/generalized_solver/n11_n10_transfer_retime075_open_wide_warm.json`
+- `runs/generalized_solver/n11_n10_transfer_retime075_open_replay_rail20.json`
+- `runs/generalized_solver/n11_n10_transfer_multiple_shooting8s.json`
+- `runs/generalized_solver/n11_time_reversed_downfall_rail12.json`
+- `runs/generalized_solver/n11_online_mpc_longtail_screen.json`
+
+### Route-tracking repair and free-split stiffness boundary (2026-09-15)
+
+The route-tracking MPC evaluator was corrected to extract the physical
+MuJoCo state with `mj_getState`; the full MuJoCo state vector includes time,
+so treating it as `[qpos, qvel]` had been corrupting the receding-horizon
+rollout. The corrected exact-physics MPC still did not produce a legal
+handoff. On a diagnostic `+/-12 m` rail, the best ordinary plan reached a
+potential fraction of about `0.998`, but its best angle was only `0.496 rad`
+from upright, its cart excursion was `12.160 m`, and its handoff speed was
+about `6.62 m/s`. Tail-aware variants also escaped to the rail without an
+upright hold. The state-extraction bug is fixed, but the transferred route is
+still not a capturable 11-link route.
+
+A whole-route correction CEM and a phase-dependent distal-feedback residual
+CEM were then tested around the transferred route. The whole-route search
+found a best route peak of `5.562 m` and no hold. The feedback-residual
+search reached a best potential of `0.762`, angle `2.519 rad`, and cart
+excursion `1.960 m`, again with zero hold. Both searches remain negative
+controls: local corrections around the ten-link transfer do not recover a
+legal free-chain capture.
+
+The next curriculum screen inserted a temporary stiffness and damping at the
+split joint between links 9 and 10 while leaving the split physically free
+(`rigid_split_inertia=false`, joint locks zero). This is explicitly a
+training wheel, not the canonical plant. The first embedded solver summaries
+looked encouraging at progress zero on a diagnostic `+/-6 m` rail:
+`K=100, c=2` reported `22.02 s` and `K=50, c=1` reported `29.94 s`. Those
+were false positives. The trajectories contained MuJoCo instability warnings
+followed by zeroed state rows, which the old evaluator counted as upright.
+After the integrity guard was added, independent replays reported
+`trajectory_integrity=false` and `termination_reason=numerical_instability`
+for both; the `K=50` trace reached a nonphysical `48,901 m` cart excursion,
+while the `K=100` trace retained a spurious `22.02 s` streak after warnings.
+
+The lower-support replays were also negative: `K=40, c=.8` produced only
+`0.12 s` before a `6.784 m` rail violation, `K=35, c=.7` produced `0.12 s`
+before `6.441 m`, and `K=30, c=.6` and `K=25, c=.5` produced no upright
+streak before violating at `6.017 m` and `6.065 m`. The boundary is even
+sharper above `K=50`: `K=49.5`, `48.5`, and `48` produced instability warnings
+and enormous nonphysical cart values; `K=45`, `42.5`, and `41` failed within
+`0.08 s` or less. A continuation optimizer run at `K=50` simply inherited
+the unstable route with no iterations, and a `K=20` continuation became
+unstable and failed. This branch is therefore a numerical artifact, not a
+support-assisted hold or a useful path to the uniform free 11-link plant.
+
+The evaluator repair is part of the playbook: `search_ilqr_capture.py` now
+rejects nonfinite or absurd state values and early zero-collapse traces, and
+the regression tests cover both rejection and a genuine upright tail.
+
+Decision: keep the corrected state extraction and the support curriculum as
+diagnostics, but reject the transferred MPC, whole-route correction,
+feedback-residual, and temporary-stiffness branches as release paths. Do not
+advance the 11-link status, README, GitHub About, video, or paper. The next
+experiment must remove the artificial support and change the route/capture
+parameterization materially, while using this section as a boundary check.
+
+Artifacts:
+
+- `scripts/search_route_tracking_mpc.py`
+- `scripts/search_route_feedback_residual_cem.py`
+- `scripts/build_free_split_stiffness_continuation.py`
+- `scripts/search_ilqr_capture.py`
+- `tests/test_ilqr.py`
+- `runs/generalized_solver/n11_route_tracking_mpc_rail12.json`
+- `runs/generalized_solver/n11_route_tracking_mpc_tail_rail12.json`
+- `runs/generalized_solver/n11_route_correction_lqr_capture_search.json`
+- `runs/generalized_solver/n11_route_feedback_residual_cem_rail12.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k100_d2_replay.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k50_d1_fddp.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k100_d2_replay_integrity_checked.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k50_d1_replay_integrity_checked.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k20_d04_fddp.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k40_d08_replay.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k35_d07_replay.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k30_d06_replay.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k25_d05_replay.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k49p5_d099_replay.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k48p5_d097_replay.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k48_d096_replay.json`
+
+### Full-waveform CEM, physics shaper, and support-gradient follow-up (2026-09-15)
+
+The corrected exact serial CEM was widened from phase-local feedback to a
+48-knot additive force waveform over the entire transferred route. On a
+diagnostic `+/-12 m` rail, `50` iterations improved the best objective to
+`406177`, but the best state was still `2.794 rad` from upright, with
+`4.388 rad/s` hinge RMS, `4.602 rad/s` absolute-rate RMS, and `2.091 m`
+maximum cart excursion. No upright event or capture occurred. This closes
+whole-waveform additive CEM around the current transfer as well as the
+earlier phase-feature residual search.
+
+An exact mass-matrix cart-acceleration energy-shaping CEM was also run for
+`30` iterations and `48` candidates per iteration on the same wide rail. Its
+best late state reached `1.834 rad` from upright but the cart then violated
+the diagnostic rail at `12.030 m`; upright streak remained zero. The
+interpretable energy expert did not provide a usable swing-up prefix.
+
+Finally, the new builder option that keeps `K=50, c=1` fixed while changing
+only split geometry and masses was screened at morphology progress
+`0.05, 0.10, 0.20, 0.40, 0.70, 1.0`. Direct replays failed at every nonzero
+progress, with instability or rail exits as early as `0.06 s`. A nominal
+`p=0.01` FDDP run again produced an embedded success summary, but its
+integrity-checked replay rejected it as numerical instability. The fixed-
+support morphology gradient therefore does not rescue the support artifact.
+
+Decision: the CEM, energy-shaping, and fixed-support morphology-gradient
+branches are closed. Continue using the playbook requirement that every
+candidate be independently replayed with finite-state integrity before its
+metrics can influence the next search. The active 11-link problem remains
+the free uniform hanging-start route on the canonical rail.
+
+Artifacts:
+
+- `runs/generalized_solver/n11_global_exact_cem_transfer_residual_rail12.json`
+- `runs/generalized_solver/n11_energy_shaping_cem_rail12.json`
+- `tmp/n11_free_split_stiffness_k50_constant.yaml`
+- `runs/generalized_solver/n11_free_split_stiffness_k50_constant_p0p05_replay.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k50_constant_p0p10_replay.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k50_constant_p0p20_replay.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k50_constant_p0p40_replay.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k50_constant_p0p70_replay.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k50_constant_p1p00_replay.json`
+- `runs/generalized_solver/n11_free_split_stiffness_k50_constant_p0p01_fddp.json`
+
+### Real crossing export, relaxed capture replay, and extended low-momentum CEM (2026-09-15)
+
+The expert-chain evaluator was first replayed with the best known cart-target
+trajectory and the capture gate relaxed to hinge RMS `<=3.0 rad/s`, cart speed
+`<=1.0 m/s`, and `|x|<=2.0 m` on the diagnostic `+/-12 m` rail. The swing
+expert reached a genuine upright crossing at `t=6.04 s` with maximum angle
+`0.0786 rad`, hinge RMS `2.5916 rad/s`, cart speed `0.5504 m/s`, and
+`x=1.8698 m`. The LQR capture action saturated on the next step; the chain
+then reached `0.2431 rad`, `3.8084 rad/s`, and `0.8643 m/s` before exiting at
+`12.0452 m`. The relaxed gate therefore exposes the failure but does not
+define an admissible handoff.
+
+The state exporter had been saving only rows after the stage switched to
+capture, which could omit the exact pre-action state responsible for the
+handoff. It now saves qualifying rows from the swing stage as well. The
+replayable state file contains the real `t=6.04 s` crossing, including its
+full `qpos/qvel`, so future capture training can use the state actually handed
+over by the first expert.
+
+A larger `40`-iteration, `64`-candidate CEM then searched the existing
+cart-position trajectory family against the strict gate: angle `<=0.15`, hinge
+RMS `<=0.90`, cart speed `<=0.50`, and `|x|<=2.0 m`. It improved the best
+geometric crossing to `0.0548 rad`, but the handoff still had hinge RMS
+`2.2851 rad/s` and cart speed `1.2485 m/s`; capture was never entered and
+upright hold remained `0 s`. This is a stronger swing transient, not a solve.
+
+Decision: preserve the real crossing-state artifact and keep the strict gate.
+Do not train or claim capture from a post-switch state, and do not widen the
+gate to turn a violent crossing into evidence. The cart-target trajectory
+family is now saturated at an internal-rate boundary; the next route search
+must change the late approach parameterization or use a nonlinear capture
+teacher while retaining the exact saved-state and independent-replay checks.
+
+Artifacts:
+
+- `scripts/search_swingup_chain.py`
+- `runs/generalized_solver/n11_chain_gate_exact_handoff_states.json`
+- `runs/generalized_solver/n11_chain_gate_exact_handoff_state_replay.json`
+- `runs/generalized_solver/n11_chain_gate_relaxed_capture_v2.json`
+- `runs/generalized_solver/n11_chain_low_momentum_cem_extended_rail12.json`
+
+### Timing-only refinement, capture-ready state searches, and settled launch (2026-09-15)
+
+The next route searches kept the cart-position feedback structure but changed
+the late timing and the handoff objective. A `20`-iteration timing-only CEM
+reached a sharp `0.0211 rad` angle crossing, but hinge RMS was `2.1240
+rad/s` and cart speed was `1.1173 m/s`; it did not enter capture. A
+capture-ready CEM that ranked angle, hinge rate, absolute angular rate, cart
+speed, and cart position found a genuine angle-ranked crossing at `0.1104
+rad`, hinge RMS `1.3706 rad/s`, absolute-rate RMS `2.3754 rad/s`, cart speed
+`1.3679 m/s`, and `x=1.6656 m`. A centered rate refinement degraded the main
+score and still found no capture. These runs confirm that a low angle alone,
+or even a low angle plus moderate hinge rate, is not the required interface.
+
+The saved angle-ranked state was replayed from its exact `qpos/qvel` with two
+nonlinear capture-actor CEMs: a full absolute/relative-state actor and a
+lower-dimensional absolute-state actor. Their best centered upright streaks
+were only `0.06 s` and `0.02 s`, respectively, with no low-momentum hold. The
+capture expert cannot be credited from a hand-picked near-upright state when
+the measured rates are outside its basin.
+
+An open-loop direct-force waveform was then replayed with the same seed and
+the same initial route candidate. It failed at about `0.34 s`, reaching
+`3.141 rad` angle and the rail. This is a useful control-architecture result:
+the successful predecessor route's cart-target feedback is doing essential
+state-dependent work, so exporting its action waveform is not an equivalent
+controller.
+
+The evaluator now supports an explicit settled-launch phase. Before the
+swing route starts, a hanging LQR centers the cart and damps the resting
+chain; exported row timestamps include the conditioning time, and the result
+stores the exact post-conditioning `qpos/qvel` as `conditioning_state`. The
+old route was first replayed after an `8 s` conditioning phase. Its tiny
+numerical launch drift changed the phase-sensitive trajectory and removed the
+old `0.0786 rad` crossing, which is expected for an open-loop timing route.
+The route was then re-optimized with the conditioning phase included in every
+evaluation. The best settled-launch candidate reached a real upright crossing
+at total time `21.00 s` with angle `0.1130 rad`, cart speed `0.0792 m/s`,
+`x=0.4228 m`, and hinge RMS `3.0660 rad/s`; maximum cart excursion was
+`2.730 m`. The strict capture gate remained closed and the hold was `0 s`.
+
+The evaluator was then repaired again for capture-aware experiments: when the
+gate opens, it snapshots the pre-action state as `stage=swing_handoff` before
+the first capture action, while retaining post-action rows as `capture`. In a
+diagnostic relaxed-gate replay, the exact handoff was `0.1199 rad`, `3.1415
+rad/s` hinge RMS, `0.0498 m/s` cart speed, and `x=0.4216 m`. The LQR capture
+action immediately saturated and the run later violated the rail, so this is
+interface evidence and not a successful capture.
+
+Decision: the settled launch is now part of the route interface and must be
+used for future candidates, but it is not a solution. Keep the exact
+pre-capture state requirement, the strict hinge/cart gate, and independent
+replay. The next route budget should optimize the downstream capture margin
+and the full-chain rates jointly, rather than reward another isolated angle
+crossing. Do not update the public frontier, README, About metadata, paper,
+or video until the canonical 11-link evidence contract passes.
+
+Artifacts:
+
+- `scripts/search_swingup_chain.py`
+- `runs/generalized_solver/n11_chain_slow_late_time_cem_rail12.json`
+- `runs/generalized_solver/n11_chain_capture_ready_absolute_rate_cem_rail12.json`
+- `runs/generalized_solver/n11_chain_capture_ready_centered_rate_refine_rail12.json`
+- `runs/generalized_solver/n11_full_state_capture_actor_from_cem_handoff.json`
+- `runs/generalized_solver/n11_absolute_state_capture_actor_from_cem_handoff.json`
+- `runs/generalized_solver/n11_direct_force_absolute_capture_ready_refine_rail12_seedmatched.json`
+- `tmp/n11_capture_ready_state_minangle.json`
+- `tmp/n11_conditioning_smoke.json`
+- `tmp/n11_settled_launch_baseline.json`
+- `runs/generalized_solver/n11_chain_settled_launch_capture_ready_rail12.json`
+- `tmp/n11_settled_relaxed_capture_replay_v2.json`
+- `tmp/n11_settled_relaxed_capture_states_v2.json`
+
+### Sequential eleven-through-twenty campaign: corrected baselines (2026-10-01)
+
+The user set a finite, sequential goal through twenty. The roadmap now records
+that objective, the shared synthesis pattern, and the unchanged release gates.
+`runs/frontier_campaign_20261001/campaign.json` prepares configurations for
+11–20 and reserves disjoint 20/100/video seeds. These seeds have not been used
+for tuning. Only eleven is active; none of these new configurations constitutes
+a promotion.
+
+Correctness changes precede further broad search. Feedback warm-start rebuilding
+now returns both the controls actually applied and their resulting states.
+FDDP receives measured initial feasibility instead of an unconditional flag;
+an explicitly requested feasible start with nonzero dynamics gaps is rejected.
+The exact environment and optimizer reject integration warnings and time
+discontinuities. FDDP rejects invalid line-search trials using infinite cost
+so they trigger smaller steps rather than silent simulator reset dynamics.
+Riccati designs are checked for finite values, positive-definite returned
+matrices, residuals, and closed-loop stability. These numerical checks are not
+nonlinear capture certificates.
+
+A separate opt-in continuous-angle route representation keeps the MuJoCo
+transition, its derivatives, quadratic target costs, and Euclidean FDDP gaps
+on the same joint-angle lift. The selected terminal winding is saved, and
+runtime evaluators align nominal joint branches at launch. Existing artifacts
+keep their original angle representation by default.
+
+The bounded initial screens preserve the target force, rail, and action cadence:
+
+| Screen | Result | Interpretation |
+| --- | --- | --- |
+| Corrected exact feedback rebuild, inherited 8-second route, 60-iteration cap | Stopped after 1 iteration; zero hold; rail exit at 3.0368 m | A dynamically consistent replay can still be a poor discovery seed |
+| Transferred nominal with actual infeasible initialization, 100-iteration cap | First aborted on an invalid integration trial; after adding the rejection barrier, 14 iterations and rail exit at 3.0690 m | Correct feasibility activates gap repair but does not make the inherited route reachable |
+| Continuous-angle transferred nominal, inherited terminal metric | 15 iterations; nominal still infeasible; zero hold; rail exit at 3.0275 m | Repairing the angle contract alone does not solve eleven |
+| Continuous-angle route with reduced Lyapunov terminal weight, otherwise same settings | 14 iterations; nominal terminal value 1391.33 below the 1800 gate, but nominal still infeasible; live rail exit at 3.0322 m | A small nominal endpoint value cannot replace a dynamically feasible trajectory and uninterrupted replay |
+| Canonical nonlinear FDDP capture from actual settled-route crossing at t=21 s; 3-second capture horizon and 9-second component episode | 100 iterations; 0.02 s upright streak; rail exit at 3.0349 m | This local capture seed does not bridge the measured swing crossing to maintenance within the remaining episode budget |
+
+The crossing screen is a saved-state component experiment, not a hanging-start
+solve. Its source came from a wider-rail search; capture itself used the canonical
+plant. The initial baseline runs span successive correctness edits, and their
+logs and commands record that limitation. Subsequent runs use
+`scripts/run_frontier_experiment.py` to freeze source/configuration and declared
+input artifacts before execution.
+
+The subsequent frozen-source eleven-link replay measures a maximum final
+state/control defect of `1.776927` in the declared scaled Euclidean coordinates,
+against a feasibility tolerance of `1e-8`. Its median defect is `0.193963`.
+Thus the low nominal endpoint value is attached to a strongly discontinuous
+trajectory, and the independent runtime replay reproduces the rail failure.
+The next optimizer must reduce the dynamics gaps, not merely refine that
+nominal endpoint further.
+
+The default upright design passes the new local numerical checks at eleven,
+but fails at every audited count from twelve through twenty. This is a failure
+of the current design procedure, not a physical impossibility result. A stable
+local controller must be synthesized and tested before relying on it as the
+next count's terminal expert.
+
+Regression evidence: all 253 root tests pass after these changes, the ten-link
+release verifier passes, and two fresh noisy parked-launch ten-link episodes
+pass with 6.12-second maximum holds. A deterministic continuous-angle replay
+also reproduces the ten-link 22.12-second hold and 2.0233-meter maximum cart
+excursion. Frozen released controller artifacts were not replaced.
+
+Decision: eleven remains active. The corrected local transfer baselines are
+negative; subsequent discovery needs explicit dynamics-gap control and
+actuator-aware arrival shaping. Preserve the phased architecture and record
+any new branch generator as a separate lever. Continue higher-count feedback
+diagnostics independently, and advance each count only after its full canonical
+bundle passes.
+
+Artifacts and exact initial commands:
+
+- `runs/frontier_campaign_20261001/campaign.json`
+- `runs/frontier_campaign_20261001/experiments.json`
+- `runs/frontier_campaign_20261001/n10_integrity_regression_two_seeds.json`
+- `runs/frontier_campaign_20261001/n10_continuous_replay_calibration/`
+- `runs/frontier_campaign_20261001/n11_low_lyapunov_exact_replay/`
+
+### Explicit sparse dynamics restoration (2026-10-01)
+
+The next correction concerns control derivatives in the SciPy waypoint and
+multiple-shooting paths. The exact transition casts normalized actions to
+float32, while SciPy's default control perturbation can be smaller than one
+representable action increment. At controls -1, +1, and the float32-exact
+values near +/-0.9, the measured default derivative was zero; an explicit
+1e-4 perturbation produced derivative norms of approximately 6.4–6.9 on the
+same eleven-link state. This does not invalidate every old derivative:
+the zero and 0.123456789 probes agreed. Fifteen inherited controls were near
+saturation and nine were exactly representable in float32. The diagnostic
+is `runs/frontier_campaign_20261001/action_derivative_quantization.json`.
+Both SciPy repair paths now request a larger control perturbation. A regression
+test requires a saturated float32 control to move to a reachable target.
+
+`src/gcartpole/dynamics_restoration.py` adds a shared bounded sparse repair
+problem with explicit transition Jacobians, continuous-angle dynamics,
+force limits, and cart bounds at every decision node. It jointly adjusts
+all route states and controls. Dynamics feasibility remains an independently
+measured condition, separate from optimizer termination and terminal cost.
+The runner preserves the original initial state and terminal winding and
+saves an exact serial open-loop replay alongside the optimizer's nodes.
+
+| Frozen experiment directory | Result | Interpretation |
+| --- | --- | --- |
+| `n11_sparse_restoration_d1e3_t1e3_15` | 15 residual evaluations, 158.32 s; maximum coordinate gap 1.776927 -> 0.016527; median 0.003510; 287,200 transition calls | Substantial dynamics repair, but still far above the 1e-8 tolerance. Exact open-loop terminal error is 2488.73 in the declared weighted continuous coordinates. |
+| `n11_sparse_restoration_d1e5_t1e3_20` | Restart from the preceding output, stronger defect penalty; 20 residual evaluations, 141.24 s; maximum gap 0.006347, median 0.001359; 389,200 transition calls | The accumulated maximum-gap reduction is about 280 times. Actual serial replay still misses the target, with weighted terminal error 3591.49. This is a continuation, not an independent matched-start ablation. |
+| `n11_restored_d1e3_fddp100` | 14 FDDP iterations, 31.76 s; maximum gap 0.016398; zero hold; live rail exit at 3.00635 m | The repaired seed does not by itself fix FDDP's loss of progress. |
+| `n11_restored_d1e5_isotropic_fddp100` | Different repaired input and Lyapunov terminal weight reduced to 1e-14; 23 iterations, 87.86 s; measured final gaps exactly zero; zero hold; live rail exit at 3.02741 m | Closing dynamics gaps alone does not establish capture. The soft rail and endpoint objective still permit a physically poor route. This changes both input and terminal metric and cannot isolate the metric's effect. |
+
+The sparse repairs' exact open-loop cart excursions are 2.45184 and 2.55219 m
+over the eight-second route. Neither reaches capture. These fixed-start
+component screens cannot establish a complete noisy hanging-start solve.
+Their large unwrapped endpoint errors are not upright-angle errors in radians;
+they include scaled velocities and the saved angle winding.
+
+An experimental alternative uses a convexified dynamics subproblem, L1
+penalties on virtual dynamics gaps, bounded state/control changes, and exact
+nonlinear merit checks. It is inspired by the virtual-control and trust-region
+construction in [Mao, Szmuk, and Acikmese (2016)](https://arxiv.org/abs/1608.05133),
+without inheriting its convergence guarantees. Virtual gaps are optimizer
+variables, never external forces or simulator resets, and must disappear in
+exact feasibility checks. An initial implementation failed a controllable
+double-integrator test because the QP penalty scaling caused repeated native
+iteration limits. Its eleven-link run was stopped, retained as
+`n11_sparse_l1_osqp_d1e3_t1e3_15`, and is invalid as physical evidence.
+Rescaling the entire QP objective preserves its minimizer and repairs the
+linear test: maximum gap approximately 1.4e-17, terminal norm below 1e-11.
+The corrected eleven-link screen,
+`n11_sparse_l1_osqp_scaled_d1e3_t1e3_15`, took 372.11 seconds and 302,400
+transition evaluations. Only two of fifteen QPs produced accepted steps;
+the others reached native iteration limits. L1 merit decreased from 4756.00
+to 2500.52, but maximum gap increased from 0.006347 to 0.043068. The serial
+rollout still missed the target (weighted terminal error 959.71). This
+implementation is therefore not yet an effective restoration replacement:
+the native QP accuracy policy and concentration of residual gaps need work.
+All 257 root tests passed after the scaling fix.
+
+A separate inspection found that the optional LTV route-feedback builder
+omitted the `K.T R K` term when propagating its Riccati value matrix. The
+term is now included, and a regression compares its first feedback gain
+against an independently condensed finite-horizon quadratic optimum.
+This correction affects newly built feedback, not frozen released gains.
+
+Every completed screen has its command, declared input hashes, source/config
+snapshot, output, runtime, and negative disposition. Later snapshots also
+include tests and pyproject metadata; runtime metadata now records SciPy,
+OSQP, and Crocoddyl versions when installed. Existing snapshots are retained
+as executed. The active frontier remains eleven and final held-out cohorts
+remain unused.
+
+Final regression for this restoration round: 258 root tests pass. The frozen
+`n10_restoration_changes_regression` screen uses two fresh noisy canonical
+ten-link episodes (seeds beginning at 20261003), the released parked-route
+controller, sixteen-second park, and -0.05 m target. Both succeed, with a
+6.12-second maximum hold and 1.9949 m maximum cart excursion. This is a
+regression screen, not a new robustness estimate. The next lever is exact
+closed-loop tracking of the repaired route using the corrected LTV builder,
+alongside better-conditioned constrained restoration; all candidates must
+still connect to uninterrupted capture before eleven can advance.
+
+### Feedback replay, finite capture intervals, and high-precision upright design (2026-10-01)
+
+The corrected LTV builder now accepts saved optimization routes with their
+fixed initial state, coordinate transform, and angle lift. It separately
+measures the source's dynamics gaps; it never labels repaired optimizer
+nodes as actual trajectories. The ten-link calibration uses the same
+control cost 0.5 and terminal scale 1000 as the eleven-link test and
+reproduces the 22.12-second hold and 2.02328 m cart maximum. Eleven's repaired
+route instead exits the rail at 3.03187 m after 182 transitions, with zero
+hold. Forty-nine of those actions are near saturation, compared with only
+three near-saturated feedforward controls in the whole 400-step nominal
+route. This is an actual tracking failure, not a successful endpoint with
+an inconvenient handoff threshold.
+
+The next L1 restoration screen permits approximate native-QP candidates
+only when their recorded residuals satisfy an explicit tolerance, then
+checks the exact nonlinear merit and gap. Native nonconvergence no longer
+shrinks the trust region as though it measured nonlinear model accuracy;
+derivatives are reused while the state/control decision is unchanged.
+`n11_sparse_l1_inexact_monotone_d1e3_t1e3_15` nevertheless fails: 424.61 s,
+148,400 transition calls, maximum coordinate gap 0.007638 and exact serial
+terminal error 1719.32. Its monotonic guard used the maximum node L2 norm,
+whereas the established feasibility screen uses the largest absolute
+coordinate (L-infinity). The former decreased while the latter increased.
+New code makes the guard use L-infinity too, with an adversarial regression
+that rejects exactly this mismatch. Existing frozen runs retain their
+executed norms. The label "Euclidean StateVector" identifies the unwrapped
+coordinate space, not an L2 feasibility metric.
+
+`high_precision_discrete_lqr` implements the structure-preserving doubling
+recurrence from [Poloni (2020), equation 33](https://arxiv.org/html/2005.08903).
+An 80–100 digit calculation produces stabilizing designs for the supplied
+linear matrices at every count from 11 through 20. It promotes existing
+binary64 finite-difference matrices exactly; it does not recover missing
+identification digits, change MuJoCo arithmetic, or certify nonlinear
+capture. Gains are rounded back to binary64 for actual execution. Neither
+the default runtime design nor the released 7–10 gains is replaced.
+
+| Links | High-precision upright gain norm | Exact local replay successes at amplitude 1e-9 / 1e-11 / 1e-13 |
+| --- | --- | --- |
+| 11 | 1.612e6 | 4/4 / 4/4 / 4/4 |
+| 12 | 1.043e7 | 0/4 / 4/4 / 4/4 |
+| 13 | 7.063e7 | 0/4 / 0/4 / 4/4 |
+| 14 | 4.938e8 | 0/4 / 0/4 / 0/4 |
+| 15 | 3.518e9 | 0/4 / 0/4 / 0/4 |
+| 16 | 2.530e10 | 0/4 / 0/4 / 0/4 |
+| 17 | 1.820e11 | 0/4 / 0/4 / 0/4 |
+| 18 | 1.299e12 | 0/4 / 0/4 / 0/4 |
+| 19 | 9.135e12 | 0/4 / 0/4 / 0/4 |
+| 20 | 6.326e13 | 0/4 / 0/4 / 0/4 |
+
+Each column contains four saved uniform random joint-angle/rate directions
+with cart position/velocity zero, an eight-second canonical component
+episode, and exact runtime dynamics. Amplitude denotes the multiplier on
+those directions, not a basin-radius estimate or initial-noise benchmark.
+The table uses the later replay that preserves tiny in-range angles.
+The earlier high-precision screens test fewer amplitudes and are retained
+separately. A sampled failure does not establish physical impossibility.
+
+The same rounded twenty-link gain gives a computed spectral radius of
+approximately 0.996223 when assembly and eigenvalue calculation use 100
+digits, versus 17585.6 with binary64 assembly and NumPy eigenvalues. This
+exposes severe sensitivity in the numerical linear analysis; it cannot
+establish that the implemented nonlinear controller is stable. The actual
+twenty-link component replays still fail. The default twelve-link DARE
+failure and the nonlinear capture failure must therefore be reported as
+different problems.
+
+The common wrapping expression `(angle + pi) % (2*pi) - pi` also erases or
+quantizes very small upright errors. `gcartpole.angles.wrap_angle` now
+preserves angles already in [-pi, pi) without arithmetic, retaining the
+old convention elsewhere. Environment feedback, transformed coordinates,
+capture features, and predictive sampling share it. Tiny-angle and pi-boundary
+regressions pass. The fresh noisy ten-link replay after this change is 2/2
+with 6.12-second maximum hold and 1.9783 m maximum cart excursion. The local
+probe table still does not constitute an end-to-end solve at any new count.
+
+This evidence motivates a finite upright interval in trajectory synthesis,
+rather than relying only on arrival at an increasingly narrow static-LQR
+funnel. The sparse runner can append a five-second capture interval, retain
+the exact target dynamics and action cadence, and bound every absolute-angle
+decision coordinate inside 0.14 radians of the saved upright winding. Those
+are optimizer-node constraints; independent dynamics feasibility and actual
+uninterrupted replay remain mandatory. Its first canonical eleven-link
+screen is `n11_capture_interval5s_sparse_d1e5_t1e3_30`; its measured outcome
+is still negative. Thirty residual evaluations and 996,450 transition calls
+take 741.12 s. Maximum coordinate gap drops from 0.090319 to 0.004995, median
+gap reaches 0.000423, and the final nominal weighted endpoint error is
+5.38e-5. All nominal capture-window absolute angles lie within approximately
+0.00368 rad of upright, well inside the imposed 0.14 rad bound. Exact serial
+replay nevertheless misses the terminal target (weighted error 2016.49).
+Nominal upright occupancy therefore still cannot replace feasible replay.
+
+Building feedback over this longer upright window exposes another numerical
+failure: dense Riccati propagation returns a negative control Hessian
+(-79357.54 at step 528) despite strictly positive costs. The builder now
+propagates a QR square-root Joseph factor, including the control-cost term,
+so it evaluates control curvature through squared factors rather than an
+ill-conditioned dense matrix. Tests compare both a well-conditioned case
+and a weak-input-mode case against independent optimal-control calculations.
+The new thirteen-second builder completes, but its actual eleven-link
+feedback replay still exits the rail at 3.02575 m with zero hold after 211
+transitions. This fixes the numerical failure, not the reachability problem.
+
+The subsequent exact FDDP screen weights the five-second upright interval
+separately (1000, with angle/rate factors 20/4), rather than using only the
+last endpoint. `n11_capture_interval5s_fddp100` stops after 18 iterations,
+82.43 s, and closes its measured dynamics gaps exactly. Its feasible route
+still has poor capture cost and the live controller exits at 3.05719 m with
+zero hold. These finite-interval inherited-route screens remain negative;
+the next branch generator must produce a different physical route rather
+than another attractive discontinuous endpoint. All 267 root tests pass
+after the square-root feedback and phased-cost changes. Eleven remains the
+active frontier and no final held-out seeds have been used.
+
+Artifacts:
+
+- `runs/frontier_campaign_20261001/n11_restored_ltv_r05_t1000_v2/`
+- `runs/frontier_campaign_20261001/n11_restored_ltv_r05_t1000_replay/`
+- `runs/frontier_campaign_20261001/n10_ltv_r05_t1000_calibration_v2/`
+- `runs/frontier_campaign_20261001/n10_ltv_r05_t1000_replay/`
+- `runs/frontier_campaign_20261001/n11_n12_n13_high_precision_lqr80/`
+- `runs/frontier_campaign_20261001/n14_to_n20_high_precision_lqr100/`
+- `runs/frontier_campaign_20261001/n11_to_n20_preserved_small_angles_local_replay/`
+- `runs/frontier_campaign_20261001/high_precision_lqr_limits.png` and `.pdf`
+- `runs/frontier_campaign_20261001/n10_angle_precision_regression/`
+- `runs/frontier_campaign_20261001/n11_capture_interval5s_sparse_d1e5_t1e3_30/`
+- `runs/frontier_campaign_20261001/n11_capture_interval5s_sqrt_ltv_r05_t1000/`
+- `runs/frontier_campaign_20261001/n11_capture_interval5s_sqrt_ltv_replay/`
+- `runs/frontier_campaign_20261001/n11_capture_interval5s_fddp100/`
+
+## Physical descent seeds and inverse-dynamics spline screen (2026-10-01)
+
+The next branch generator uses actual controlled descent on the canonical
+eleven-link plant. A deterministic 54-case sweep varies a brief upright
+cart-force kick, cart velocity damping, and position feedback, selecting
+quiet hanging endpoints after at least six seconds. The best bounded
+descent ends at 11.7 seconds with hanging-quality score 0.2657 and maximum
+cart excursion approximately 0.0903 m. It still has a 1.4086 physical-state
+norm mismatch from the exact hanging launch after reversal. Reversing its
+states and velocity signs does not reverse joint dissipation: its maximum
+discrete coordinate defect is 6.828, median 0.5515. The saved first-node
+projection is an optimizer reference, never a runtime reset. Quiet descent
+is therefore useful seed information but not a feasible upward route.
+
+A subsequent 48-case screen balances the reversed force waveform's impulse
+and first moment before clipping, varies force scale and timing, and adds
+explicitly recorded cart-rail feedback. Every branch is replayed forward
+from the target's exact hanging state. None captures. The best selected
+prefix reaches a maximum absolute angle of 2.072 rad at 4.46 seconds, far
+outside the 0.15-rad threshold. These are new physically feasible route
+prefixes, not transferred or reset trajectories.
+
+Exact Box-FDDP refinement of two retained branches remains negative. The
+first, with a four-second appended interval, stops at 16 iterations in
+81.50 seconds. Its measured gaps close exactly, but replay exits the rail
+at 3.00436 m after 322 steps with zero hold. The second consumes all 200
+iterations, 1396.83 seconds, and 3,544,617 optimization transition calls.
+Its measured gaps are also zero, with final optimization cost 542395.44;
+feedback replay exits at 3.02000 m after 368 steps with zero hold. Dynamics
+feasibility alone does not establish a useful arrival or a successful
+feedback connection to maintenance.
+
+An independent formulation now represents cart and joint positions with
+quintic B-splines, fixes hanging and upright endpoint positions, and enforces
+zero endpoint velocity and acceleration. The optimizer penalizes required
+unactuated joint forces and cart force above 80 N. Unactuated forces are
+never applied during benchmark replay. A separate cart-only RK4 replay and
+discrete-defect measurement remain mandatory. MuJoCo's inverse-derivative
+helper rejects RK4 models, so this implementation differentiates continuous
+inverse dynamics directly on the unchanged model and uses its mass matrix
+for acceleration derivatives. Independent directional differences and
+cart-only forward acceleration checks verify those calculations.
+
+The initial eight-second, twenty-control-point torque formulation converges
+on two links in 28 residual evaluations, but still requires up to 1.724 Nm
+of joint torque, has maximum local coordinate gap 0.2803, and achieves zero
+hold. Increasing to forty points and 100 evaluations reduces the gap to
+0.07238 and required joint torque to 0.5687 Nm, still with zero hold. Thus
+this initial spline parameterization is not yet calibrated as a reliable
+solver even at the smaller count.
+
+The matched eleven-link twenty-point torque screen consumes 50 residual
+evaluations and 34.16 seconds. Its maximum normalized joint-torque residual
+is 0.2152, yet the same missing forces produce up to 309.03 in the mixed
+cart/relative-joint acceleration vector (m/s² and rad/s², respectively).
+Its maximum discrete coordinate gap is 7.9859. Gravity-normalized torque
+residuals therefore hide important inertial amplification in this example.
+
+The alternative residual explicitly measures `M(q)^-1 * [0, tau_joint]`,
+the acceleration discrepancy caused by omitting those joint forces while
+applying the required cart force. In a matched 50-evaluation eleven-link
+screen, maximum dense acceleration discrepancy drops to 4.835 and maximum
+discrete coordinate gap to 0.1862. It takes 26.72 seconds and 992,353 inverse
+dynamics calls. The actual replay still holds upright for zero seconds,
+with maximum cart excursion 2.7289 m. The matched two-link acceleration
+screen also remains negative (gap 0.1348, zero hold). These differing
+objectives expose a scaling issue; they do not establish overall superiority
+or a solution. All 275 root tests pass. Eleven remains the active frontier,
+all these bounded jobs have completed, and final evaluation seeds remain
+unused.
+
+The full commands, frozen inputs, physical replays, optimizer budgets, and
+negative outcomes are indexed in
+`runs/frontier_campaign_20261001/reverse_descent_and_inverse_spline_experiments.json`.
+The next spline work must establish a feasible small-count calibration and
+introduce adaptive trajectory resolution or better route initialization,
+rather than treating least-squares convergence as completion. A feasible
+eleven-link candidate still needs a sustained capture interval and the
+unchanged held-out release gates.
+
+## Control cadence, runtime precision, and refined spline calibration (2026-10-01)
+
+The user proposed that more links require more frequent and more precise
+corrections. The cadence audit separates action frequency from physics
+accuracy: it retains the canonical 0.005-second RK4 integrator and changes
+only `frame_skip` from four to two to one, yielding 50, 100, and 200 Hz.
+An independent check confirms that held force over the same four physics
+steps produces exactly identical physical states in all three variants.
+Every rate receives a newly designed upright LQR with the same Q/R weights;
+high-precision Riccati arithmetic is used where necessary. The initial
+relative-joint angle/rate directions are identical across rates at each
+count. Changed cadences are diagnostic benchmark variants, not releases.
+
+The fastest estimated upright growth rate rises only from approximately
+27.005/s at ten links to 28.497/s at twenty in this particular compiled
+model. At eleven, its amplification over one control interval changes
+from 1.7329 at 50 Hz to 1.3164 at 100 Hz and 1.1473 at 200 Hz. Faster
+updates therefore materially reduce growth between corrections. However,
+the gain norm also increases in this controller family: approximately
+1.61e6, 6.36e6, and 1.32e7 at eleven, respectively. At twenty it reaches
+approximately 6.33e13, 1.11e15, and 5.06e15. Those gains increase sensitivity
+to saturation and arithmetic; the observed growth rates do not by
+themselves explain the sharp link-count performance cliff.
+
+The first 180 local component replays use ten, eleven, twelve, fourteen,
+and twenty links, three rates, three perturbation amplitudes, and four
+matched directions per amplitude. All rates yield the same success totals
+at the coarse tested amplitudes: ten and eleven pass 4/4 at 1e-9 and 1e-13,
+twelve passes only the 1e-13 cohort, and fourteen and twenty fail all three
+cohorts. Every count fails the 1e-5 cohort. An additional 216 replays
+resolve the smaller-count boundary more finely:
+
+| Count and initial amplitude | 50 Hz | 100 Hz | 200 Hz |
+| --- | --- | --- | --- |
+| 10, 1e-7 | 2/4 | 3/4 | 3/4 |
+| 11, 1e-8 | 1/4 | 2/4 | 2/4 |
+| 12, 1e-10 | 3/4 | 4/4 | 4/4 |
+
+There is a small positive effect in these matched cohorts. Four directions
+cannot establish a robustness distribution or a basin radius, and this
+does not demonstrate a hanging-start solve. In particular, route arrivals
+can have strongly correlated errors, so generic near-equilibrium
+perturbation amplitudes are not tolerances on the released hanging-start
+noise distribution. The twenty-link local tests still fail at 200 Hz.
+
+A separate 360-replay precision screen holds the saved gains, initial
+directions, and physics fixed while comparing float32 actions with binary64
+dot products, float64 actions with binary64 dot products, and float64
+actions with 80-digit dot products. The latter promotes the saved rounded
+gain and current binary64 state; it cannot recover precision lost in model
+identification or gain storage. All three variants give identical success
+totals in the sampled cohorts. Eleven passes all tested amplitudes from
+1e-9 down to 1e-19; fourteen fails 1e-9 and 1e-13 but passes 4/4 from 1e-15
+downward; twenty fails every tested amplitude at both 50 and 200 Hz. The
+diagnostic float32 stepping agrees exactly with canonical stepping in a
+unit comparison and all 48 overlapping full audit episodes. Action casting
+and dot-product accumulation alone do not explain these particular
+failures. This is not a proof that faster control, different controllers,
+or more accurate models cannot help.
+
+The rate/precision comparisons support retaining frequency as an explicit
+experimental variable while investigating weak actuator coupling, model
+and gain conditioning, and arrival structure. The implementation defaults
+and fifty-hertz release gates remain unchanged. Relevant methodological
+background is the [MuJoCo integration documentation](https://mujoco.readthedocs.io/en/3.3.5/computation/)
+and the [MIT discrete/continuous LQR notes](https://underactuated.mit.edu/lqr.html).
+The saved scientific figure is
+`runs/frontier_campaign_20261001/control_frequency_figure/control_frequency.png`
+with a matching PDF.
+
+Meanwhile, exact midpoint knot insertion now increases spline resolution
+without changing the saved curve, velocity, or acceleration. Refining the
+two-link forty-point spline to 145 points and optimizing for 200 residual
+evaluations reduces maximum required joint torque to 0.007456 Nm. Its
+50-Hz discrete gap remains 0.05230 and actual open-loop hold is only 0.18 s:
+continuous force feasibility and zero-order-held cart force remain distinct.
+Exact FDDP then closes the measured gap to 3.94e-10. Its first execution
+uses the script's historical zero tracking-feedback default and holds for
+1.7 s before rail exit. Explicit selection of its unscaled saved solver
+feedback, with tracking and upright LQR scales both one, succeeds from
+exact hanging over the complete thirty-second calibration episode: 24.6 s
+maximum uninterrupted hold, 2.6063 m maximum cart excursion, and LQR
+handoff at eight seconds. This is a small-count calibration of the shared
+pipeline, not an eleven-link release or a held-out gate.
+
+At eleven, refining the generic twenty-point acceleration spline to 65
+points and spending 100 residual evaluations yields gap 0.1421, dense
+acceleration discrepancy 1.1449, and zero hold. Two subsequent FDDP jobs
+stop at LQR/Lyapunov preflight because the commands omit the established
+`lqr-scale=1` and inherit 1.3, whose linear spectral radius is 3.5276.
+These are setup errors, not completed optimization failures. With the
+correct explicit feedback settings, the thirteen-second FDDP screen
+completes 14 iterations in 63.20 s and closes its gaps exactly, but replay
+exits at 3.02636 m after 29 steps with zero hold.
+
+Transferring the resolved two-link spline to eleven interpolates absolute
+angles at normalized link centers, preserving the cart curve and endpoint
+conditions. It is an optimizer initialization, not inherited dynamics
+feasibility. A 100-evaluation target-plant acceleration refinement yields
+gap 0.3876, dense acceleration discrepancy 2.3348, and zero hold, despite
+remaining inside the rail during the eight-second open-loop replay.
+Smaller count increments are the next calibration of this route family;
+the active frontier remains eleven. All 280 tests pass. The fresh ten-link
+reference regression passes 2/2 with 6.12-second maximum hold and 1.9823 m
+maximum cart excursion. Complete commands, source hashes, budgets, and
+outcomes are indexed in
+`runs/frontier_campaign_20261001/frequency_and_spline_resolution_experiments.json`.
+Reserved final evaluation seeds remain unused.
+
+The first smaller increment, two to three links, now completes the same
+fixed hanging-start calibration. Material-coordinate spline transfer,
+100 target inverse-dynamics residual evaluations, and 100 exact FDDP
+iterations produce an exactly feasible nominal route. The thirty-second
+feedback episode holds upright for 24.24 s, reaches maximum cart excursion
+2.85143 m, and hands off to upright LQR at eight seconds. Optimization
+takes 150.32 s. These are discovery/calibration results, not new releases;
+the unchanged seven-to-ten artifacts and eleven-link promotion gate remain
+authoritative. The four-link increment initially fails: 26 FDDP iterations
+leave maximum gap 0.12549 and the actual episode exits the rail with zero
+hold. Thirty sparse restoration evaluations reduce the gap to 0.00019222;
+the serial open-loop rollout still misses the target by 888.98 in the
+weighted terminal coordinates. A further 100 FDDP iterations close the gap
+exactly and the full feedback episode succeeds: 24.44-second hold,
+2.85115 m maximum cart excursion, and LQR handoff at eight seconds.
+
+### Adjacent inverse-route synthesis and feasibility preconditioning
+
+`scripts/synthesize_inverse_increment.py` now packages material-coordinate
+transfer, acceleration-residual inverse refinement, exact target FDDP with
+explicit feedback settings, conditional sparse repair, and full exact-start
+replay. It refuses a source without a dynamically feasible nominal route
+and a successful complete thirty-second physical replay, and refuses
+non-adjacent source/target counts. This is a discovery screen; its successful
+two-, three-, and four-link calibrations are not noisy evaluation gates or
+frontier promotions. Each nested stage has a frozen execution journal.
+
+The first five-link run exposes a failure of post-hoc conditional repair.
+Its inverse route has gap 0.19516. Box-FDDP initially reduces nominal cost
+from about 2189 to 2133 while reducing gaps only slightly. It eventually
+closes gaps to zero by accepting a route costing 91,965,959.75. Actual
+feedback replay then exits at 3.04139 m after 250 steps with zero hold.
+Native feasibility and measured zero defects correctly describe the new
+route, but say nothing about whether that route captures upright. Since
+the nominal route is now feasible, the old conditional repair does not
+run; repairing this already poor route is not the intended next experiment.
+
+A matched prerequisite-repair screen instead starts from the raw inverse
+route. Thirty evaluations reduce its maximum gap from 0.19516 to
+0.00010793 in 74.04 s while retaining a small nominal weighted endpoint
+error. Serial rollout still has weighted terminal error 1044.78, so this
+remains a warm start rather than a capture result. The subsequent 100
+FDDP iterations close gaps exactly and keep cost at 2133.31; actual feedback
+replay succeeds for all 1500 steps with 24.22-second hold, 2.79883 m maximum
+cart excursion, and LQR handoff at eight seconds. This matched five-link
+comparison changes only prerequisite restoration before the same FDDP
+and execution recipe. Its optimization costs include 74.04 s restoration
+plus 289.37 s FDDP, versus 101.37 s FDDP in the failed baseline. It supports
+the usefulness of preconditioning this candidate, not a universal
+convergence claim. The runner exposes this
+experimental order as `--pre-restore`, preserving the earlier recipe for
+comparison. The same prerequisite-repair test is applied to the active
+eleven-link material-transfer route. The six-link calibration increment
+uses the successful five-link source and the same prerequisite-repair
+recipe; it cannot promote eleven or change the released seven-to-ten
+controllers.
+
+Eleven-link prerequisite restoration reduces maximum gap from 0.38761 to
+0.00109497 in 242.51 s, but serial terminal error remains 1766.39. Native
+FDDP accepts an initial uphill feasibility step from nominal cost about
+4807 to 1.549e9. It stops after 31 iterations in 108.48 s with measured
+zero gaps, yet actual replay has zero hold and exits the rail. This
+reproduces the separation between feasible route and useful capture.
+
+The [Crocoddyl 3.2.1 acceptance rule](https://github.com/loco-3d/crocoddyl/blob/v3.2.1/src/core/solvers/fddp.cpp)
+permits uphill steps for infeasible trajectories using default threshold
+two. An explicit `--fddp-ascent-acceptance 0` ablation retains nominal cost
+about 4807 but stops after fourteen iterations in 22.58 s without closing
+the 0.001095 gaps; actual replay still fails with zero hold. Its minimum
+nominal Lyapunov value 3.98 does not certify an executable arrival. This
+option changes only native acceptance settings when supplied; defaults
+are preserved. Neither cost preservation alone nor unconditional gap
+closure solves this route. A matched thirty-evaluation restoration with
+LSMR inner budget 3000 instead of 300 reduces final maximum gap further to
+7.34354e-5 and restoration cost from 11.56394 to 0.03510. Both trials use
+the same raw inverse route, thirty outer evaluations, weights, and physical
+plant; wall times are 242.51 and 241.86 s. The terminal nominal error is
+0.0070853, but serial terminal error is still 1998.63. Better linear solves
+improve the nominal conditioning result without establishing actual
+capture. Matching native FDDP stops after 25 iterations in 75.3 s with
+measured zero gaps, but its high-cost route again has zero actual hold and
+exits at 3.025 m. The extra inner iterations improve the warm-start defect
+metric without improving capture in this direct two-to-eleven route family.
+
+The shared prerequisite-repair recipe subsequently passes six-link
+calibration with 23.54-second hold, 2.85036 m maximum cart excursion,
+eight-second LQR handoff, full 1500-step clean replay, and exactly zero
+measured nominal gaps. The seven-link increment then passes with
+23.56-second hold, 2.38183 m maximum cart excursion, full clean 1500-step
+episode, and zero measured gaps. Its prerequisite repair reduces gap from
+0.28102 to 0.00018134 in 126.0 s; FDDP takes 173.79 s.
+Complete stage commands, input/source hashes,
+and budget/result records are indexed in
+`runs/frontier_campaign_20261001/inverse_increment_experiments.json`.
+The five-link preconditioning comparison spends extra compute and is not
+an equal-compute ablation. No reserved held-out seeds are used.
+
+A separate smaller finite-difference probe uses upright identification
+epsilon 1e-11 instead of 1e-7 with 100-digit Riccati design. It reproduces
+the sampled fourteen- and twenty-link local outcomes: fourteen passes
+4/4 at amplitudes 1e-17 and 1e-19 and fails at 1e-9 and 1e-13; twenty fails
+all four directions at all four amplitudes. Changing that identification
+step alone does not resolve the tested failures. This is local diagnostic
+evidence, not hanging-start evidence or an impossibility claim. All 282
+root tests pass after the runner and coordinate-provenance changes.
+
+### Eight-link calibration: capture before the nominal endpoint
+
+The next identical inverse/pre-restoration/FDDP recipe reaches a feasible
+eight-link route but fails the full episode. Inverse gap 0.31799 falls to
+0.00030900 after thirty restoration evaluations (135.50 s), then to zero
+after 100 FDDP iterations (378.23 s). At the forced eight-second handoff,
+largest absolute angle is only 0.00013965 rad and relative hinge-velocity
+RMS is 0.0016600, but Lyapunov value is 592.11. The first upright-LQR action
+is -0.08489 normalized, followed by growing oscillations and saturation.
+Maximum hold is 2.22 s and the rail exits at 3.01068 m after 493 steps.
+Tiny componentwise endpoint errors do not establish a usable capture.
+
+The same physical route reaches smaller Lyapunov values earlier. Removing
+only `--defer-handoff-until-horizon`, with the original threshold 1800 and
+all other state gates, switches at 6.54 s and succeeds for all 1500 steps:
+23.48-second hold and 2.303 m maximum cart excursion. The optimization,
+saved trajectory, gains, plant, rate, and development seed are unchanged;
+no new optimization, reset, or state overwrite occurs. A separate
+threshold-five replay switches at 7.12 s and also passes. Timing alone is
+therefore sufficient to recover this particular baseline; tightening the
+threshold is not needed for its recovery. The shared runner now exposes
+`--state-gated-handoff` and a recorded optional threshold. A fresh complete
+eight-link synthesis reproduces the failure and automatically recovers it
+through a replay-only early-capture stage: handoff 6.54 s, hold 23.48 s,
+maximum cart 2.30256 m, full clean episode. The driver tries this cheap
+recovery after a nominally feasible route fails, before requiring another
+optimization. The nine-link experiments use threshold five.
+
+Two further 100-iteration refinements start from the same feasible failed
+eight-link route while preserving its forced eight-second handoff. Weight
+0.01 reduces nominal terminal Lyapunov value to 41.76 and full replay passes
+with 23.46-second hold. Weight 18 reduces it to 1.46 and also passes with
+23.46-second hold. Both have about 2.379 m maximum cart excursion. The
+code divides terminal Lyapunov weight by the handoff threshold, so weight
+18 corresponds to coefficient 0.01 on P at threshold 1800, matching the
+isotropic running state cost. P solves the preset linear LQR's state-cost
+Lyapunov equation; this interpretation applies locally without saturation,
+does not include the future control-cost term, and is not a nonlinear
+certificate. The first 0.01 trial was initially described as matched scale
+before the normalizer was noticed; it is retained as a weaker-pressure
+trial. The matched additional 100 iterations with original weight 1e-14
+fail: nominal endpoint value 1239.58, hold 1.88 s, rail 3.02963 m after
+481 steps. All three continuations start from the same feasible candidate
+and use the same iteration budget, seed, gates, and forced handoff. Extra
+iterations alone do not explain these two value-weight recoveries. This is
+a controlled comparison for one candidate, not a general robustness claim.
+
+Transferring the old inverse spline also omits source FDDP corrections:
+at seven, the passed route differs by up to 0.24934 m cart position and
+0.11351 rad absolute link angle. `fit_inverse_spline_from_route.py` fits
+positions and velocities to the same clamped quintic basis, aligns the
+initial angle branch, refuses incompatible terminal winding, and validates
+the source replay and full configuration hash. Two first invocations fail
+at setup (direct-script import, then an extra reconstructed config field);
+both are preserved and are not algorithmic negatives. The corrected fit
+has errors 0.004187 m and 0.002178 rad. Matched transfer/refinement to eight
+still fails its forced-horizon replay: 2.12-second hold, rail 3.030 m,
+terminal Lyapunov value 956.27. Better curve transfer alone does not fix
+this tested handoff. The fitter now declares physical versus nominal
+curve selection; physical mode includes the actually executed early
+capture interval. An eight-link physical fit is available as a subsequent
+initialization, with no inherited dynamics-feasibility claim.
+
+The scientific comparison plot and PDF are under
+`runs/frontier_campaign_20261001/n8_capture_handoff_comparison_figure_v3/`.
+The experiment ledger records every completed and pending stage. All 287
+tests pass. Runtime evidence now reads Crocoddyl's module version when
+Conda supplies no distribution metadata, reporting 3.2.1 for new runs;
+older null version fields are not rewritten. The active frontier remains
+eleven, frozen seven-to-ten releases are unchanged, and final seeds remain
+unused. These exact-start discovery episodes are not noisy release gates.
+
+### Nine-link recovery: sparse inner accuracy and faithful gate evaluation
+
+The original nine-link increment uses the passed threshold-five eight-link
+controller and its raw inverse spline. Thirty pre-restoration evaluations
+with LSMR cap 300 leave maximum gap 0.00073880. FDDP accepts a feasible
+high-cost route after 24 iterations (56.97 s, cost 337,933,996.77), with zero
+hold and rail exit 3.04639 m after 294 steps. Changing only the LSMR inner
+cap to 3000, with the same outer budgets, source inputs, state gate, seed,
+and plant, leaves gap 0.00007592. Subsequent 100-iteration FDDP closes the
+gaps and passes the full episode: hold 23.50 s, rail maximum 2.31032 m,
+handoff 7.14 s. Stronger sparse solves recover capture here, unlike the
+previous direct two-to-eleven route. The initializer's conditioning matters
+to which feasible solution FDDP reaches.
+
+A matched physical-curve refit from the passed eight-link controller also
+passes nine with the stronger inner budget: hold 23.52 s, cart 2.388 m,
+zero measured gaps. The raw transfer is simpler and has slightly more rail
+margin; it is selected for the ten-link increment, which is running with
+the same 100/30/100 outer budgets, LSMR cap 3000, and threshold-five state
+capture. This remains development calibration, not sequential promotion.
+
+The parked evaluator previously discarded the saved early-capture flag and
+forced the entire route, potentially restoring the bad handoff recovered
+above. It now opts into state capture only for an explicit false
+`defer_handoff_until_horizon` flag. It reconstructs the certified Lyapunov
+metric and requires its hash to match the artifact, applies all saved gates
+around the parked cart target, and latches capture without a state overwrite
+or reset. Missing flags retain the legacy full-route behavior. Tests check
+translation, angle/velocity limits, irreversible capture latching, one
+reset, and legacy timing. The two new zero-noise eight/nine replays reproduce
+their 6.54/7.14-second handoffs and 23.48/23.50-second holds.
+
+Four fresh noisy development seeds per count with 16-second hanging-LQR
+parking at -0.05 m then pass 4/4 at both eight and nine: holds 7.48/7.50 s,
+maximum cart excursions 2.37382/2.37281 m. Eight captures at 22.54 s; nine
+at 23.12–23.14 s. No reserved gate seeds are used. A fresh legacy ten-link
+regression remains 2/2 with 6.12-second hold and 1.97114 m maximum cart
+excursion. The released artifacts are unchanged, eleven is unsolved, and
+these small development screens do not replace its required final gates.
+
+### Shared ten calibration and the adjacent eleven failure
+
+The ten-link 100/30/100 recipe with LSMR cap 3000 reaches independently
+feasible gaps 6.9368e-9 but fails its threshold-five execution. The minimum
+actual value is 5.20011, so the gate never opens; hold is 1.54 s and rail
+exit is 3.04936 m. Replaying unchanged controls, nominal states, and gains
+with switch thresholds 10 and 25 passes all 1500 steps: handoffs 6.96 and
+6.78 s, holds 23.48 s, maximum cart 2.07770 m. Thresholds 100 and 1800 both
+switch at 6.54 s and fail after 365 steps with 0.32-second hold. The
+optimization handoff normalizer remains five during these replay-only
+comparisons; only `switch_lyapunov` changes. This separates objective
+normalization from policy selection.
+
+The driver now tries a bounded development grid [5, 10, 25, 100, 1800]
+after a feasible route fails, retaining the optimizer objective and stopping
+at its first complete passing replay. A fresh entire ten synthesis reproduces
+the baseline failure and automatically selects threshold ten. This is
+development selection, not an independent robustness gate. Exact zero-noise
+parked replay reproduces hold 23.48 s and handoff 6.96 s.
+
+On four noisy starts with 16-second parking, the new ten policy passes 3/4;
+seed 20261032 fails before capture. Changing only parking to 17.5 s recovers
+all four, with 5.98-second hold. A fresh matched twenty-seed cohort passes
+15/20 at 16 s and 20/20 at 17.5 s (maximum cart 2.15515 m). A separate
+hundred-seed development cohort at 17.5 s passes 93/100. These results are
+not the reserved frontier gates and do not claim the old ten release's
+100/100 robustness. They show that a nominal discovery success still
+requires launch-distribution contraction and independent noisy validation.
+
+The first adjacent eleven transfer begins from the new successful ten
+candidate, not from an old released frontier waveform. Pre-restoration
+reduces maximum gap 0.34641 to 7.16145e-5 in 436.6 s under parallel CPU
+load. Native 100-budget FDDP stops after 29 iterations (122.2 s), closes
+all gaps, and destroys the useful route: cost 911,354,293.45, zero hold,
+rail 3.06049 m after 208 steps. Minimum actual capture value is 5,798,899,
+far above every predeclared grid threshold, so alternative gates cannot
+open anywhere in this identical failed trajectory. No runtime reset occurs.
+
+Fitting the passed ten's physical curve is accurate (cart 0.003723 m,
+absolute angle 0.002768 rad, hinge-velocity RMS error 0.01837), but matched
+adjacent-eleven synthesis still produces a feasible failed route: cost
+562,912,750.73, zero hold, rail 3.05969 m after 268 steps. Extra seventy
+restoration evaluations from the raw pre-restored route reduce gap only to
+6.36352e-5; subsequent FDDP again closes gaps and fails capture. Raising
+initial FDDP regularization to one instead of 1e-6 also fails. Curve fitting,
+extra outer iterations, and this regularization change are insufficient
+for the tested branch.
+
+Two targeted next comparisons retain the original low-defect initializer:
+dynamics penalty 1e7 instead of 1e5 reduces maximum gap to 9.78959e-7 after
+thirty evaluations (210.9 s), with larger terminal norm 0.00813. Separately,
+FDDP terminal Lyapunov weight 0.1 at optimizer normalizer ten gives
+coefficient 0.01 on the preset LQR state-value matrix, matching the running
+state coefficient. The initializer's terminal value is 116,262.16 despite
+small componentwise errors. This value-weighted refinement is still running;
+it retains a low-cost route while closing gaps, unlike the baseline cost
+explosion. Full replay remains required before claiming eleven capture.
+
+### Evidence video must depict the evaluated controller
+
+The legacy parked video script uses a different hanging regulator from the
+parked evaluator. New gate evidence should not silently substitute that
+policy. `render_parked_evaluation_trace.py` instead renders every recorded
+physical post-step state from the evaluator, checks complete cadence,
+finite states, action/rail limits, pose-derived upright status and hold,
+and verifies the source config and generated plant geometry hashes. It
+does not resimulate or interpolate states. The camera uses one isotropic
+fixed scale and fits the entire uniform chain through twenty, including
+extreme rail/upright/horizontal/hanging poses. Legacy render defaults and
+released videos remain unchanged.
+
+A ten-link development video contains the 1500 recorded frames from seed
+20261030's successful 17.5-second parked episode, with 24.46-second capture
+and 5.98-second hold. Hanging, swing, and capture frames were visually
+checked; source/controller/config/geometry/video hashes and the executed
+gate are saved under `n10_shared_evaluator_trace_video`. This is a
+development video, not eleven's reserved video or a new release promotion.
+All 291 root tests pass.
+
+### Eleven passes the canonical bundle; twelve becomes the active frontier
+
+The later directional-value continuations complete the earlier eleven
+comparison. From the same useful 200-iteration source, another 100 iterations
+with regularization 10 and fixed eight-second handoff fails at coefficient
+0.01 on the saved capture value (3.70-second hold, rail loss). Changing only
+that coefficient to one succeeds for all 30 seconds: 23.50-second hold,
+maximum cart 2.071622 m, independently measured local gap 1.70e−10. An offline
+feedback rebuild saves the actually applied controls and physically rolled
+states; the same stronger-value refinement then has exactly zero checked
+initial/final gaps, passes full physical replay, and reaches 2.071341 m.
+The native solver has not converged; acceptance uses the checked full replay.
+
+This also sharpens the feasibility correction. Crocoddyl's initial-feasibility
+flag now requires exactly zero gaps, not merely reporting tolerance 1e−8.
+A tested unstable example shows that individually tiny gaps can accumulate
+into a materially different serial rollout. Reporting tolerance remains a
+separate diagnostic, and the first nonzero-gap successful candidate remains
+preserved rather than relabeled as exactly feasible.
+
+Initial eleven noisy screens pass only 2/4 after sixteen-second parking and
+3/4 after seventeen-and-a-half. Rebuilding the source does not itself recover
+the failing seed. Hanging regulator action penalties 1000, 100 and 10 all
+give the same 3/4 at 17.5 s. Route feedback scales .75 and 1.25 fail all four;
+changing the parked target to zero also does not recover the failing seed.
+Longer default parking passes all four at 18 and 18.4 s but leaves only
+5.50 and 5.10 seconds for the hold.
+
+The causal launch improvement comes from the cart-state cost. At 17.5 s,
+weights 10 for cart position and 5 for cart velocity reduce the failing
+seed's launch tilt 7.67e−4→6.80e−7 rad and speed .009325→8.34e−6 m/s. It
+then passes using the identical swing controls/gains. Weights 1/1 also recover
+the four-seed case. The stronger 10/5 design passes all four at sixteen
+seconds with 7.50-second hold. On a fresh matched twenty, default weights
+give 16/20 at 17.5 s and 19/20 at 18 s; 10/5 gives 20/20 at both 16 and
+17.5 s. A separate development hundred passes 100/100 at sixteen seconds.
+The remaining launch distribution, not nominal capture alone, was causal.
+
+The policy is frozen before reserved seeds are used. An isolated local Git
+source bundle at commit 1920582683b2fd500386a986b276951469966c45 includes
+the policy, route, configs, source and tests. A fresh clean clone passes
+reserved noisy 20/20, disjoint noisy 100/100, exact 20/20 and video seed
+211500. Every episode completes 1500 steps with 7.50-second hold; the
+noisy hundred's maximum cart excursion is 2.121369 m. The trace video uses
+the actual 1500 physical states and no resimulation/interpolation/reset.
+Hanging, swing and capture frames were visually inspected. A new
+count-agnostic verifier checks the unchanged plant/noise contract, policy,
+gains, source cleanliness, disjoint reserved cohorts, full-episode success,
+actual pose-derived video hold and artifact hashes. It passes without errors.
+The manifest and appendix are under `runs/swingup11_uniform/` and
+`docs/eleven_link_swingup_paper.md`. Nothing has been publicly published.
+
+All 302 root tests pass at release, with 99 focused tests in the clean
+source clone. The existing ten verifier and a new 2/2 noisy regression pass.
+The evaluator now distinguishes an earlier five-second success from full
+episode completion; a hold followed by rail failure cannot generate accepted
+release evidence. Failed requested evidence is saved before rejection.
+
+Twelve is now active; all higher counts remain queued. The shared synthesis
+runner records a bounded capture-value recovery schedule, restarting from
+the useful pre-restored initializer instead of a collapsed feasible route.
+Coefficients .01/.01/1 each receive the declared refinement budget, with
+regularization 1e−6/10/10 and exact offline feedback rebuilding before the
+last stage. This encodes the intervention developed at eleven; independent
+automatic re-synthesis has not yet validated it.
+
+An opt-in precision path supplies promoted-input Riccati designs and a
+factored Lyapunov terminal value. It checks stability of the rounded gain
+in extended precision, solves the Lyapunov equation for that actual rounded
+gain, and computes values/gradients through the saved factor. A regression
+demonstrates a small direction lost by Gram-matrix rounding but retained
+by the factor. This does not recover lost identification digits or certify
+nonlinear capture. Default production behavior and the frozen eleven source
+remain unchanged. In the ongoing local development checkout, all 304 root tests pass, and a fresh four-seed
+eleven replay after these opt-in changes passes 4/4. The first twelve
+adjacent inverse/repair/refinement pipeline is running with 80-digit design,
+the same canonical plant, source eleven release and separate development
+seed 20261048. No twelve release seeds have been used.

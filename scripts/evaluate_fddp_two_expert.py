@@ -93,6 +93,20 @@ def load_controller(path: Path, n_links: int, spec: dict[str, Any]) -> dict[str,
         "periodic_coordinate_errors": bool(
             controller.get("periodic_coordinate_errors", False)
         ),
+        "continuous_angles": bool(controller.get("continuous_angles", False)),
+        # Older released policies use the complete route. Only an explicit
+        # false flag opts the parked evaluator into the saved capture gate.
+        "defer_handoff_until_horizon": bool(
+            controller.get("defer_handoff_until_horizon", True)
+        ),
+        "capture_gate": {
+            "lyapunov": controller.get("switch_lyapunov", controller.get("handoff_lyapunov")),
+            "cart_abs": controller.get("handoff_cart_abs"),
+            "angle_abs": controller.get("handoff_angle_abs"),
+            "cart_velocity_abs": controller.get("handoff_cart_velocity_abs"),
+            "hinge_velocity_rms": controller.get("handoff_hinge_velocity_rms"),
+        },
+        "lyapunov_metadata": payload.get("lyapunov", {}),
     }
 
 
@@ -277,6 +291,7 @@ def run_episode(
     max_cart = abs(float(reset_info.get("x", env.data.qpos[0])))
     first_upright: float | None = None
     phase_cursor = 0
+    angle_branch_aligned = False
     terminated = False
     truncated = False
     episode_return = 0.0
@@ -289,8 +304,24 @@ def run_episode(
         if measurement_noise_std > 0.0:
             measured_qpos += measurement_rng.normal(0.0, measurement_noise_std, size=measured_qpos.shape)
             measured_qvel += measurement_rng.normal(0.0, measurement_noise_std, size=measured_qvel.shape)
-        coordinate_state = dimensionless_wrapped_state(measured_qpos, measured_qvel, transform)
+        coordinate_state = (
+            transform @ np.r_[measured_qpos, measured_qvel]
+            if controller.get("continuous_angles", False)
+            else dimensionless_wrapped_state(measured_qpos, measured_qvel, transform)
+        )
         route_step = step - prelude_steps
+        if (
+            step >= prelude_steps
+            and controller.get("continuous_angles", False)
+            and not angle_branch_aligned
+        ):
+            nominal_physical = np.linalg.solve(transform, nominal_states[0])
+            branch_shift = np.zeros(transform.shape[0])
+            branch_shift[1 : env.n + 1] = 2 * np.pi * np.round(
+                (measured_qpos[1:] - nominal_physical[1 : env.n + 1]) / (2 * np.pi)
+            )
+            route_nominal_states += transform @ branch_shift
+            angle_branch_aligned = True
         if step < prelude_steps:
             if settle_mode == "hanging_lqr":
                 if settle_gain is None:

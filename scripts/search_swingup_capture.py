@@ -8,11 +8,11 @@ from typing import Any
 
 import mujoco
 import numpy as np
-from scipy.linalg import solve_discrete_are
 
 from gcartpole.config import apply_overrides, dump_json, load_config
 from gcartpole.evidence import data_sha256, git_metadata, runtime_metadata, utc_timestamp
 from gcartpole.env import NLinkCartPoleEnv, wrap_angle
+from gcartpole.lqr_design import checked_discrete_lqr
 try:
     from scripts.make_lqr_checkpoint import absolute_angle_cost, finite_difference_dynamics
     from scripts.probe_swingup_trajectory import (
@@ -55,8 +55,8 @@ def lqr_gain(
         weights.update({key: float(value) for key, value in q_weights.items()})
     q = absolute_angle_cost(n, weights)
     r = np.array([[float(control_cost)]], dtype=np.float64)
-    p = solve_discrete_are(a, b, q, r)
-    return np.linalg.solve(b.T @ p @ b + r, b.T @ p @ a).reshape(-1)
+    gain, _, _ = checked_discrete_lqr(a, b, q, r)
+    return gain.reshape(-1)
 
 
 def lqr_action(env: NLinkCartPoleEnv, gain: np.ndarray, *, scale: float, cart_target: float) -> float:

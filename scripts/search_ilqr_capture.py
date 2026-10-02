@@ -18,7 +18,7 @@ from gcartpole.evidence import (
     runtime_metadata,
     utc_timestamp,
 )
-from gcartpole.env import NLinkCartPoleEnv
+from gcartpole.env import NLinkCartPoleEnv, wrap_angle
 from gcartpole.ilqr import (
     MujocoTransition,
     QuadraticTrajectoryCost,
@@ -125,7 +125,7 @@ def interpolate_initial_state(
     qpos = (1.0 - alpha) * source_qpos + alpha * target_qpos
     qvel = (1.0 - alpha) * source_qvel + alpha * target_qvel
     absolute_angles = np.cumsum(qpos[1:])
-    absolute_angles = (absolute_angles + np.pi) % (2.0 * np.pi) - np.pi
+    absolute_angles = wrap_angle(absolute_angles)
     return {
         "state_id": (
             f"interpolation-{source.get('state_id', 'source')}-to-"
@@ -150,7 +150,7 @@ def handoff_bounds_satisfied(
 ) -> bool:
     state = np.asarray(state, dtype=np.float64)
     nq = n_links + 1
-    relative_angles = (state[1:nq] + np.pi) % (2.0 * np.pi) - np.pi
+    relative_angles = wrap_angle(state[1:nq])
     absolute_angles = np.cumsum(relative_angles)
     return bool(
         (angle_abs is None or np.max(np.abs(absolute_angles)) <= angle_abs)
@@ -160,6 +160,55 @@ def handoff_bounds_satisfied(
             or float(np.sqrt(np.mean(state[nq + 1 :] ** 2))) <= hinge_velocity_rms
         )
     )
+
+
+def trajectory_integrity(trajectory: list[dict[str, Any]]) -> bool:
+    """Reject MuJoCo warning/collapse traces that can mimic a successful hold."""
+    if len(trajectory) < 2:
+        return False
+    zero_run = 0
+    saw_upright_before_zero_run = False
+    for index, row in enumerate(trajectory):
+        try:
+            relative_angles = np.asarray(row["relative_angles"], dtype=np.float64)
+            absolute_angles = np.asarray(row["absolute_angles"], dtype=np.float64)
+            qvel = np.asarray(row["qvel"], dtype=np.float64)
+            x = float(row["x"])
+        except (KeyError, TypeError, ValueError):
+            return False
+        if (
+            relative_angles.ndim != 1
+            or absolute_angles.ndim != 1
+            or qvel.ndim != 1
+            or relative_angles.size + 1 != qvel.size
+            or absolute_angles.shape != relative_angles.shape
+            or not np.isfinite(x)
+            or not np.all(np.isfinite(relative_angles))
+            or not np.all(np.isfinite(absolute_angles))
+            or not np.all(np.isfinite(qvel))
+            or abs(x) > 1.0e6
+            or np.max(np.abs(relative_angles), initial=0.0) > 1.0e6
+            or np.max(np.abs(absolute_angles), initial=0.0) > 1.0e6
+            or np.max(np.abs(qvel), initial=0.0) > 1.0e3
+        ):
+            return False
+
+        state_norm = float(np.linalg.norm(np.r_[x, relative_angles, qvel]))
+        zeroish = state_norm <= 1.0e-10
+        if zeroish:
+            if zero_run == 0:
+                saw_upright_before_zero_run = any(
+                    bool(previous.get("is_upright", False))
+                    for previous in trajectory[:index]
+                )
+            zero_run += 1
+        else:
+            if zero_run >= 10 and not saw_upright_before_zero_run:
+                return False
+            zero_run = 0
+    if zero_run >= 10 and not saw_upright_before_zero_run:
+        return False
+    return True
 
 
 def execute_controller(
@@ -183,6 +232,7 @@ def execute_controller(
     defer_handoff_until_horizon: bool = False,
     phase_adaptive: bool = False,
     phase_window: int = 12,
+    continuous_angles: bool = False,
 ) -> dict[str, Any]:
     if not 0.0 <= float(progress) <= 1.0:
         raise ValueError("progress must be in [0, 1]")
@@ -225,8 +275,10 @@ def execute_controller(
             if env.step_count < len(controls) and (
                 defer_handoff_until_horizon or not latched
             ):
-                coordinate_state = dimensionless_wrapped_state(
-                    env.data.qpos, env.data.qvel, transform
+                coordinate_state = (
+                    transform @ data_state(env.data)
+                    if continuous_angles
+                    else dimensionless_wrapped_state(env.data.qpos, env.data.qvel, transform)
                 )
                 if phase_adaptive:
                     if phase_cursor >= controls.size:
@@ -270,20 +322,30 @@ def execute_controller(
             trajectory.append(row)
     finally:
         env.close()
+    integrity = trajectory_integrity(trajectory)
+    max_cart_excursion = max(
+        [abs(float(row["x"])) for row in trajectory],
+        default=float(info.get("max_cart_excursion", 0.0)),
+    )
+    termination_reason = info.get("termination_reason")
+    if not integrity:
+        latched = False
+        termination_reason = "numerical_instability"
     return {
-        "success": bool(info.get("success", False)),
+        "success": bool(info.get("success", False)) and integrity,
         "return": float(episode_return),
         "length": len(trajectory),
-        "termination_reason": info.get("termination_reason"),
+        "termination_reason": termination_reason,
         "max_upright_streak_seconds": float(
             info.get("max_upright_streak_seconds", 0.0)
         ),
         "max_low_momentum_upright_streak_seconds": float(
             info.get("max_low_momentum_upright_streak_seconds", 0.0)
         ),
-        "max_cart_excursion": float(info.get("max_cart_excursion", 0.0)),
+        "max_cart_excursion": max_cart_excursion,
         "minimum_lyapunov": float(minimum_value),
         "latched": bool(latched),
+        "trajectory_integrity": bool(integrity),
         "first_handoff_step": first_handoff_step,
         "first_handoff_time": None
         if first_handoff_step is None

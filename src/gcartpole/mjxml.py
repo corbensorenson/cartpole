@@ -69,6 +69,7 @@ def generate_nlink_cartpole_xml(
     joint_armature: float = 0.0005,
     link_radius: float = 0.025,
     rigid_split_inertia: bool = False,
+    rigid_split_mass_fraction: float = 1.0e-8,
     joint_lock_impedance_schedule: str = "linear",
 ) -> str:
     """Generate a planar serial n-link inverted pendulum on a sliding cart.
@@ -79,6 +80,9 @@ def generate_nlink_cartpole_xml(
       - hinge axis is +y, so motion is in the x-z plane
     """
     n = morph.n_links
+    split_mass_fraction = float(rigid_split_mass_fraction)
+    if not 0.0 < split_mass_fraction <= 1.0:
+        raise ValueError("rigid_split_mass_fraction must lie in (0, 1]")
     height = morph.total_length
     cam_y = max(7.0, 2.2 * height)
     cam_z = max(1.2, 0.55 * height)
@@ -86,6 +90,11 @@ def generate_nlink_cartpole_xml(
     cart_half_z = 0.07
     base_z = cart_half_z
     split_groups = _rigid_split_groups(morph) if rigid_split_inertia else {}
+    legacy_standard = (
+        not rigid_split_inertia
+        and all(float(value) == 0.0 for value in morph.joint_lock)
+        and all(float(value) == 0.0 for value in morph.joint_stiffness)
+    )
     group_for_link: dict[int, tuple[int, int, float]] = {}
     for group_start, (group_end, strength) in split_groups.items():
         for link in range(group_start, group_end + 1):
@@ -122,6 +131,21 @@ def generate_nlink_cartpole_xml(
         rgba = "0.9 0.25 0.15 1" if i % 2 == 0 else "0.95 0.65 0.10 1"
         lines.append(f'{indent}<body name="link_{idx}" pos="0 0 {_f(parent_pos if i == 0 else morph.lengths[i-1])}">')
         indent += '  '
+        if legacy_standard:
+            lines.append(
+                f'{indent}<joint name="hinge_{idx}" type="hinge" axis="0 1 0" '
+                f'damping="{_f(damping)}" frictionloss="{_f(frictionloss)}"/>'
+            )
+            lines.append(
+                f'{indent}<geom name="link_{idx}_geom" type="capsule" '
+                f'fromto="0 0 0 0 0 {_f(length)}" size="{_f(link_radius)}" '
+                f'mass="{_f(mass)}" rgba="{escape(rgba)}"/>'
+            )
+            lines.append(
+                f'{indent}<site name="tip_{idx}" pos="0 0 {_f(length)}" '
+                'size="0.012" rgba="0 0 0 1"/>'
+            )
+            continue
         spring = "" if stiffness <= 0.0 else f' stiffness="{_f(stiffness)}" springref="0"'
         armature = (
             float(joint_armature) * (1.0 - float(morph.joint_lock[i]))
@@ -138,7 +162,7 @@ def generate_nlink_cartpole_xml(
         if group is not None:
             group_start, group_end, strength = group
             group_mass = float(np.sum(morph.masses[group_start : group_end + 1]))
-            numerical_mass = 1.0e-8 * group_mass
+            numerical_mass = split_mass_fraction * group_mass
             standard_mass = (1.0 - strength) * mass + strength * numerical_mass * (
                 mass / group_mass
             )
@@ -150,7 +174,7 @@ def generate_nlink_cartpole_xml(
         if i in split_groups:
             group_end, strength = split_groups[i]
             group_mass = float(np.sum(morph.masses[i : group_end + 1]))
-            numerical_mass = 1.0e-8 * group_mass
+            numerical_mass = split_mass_fraction * group_mass
             combined_mass = strength * (group_mass - numerical_mass)
             combined_length = float(np.sum(morph.lengths[i : group_end + 1]))
             lines.append(
