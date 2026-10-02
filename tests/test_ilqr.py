@@ -24,6 +24,7 @@ from scripts.recenter_trajectory_controller import realized_trajectory
 from scripts.search_ilqr_capture import (
     handoff_bounds_satisfied,
     interpolate_initial_state,
+    trajectory_integrity,
 )
 from scripts.search_capture_pipeline import (
     best_extension_stage,
@@ -180,6 +181,49 @@ class ILQRTests(unittest.TestCase):
                 hinge_velocity_rms=0.75,
             )
         )
+
+    def test_trajectory_integrity_rejects_numerical_collapse(self) -> None:
+        def row(angle: float, rate: float, upright: bool) -> dict[str, object]:
+            return {
+                "x": 0.0,
+                "relative_angles": [angle],
+                "absolute_angles": [angle],
+                "qvel": [0.0, rate],
+                "is_upright": upright,
+            }
+
+        collapsed = [row(np.pi, 0.0, False), row(np.pi, 2_000.0, False)]
+        collapsed.extend(row(0.0, 0.0, True) for _ in range(12))
+        self.assertFalse(trajectory_integrity(collapsed))
+
+    def test_trajectory_integrity_allows_a_real_upright_tail(self) -> None:
+        valid = [row for row in (
+            {
+                "x": 0.0,
+                "relative_angles": [np.pi],
+                "absolute_angles": [np.pi],
+                "qvel": [0.0, 0.0],
+                "is_upright": False,
+            },
+            {
+                "x": 0.1,
+                "relative_angles": [0.1],
+                "absolute_angles": [0.1],
+                "qvel": [0.0, 0.1],
+                "is_upright": True,
+            },
+        )]
+        valid.extend(
+            {
+                "x": 0.0,
+                "relative_angles": [0.0],
+                "absolute_angles": [0.0],
+                "qvel": [0.0, 0.0],
+                "is_upright": True,
+            }
+            for _ in range(12)
+        )
+        self.assertTrue(trajectory_integrity(valid))
 
     def test_chain_basin_helpers_validate_and_aggregate(self) -> None:
         self.assertEqual(parse_radii("0.01, 0.2"), [0.01, 0.2])

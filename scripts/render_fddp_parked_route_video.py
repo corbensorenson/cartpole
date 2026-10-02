@@ -68,6 +68,7 @@ def draw_frame(
     cart_trace: list[float],
     rail_limit: float,
     n_links: int,
+    total_length: float | None = None,
 ) -> np.ndarray:
     image = Image.new("RGB", (width, height), (9, 15, 30))
     draw = ImageDraw.Draw(image)
@@ -77,10 +78,19 @@ def draw_frame(
     # replay: the viewer should never lose the top or bottom links.
     track_y = int(height * 0.50)
     panel_y = height - 106
+    vertical_clearance = min(track_y - 116.0, panel_y - track_y - 30.0)
+    pixels_per_meter = None
+    if total_length is not None:
+        pixels_per_meter = min(
+            (right-left) / (2*(rail_limit+total_length+.5)),
+            vertical_clearance / total_length,
+        )
     world_half = max(rail_limit + 0.25, 3.25)
     world_min, world_max = -world_half, world_half
 
     def sx(value: float) -> int:
+        if pixels_per_meter is not None:
+            return int(width/2 + pixels_per_meter*float(value))
         return int(
             left
             + (float(value) - world_min) / (world_max - world_min) * (right - left)
@@ -151,22 +161,25 @@ def draw_frame(
     )
 
     absolute_angles = serial_absolute_angles(np.asarray(qpos[1:], dtype=np.float64))
-    vertical_clearance = min(track_y - 116.0, panel_y - track_y - 30.0)
-    link_pixels = max(22.0, vertical_clearance / max(1, n_links))
+    link_pixels = (max(22.0, vertical_clearance / max(1, n_links))
+                   if total_length is None else pixels_per_meter*total_length/max(1, n_links))
+    joint_radius = 8 if total_length is None else max(2, min(8, round(link_pixels*.2)))
+    line_width = 10 if total_length is None else max(2, min(10, round(link_pixels*.5)))
+    tip_radius = 7 if total_length is None else max(3, joint_radius-1)
     px, py = float(cart_x), float(track_y)
     for angle in absolute_angles:
         ex = px + link_pixels * np.sin(float(angle))
         ey = py - link_pixels * np.cos(float(angle))
-        draw.line((px, py, ex, ey), fill=phase_color, width=10)
+        draw.line((px, py, ex, ey), fill=phase_color, width=line_width)
         draw.ellipse(
-            (int(px - 8), int(py - 8), int(px + 8), int(py + 8)),
+            (int(px - joint_radius), int(py - joint_radius), int(px + joint_radius), int(py + joint_radius)),
             fill=(248, 250, 252),
             outline=(30, 41, 59),
             width=2,
         )
         px, py = ex, ey
     draw.ellipse(
-        (int(px - 7), int(py - 7), int(px + 7), int(py + 7)),
+        (int(px - tip_radius), int(py - tip_radius), int(px + tip_radius), int(py + tip_radius)),
         fill=(251, 191, 36),
         outline=(30, 41, 59),
         width=2,

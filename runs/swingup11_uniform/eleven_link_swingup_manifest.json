@@ -1,0 +1,103 @@
+{
+  "claim_status": "released_internal_canonical_frontier",
+  "evaluation": {
+    "exact20": {
+      "bytes": 155469,
+      "path": "runs/swingup11_uniform/eval_swingup11_exact20.json",
+      "sha256": "ca7600cda96e4e03f4b4a50c563a7533c9691ac72691e1f0c8f5902a4629c49c"
+    },
+    "gate100": {
+      "bytes": 765047,
+      "path": "runs/swingup11_uniform/eval_swingup11_100.json",
+      "sha256": "b22fe8a8d592bf01fb42eca9a80b8956dbce98e42eb1da5b3ae260ab5b0affbe"
+    },
+    "gate20": {
+      "bytes": 155298,
+      "path": "runs/swingup11_uniform/eval_swingup11_20.json",
+      "sha256": "9b3209332083f0c59bce508b7f8c50167a6c8b5d5c3e103dbe51182cbb41b675"
+    },
+    "video_episode": {
+      "bytes": 2808499,
+      "path": "runs/swingup11_uniform/eleven_link_video_episode.json",
+      "sha256": "5548293f78086bd4ba492734263db6d468f6c8da801036797f1a1ab86b453c42"
+    }
+  },
+  "generated_at": "2026-10-02T01:29:31+00:00",
+  "limitations": [
+    "Internal repository benchmark, not an external world-record claim.",
+    "Exact MuJoCo full-state simulation with the declared initial noise; sensor noise, delay, model mismatch and hardware transfer remain unvalidated.",
+    "Local linear Riccati and Lyapunov checks do not constitute a nonlinear capture certificate.",
+    "Source bundle is an isolated local Git snapshot; nothing has been pushed or publicly published."
+  ],
+  "method": "Hanging-state contraction, adjacent-count inverse spline and sparse dynamics repair, directional terminal-value Box-FDDP refinement, full physical feedback route, then upright LQR.",
+  "metrics": {
+    "exact20": {
+      "all_full_episode": true,
+      "episodes": 20,
+      "maximum_cart_excursion": 2.121342077752184,
+      "minimum_hold": 7.5,
+      "seed_start": 211200,
+      "successes": 20
+    },
+    "gate100": {
+      "all_full_episode": true,
+      "episodes": 100,
+      "maximum_cart_excursion": 2.121368953254274,
+      "minimum_hold": 7.5,
+      "seed_start": 211100,
+      "successes": 100
+    },
+    "gate20": {
+      "all_full_episode": true,
+      "episodes": 20,
+      "maximum_cart_excursion": 2.1213563852219366,
+      "minimum_hold": 7.5,
+      "seed_start": 211000,
+      "successes": 20
+    },
+    "video_episode": {
+      "all_full_episode": true,
+      "episodes": 1,
+      "maximum_cart_excursion": 2.1213449329337646,
+      "minimum_hold": 7.5,
+      "seed_start": 211500,
+      "successes": 1
+    }
+  },
+  "n_links": 11,
+  "not_solution": false,
+  "policy": {
+    "bytes": 21988,
+    "path": "runs/swingup11_uniform/eleven_link_policy.json",
+    "sha256": "b2fab1f6defdea70c46814d91c737d454eeaec84d0d3f04454ad82b081d98324"
+  },
+  "reproduction": {
+    "commands": {
+      "bytes": 3778,
+      "path": "runs/swingup11_uniform/reserved_commands.json",
+      "sha256": "35907176bd8d4580f1f39af12b248812ca0dc23d40853643cd8765b2ad2d3d8f"
+    },
+    "focused_source_tests_passed": 99,
+    "fresh_clone": "runs/frontier_campaign_20261001/n11_release_fresh_clone",
+    "full_working_tree_tests_passed": 302,
+    "source_bundle": {
+      "bytes": 1944287,
+      "path": "runs/swingup11_uniform/eleven_link_source.bundle",
+      "sha256": "74d8d6fee7510e3f2ee8e438cfe7d1d409b2efdb0c9195886a8a180a1b7941b1"
+    },
+    "source_commit": "1920582683b2fd500386a986b276951469966c45",
+    "verifier": "scripts/verify_frontier_release.py"
+  },
+  "schema_version": 1,
+  "tuning_disclosure": "Nominal synthesis and launch parameters were selected using development artifacts. Reserved cohorts were unused until the policy and clean source commit were frozen. Independent automatic re-synthesis and arbitrary morphology generalization remain separate research gates.",
+  "video": {
+    "bytes": 815771,
+    "path": "runs/swingup11_uniform/eleven_link_swingup_success.mp4",
+    "sha256": "09af3f1b442a696d39702972446b65b30397a5dd88e34647bff5c6e837536c54"
+  },
+  "video_metadata": {
+    "bytes": 5758,
+    "path": "runs/swingup11_uniform/eleven_link_swingup_success.video.json",
+    "sha256": "7424b6c2407ee1231bddb86723d1a9159c3a74e13b4d7d413ae294c335db5daa"
+  }
+}

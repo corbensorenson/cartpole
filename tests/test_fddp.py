@@ -43,6 +43,44 @@ class _LinearTransition:
 
 @unittest.skipUnless(importlib.util.find_spec("crocoddyl"), "Crocoddyl is optional")
 class FDDPTests(unittest.TestCase):
+    def test_shifted_stage_cost_gradient_matches_finite_differences(self) -> None:
+        from gcartpole.fddp import MujocoActionModel
+
+        cost = QuadraticTrajectoryCost(
+            np.diag([2.0, 3.0, 4.0, 5.0]), np.eye(4), 0.5, 1.0, 3.0, 10.0,
+            wrap_angles=False, stage_target=np.array([1.25, 4 * np.pi, 0.1, -0.2]),
+        )
+        model = MujocoActionModel(_LinearTransition(), cost)
+        state = np.array([1.5, 4 * np.pi + 0.1, 0.2, 0.0])
+        data = model.createData()
+        model.calcDiff(data, state, np.array([0.0]))
+        derivative = []
+        for column in range(4):
+            offset = np.eye(4)[column] * 1e-6
+            plus = model.createData()
+            minus = model.createData()
+            model.calc(plus, state + offset, np.zeros(1))
+            model.calc(minus, state - offset, np.zeros(1))
+            derivative.append((plus.cost - minus.cost) / 2e-6)
+        np.testing.assert_allclose(data.Lx, derivative, atol=1e-8)
+
+    def test_invalid_trial_has_infinite_cost_instead_of_reset_dynamics(self) -> None:
+        from gcartpole.fddp import MujocoActionModel
+        from gcartpole.simulation import SimulationError
+
+        class InvalidTransition(_LinearTransition):
+            def __call__(self, state, action):
+                raise SimulationError("synthetic automatic reset")
+
+        cost = QuadraticTrajectoryCost(
+            np.eye(4), np.eye(4), 0.5, 10.0, 20.0, 1.0, wrap_angles=False
+        )
+        model = MujocoActionModel(InvalidTransition(), cost)
+        data = model.createData()
+        model.calc(data, np.ones(4), np.zeros(1))
+        self.assertTrue(np.isinf(data.cost))
+        self.assertEqual(model.invalid_transition_count, 1)
+
     def test_action_model_matches_transition_and_derivative_shapes(self) -> None:
         from gcartpole.fddp import MujocoActionModel, rollout_controls
 
@@ -79,19 +117,25 @@ class FDDPTests(unittest.TestCase):
 class FDDPContinuationTests(unittest.TestCase):
     @unittest.skipUnless(importlib.util.find_spec("crocoddyl"), "Crocoddyl is optional")
     def test_feedback_warm_start_tracks_the_inherited_route(self) -> None:
+        from gcartpole.fddp import rollout_controls
         from scripts.search_fddp_capture import rebuild_feedback_warm_start
 
         transition = _LinearTransition()
         controls = np.asarray([0.1, 0.2])
         nominal_states = np.zeros((3, 4), dtype=np.float64)
         feedback_gains = np.ones((2, 4), dtype=np.float64)
-        states = rebuild_feedback_warm_start(
+        applied_controls, states = rebuild_feedback_warm_start(
             transition,
             np.zeros(4, dtype=np.float64),
             controls,
             nominal_states,
             feedback_gains,
             feedback_scale=0.5,
+        )
+        np.testing.assert_allclose(applied_controls, [0.1, 0.4])
+        np.testing.assert_allclose(
+            states,
+            rollout_controls(transition, np.zeros(4), applied_controls),
         )
         np.testing.assert_allclose(
             states,

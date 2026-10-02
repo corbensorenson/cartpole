@@ -4,7 +4,171 @@
 
 This is the authoritative completion contract for the project.
 
-The project advances one link at a time. The current active frontier is a reproducible uniform **11-link** MuJoCo cart-pole because the 10-link controller has now passed the project's canonical 20/100 control gate. Every frontier starts hanging below the cart, swings up, captures, and remains upright. The existing 6-link work is a required calibration and debugging gate because a public 6-link result already exists; it is not the endpoint.
+## Eleven Through Twenty Campaign (2026-10-01)
+
+The user has set the next finite goal: solve every canonical uniform count
+from **11 through 20**, sequentially, using a shared synthesis procedure.
+Twenty links is the target of this campaign; counts 7–10 remain regression
+references. The promotion gates below remain unchanged.
+
+The procedure inherits hanging-state contraction, exact target-plant
+trajectory optimization with feedback, and uninterrupted capture/maintenance.
+Count-specific trajectories and gains are outputs of the procedure. Record
+every manual intervention and later replace it with a repeatable selection or
+optimization step; a folder of independently hand-tuned controllers does not
+by itself establish general solver success.
+
+The [October frontier review](docs/eleven_link_frontier_review.md) identifies
+the immediate work: correct warm-start state/control consistency and actual
+feasibility declarations; enforce simulation integrity; validate Riccati
+solutions; make the optimization and execution angle representations agree;
+and discover an actuator-limited arrival that connects to genuine capture.
+The earlier eleven-link bank establishes maintenance from already settled
+states, not a broad reachable capture boundary.
+
+Proceed through these checkpoints:
+
+1. Preserve the frozen 7–10 artifacts and replay the ten-link reference after
+   shared numerical changes. Save correctness regressions and exact commands.
+2. Solve eleven on the canonical target. Start with corrected inherited-route
+   FDDP baselines. If these fail, record why and extend trajectory discovery
+   and arrival shaping within the same phased architecture.
+3. Separately diagnose local stabilization at higher counts to identify
+   numerical or capture architecture limits early. These component studies
+   cannot promote a count or substitute for hanging-start evidence.
+4. After each count passes its complete release bundle, generate the next
+   uniform configuration, transfer the predecessor, refine on the new exact
+   plant, and repeat the same gates through twenty.
+5. Record synthesis time, optimization evaluations, seed-selection history,
+   normalized arrival errors, saturation and rail margins, negative controls,
+   source/config hashes, and simulator versions. Reserve final evaluation
+   cohorts before tuning; use separate development seeds.
+6. Before the paper claim, freeze a solver version and measure automatic
+   re-synthesis and held-out morphology performance separately from replay of
+   saved controllers. Report empirically measured robustness separately from
+   formal certificates and from the existing initial-noise benchmark.
+7. At the user's request, publish every newly validated record from eleven
+   through twenty to `github.com/corbensorenson/cartpole`. Include the complete
+   working video, README preview, evaluation metrics, controller and source
+   hashes, frozen reproducible source and an experiment appendix. Use the
+   same complete validation bundle before each publication. Preserve previous
+   records, and publish a GitHub release for each new accepted count.
+
+Current campaign artifacts live in `runs/frontier_campaign_20261001/`.
+The active frontier is now **twelve** after the complete eleven-link bundle
+passed. Preparing higher-count configs or finding a component controller
+never advances a count. Earlier diagnostics below retain their claim status
+at the time they were performed.
+
+Eleven-link promotion (2026-10-01): a frozen policy and isolated clean Git
+source bundle pass reserved noisy 20/20 (211000–211019), disjoint noisy
+100/100 (211100–211199), exact 20/20 (211200–211219), and a reset-free
+30-second held-out video (211500). All episodes reach the time limit and
+hold for 7.50 s. The noisy hundred's maximum cart excursion is 2.121369 m.
+The full 1500-frame video renders recorded physical states, and its hanging,
+swing and upright frames were inspected. The count-agnostic release verifier
+passes with no errors. All 302 root tests and 99 focused tests in the fresh
+source clone pass; the frozen ten-link release and a new 2/2 noisy regression
+remain valid. The bundle, policy, gains, source commit, metrics and hash
+manifest are under `runs/swingup11_uniform/`; the method and causal comparisons
+are in [the eleven-link appendix](docs/eleven_link_swingup_paper.md).
+This is an internal benchmark promotion with a GitHub result/video release.
+Packaging artifacts retain their original pre-publication provenance.
+The original 7–10 artifacts remain unchanged. The goal
+through twenty remains active.
+
+Numerical follow-up (2026-10-01): an opt-in 80–100 digit Riccati calculation
+now finds stabilizing designs for the supplied linear matrices through
+twenty. Exact nonlinear upright-state probes still fail at most higher
+counts, even from extremely small sampled errors. This separates arithmetic
+failure from practical capture failure and motivates optimizing a sustained
+upright trajectory interval. The first five-second eleven-link interval
+screens remain negative, including a dynamically feasible FDDP route that
+fails actual capture. New trajectory feedback uses a QR square-root Riccati
+recurrence, and tiny in-range angles retain their original precision.
+Evidence and limits are recorded in the [playbook](docs/levers_and_pitfalls.md).
+The goal, canonical plant, sequential promotion rule, and held-out gates
+remain unchanged.
+
+Discovery follow-up (2026-10-01): canonical controlled-descent seeds and
+48 forward branch variants add new feasible swing prefixes, but two exact
+FDDP refinements still fail capture. An inverse-dynamics spline formulation
+separates required joint torques from the cart-only replay and exposes
+large acceleration errors hidden by torque scaling. Acceleration residuals
+reduce one matched eleven-link local gap substantially but still yield
+zero hold; the initial smaller-count calibration is also incomplete.
+Commands and budgets are indexed in
+`runs/frontier_campaign_20261001/reverse_descent_and_inverse_spline_experiments.json`.
+All 275 tests pass. No count has advanced and reserved final seeds remain
+unused.
+
+Control-cadence follow-up (2026-10-01): fixed 0.005-second RK4 physics
+comparisons at 50/100/200 Hz show small improvements in selected local
+capture cohorts, including eleven-link 1e-8 probes improving from 1/4 to
+2/4. Faster updates do not resolve the twenty-link local failures, and
+changing action/dot-product precision alone does not improve the tested
+cohorts. These higher-rate cases remain diagnostic variants; canonical
+promotion conditions stay unchanged. A refined spline plus exact FDDP and
+explicit solver feedback now passes a two-link hanging-start calibration
+with 24.6-second hold, but the eleven-link variants remain negative.
+The [playbook](docs/levers_and_pitfalls.md) records interpretation limits,
+the scientific figure, and the full experiment ledger. All 280 tests and
+the fresh 2/2 ten-link reference regression pass.
+
+Shared-synthesis calibration follow-up (2026-10-01): adjacent inverse-spline
+transfer now yields successful full exact-start feedback episodes at two,
+three, and four links; four requires sparse dynamics repair before another
+FDDP refinement. A shared runner journals these stages and refuses to
+increment a failed source. Its first five-link route closes dynamics gaps
+but sacrifices capture and fails actual replay. Matched prerequisite repair
+then succeeds with 24.22-second hold over the complete episode. Six-link
+calibration uses this recipe. At eleven, prerequisite repair plus native
+FDDP still sacrifices capture; forbidding uphill feasibility steps preserves
+nominal cost but cannot close gaps. Increasing its sparse inner budget
+reduces final gap from 0.001095 to 0.00007344; matched FDDP closes gaps but
+still fails actual capture. Six-link calibration passes with 23.54-second hold,
+and the shared seven-link increment passes with 23.56-second hold. Eight
+initially fails after a forced eight-second handoff, but removing that
+clock restriction alone recovers the same route with 23.48-second hold.
+Nine-link calibration passes with 23.50-second hold after increasing only
+the sparse inner budget from 300 to 3000; the matched smaller-budget case
+fails. A fitted transfer also passes. Ten-link calibration passes after
+replay-only threshold selection; fresh entire synthesis automatically recovers
+the threshold-five failure with threshold ten. The matched eight-link extra-iteration
+control fails, while both endpoint-value refinements pass. A fresh synthesis
+automatically recovers eight through an early-capture replay. The parked
+evaluator now honors saved early gates while retaining legacy timing; noisy
+development screens pass 4/4 each at eight/nine, and the released ten remains
+2/2 on fresh regression seeds. These calibrations do not satisfy new release
+gates or advance the frontier. All 295 root tests pass, and new evidence
+records the Conda Crocoddyl module version.
+
+Adjacent-eleven follow-up (2026-10-01): the first new ten-to-eleven transfer
+again closes gaps by sacrificing the useful route. Matched physical-curve
+transfer, extra outer restoration iterations, and stronger initial FDDP
+regularization also fail actual capture. Directional terminal-value shaping
+now recovers eleven's nominal route. A matched extra 100-iteration comparison
+from the same useful initializer holds only 3.70 s with capture-value
+coefficient 0.01, but passes all 30 s and holds 23.50 s with coefficient 1.
+The latter stays within 2.0717 m at the unchanged 50 Hz / 80 N / 3 m rail.
+An offline feedback rebuild followed by the stronger-value refinement also
+passes, with exactly zero independently checked dynamics gaps.
+New ten's noisy launch comparison improves from 15/20 at
+16-second parking to 20/20 at 17.5 seconds on the same fresh development
+cohort; a disjoint development hundred gives 93/100. A trace renderer now
+depicts the evaluator's actual policy and physical states without substituting
+the legacy video parking regulator. Eleven's initial noisy screens still
+fail some launches. On the same fresh twenty-seed cohort, default hanging
+weights give 16/20 at 17.5 s and 19/20 at 18 s. Increasing only cart-position
+and cart-velocity weights to 10 and 5 gives 20/20 at both 16 and 17.5 s.
+This contracts launch errors rather than altering the swing or benchmark.
+A separate development hundred is running at the shorter successful launch.
+Eleven has not yet passed its release bundle, reserved final seeds remain
+unused, and the old releases remain unchanged. The evaluator now reports
+full-episode success separately from any earlier five-second hold, and
+retains failed requested release evidence before exiting with an error.
+
+The project advances one link at a time. The current active frontier is a reproducible uniform **12-link** MuJoCo cart-pole because eleven has passed the complete canonical bundle above. Every frontier starts hanging below the cart, swings up, captures, and remains upright. The existing 6-link work remains a calibration and debugging reference, not the endpoint.
 
 Promotion update (2026-09-14): ten links passed `20/20` and `100/100` noisy
 episodes on the canonical `+/-3 m` rail, an exact `20/20` replay, and a
@@ -15,9 +179,67 @@ eleven links and must begin by applying this same stack before broadening the
 search. This is an internal canonical benchmark promotion, not an external
 world-record claim.
 
+Frontier update (2026-09-15): eleven links are not solved. The newest
+release-aware split-link continuation advanced its exact replay frontier to
+`p=2.08740234375e-5` with a `22.12 s` hold, while `p=2.099609375e-5` failed
+capture and rail integrity even after waypoint repair. This is still a
+near-locked support curriculum, not the free uniform 11-link benchmark. The
+earlier `p=3.125e-5` near-locked artifact remains a separate development
+variant. Direct route CEM found a `0.1179 rad` crossing but with `4.45 rad/s`
+hinge RMS and `12.14 m` exploratory-rail use; direct-force CEM and the
+10-link parked-route transfer both failed. These results, commands, and
+dispositions are recorded in the [`levers and pitfalls playbook`](docs/levers_and_pitfalls.md).
+No README/About or public-frontier claim should advance until the canonical
+11-link gates pass.
+The distinct 10-link endpoint-tail transfer and a four-second appended tail
+also fail on the canonical target, and a config-aware interior split-position
+probe fails before it can establish a locked-start baseline. The active next
+step is therefore a materially different release-aware free-chain route, not
+more tail padding or an unverified split adapter.
+The capture dependency is now isolated: all 24 real saved handoff states from
+the assisted route hold for the full 8.02-second screen on the canonical
+uniform 11-link plant with exact upright LQR, with only 0.012 m maximum cart
+excursion. This is component evidence, not an 11-link promotion; the missing
+result is still a reproducible hanging-start swing-up into one of those states.
+Two canonical PPO probes were also bounded: a 200-update curriculum run and a
+600-update direct-target run both finished at `0.00` target success. The direct
+run collapsed to approximately 19-step early failures, so generic PPO is now
+recorded as a negative control rather than the active method.
+The next teacher test used the retained p39 route's recorded state/action
+pairs and then a low-exploration PPO warm start. The corrected teacher still
+exited the canonical rail at `5.46 s` with no upright event, and the PPO
+continuation also finished at `0.00` success. The earlier replay-based teacher
+had `0.212 m` source-trace drift and is explicitly superseded. The active
+method must now optimize closed-loop reachability into the measured handoff
+bank on the canonical plant. A bounded `+/-12 m` rail continuation of the
+corrected teacher also finished at `0.00` success after `300` updates and
+`614,400` environment steps, so rail widening alone is not the missing
+capability.
+The closed-loop route-residual CEM and an exact mass-matrix energy/modal probe
+also failed to enter the bank: the best wide-rail route-residual candidate had
+`8.22` terminal bank distance and `18.52 m` cart excursion, while the energy
+probe reached `1.172 rad` at best and had no upright event. These results are
+recorded in the playbook; the next method must couple route reachability to a
+measured capture value or staged handoff curriculum.
+The staged handoff-bank route-residual PPO test completed `600` updates and
+`1,228,800` environment steps with `0.00` success. Its best checkpoint ran to
+the `+/-20 m` rail boundary after `122` steps without an upright event; the
+same checkpoint on the canonical `+/-3 m` rail violated at `52` steps with
+`x=3.013 m`. The bank-distance reward and route residual therefore did not
+make the hanging-start reachability problem solvable. Keep this result in the
+playbook as a negative control and do not advance the public frontier.
+The inherited LQR-saturation curriculum then passed the tiny `progress=0.05`
+stage but failed at `progress=0.10` (`0/8` success, `0.20 s` maximum upright
+streak). A route/LQR handoff variant and the copied heavy-base/high-damping
+morphology gradient also failed before full hanging; the latter's fixed
+uniform LQR gain failed even at `progress=0.025` on the easier plant. These
+results confirm that the local maintenance expert is sound but its basin does
+not reach the n=11 swing-up phase. They are recorded in the playbook; the next
+method must supply a real swing-up teacher or reachable terminal funnel.
+
 The project goal can point directly at this file:
 
-> Complete every required phase and the Final Completion Audit in `ROADMAP.md`. At the active frontier `n`, produce reproducible public evidence that the canonical uniform `n`-link MuJoCo cart-pole swings up from the hanging initial-state distribution and stabilizes upright, meeting the 20-episode and 100-episode success gates with published weights, hashes, metrics, and a reset-free 30-second video. Once frontier `n` passes that gate, promote the active frontier to `n+1` and repeat until the user stops the escalation. Six-link end-to-end reproduction remains a mandatory calibration gate, not the endpoint. Do not treat near-upright, curriculum-stage, widened-rail, altered-morphology, hand-picked-seed, or reset-containing runs as completion evidence.
+> Complete every required phase and the Final Completion Audit in `ROADMAP.md`. At the active frontier `n`, produce reproducible public evidence that the canonical uniform `n`-link MuJoCo cart-pole swings up from the hanging initial-state distribution and stabilizes upright, meeting the 20-episode and 100-episode success gates with published weights, hashes, metrics, and a reset-free 30-second video. Once frontier `n` passes that gate, promote the active frontier to `n+1` and repeat through twenty for the current campaign, or until the user stops the escalation. Six-link end-to-end reproduction remains a mandatory calibration gate, not the endpoint. Do not treat near-upright, curriculum-stage, widened-rail, altered-morphology, hand-picked-seed, or reset-containing runs as completion evidence.
 
 ## Escalating Frontier Rule
 
@@ -78,8 +300,9 @@ terminal state, rail outcome, and capture outcome in `docs/levers_and_pitfalls.m
 | 7 | Canonical 20/100 control gate passed | Finish audit items, then retain as reference |
 | 8 | Passed internal canonical bundle | Retain as the reference route and preserve all negative controls |
 | 9 | Passed internal canonical bundle | Retain as the reference route and preserve all negative controls |
-| 10 | Active | Apply the nine-link parked-launch stack and pass the full canonical evidence bundle |
-| 11+ | Queued | Start automatically after the preceding frontier passes |
+| 10 | Passed internal canonical bundle | Retain the parked-launch manifest, 20/100 gates, exact replay, and reset-free video as the current ten-link release; it is not an external record claim |
+| 11 | Passed local internal canonical bundle | Retain the 20/100 noisy gates, exact 20, reset-free video, clean source bundle and eleven-link appendix |
+| 12–20 | Active queue, starting at twelve | Transfer the validated predecessor and promote one link at a time only after the complete evidence bundle passes |
 
 ## Final Definition Of Done
 
@@ -185,7 +408,7 @@ An open-loop trajectory may be used for diagnostics or warm starts, but final ev
 
 The review of `frontier_swingup_study/`, `hybrid_training_study/`, `harmonic_codesign_study/`, and `cartpole_research_master_handoff/` is recorded in [`docs/packet_review.md`](docs/packet_review.md). The frontier study reinforces that global discovery must precede verification: it produced a genuine three-link model-based down-start swing-up, but no seven/eight-link solution under a different idealized benchmark. The hybrid study contributes evidence and resource-accounting discipline, not a swing-up controller. The harmonic study adds a bounded phase/energy and morphology-design diagnostic, with no canonical MuJoCo swing-up evidence. The master handoff adds immutable task identity, independent forward replay, positive/negative controls, energy-matching, and risk/accounting components, but its MuJoCo gate is blocked and its global high-link task remains unfinished.
 
-The active experiment ledger is [`docs/levers_and_pitfalls.md`](docs/levers_and_pitfalls.md). It records exact levers, negative controls, hard-negative states, and the conditions under which a result is or is not admissible evidence.
+The active experiment ledger and working playbook is [`docs/levers_and_pitfalls.md`](docs/levers_and_pitfalls.md). It records exact levers, negative controls, hard-negative states, and the conditions under which a result is or is not admissible evidence.
 
 None of these packets is canonical evidence. Their non-MuJoCo dynamics, nonuniform morphologies, force limits, rails, actuator contracts, and initial-state distributions differ from this roadmap's contract. In particular, the master handoff's legacy `+/-15 N`, `+/-2.4 m` rail, actuator lag, and 19 s horizon must not be silently substituted for the frozen uniform MuJoCo benchmark.
 
@@ -260,7 +483,17 @@ Phases 1 and 2 are an intentional coupled loop: new real handoffs expand capture
 
 ### Global Discovery Feasibility Gate
 
-Status: **Not passed**. This is an execution checkpoint between capture-basin work and full swing-policy scaling. It does not replace P1, P2, or P3.
+Status: **Passed as a feasibility checkpoint; P1, P2, and P3 remain open**. This is an execution checkpoint between capture-basin work and full swing-policy scaling. It does not replace P1, P2, or P3.
+
+The exact route evidence is recorded in
+[`runs/goal_global_discovery/global_route_evidence.json`](runs/goal_global_discovery/global_route_evidence.json).
+It replays the uniform six-link plant from four held-out noisy hanging starts,
+uses a single initial reset per episode and no post-launch reset, selects
+between mirrored saved Box-FDDP routes with isolated forward predictions, and
+records complete `qpos`, `qvel`, action, phase, and termination traces. All
+four episodes reached capture and held for at least five seconds on the
+canonical `+/-3 m` rail. This proves route feasibility only; it is not a P1
+capture-basin result or a P3 cohort result.
 
 Purpose: prove that the exact uniform six-link MuJoCo plant has at least one executable hanging-start route into sustained capture before investing in larger policy cohorts or validation acceleration.
 
@@ -456,11 +689,11 @@ After P7, turn the seven-link result into an arbitrary-`n` scaling experiment. T
 | Phase | Status | Current evidence |
 |---|---|---|
 | P0 benchmark/verifier | Passed | Canonical config, XML hash export, runtime assertions, native MuJoCo tests, and the final artifact verifier are present; all 78 tests pass in the release environment. |
-| Global discovery feasibility | Not passed | The CPU-safe exact-MuJoCo evaluator records `0/4` five-second holds for the current low-momentum swing plus LQR chain; the best baseline streak is `0.04 s`. Capture-ready CEM reduced nominal hinge RMS to about `0.835 rad/s` but still produced no sustained hold. The active phase/energy branch now has a measured rail-length diagnostic: the intermediate checkpoint crossed upright at `12 m` in `1/2` episodes and at `18 m` in `2/2`, but had `0/2` low-momentum handoffs and `0/2` captures. The completed 150-update real-handoff capture curriculum reached a best `0.28 s` upright streak and `0.7958` capture-quality score, but captured `0/2` episodes, succeeded `0/2`, and reached about `3.07 m` cart excursion. |
+| Global discovery feasibility | Passed as feasibility only | `scripts/evaluate_global_discovery_route.py` records `4/4` held-out canonical hanging-start episodes with full traces, mirrored exact-route selection, no post-launch reset, at least a five-second hold, and no rail termination. This does not close P1, P2, or P3. |
 | P1 six-link capture basin | In progress | The seeded 20k/2k/1k envelope and strict gate evaluator are frozen. At `p=0.0700`, target planning reaches `217/256`, standard feedback MPC reaches `227/256`, and deterministic escalation reaches `233/256 = 91.02%` with a `13.90 s` median hold and no successful rail hits. The next `p=0.0725` cascade reaches only `220/256 = 85.94%`, so the accepted frontier remains `p=0.0700`. On representative `p=1.0` state 674, a frozen CEM-seeded DDP approach, settling tail, and LQR fallback succeeds in uninterrupted replay: funnel entry at `5.02 s`, minimum `V=0.12`, `9.30 s` upright hold, and maximum cart excursion `2.413 m`; its measured feedback tube is only `4/32` at normalized radius `0.005` and zero by `0.05`. Static action distillation, reward-only PPO, and raw-action DAgger are rejected. Predictive and receding-iLQR tails bottom out near `V=4,500`. Exact-MuJoCo Box-FDDP with stronger endpoint weights and policy-action precision parity now produces strict `10.56 s` replay successes through `alpha=0.7878125` toward held-out state 442. Full trajectory feedback recovers `32/32` perturbations through normalized radius `0.05`, `26/32` at `0.10`, and `13/32` at `0.20`, but `0/23` nearest distinct validation states. This is one useful local funnel rather than a reusable capture policy, and P1 is not passed. |
 
 Latest full-width calibration note (2026-09-14): the strongest complete validation checkpoint is the LQR-homotopy residual policy at `p=0.05925`, scoring `1803/2000 = 90.15%` with a `15.02 s` median hold and `197` rail terminations. The 1000-state fine continuation fails `p=0.0595` at `89.6%`; hard-tail sampling and residual-floor experiments do not improve the full split. The final `p=1.0` test gate and reusable capture policy remain open. See `docs/levers_and_pitfalls.md` for the experiment ledger.
-| P2 six-link swing handoff | In progress | Best learned handoffs are from a progress-`0.3875` curriculum plant, not final uniform 6-link. |
+| P2 six-link swing handoff | In progress | The exact uniform route cohort now provides `100/100` measured route-terminal handoffs and `100/100` independent capture-LQR replays, but it launches after a 15-second conditioning phase and cannot be credited as a P2 pass until the P1 capture basin is proven and the handoff split is promoted under that basin. |
 | P3 integrated six | In progress | The saved Box-FDDP route plus mirrored route passes `20/20` and `100/100` from conditioned noisy hanging starts at canonical `+/-3 m`; the reset-free noisy video and route manifest are now recorded, while separate P1/P2 closure remains outstanding. |
 | P4 seven-link maintenance/capture | Superseded by integrated pass | The terminal upright LQR holds all 120 disjoint canonical release episodes after the Box-FDDP route; older curriculum failures remain preserved as research history. |
 | P5 seven-link swing | Superseded by integrated pass | The settled-launch controller reaches capture in all 120 disjoint canonical release episodes; component-only gates were superseded by stronger end-to-end evidence. |
@@ -469,7 +702,7 @@ Latest full-width calibration note (2026-09-14): the strongest complete validati
 | P8 eight-link promotion | Passed internal canonical bundle | `20/20` and `100/100` noisy parked-route gates, exact `20/20`, held-out reset-free video, and manifest are recorded. This is not an external record claim. |
 | P9 nine-link promotion | Passed internal canonical bundle | `20/20` and `100/100` noisy parked-route gates, exact `20/20`, held-out reset-free video, and manifest are recorded. This is not an external record claim. |
 | P10 ten-link promotion | Passed internal canonical bundle | `20/20` and `100/100` noisy parked-route gates, exact `20/20`, held-out reset-free video, and manifest are recorded on the canonical uniform ten-link plant. This is not an external record claim. |
-| P11 eleven-link frontier | Active | Reuse the ten-link 16-second settled launch, target-plant Box-FDDP feedback route, angle/rate-weighted terminal objective, parked-target LQR capture, and the same canonical evidence contract. |
+| P11 eleven-link frontier | Active | The direct ten-link parked-route transfer, cart-route/direct-force CEMs, and the release-aware split curriculum are retained as diagnostics. The next admissible candidate must be a free uniform 11-link route with the 16-second settled launch, target-plant feedback, parked-target LQR capture, and the complete canonical evidence contract. |
 
 Six-link canonical route checkpoint (2026-09-13): the inherited seven-link
 architecture was re-run with corrected six-link provenance and carried through

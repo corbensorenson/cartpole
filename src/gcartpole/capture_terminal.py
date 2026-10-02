@@ -10,6 +10,86 @@ import numpy as np
 Array = np.ndarray
 
 
+def minimum_energy_terminal_metric(
+    state_matrix: Array,
+    input_matrix: Array,
+    *,
+    horizon_steps: int,
+    regularization: float = 1.0e-8,
+    normalize: bool = True,
+) -> tuple[Array, dict[str, Any]]:
+    """Return a finite-horizon minimum-energy metric for a zero target.
+
+    For the linearized plant ``x[k+1] = A x[k] + B u[k]``, the minimum
+    squared control energy needed to drive an endpoint state to zero in
+    ``horizon_steps`` is
+
+    ``x.T @ (A**N).T @ W_N^-1 @ A**N @ x``.
+
+    ``W_N`` is regularized in its singular-value basis because long chains
+    have controllability directions that are numerically observable but far
+    too weak for an unconstrained inverse.  The optional trace normalization
+    makes the returned matrix a stable shaping term whose strength is chosen
+    by the caller, rather than by arbitrary state-unit magnitudes.
+    """
+
+    a = np.asarray(state_matrix, dtype=np.float64)
+    b = np.asarray(input_matrix, dtype=np.float64)
+    if a.ndim != 2 or a.shape[0] != a.shape[1]:
+        raise ValueError("state matrix must be square")
+    if b.ndim != 2 or b.shape[0] != a.shape[0] or b.shape[1] != 1:
+        raise ValueError("input matrix must have shape (state_size, 1)")
+    if int(horizon_steps) != horizon_steps or horizon_steps < 1:
+        raise ValueError("horizon_steps must be a positive integer")
+    if not np.isfinite(regularization) or regularization <= 0.0:
+        raise ValueError("regularization must be finite and positive")
+    if not np.all(np.isfinite(a)) or not np.all(np.isfinite(b)):
+        raise ValueError("state and input matrices must be finite")
+
+    state_size = a.shape[0]
+    reach = np.eye(state_size, dtype=np.float64)
+    gramian = np.zeros((state_size, state_size), dtype=np.float64)
+    for _ in range(int(horizon_steps)):
+        column = reach @ b
+        gramian += column @ column.T
+        reach = a @ reach
+
+    gramian = 0.5 * (gramian + gramian.T)
+    singular_values, basis = np.linalg.eigh(gramian)
+    singular_values = np.maximum(singular_values, 0.0)
+    largest = float(np.max(singular_values, initial=0.0))
+    floor = max(np.finfo(np.float64).eps * max(1.0, largest), regularization * largest)
+    inverse = basis @ np.diag(1.0 / np.maximum(singular_values, floor)) @ basis.T
+    metric_raw = reach.T @ inverse @ reach
+    metric_raw = 0.5 * (metric_raw + metric_raw.T)
+
+    trace = float(np.trace(metric_raw))
+    normalization = 1.0
+    metric = metric_raw.copy()
+    if normalize and np.isfinite(trace) and trace > 0.0:
+        normalization = float(state_size / trace)
+        metric *= normalization
+    if not np.all(np.isfinite(metric)):
+        raise ValueError("minimum-energy terminal metric is not finite")
+
+    metric_eigenvalues = np.linalg.eigvalsh(metric)
+    metadata = {
+        "type": "finite_horizon_minimum_energy_terminal_metric",
+        "horizon_steps": int(horizon_steps),
+        "regularization": float(regularization),
+        "normalized": bool(normalize),
+        "gramian_singular_values": singular_values.astype(float).tolist(),
+        "gramian_floor": float(floor),
+        "gramian_rank": int(np.count_nonzero(singular_values > floor)),
+        "raw_trace": trace,
+        "normalization": normalization,
+        "raw_metric_max_abs": float(np.max(np.abs(metric_raw), initial=0.0)),
+        "metric_minimum_eigenvalue": float(metric_eigenvalues[0]),
+        "metric_maximum_eigenvalue": float(metric_eigenvalues[-1]),
+    }
+    return metric, metadata
+
+
 @dataclass(frozen=True)
 class FeedbackHorizonMetric:
     """Quadratic terminal metric induced by a fixed linear feedback horizon.

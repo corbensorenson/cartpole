@@ -19,14 +19,14 @@ else:
 from .mjxml import generate_nlink_cartpole_xml
 from .modal import StateScales, dimensionless_absolute_transform
 from .morphology import Morphology, build_morphology
+from .route_feedback import TimeVaryingFeedbackRoute
+from .simulation import SimulationError, advance_checked
+from .angles import wrap_angle
 
 
 _INIT_STATE_FILE_CACHE: dict[Path, list[dict[str, Any]]] = {}
 _INIT_STATE_ORDER_CACHE: dict[Path, list[int]] = {}
-
-
-def wrap_angle(angle: np.ndarray) -> np.ndarray:
-    return (angle + np.pi) % (2.0 * np.pi) - np.pi
+_HANDOFF_BANK_CACHE: dict[Path, tuple[np.ndarray, np.ndarray]] = {}
 
 
 def serial_absolute_angles(relative_angles: np.ndarray) -> np.ndarray:
@@ -86,6 +86,17 @@ class NLinkCartPoleEnv(gym.Env):
         self.lqr_switch_first_entry_step: int | None = None
         self.lqr_switch_lqr_steps = 0
         self.lqr_switch_policy_steps = 0
+        self.action_route: TimeVaryingFeedbackRoute | None = None
+        route_cfg = self.env_cfg.get("action_route_residual", {})
+        if bool(route_cfg.get("enabled", False)):
+            self.action_route = TimeVaryingFeedbackRoute(
+                route_cfg.get("path"),
+                self.n,
+                tracking_gain_scale=float(route_cfg.get("tracking_gain_scale", 1.0)),
+                phase_window=int(route_cfg.get("phase_window", 12)),
+            )
+        self._handoff_bank_targets = self._load_handoff_bank_targets()
+        self._last_handoff_distance: float | None = None
         self.upright_streak_steps = 0
         self.max_upright_streak_steps = 0
         self.centered_upright_streak_steps = 0
@@ -141,6 +152,9 @@ class NLinkCartPoleEnv(gym.Env):
             link_radius=float(self.env_cfg.get("link_radius", 0.025)),
             rigid_split_inertia=bool(
                 self.env_cfg.get("rigid_split_inertia", False)
+            ),
+            rigid_split_mass_fraction=float(
+                self.env_cfg.get("rigid_split_mass_fraction", 1.0e-8)
             ),
             joint_lock_impedance_schedule=str(
                 self.env_cfg.get("joint_lock_impedance_schedule", "linear")
@@ -199,6 +213,7 @@ class NLinkCartPoleEnv(gym.Env):
         self.reset()
 
     def reset(self, *, seed: int | None = None, options: dict[str, Any] | None = None):
+        self.simulation_error = None
         if seed is not None:
             self.rng = np.random.default_rng(seed)
         self.step_count = 0
@@ -220,6 +235,9 @@ class NLinkCartPoleEnv(gym.Env):
         self.lqr_switch_first_entry_step = None
         self.lqr_switch_lqr_steps = 0
         self.lqr_switch_policy_steps = 0
+        if self.action_route is not None:
+            self.action_route.reset()
+        self._last_handoff_distance = None
         self.data.qpos[:] = 0.0
         self.data.qvel[:] = 0.0
         angle_noise = self._progress_value(self.env_cfg, "init_angle_noise", 0.02)
@@ -277,6 +295,7 @@ class NLinkCartPoleEnv(gym.Env):
         self.last_lqr_cart_target = 0.0
         mujoco.mj_forward(self.model, self.data)
         self._last_potential_energy = self._potential_energy()
+        self._last_handoff_distance = self._handoff_distance()
         self.max_cart_excursion = abs(float(self.data.qpos[0]))
         self._update_upright_tracking()
         return self._get_obs(), self._info()
@@ -302,6 +321,65 @@ class NLinkCartPoleEnv(gym.Env):
             raise ValueError("state_list initial states must be a list")
         self._init_state_cache = states
         return self._init_state_cache
+
+    def _load_handoff_bank_targets(self) -> tuple[np.ndarray, np.ndarray] | None:
+        reward_cfg = self.env_cfg.get("reward", {})
+        path_value = reward_cfg.get("handoff_bank_path")
+        if not path_value:
+            return None
+        path = Path(path_value).expanduser().resolve()
+        cached = _HANDOFF_BANK_CACHE.get(path)
+        if cached is not None:
+            return cached
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        states = payload.get("states", payload) if isinstance(payload, dict) else payload
+        if not isinstance(states, list) or not states:
+            raise ValueError("handoff_bank_path must contain a nonempty state list")
+        targets: list[np.ndarray] = []
+        for state in states:
+            if not isinstance(state, dict):
+                raise ValueError("handoff bank states must be objects")
+            qpos = np.asarray(state.get("qpos", []), dtype=np.float64)
+            qvel = np.asarray(state.get("qvel", []), dtype=np.float64)
+            expected = self.n + 1
+            if qpos.shape != (expected,) or qvel.shape != (expected,):
+                raise ValueError("handoff bank state dimension does not match env.n_links")
+            targets.append(
+                np.concatenate(
+                    (
+                        [qpos[0], qvel[0]],
+                        serial_absolute_angles(qpos[1:]),
+                        np.cumsum(qvel[1:]),
+                    )
+                )
+            )
+        scales = np.concatenate(
+            (
+                [float(reward_cfg.get("handoff_cart_scale", 1.25)),
+                 float(reward_cfg.get("handoff_cart_velocity_scale", 0.50))],
+                np.full(self.n, float(reward_cfg.get("handoff_angle_scale", 0.15))),
+                np.full(self.n, float(reward_cfg.get("handoff_rate_scale", 0.75))),
+            )
+        )
+        if np.any(~np.isfinite(scales)) or np.any(scales <= 0.0):
+            raise ValueError("handoff distance scales must be finite and positive")
+        result = (np.asarray(targets, dtype=np.float64), scales)
+        _HANDOFF_BANK_CACHE[path] = result
+        return result
+
+    def _handoff_distance(self) -> float | None:
+        if self._handoff_bank_targets is None:
+            return None
+        targets, scales = self._handoff_bank_targets
+        features = np.concatenate(
+            (
+                [float(self.data.qpos[0]), float(self.data.qvel[0])],
+                self._angles()[1],
+                self._absolute_angular_velocity(),
+            )
+        )
+        normalized = (targets - features[None, :]) / scales[None, :]
+        return float(np.min(np.sqrt(np.mean(normalized * normalized, axis=1))))
 
     def _state_list_quality(self, state: dict[str, Any]) -> tuple[float, float, float, float]:
         qpos = np.asarray(state.get("qpos", []), dtype=np.float64)
@@ -374,8 +452,12 @@ class NLinkCartPoleEnv(gym.Env):
         self.last_action_bias_norm = 0.0
         self.last_residual_scale = 1.0
         self.last_lqr_cart_target = 0.0
+        if self.action_route is not None:
+            self.action_route.reset()
+        self._last_handoff_distance = None
         mujoco.mj_forward(self.model, self.data)
         self._last_potential_energy = self._potential_energy()
+        self._last_handoff_distance = self._handoff_distance()
         self.max_cart_excursion = abs(float(self.data.qpos[0]))
         self._update_upright_tracking()
         return self._get_obs(), self._info()
@@ -387,14 +469,21 @@ class NLinkCartPoleEnv(gym.Env):
         self.last_policy_action_norm[0] = policy_action_norm
         self.last_action_norm[0] = action_norm
         self.data.ctrl[0] = action_norm * self.force_limit
-        for _ in range(self.frame_skip):
-            mujoco.mj_step(self.model, self.data)
+        try:
+            advance_checked(self.model, self.data, self.frame_skip)
+        except SimulationError as error:
+            self.simulation_error = str(error)
         self.step_count += 1
         self.max_cart_excursion = max(self.max_cart_excursion, abs(float(self.data.qpos[0])))
-        self._update_upright_tracking()
+        if self.simulation_error is None:
+            self._update_upright_tracking()
+        else:
+            self.upright_streak_steps = 0
+            self.centered_upright_streak_steps = 0
+            self.low_momentum_upright_streak_steps = 0
 
         obs = self._get_obs()
-        reward = self._reward(action_norm)
+        reward = self._reward(action_norm) if self.simulation_error is None else 0.0
         termination_reason = self._termination_reason()
         terminated = termination_reason is not None
         truncated = self.step_count >= self.max_steps
@@ -426,8 +515,30 @@ class NLinkCartPoleEnv(gym.Env):
         scale = self._progress_value(cfg, "scale", 1.0)
         state = np.zeros(expected, dtype=np.float64)
         state[0] = float(self.data.qpos[0]) - cart_target
-        state[1 : 1 + self.n] = wrap_angle(np.asarray(self.data.qpos[1 : 1 + self.n], dtype=np.float64))
-        state[self.n + 1 :] = np.asarray(self.data.qvel, dtype=np.float64)
+        coordinates = str(cfg.get("state_coordinates", "relative")).strip().lower()
+        if coordinates in {"relative", "modal"}:
+            state[1 : 1 + self.n] = wrap_angle(
+                np.asarray(self.data.qpos[1 : 1 + self.n], dtype=np.float64)
+            )
+            state[self.n + 1 :] = np.asarray(self.data.qvel, dtype=np.float64)
+        elif coordinates == "absolute":
+            state[1 : 1 + self.n] = wrap_angle(
+                np.cumsum(np.asarray(self.data.qpos[1 : 1 + self.n], dtype=np.float64))
+            )
+            state[self.n + 1 :] = np.r_[
+                float(self.data.qvel[0]),
+                np.cumsum(np.asarray(self.data.qvel[1 : 1 + self.n], dtype=np.float64)),
+            ]
+        else:
+            raise ValueError("LQR state_coordinates must be 'relative', 'absolute', or 'modal'")
+        if "state_transform" in cfg:
+            transform = np.asarray(cfg["state_transform"], dtype=np.float64)
+            if transform.shape != (expected, expected):
+                raise ValueError(
+                    "LQR state_transform must have shape "
+                    f"{(expected, expected)}; got {transform.shape}"
+                )
+            state = transform @ state
         raw_action = -scale * float(gain @ state)
         action_squash = str(cfg.get("action_squash", "clip")).lower()
         if action_squash == "tanh":
@@ -506,8 +617,37 @@ class NLinkCartPoleEnv(gym.Env):
     def _applied_action_norm(self, policy_action_norm: float) -> float:
         residual_cfg = self.env_cfg.get("action_lqr_residual", {})
         switch_cfg = self.env_cfg.get("action_lqr_switch", {})
+        route_cfg = self.env_cfg.get("action_route_residual", {})
         residual_enabled = bool(residual_cfg.get("enabled", False))
         switch_enabled = bool(switch_cfg.get("enabled", False))
+        route_enabled = self.action_route is not None
+        route_lqr_warm_start = bool(
+            route_enabled
+            and residual_enabled
+            and route_cfg.get("lqr_until_progress") is not None
+            and self.progress < float(route_cfg["lqr_until_progress"])
+        )
+        route_lqr_schedule = route_cfg.get("lqr_until_progress") is not None
+        if route_enabled and (switch_enabled or (residual_enabled and not route_lqr_schedule)):
+            raise ValueError(
+                "action_route_residual cannot be combined with action_lqr_residual "
+                "or action_lqr_switch"
+            )
+        if route_enabled and not route_lqr_warm_start:
+            base_action, _ = self.action_route.action(self.data.qpos, self.data.qvel)
+            route_action_scale = self._progress_value(route_cfg, "route_action_scale", 1.0)
+            base_action *= route_action_scale
+            residual_scale = self._progress_value(route_cfg, "residual_scale", 1.0)
+            residual_limit = self._progress_value(route_cfg, "residual_action_limit", 1.0)
+            if residual_limit < 1.0:
+                policy_action_norm = float(
+                    np.clip(policy_action_norm, -abs(float(residual_limit)), abs(float(residual_limit)))
+                )
+            self.last_action_bias_norm = float(base_action)
+            self.last_residual_scale = float(residual_scale)
+            self.last_lqr_cart_target = 0.0
+            self.last_controller_mode = "route_residual"
+            return float(np.clip(base_action + residual_scale * policy_action_norm, -1.0, 1.0))
         if residual_enabled and switch_enabled:
             raise ValueError("action_lqr_residual and action_lqr_switch are mutually exclusive")
         if switch_enabled:
@@ -551,6 +691,15 @@ class NLinkCartPoleEnv(gym.Env):
         self.last_action_bias_norm = float(bias)
         self.last_residual_scale = float(residual_scale)
         self.last_lqr_cart_target = float(cart_target)
+        # An additive residual cannot change a clipped LQR action.  This opt-in
+        # escape hatch gives the learned controller full authority only in
+        # that saturated region, while preserving the LQR anchor elsewhere.
+        if bool(residual_cfg.get("policy_on_saturation", False)):
+            saturation_threshold = float(residual_cfg.get("saturation_threshold", 0.999))
+            if abs(float(bias)) >= saturation_threshold:
+                self.last_residual_scale = 1.0
+                self.last_controller_mode = "policy_saturated_lqr"
+                return float(policy_action_norm)
         self.last_controller_mode = "lqr_residual"
         return float(np.clip(bias + residual_scale * policy_action_norm, -1.0, 1.0))
 
@@ -567,13 +716,59 @@ class NLinkCartPoleEnv(gym.Env):
         qpos = np.array(self.data.qpos, dtype=np.float64)
         qvel = np.array(self.data.qvel, dtype=np.float64)
         rel, abs_angles = self._angles()
-        obs_parts = [
-            np.array([qpos[0] / self.rail_limit, qvel[0]], dtype=np.float64),
-            np.sin(abs_angles),
-            np.cos(abs_angles),
-            rel,
-            qvel[1 : 1 + self.n],
-        ]
+        qpos_scale = max(
+            1.0e-9,
+            abs(float(self._progress_value(self.env_cfg, "init_qpos_scale", 1.0))),
+        )
+        qvel_scale = max(1.0e-9, abs(float(self._init_qvel_scale())))
+        normalize_reset_scaling = bool(
+            self.env_cfg.get("obs_normalize_reset_scaling", False)
+        )
+        if normalize_reset_scaling:
+            # State-list curricula change the physical reset by separate
+            # position and velocity scales.  Expose the effective state so a
+            # policy does not have to relearn the same funnel coordinates at
+            # every curriculum stage.
+            normalized_rel = rel / qpos_scale
+            normalized_abs = wrap_angle(np.cumsum(normalized_rel))
+            normalized_qvel = qvel[1 : 1 + self.n] / qvel_scale
+            obs_parts = [
+                np.array(
+                    [qpos[0] / (self.rail_limit * qpos_scale), qvel[0] / qvel_scale],
+                    dtype=np.float64,
+                ),
+                np.sin(normalized_abs),
+                np.cos(normalized_abs),
+                normalized_rel,
+                normalized_qvel,
+            ]
+        else:
+            obs_parts = [
+                np.array([qpos[0] / self.rail_limit, qvel[0]], dtype=np.float64),
+                np.sin(abs_angles),
+                np.cos(abs_angles),
+                rel,
+                qvel[1 : 1 + self.n],
+            ]
+        if bool(self.env_cfg.get("obs_include_reset_scaled_state", False)) and not normalize_reset_scaling:
+            # Preserve physical coordinates while also exposing the effective
+            # unscaled reset, so a curriculum can be conditioned without
+            # hiding the dynamics that produced the current observation.
+            normalized_rel = rel / qpos_scale
+            normalized_abs = wrap_angle(np.cumsum(normalized_rel))
+            normalized_qvel = qvel[1 : 1 + self.n] / qvel_scale
+            obs_parts.append(
+                np.r_[
+                    qpos[0] / (self.rail_limit * qpos_scale),
+                    qvel[0] / qvel_scale,
+                    np.sin(normalized_abs),
+                    np.cos(normalized_abs),
+                    normalized_rel,
+                    normalized_qvel,
+                ]
+            )
+        if bool(self.env_cfg.get("obs_include_reset_scales", False)):
+            obs_parts.append(np.asarray([qpos_scale, qvel_scale], dtype=np.float64))
         if self.obs_include_absolute_velocity:
             velocity_bound = max(
                 1e-9,
@@ -612,6 +807,16 @@ class NLinkCartPoleEnv(gym.Env):
                 lqr_bias,
             ]
             obs_parts.append(np.clip(capture_features, -10.0, 10.0))
+        if bool(self.env_cfg.get("obs_include_route_features", False)):
+            if self.action_route is None:
+                obs_parts.append(np.zeros(2, dtype=np.float64))
+            else:
+                obs_parts.append(
+                    np.asarray(
+                        [self.action_route.phase_fraction, self.action_route.last_base_action],
+                        dtype=np.float64,
+                    )
+                )
         if self.obs_include_time:
             time_scale = max(1e-9, float(self.env_cfg.get("obs_time_scale_seconds", self.env_cfg["episode_seconds"])))
             phase = float(self.step_count * self.dt) / time_scale
@@ -643,6 +848,12 @@ class NLinkCartPoleEnv(gym.Env):
         hinge_vel_cost = float(hinge_vel_rms * hinge_vel_rms)
         control_cost = float(action_norm * action_norm)
         policy_control_cost = float(self.last_policy_action_norm[0] ** 2)
+        handoff_distance = self._handoff_distance()
+        handoff_progress = 0.0
+        if handoff_distance is not None:
+            if self._last_handoff_distance is not None:
+                handoff_progress = float(self._last_handoff_distance - handoff_distance)
+            self._last_handoff_distance = handoff_distance
         potential_energy = self._potential_energy()
         energy_delta = (potential_energy - self._last_potential_energy) / self._energy_gap
         energy_fraction = np.clip(self._energy_fraction(potential_energy), -2.0, 2.0)
@@ -715,6 +926,11 @@ class NLinkCartPoleEnv(gym.Env):
         reward -= float(reward_cfg.get("rail_margin", 0.0)) * rail_margin * rail_margin
         reward -= float(reward_cfg.get("control", 0.0003)) * control_cost
         reward -= float(reward_cfg.get("policy_control", 0.0)) * policy_control_cost
+        reward += float(reward_cfg.get("handoff_distance_progress", 0.0)) * handoff_progress
+        if handoff_distance is not None:
+            reward -= float(reward_cfg.get("handoff_distance_cost", 0.0)) * handoff_distance
+            if handoff_distance <= float(reward_cfg.get("handoff_bank_threshold", 0.50)):
+                reward += float(reward_cfg.get("handoff_bank_bonus", 0.0))
         reward += energy_progress_scale * float(energy_delta)
         reward += energy_level_scale * float(energy_fraction)
         return float(np.clip(reward, -100.0, 100.0))
@@ -747,6 +963,8 @@ class NLinkCartPoleEnv(gym.Env):
         return float(np.exp(-min(50.0, cost)))
 
     def _termination_reason(self) -> str | None:
+        if getattr(self, "simulation_error", None) is not None:
+            return "simulation_invalid"
         if not np.all(np.isfinite(self.data.qpos)) or not np.all(np.isfinite(self.data.qvel)):
             return "non_finite_state"
         if abs(float(self.data.qpos[0])) > self.rail_limit:
@@ -841,6 +1059,7 @@ class NLinkCartPoleEnv(gym.Env):
         absolute_angular_velocity_rms = float(np.sqrt(np.mean(absolute_angular_velocity**2)))
         max_abs_angle = float(np.max(np.abs(abs_angles)))
         return {
+            "simulation_error": getattr(self, "simulation_error", None),
             "x": float(self.data.qpos[0]),
             "max_abs_angle": max_abs_angle,
             "mean_abs_angle": float(np.mean(np.abs(abs_angles))),
@@ -848,7 +1067,9 @@ class NLinkCartPoleEnv(gym.Env):
             "absolute_angular_velocity_rms": absolute_angular_velocity_rms,
             "max_absolute_angular_velocity": float(np.max(np.abs(absolute_angular_velocity))),
             "capture_quality": self._capture_quality(max_abs_angle=max_abs_angle, hinge_vel_rms=hinge_vel_rms),
-            "is_upright": bool(self._is_upright(abs_angles)),
+            "is_upright": bool(
+                getattr(self, "simulation_error", None) is None and self._is_upright(abs_angles)
+            ),
             "upright_streak_seconds": float(self.upright_streak_steps * self.dt),
             "max_upright_streak_seconds": float(self.max_upright_streak_steps * self.dt),
             "centered_upright_streak_seconds": float(self.centered_upright_streak_steps * self.dt),
@@ -876,6 +1097,13 @@ class NLinkCartPoleEnv(gym.Env):
             "residual_scale": float(self.last_residual_scale),
             "lqr_cart_target": float(self.last_lqr_cart_target),
             "controller_mode": self.last_controller_mode,
+            "handoff_bank_distance": self._handoff_distance(),
+            "route_phase_fraction": (
+                None if self.action_route is None else float(self.action_route.phase_fraction)
+            ),
+            "route_index": (
+                None if self.action_route is None else self.action_route.last_route_index
+            ),
             "lqr_switch_active": bool(self.lqr_switch_active),
             "lqr_switch_lyapunov_value": (
                 self._lqr_switch_lyapunov_value(self.env_cfg["action_lqr_switch"])

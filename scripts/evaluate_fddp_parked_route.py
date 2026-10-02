@@ -35,14 +35,62 @@ from gcartpole.evidence import (
 )
 from gcartpole.generalized_energy import hanging_lqr_gain
 from gcartpole.ilqr import data_state
-from gcartpole.modal import dimensionless_wrapped_state
+from gcartpole.modal import closed_loop_lyapunov_matrix, dimensionless_wrapped_state
 
 try:
     from scripts.evaluate_fddp_two_expert import load_controller
     from scripts.search_swingup_capture import lqr_action, lqr_gain
+    from scripts.make_lqr_checkpoint import finite_difference_dynamics
+    from scripts.search_ilqr_capture import handoff_bounds_satisfied, lyapunov_value
 except ModuleNotFoundError:
     from evaluate_fddp_two_expert import load_controller
     from search_swingup_capture import lqr_action, lqr_gain
+    from make_lqr_checkpoint import finite_difference_dynamics
+    from search_ilqr_capture import handoff_bounds_satisfied, lyapunov_value
+
+
+def capture_metric(
+    cfg: dict[str, Any], controller: dict[str, Any], gain: np.ndarray
+) -> np.ndarray | None:
+    """Reconstruct the saved state gate; legacy full-route policies need none."""
+    if controller.get("defer_handoff_until_horizon", True):
+        return None
+    gate = controller["capture_gate"]
+    for key, value in gate.items():
+        if value is None and key not in ("lyapunov", "cart_abs"):
+            continue
+        if value is None or not np.isfinite(value) or value <= 0:
+            raise ValueError(f"invalid saved capture gate: {key}")
+    metadata = controller["lyapunov_metadata"]
+    if metadata.get("source") != "lqr_discrete_lyapunov":
+        raise ValueError("state-gated replay requires the saved LQR Lyapunov metric")
+    a, b = finite_difference_dynamics(cfg, 1.0, 1e-7)
+    matrix, _ = closed_loop_lyapunov_matrix(
+        a, b, gain, controller["transform"], controller["lqr_scale"]
+    )
+    if data_sha256(matrix.astype(float).tolist()) != metadata.get("matrix_sha256"):
+        raise ValueError("reconstructed capture metric differs from the saved controller")
+    return matrix
+
+
+def capture_gate_satisfied(
+    state: np.ndarray, n_links: int, controller: dict[str, Any],
+    metric: np.ndarray, cart_target: float,
+) -> bool:
+    # Evaluate the capture gate around the same translated equilibrium as LQR.
+    centered = np.asarray(state, dtype=np.float64).copy()
+    centered[0] -= cart_target
+    gate = controller["capture_gate"]
+    return bool(
+        np.all(np.isfinite(centered))
+        and abs(centered[0]) <= gate["cart_abs"]
+        and lyapunov_value(centered, controller["transform"], metric) <= gate["lyapunov"]
+        and handoff_bounds_satisfied(
+            centered, n_links, angle_abs=gate["angle_abs"],
+            cart_velocity_abs=gate["cart_velocity_abs"],
+            hinge_velocity_rms=gate["hinge_velocity_rms"],
+        )
+    )
 
 
 def zero_noise_config(cfg: dict[str, Any]) -> dict[str, Any]:
@@ -85,7 +133,10 @@ def run_episode(
     phase_adaptive: bool,
     phase_window: int,
     include_trace: bool,
+    lyapunov: np.ndarray | None = None,
 ) -> dict[str, Any]:
+    if not controller.get("defer_handoff_until_horizon", True) and lyapunov is None:
+        raise ValueError("state-gated controller requires its capture metric")
     env = NLinkCartPoleEnv(cfg, progress=1.0, seed=seed)
     _, reset_info = env.reset(seed=seed)
 
@@ -98,6 +149,9 @@ def run_episode(
     route_steps = int(controls.size)
     cart_nominal_shift: float | None = None
     phase_cursor = 0
+    angle_branch_aligned = False
+    capture_latched = False
+    first_handoff_step: int | None = None
     max_cart = abs(float(reset_info.get("x", env.data.qpos[0])))
     first_upright: float | None = None
     park_state: dict[str, Any] | None = None
@@ -114,18 +168,30 @@ def run_episode(
         else:
             route_elapsed = step - park_steps
             route_index = route_elapsed
-            coordinate_state = dimensionless_wrapped_state(
-                np.asarray(env.data.qpos, dtype=np.float64),
-                np.asarray(env.data.qvel, dtype=np.float64),
-                transform,
+            coordinate_state = (
+                transform @ data_state(env.data)
+                if controller.get("continuous_angles", False)
+                else dimensionless_wrapped_state(env.data.qpos, env.data.qvel, transform)
             )
+            if controller.get("continuous_angles", False) and not angle_branch_aligned:
+                nominal_physical = np.linalg.solve(transform, nominal_states[0])
+                branch_shift = np.zeros(transform.shape[0])
+                branch_shift[1 : env.n + 1] = 2 * np.pi * np.round(
+                    (env.data.qpos[1:] - nominal_physical[1 : env.n + 1]) / (2 * np.pi)
+                )
+                translated_nominal_states += transform @ branch_shift
+                angle_branch_aligned = True
             if cart_nominal_shift is None:
                 cart_nominal_shift = float(
                     coordinate_state[0] - nominal_states[0, 0]
                 )
                 translated_nominal_states[:, 0] += cart_nominal_shift
 
-            in_route = route_elapsed < route_steps
+            if lyapunov is not None and not capture_latched:
+                capture_latched = capture_gate_satisfied(
+                    data_state(env.data), env.n, controller, lyapunov, cart_target
+                )
+            in_route = route_elapsed < route_steps and not capture_latched
             if in_route and phase_adaptive:
                 if phase_cursor >= route_steps:
                     in_route = False
@@ -155,6 +221,8 @@ def run_episode(
                 )
             else:
                 phase = "capture_lqr"
+                if first_handoff_step is None:
+                    first_handoff_step = step
                 action = lqr_action(
                     env,
                     capture_gain,
@@ -204,14 +272,31 @@ def run_episode(
             break
 
     env.close()
+    full_episode = bool(
+        step + 1 == env.max_steps
+        and final_info.get("termination_reason") == "time_limit"
+        and final_info.get("simulation_error") is None
+        and np.isfinite(max_cart)
+        and max_cart <= float(cfg.get("env", {}).get("rail_limit", np.inf))
+    )
     return {
         "seed": int(seed),
         "success": bool(final_info.get("success", False)),
+        "full_episode_success": bool(full_episode and final_info.get("success", False)),
+        "length": int(step + 1),
         "termination_reason": final_info.get("termination_reason"),
         "return": float(episode_return),
         "park_seconds": float(park_steps * env.dt),
         "route_seconds": float(route_steps * env.dt),
+        "first_handoff_step": first_handoff_step,
+        "first_handoff_time": None if first_handoff_step is None else float(first_handoff_step * env.dt),
+        "handoff_reason": None if first_handoff_step is None else (
+            "saved_state_gate" if capture_latched else "route_end"
+        ),
         "first_upright_time": first_upright,
+        "time_to_first_upright": final_info.get("time_to_first_upright", first_upright),
+        "time_to_capture": final_info.get("time_to_capture"),
+        "final_upright_streak_seconds": float(final_info.get("upright_streak_seconds", 0.0)),
         "max_upright_streak_seconds": float(
             final_info.get("max_upright_streak_seconds", 0.0)
         ),
@@ -237,6 +322,10 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=80801)
     parser.add_argument("--park-seconds", type=float, default=17.5)
     parser.add_argument("--cart-target", type=float, default=-0.10)
+    parser.add_argument("--settle-control-cost", type=float, default=1000.0,
+                        help="normalized-action penalty for the hanging regulator")
+    parser.add_argument("--settle-cart-position-cost", type=float, default=0.1)
+    parser.add_argument("--settle-cart-velocity-cost", type=float, default=0.1)
     parser.add_argument("--tracking-gain-scale", type=float, default=1.0)
     parser.add_argument("--phase-adaptive", action="store_true")
     parser.add_argument("--phase-window", type=int, default=12)
@@ -251,10 +340,13 @@ def main() -> None:
     args = parser.parse_args()
     if args.episodes < 1 or args.park_seconds < 0.0:
         raise ValueError("episodes must be positive and park duration nonnegative")
-    if args.cart_target >= 0.0:
-        raise ValueError("cart target must be negative for the current rail-safe route")
+    if args.cart_target > 0.0:
+        raise ValueError("cart target must be nonpositive for the current rail-safe route")
     if args.tracking_gain_scale < 0.0 or args.phase_window < 0:
         raise ValueError("tracking gain and phase window must be nonnegative")
+    if any(not np.isfinite(value) or value <= 0.0 for value in
+           (args.settle_control_cost, args.settle_cart_position_cost, args.settle_cart_velocity_cost)):
+        raise ValueError("settle costs must be finite and positive")
 
     source_cfg = load_config(args.config)
     cfg = copy.deepcopy(source_cfg)
@@ -274,8 +366,13 @@ def main() -> None:
         control_cost=controller["lqr_control_cost"],
         q_weights=controller["lqr_weights"],
     )
+    lyapunov = capture_metric(cfg, controller, capture_gain)
     probe = NLinkCartPoleEnv(cfg, progress=1.0, seed=args.seed)
-    settle_gain = hanging_lqr_gain(probe, control_cost=1000.0)
+    settle_gain = hanging_lqr_gain(
+        probe, control_cost=args.settle_control_cost,
+        cart_position_cost=args.settle_cart_position_cost,
+        cart_velocity_cost=args.settle_cart_velocity_cost,
+    )
     generated_xml_sha256 = text_sha256(probe.xml)
     observation_dim = int(probe.observation_space.shape[0])
     action_dim = int(probe.action_space.shape[0])
@@ -295,14 +392,13 @@ def main() -> None:
             phase_adaptive=args.phase_adaptive,
             phase_window=args.phase_window,
             include_trace=args.include_traces and index == 0,
+            lyapunov=lyapunov,
         )
         for index in range(args.episodes)
     ]
     successes = sum(bool(row["success"]) for row in episodes)
-    if args.release_evidence and successes != args.episodes:
-        raise RuntimeError(
-            "release evidence requires every requested episode to pass"
-        )
+    full_successes = sum(bool(row["full_episode_success"]) for row in episodes)
+    release_passed = bool(args.release_evidence and full_successes == args.episodes)
     source_git = {
         key: value
         for key, value in git_metadata(Path(__file__).resolve().parents[1]).items()
@@ -313,10 +409,10 @@ def main() -> None:
         "generated_at": utc_timestamp(),
         "claim_status": (
             "canonical_parked_route_gate_evidence"
-            if args.release_evidence
+            if release_passed
             else "development_fddp_parked_route"
         ),
-        "not_solution": not args.release_evidence,
+        "not_solution": not release_passed,
         "summary": (
             f"{int(cfg['env']['n_links'])}-link parked-cart launch with "
             "Box-FDDP feedback and parked-target upright LQR capture."
@@ -332,15 +428,26 @@ def main() -> None:
         "seed_start": int(args.seed),
         "zero_noise": bool(args.zero_noise),
         "release_evidence": bool(args.release_evidence),
+        "release_gate_passed": release_passed,
         "park_seconds": float(args.park_seconds),
         "cart_target": float(args.cart_target),
+        "settle_control_cost": float(args.settle_control_cost),
+        "settle_cart_position_cost": float(args.settle_cart_position_cost),
+        "settle_cart_velocity_cost": float(args.settle_cart_velocity_cost),
+        "settle_gain_sha256": data_sha256(settle_gain.astype(float).tolist()),
+        "capture_gain_sha256": data_sha256(capture_gain.astype(float).reshape(-1).tolist()),
         "tracking_gain_scale": float(args.tracking_gain_scale),
         "phase_adaptive": bool(args.phase_adaptive),
         "phase_window": int(args.phase_window),
         "route_steps": int(controller["horizon_steps"]),
         "route_seconds": float(controller["horizon_seconds"]),
+        "capture_gate": controller["capture_gate"] if lyapunov is not None else None,
+        "capture_metric_sha256": None if lyapunov is None else data_sha256(lyapunov.astype(float).tolist()),
+        "defer_handoff_until_horizon": controller["defer_handoff_until_horizon"],
         "successes": int(successes),
         "success_rate": float(successes / args.episodes),
+        "full_episode_successes": int(full_successes),
+        "full_episode_success_rate": float(full_successes / args.episodes),
         "ever_upright_rate": float(
             np.mean([row["first_upright_time"] is not None for row in episodes])
         ),
@@ -379,6 +486,11 @@ def main() -> None:
         f"max_cart={output['max_cart_excursion_max']:.4f} "
         f"zero_noise={args.zero_noise} phase_adaptive={args.phase_adaptive}"
     )
+    if args.release_evidence and not release_passed:
+        raise RuntimeError(
+            "release evidence requires every requested episode to pass the full physical episode; "
+            "failed evidence was saved"
+        )
 
 
 if __name__ == "__main__":

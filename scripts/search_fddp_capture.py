@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -55,6 +56,14 @@ except ModuleNotFoundError:
     from search_swingup_capture import lqr_gain
 
 
+def load_solver_feedback(payload: dict[str, Any], expected_shape: tuple[int, int]) -> np.ndarray:
+    """Select unscaled saved solver gains explicitly, preserving replay provenance."""
+    gains = np.asarray(payload["controller"]["solver_feedback_gains"], dtype=np.float64)
+    if gains.shape != expected_shape or not np.all(np.isfinite(gains)):
+        raise ValueError("saved solver feedback gains must have the expected finite shape")
+    return gains.copy()
+
+
 def rebuild_feedback_warm_start(
     transition: Any,
     start_state: np.ndarray,
@@ -63,8 +72,8 @@ def rebuild_feedback_warm_start(
     feedback_gains: np.ndarray,
     *,
     feedback_scale: float = 1.0,
-) -> np.ndarray:
-    """Replay an inherited feedback trajectory on a new exact plant."""
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return the applied controls and states from exact feedback replay."""
     controls = np.asarray(controls, dtype=np.float64)
     nominal_states = np.asarray(nominal_states, dtype=np.float64)
     feedback_gains = np.asarray(feedback_gains, dtype=np.float64)
@@ -79,8 +88,13 @@ def rebuild_feedback_warm_start(
         raise ValueError("warm-start feedback scale must be nonnegative")
 
     states = [start_state.copy()]
+    applied_controls = []
     for step, control in enumerate(controls):
-        error = states[-1] - nominal_states[step]
+        error = (
+            transition.difference(states[-1], nominal_states[step])
+            if hasattr(transition, "difference")
+            else states[-1] - nominal_states[step]
+        )
         action = float(
             np.clip(
                 control + feedback_scale * feedback_gains[step] @ error,
@@ -88,8 +102,121 @@ def rebuild_feedback_warm_start(
                 1.0,
             )
         )
+        applied_controls.append(action)
         states.append(transition(states[-1], action))
-    return np.asarray(states, dtype=np.float64)
+    return (
+        np.asarray(applied_controls, dtype=np.float64),
+        np.asarray(states, dtype=np.float64),
+    )
+
+
+def warm_start_diagnostics(
+    transition: Any,
+    start_state: np.ndarray,
+    controls: np.ndarray,
+    states: np.ndarray,
+    *,
+    tolerance: float = 1e-8,
+    require_feasible: bool = False,
+) -> dict[str, Any]:
+    """Measure feasibility in the Euclidean state used by Crocoddyl.
+
+    Periodically equivalent states on different branches are not feasible
+    for StateVector: its actual gap is their Euclidean difference.
+    """
+    controls = np.asarray(controls, dtype=np.float64)
+    states = np.asarray(states, dtype=np.float64)
+    start_state = np.asarray(start_state, dtype=np.float64)
+    if controls.ndim != 1 or states.shape != (controls.size + 1, start_state.size):
+        raise ValueError("warm-start state/control dimensions are inconsistent")
+    if not (np.all(np.isfinite(controls)) and np.all(np.isfinite(states))):
+        raise ValueError("warm start contains non-finite values")
+    if np.max(np.abs(controls), initial=0.0) > 1.0:
+        raise ValueError("warm-start controls exceed the normalized force bound")
+    if not np.isfinite(tolerance) or tolerance <= 0:
+        raise ValueError("feasibility tolerance must be finite and positive")
+    initial_gap = float(np.max(np.abs(states[0] - start_state), initial=0.0))
+    defects = []
+    for step, action in enumerate(controls):
+        predicted = np.asarray(transition(states[step], float(action)), dtype=np.float64)
+        if not np.all(np.isfinite(predicted)):
+            raise ValueError("warm-start transition produced a non-finite state")
+        defects.append(float(np.max(np.abs(predicted - states[step + 1]), initial=0.0)))
+    max_gap = max([initial_gap, *defects])
+    feasible = max_gap <= tolerance
+    exactly_feasible = max_gap == 0.0
+    if require_feasible and not exactly_feasible:
+        raise ValueError(
+            f"initial-feasible requested, but maximum state/control defect is "
+            f"{max_gap:.6g}; the solver's flag requires zero defects, "
+            f"not just the reporting tolerance {tolerance:.6g}; rebuild the trajectory "
+            "or let FDDP start infeasibly"
+        )
+    return {
+        "is_feasible": bool(feasible),
+        "is_exactly_feasible": bool(exactly_feasible),
+        "tolerance": float(tolerance),
+        "initial_state_gap": initial_gap,
+        "maximum_dynamics_defect": max(defects, default=0.0),
+        "median_dynamics_defect": float(np.median(defects)) if defects else 0.0,
+        "max_abs_control": float(np.max(np.abs(controls), initial=0.0)),
+        "coordinate_gap": "euclidean_crocoddyl_state_vector",
+        "gap_norm": "linf",
+    }
+
+
+def load_terminal_target(
+    path: str,
+    index: str,
+    state_size: int,
+) -> tuple[np.ndarray, dict[str, Any]]:
+    """Load one saved coordinate-space handoff state for terminal targeting."""
+
+    source_path = Path(path)
+    payload = json.loads(source_path.read_text(encoding="utf-8"))
+    if isinstance(payload.get("terminal_target"), list):
+        states = np.asarray([payload["terminal_target"]], dtype=np.float64)
+        selected_index = 0
+    else:
+        search = payload.get("search")
+        if not isinstance(search, dict) or not isinstance(
+            search.get("nominal_coordinate_states"), list
+        ):
+            raise ValueError(
+                "terminal target artifact must contain terminal_target or "
+                "search.nominal_coordinate_states"
+            )
+        states = np.asarray(search["nominal_coordinate_states"], dtype=np.float64)
+        if index == "last":
+            selected_index = states.shape[0] - 1
+        else:
+            selected_index = int(index)
+            if selected_index < 0:
+                selected_index += states.shape[0]
+    if states.ndim != 2 or states.shape[1] != state_size:
+        raise ValueError("terminal target states do not match the target coordinate dimension")
+    if not 0 <= selected_index < states.shape[0]:
+        raise ValueError("terminal target index is out of range")
+    return states[selected_index].copy(), {
+        "path": str(source_path),
+        "sha256": data_sha256(payload),
+        "index": int(selected_index),
+        "state_count": int(states.shape[0]),
+    }
+
+
+def lift_nominal_trajectory(
+    transition: MujocoTransition, states: np.ndarray, start_state: np.ndarray
+) -> np.ndarray:
+    """Choose a continuous joint-angle branch aligned with the launch state."""
+    physical = np.asarray([transition.to_physical(row) for row in states])
+    initial = transition.to_physical(start_state)
+    angles = slice(1, transition.env.n + 1)
+    physical[:, angles] = np.unwrap(physical[:, angles], axis=0)
+    physical[:, angles] += 2 * np.pi * np.round(
+        (initial[angles] - physical[0, angles]) / (2 * np.pi)
+    )
+    return np.asarray([transition.to_coordinates(row) for row in physical])
 
 
 def main() -> None:
@@ -117,6 +244,18 @@ def main() -> None:
     parser.add_argument("--interpolate-from-state-index", default=None)
     parser.add_argument("--interpolation-alpha", type=float, default=1.0)
     parser.add_argument("--initial-controller", default=None)
+    parser.add_argument("--initial-solver-feedback", action="store_true",
+                        help="Select unscaled solver_feedback_gains from the source instead of its applied feedback_gains.")
+    parser.add_argument(
+        "--terminal-target-json",
+        default=None,
+        help="artifact containing search.nominal_coordinate_states for a measured handoff target",
+    )
+    parser.add_argument(
+        "--terminal-target-index",
+        default="last",
+        help="row index in the terminal target artifact, or 'last'",
+    )
     parser.add_argument(
         "--replay-only",
         action="store_true",
@@ -131,6 +270,11 @@ def main() -> None:
     )
     parser.add_argument("--initial-feasible", action="store_true")
     parser.add_argument("--rebuild-initial-states", action="store_true")
+    parser.add_argument(
+        "--continuous-angles",
+        action="store_true",
+        help="use a continuous joint-angle lift consistent with Euclidean FDDP state gaps",
+    )
     parser.add_argument(
         "--rebuild-initial-feedback",
         action="store_true",
@@ -147,6 +291,10 @@ def main() -> None:
     )
     parser.add_argument("--seed", type=int, default=67001)
     parser.add_argument("--iterations", type=int, default=100)
+    parser.add_argument("--solver-verbose", action="store_true",
+                        help="Record Crocoddyl iteration diagnostics in the experiment log.")
+    parser.add_argument("--fddp-ascent-acceptance", type=float,
+                        help="Override native uphill-step acceptance threshold; zero requires cost decrease in its ascent branch.")
     parser.add_argument("--initial-regularization", type=float, default=1e-6)
     parser.add_argument("--tracking-gain-scale", type=float, default=0.0)
     parser.add_argument("--lqr-scale", type=float, default=1.30)
@@ -164,6 +312,30 @@ def main() -> None:
     parser.add_argument("--lqr-relative-angular-velocity-cost", type=float, default=0.01)
     parser.add_argument("--control-cost", type=float, default=0.1)
     parser.add_argument("--stage-weight", type=float, default=0.1)
+    parser.add_argument("--capture-start-seconds", type=float, default=None,
+                        help="Start a separately weighted upright interval within the optimized route.")
+    parser.add_argument("--capture-stage-weight", type=float, default=1000.0)
+    parser.add_argument(
+        "--split-link",
+        type=int,
+        default=None,
+        help=(
+            "one-based source link whose new target joint should remain phase-aligned "
+            "during the optimized route"
+        ),
+    )
+    parser.add_argument(
+        "--split-angle-stage-weight",
+        type=float,
+        default=0.0,
+        help="running weight on the inserted relative angle in scaled coordinates",
+    )
+    parser.add_argument(
+        "--split-rate-stage-weight",
+        type=float,
+        default=0.0,
+        help="running weight on the inserted hinge rate in scaled coordinates",
+    )
     parser.add_argument("--terminal-weight", type=float, default=10_000.0)
     parser.add_argument("--terminal-state-weight", type=float, default=100_000.0)
     parser.add_argument("--terminal-cart-weight", type=float, default=0.0)
@@ -230,6 +402,10 @@ def main() -> None:
     parser.add_argument("--out", required=True)
     parser.add_argument("--override", action="append", default=[])
     args = parser.parse_args()
+    if args.fddp_ascent_acceptance is not None and (
+        not np.isfinite(args.fddp_ascent_acceptance) or args.fddp_ascent_acceptance < 0
+    ):
+        raise ValueError("FDDP ascent acceptance must be finite and nonnegative")
     if (
         min(
             args.iterations,
@@ -264,10 +440,13 @@ def main() -> None:
             args.terminal_cart_velocity_weight,
         )
         < 0.0
+        or min(args.split_angle_stage_weight, args.split_rate_stage_weight) < 0.0
     ):
-        raise ValueError("counts, weights, and thresholds must be positive")
+        raise ValueError("required counts, weights, and thresholds must be positive; optional split weights must be nonnegative")
     if args.switch_lyapunov is not None and args.switch_lyapunov <= 0.0:
         raise ValueError("switch Lyapunov threshold must be positive")
+    if args.capture_stage_weight <= 0 or (args.capture_start_seconds is not None and args.capture_start_seconds < 0):
+        raise ValueError("capture stage weight must be positive and start time nonnegative")
     if args.tracking_gain_scale < 0.0:
         raise ValueError("tracking gain scale must be nonnegative")
     if not 0.0 <= args.progress <= 1.0:
@@ -293,6 +472,15 @@ def main() -> None:
         raise ValueError("phase window must be nonnegative")
 
     base_cfg = apply_overrides(load_config(args.config), args.override)
+    if args.split_link is not None and not 1 <= args.split_link < int(
+        base_cfg["env"]["n_links"]
+    ):
+        raise ValueError("split-link must identify an internal source link")
+    if (
+        args.split_link is None
+        and (args.split_angle_stage_weight > 0.0 or args.split_rate_stage_weight > 0.0)
+    ):
+        raise ValueError("split-link is required for split-mode stage weights")
     base_cfg["env"].setdefault("action_lqr_residual", {})["enabled"] = False
     state, state_index = load_state(args.state_json, args.state_index)
     interpolation = None
@@ -316,13 +504,24 @@ def main() -> None:
         "relative_angle": args.lqr_relative_angle_cost,
         "relative_angular_velocity": args.lqr_relative_angular_velocity_cost,
     }
-    gain = lqr_gain(
-        cfg,
-        progress=lqr_progress,
-        fd_eps=1e-7,
-        control_cost=args.lqr_control_cost,
-        q_weights=lqr_weights,
-    )
+    lqr_fallback_reason: str | None = None
+    try:
+        gain = lqr_gain(
+            cfg,
+            progress=lqr_progress,
+            fd_eps=1e-7,
+            control_cost=args.lqr_control_cost,
+            q_weights=lqr_weights,
+        )
+    except (np.linalg.LinAlgError, ValueError) as error:
+        if not args.replay_only and not args.allow_unstable_lyapunov:
+            raise
+        # Temporarily constrained or nearly singular continuation plants can
+        # lack a finite upright Riccati solution. Keep the exact FDDP search
+        # available when the caller explicitly permits an uncertified
+        # Lyapunov metric; the artifact records why the fallback was used.
+        gain = np.zeros(2 * (int(cfg["env"]["n_links"]) + 1), dtype=np.float64)
+        lqr_fallback_reason = f"{type(error).__name__}: {error}"
     spec = load_config(args.spec)
     distribution = spec["distribution"]
     transform = dimensionless_absolute_transform(
@@ -364,13 +563,17 @@ def main() -> None:
 
     env = NLinkCartPoleEnv(cfg, progress=args.progress, seed=args.seed)
     env.reset(seed=args.seed)
-    transition = MujocoTransition(env, coordinate_transform=transform)
+    transition = MujocoTransition(
+        env, coordinate_transform=transform, continuous_angles=args.continuous_angles
+    )
     start_state = transition.to_coordinates(data_state(env.data))
     initial_path = (
         None if args.initial_controller is None else Path(args.initial_controller)
     )
     source_feedback_gains: np.ndarray | None = None
     if initial_path is None:
+        if args.initial_solver_feedback:
+            raise ValueError("selecting saved solver feedback requires an initial controller")
         horizon_steps = max(2, int(round(args.horizon_seconds / env.dt)))
         initial_controls = np.zeros(horizon_steps, dtype=np.float64)
         initial_states = rollout_controls(transition, start_state, initial_controls)
@@ -379,6 +582,10 @@ def main() -> None:
         initial_controls, initial_states, source_feedback_gains = source_trajectory(
             initial_payload
         )
+        if args.initial_solver_feedback:
+            source_feedback_gains = load_solver_feedback(initial_payload, source_feedback_gains.shape)
+        if args.continuous_angles:
+            initial_states = lift_nominal_trajectory(transition, initial_states, start_state)
         if args.append_tail_seconds > 0.0:
             tail_steps = max(1, int(round(args.append_tail_seconds / env.dt)))
             tail_controls = np.zeros(tail_steps, dtype=np.float64)
@@ -409,9 +616,16 @@ def main() -> None:
     initial_states = initial_states.copy()
     initial_states[0] = start_state
     replay_nominal_states = initial_states.copy()
+    branch_terminal_target = None
+    if args.continuous_angles:
+        target_physical = np.zeros(transform.shape[0])
+        angles = slice(1, env.n + 1)
+        nominal_endpoint = transition.to_physical(initial_states[-1])
+        target_physical[angles] = 2 * np.pi * np.round(nominal_endpoint[angles] / (2 * np.pi))
+        branch_terminal_target = transform @ target_physical
     if args.rebuild_initial_feedback:
         assert source_feedback_gains is not None
-        initial_states = rebuild_feedback_warm_start(
+        initial_controls, initial_states = rebuild_feedback_warm_start(
             transition,
             start_state,
             initial_controls,
@@ -421,11 +635,27 @@ def main() -> None:
         )
     elif args.rebuild_initial_states:
         initial_states = rollout_controls(transition, start_state, initial_controls)
+    initial_diagnostics = warm_start_diagnostics(
+        transition,
+        start_state,
+        initial_controls,
+        initial_states,
+        require_feasible=args.initial_feasible and not args.replay_only,
+    )
+    warm_start_transition_evaluations = transition.evaluations
     terminal_identity = np.eye(transform.shape[0], dtype=np.float64)
     state_half = transform.shape[0] // 2
     terminal_identity[1:state_half, 1:state_half] *= args.terminal_angle_factor
     terminal_identity[state_half, state_half] *= args.terminal_cart_velocity_factor
     terminal_identity[state_half + 1 :, state_half + 1 :] *= args.terminal_hinge_velocity_factor
+    terminal_target = branch_terminal_target
+    terminal_target_source = None
+    if args.terminal_target_json is not None:
+        terminal_target, terminal_target_source = load_terminal_target(
+            args.terminal_target_json,
+            args.terminal_target_index,
+            transform.shape[0],
+        )
     terminal_metric = (
         args.terminal_weight * lyapunov / args.handoff_lyapunov
         + args.terminal_state_weight * terminal_identity
@@ -436,14 +666,29 @@ def main() -> None:
         cart_weight=args.terminal_cart_weight,
         cart_velocity_weight=args.terminal_cart_velocity_weight,
     )
+    stage_state = args.stage_weight * np.eye(transform.shape[0], dtype=np.float64)
+    if args.split_link is not None:
+        split_angle = np.zeros(transform.shape[0], dtype=np.float64)
+        split_angle[args.split_link] = 1.0
+        split_angle[args.split_link + 1] = -1.0
+        stage_state += args.split_angle_stage_weight * np.outer(
+            split_angle, split_angle
+        )
+        split_rate = np.zeros(transform.shape[0], dtype=np.float64)
+        split_rate[int(cfg["env"]["n_links"]) + 1 + args.split_link] = 1.0
+        stage_state += args.split_rate_stage_weight * np.outer(
+            split_rate, split_rate
+        )
     trajectory_cost = QuadraticTrajectoryCost(
-        stage_state=args.stage_weight * np.eye(transform.shape[0], dtype=np.float64),
+        stage_state=stage_state,
         terminal_state=terminal_metric,
         control=float(args.control_cost),
         rail_soft_limit=float(args.rail_soft_limit * transform[0, 0]),
         rail_limit=float(env.rail_limit * transform[0, 0]),
         rail_weight=float(args.rail_weight),
         wrap_angles=False,
+        terminal_target=terminal_target,
+        stage_target=terminal_target if args.continuous_angles else None,
     )
     if args.replay_only:
         assert source_feedback_gains is not None
@@ -456,16 +701,32 @@ def main() -> None:
         search_iterations = 0
         search_cost = 0.0
         search_stop = 0.0
-        search_is_feasible = True
+        search_is_feasible = initial_diagnostics["is_feasible"]
+        invalid_transition_count = 0
     else:
         running_model = MujocoActionModel(transition, trajectory_cost)
+        running_models = [running_model] * int(initial_controls.size)
+        capture_model = None
+        if args.capture_start_seconds is not None:
+            capture_step = int(round(args.capture_start_seconds / env.dt))
+            if capture_step >= initial_controls.size:
+                raise ValueError("capture interval starts outside the optimized horizon")
+            capture_cost = replace(trajectory_cost,
+                                   stage_state=args.capture_stage_weight * terminal_identity,
+                                   stage_target=terminal_target)
+            capture_model = MujocoActionModel(transition, capture_cost)
+            running_models[capture_step:] = [capture_model] * (initial_controls.size - capture_step)
         terminal_model = MujocoActionModel(transition, trajectory_cost, terminal=True)
         problem = crocoddyl.ShootingProblem(
             start_state,
-            [running_model] * int(initial_controls.size),
+            running_models,
             terminal_model,
         )
         solver = crocoddyl.SolverBoxFDDP(problem)
+        if args.fddp_ascent_acceptance is not None:
+            solver.th_acceptNegStep = args.fddp_ascent_acceptance
+        if args.solver_verbose:
+            solver.setCallbacks([crocoddyl.CallbackVerbose()])
         initial_xs = [row.copy() for row in initial_states]
         initial_us = [np.asarray([action], dtype=np.float64) for action in initial_controls]
         started = time.time()
@@ -474,10 +735,10 @@ def main() -> None:
                 initial_xs,
                 initial_us,
                 args.iterations,
-                args.initial_feasible
-                or args.rebuild_initial_feedback
-                or args.rebuild_initial_states
-                or initial_path is None,
+                # Nonzero defects must reach FDDP's gap restoration, even if
+                # they pass a reporting tolerance. Unstable chains can amplify
+                # a tiny omitted defect across the entire swing horizon.
+                initial_diagnostics["is_exactly_feasible"],
                 args.initial_regularization,
             )
         )
@@ -492,11 +753,21 @@ def main() -> None:
         search_cost = float(solver.cost)
         search_stop = float(solver.stop)
         search_is_feasible = bool(solver.isFeasible)
+        invalid_transition_count = int(running_model.invalid_transition_count)
+        if capture_model is not None:
+            invalid_transition_count += int(capture_model.invalid_transition_count)
+    optimization_transition_evaluations = transition.evaluations - warm_start_transition_evaluations
+    final_diagnostics = warm_start_diagnostics(
+        transition, start_state, controls, nominal_states
+    )
     env.close()
 
+    metric_states = nominal_states
+    if args.continuous_angles:
+        metric_states = nominal_states - terminal_target
     nominal_values = np.maximum(
         0.0,
-        np.einsum("ij,jk,ik->i", nominal_states, lyapunov, nominal_states),
+        np.einsum("ij,jk,ik->i", metric_states, lyapunov, metric_states),
     )
     result = execute_controller(
         cfg,
@@ -522,6 +793,7 @@ def main() -> None:
         defer_handoff_until_horizon=args.defer_handoff_until_horizon,
         phase_adaptive=args.phase_adaptive,
         phase_window=args.phase_window,
+        continuous_angles=args.continuous_angles,
     )
     payload: dict[str, Any] = {
         "schema_version": 1,
@@ -541,21 +813,40 @@ def main() -> None:
             "initial_controller": (
                 None if initial_path is None else file_metadata(initial_path)
             ),
-            "initial_feasible": bool(
-                args.initial_feasible
-                or args.rebuild_initial_states
-                or args.replay_only
-                or initial_path is None
-            ),
+            "terminal_target": terminal_target_source,
+            "initial_feasible": initial_diagnostics["is_exactly_feasible"],
+            "initial_feasible_within_tolerance": initial_diagnostics["is_feasible"],
+            "initial_feasible_requested": bool(args.initial_feasible),
+            "initial_solver_feedback_selected": bool(args.initial_solver_feedback),
+            "warm_start_diagnostics": initial_diagnostics,
+            "final_trajectory_diagnostics": final_diagnostics,
+            "invalid_optimizer_transition_trials": invalid_transition_count,
+            "transition_evaluation_budget": {
+                "warm_start": int(warm_start_transition_evaluations),
+                "optimization": int(optimization_transition_evaluations),
+                "final_defect_validation": int(controls.size),
+                "physics_steps_upper_bound": int(transition.evaluations * cfg["env"]["frame_skip"]),
+                "scope": "trajectory transition calls, including derivative and rejected trial evaluations; excludes LQR design and full controller evaluation",
+            },
             "replay_only": bool(args.replay_only),
             "rebuilt_initial_states": bool(args.rebuild_initial_states),
             "rebuilt_initial_feedback": bool(args.rebuild_initial_feedback),
             "initial_feedback_scale": float(args.initial_feedback_scale),
+            "continuous_angles": bool(args.continuous_angles),
+            "coordinate_transform": transform.tolist(),
+            "angle_branch_terminal_target": (
+                None if branch_terminal_target is None else branch_terminal_target.tolist()
+            ),
             "horizon_steps": int(controls.size),
             "horizon_seconds": float(
                 controls.size * cfg["env"]["timestep"] * cfg["env"]["frame_skip"]
             ),
             "iterations": int(args.iterations),
+            "solver_verbose": bool(args.solver_verbose),
+            "fddp_ascent_acceptance": args.fddp_ascent_acceptance,
+            "fddp_ascent_acceptance_effective": (
+                None if args.replay_only else float(solver.th_acceptNegStep)
+            ),
             "append_tail_seconds": float(args.append_tail_seconds),
             "initial_regularization": float(args.initial_regularization),
             "tracking_gain_scale": float(args.tracking_gain_scale),
@@ -565,6 +856,11 @@ def main() -> None:
             "lqr_weights": {key: float(value) for key, value in lqr_weights.items()},
             "control_cost": float(args.control_cost),
             "stage_weight": float(args.stage_weight),
+            "split_link": (
+                None if args.split_link is None else int(args.split_link)
+            ),
+            "split_angle_stage_weight": float(args.split_angle_stage_weight),
+            "split_rate_stage_weight": float(args.split_rate_stage_weight),
             "terminal_weight": float(args.terminal_weight),
             "terminal_state_weight": float(args.terminal_state_weight),
             "terminal_cart_weight": float(args.terminal_cart_weight),
@@ -587,9 +883,12 @@ def main() -> None:
             "defer_handoff_until_horizon": bool(args.defer_handoff_until_horizon),
             "phase_adaptive": bool(args.phase_adaptive),
             "phase_window": int(args.phase_window),
+            "capture_start_seconds": args.capture_start_seconds,
+            "capture_stage_weight": args.capture_stage_weight,
             "prefix_control_scale": float(args.prefix_control_scale),
             "prefix_control_seconds": float(args.prefix_control_seconds),
             "allow_unstable_lyapunov": bool(args.allow_unstable_lyapunov),
+            "lqr_fallback_reason": lqr_fallback_reason,
             "progress": float(args.progress),
             "controls": controls.astype(float).tolist(),
             "feedback_gains": feedback_gains.astype(float).tolist(),
