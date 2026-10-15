@@ -1,0 +1,555 @@
+{
+  "actual_hanging_start_episode_steps": 950,
+  "all_native_queries_proved": 395665,
+  "attempted_native_transition_calls": 395665,
+  "authoritative_handles": {
+    "all_terminal": true,
+    "execution": 68688,
+    "independent_audit": 64519
+  },
+  "failed_native_queries_proved": 0,
+  "forecasts_proved": 126,
+  "gap_tapes_proved": 124,
+  "generated_at": "2026-10-04T17:45:05+00:00",
+  "lp_validation_scope": "Independent approximate primal residual/epigraph/trust/angle/action/rail/L1 selection checks; All original primary and successful secondary vectors retained and checked; no new MP recurrence audit in this execution. Native actual controls are authoritative, no independent LPoptimality or robustness certificate.",
+  "maintenance_affine_checks": 1030,
+  "maintenance_decisions_proved": 68,
+  "maximum_affine_gap": 2.1138847232187757e-16,
+  "models_proved": 60,
+  "native_physics_substeps": 1582660,
+  "native_prefix_preserving_rebases_proved": 60,
+  "new_actual_episodes": 2,
+  "outcomes": [
+    {
+      "active_start": 400,
+      "actual_hanging_start_episode_steps": 476,
+      "armkey": "fresh1_start400_minimax",
+      "full_nominal_gate_passed": false,
+      "hold_seconds": 3.0,
+      "label": "fresh1_start400_minimax_h441",
+      "maximum_cart": 3.0116127833857105,
+      "runtime": "fresh1",
+      "selected_forecast": 64,
+      "selection": "minimax",
+      "simulation_error": null,
+      "tape": {
+        "bytes": 122109,
+        "path": "runs/canonical15_active_continuation_20261004/execution/diagnostic/fresh1_start400_minimax_h441_actual.npz",
+        "sha256": "6e0d87f4fbc12d1f0f35929b17e8182b767c6f33ee7642a202ff324861c2e22e"
+      },
+      "termination_reason": "rail_violation"
+    },
+    {
+      "active_start": 400,
+      "actual_hanging_start_episode_steps": 474,
+      "armkey": "fresh1_start400_minimum_change",
+      "full_nominal_gate_passed": false,
+      "hold_seconds": 3.0,
+      "label": "fresh1_start400_minimum_change_h441",
+      "maximum_cart": 3.064074726170762,
+      "runtime": "fresh1",
+      "selected_forecast": 125,
+      "selection": "minimum_change",
+      "simulation_error": null,
+      "tape": {
+        "bytes": 121575,
+        "path": "runs/canonical15_active_continuation_20261004/execution/diagnostic/fresh1_start400_minimum_change_h441_actual.npz",
+        "sha256": "116cc45358ebd0145186e4e9529077dc29b89ca2d856b3b9240b50a7bdcd2179"
+      },
+      "termination_reason": "rail_violation"
+    }
+  ],
+  "partial_transition_substeps": 0,
+  "passed": true,
+  "proposals_proved": [
+    {
+      "accepted": 1,
+      "backtracks": 1,
+      "index": 0,
+      "status": 0
+    },
+    {
+      "accepted": 2,
+      "backtracks": 1,
+      "index": 1,
+      "status": 0
+    },
+    {
+      "accepted": 3,
+      "backtracks": 1,
+      "index": 2,
+      "status": 0
+    },
+    {
+      "accepted": 5,
+      "backtracks": 1,
+      "index": 3,
+      "status": 0
+    },
+    {
+      "accepted": 7,
+      "backtracks": 1,
+      "index": 4,
+      "status": 0
+    },
+    {
+      "accepted": 9,
+      "backtracks": 1,
+      "index": 5,
+      "status": 0
+    },
+    {
+      "accepted": 11,
+      "backtracks": 1,
+      "index": 6,
+      "status": 0
+    },
+    {
+      "accepted": 13,
+      "backtracks": 1,
+      "index": 7,
+      "status": 0
+    },
+    {
+      "accepted": 15,
+      "backtracks": 1,
+      "index": 8,
+      "status": 0
+    },
+    {
+      "accepted": 17,
+      "backtracks": 1,
+      "index": 9,
+      "status": 0
+    },
+    {
+      "accepted": 19,
+      "backtracks": 1,
+      "index": 10,
+      "status": 0
+    },
+    {
+      "accepted": 21,
+      "backtracks": 1,
+      "index": 11,
+      "status": 0
+    },
+    {
+      "accepted": 23,
+      "backtracks": 1,
+      "index": 12,
+      "status": 0
+    },
+    {
+      "accepted": 25,
+      "backtracks": 1,
+      "index": 13,
+      "status": 0
+    },
+    {
+      "accepted": 27,
+      "backtracks": 1,
+      "index": 14,
+      "status": 0
+    },
+    {
+      "accepted": 29,
+      "backtracks": 1,
+      "index": 15,
+      "status": 0
+    },
+    {
+      "accepted": 31,
+      "backtracks": 1,
+      "index": 16,
+      "status": 0
+    },
+    {
+      "accepted": 33,
+      "backtracks": 1,
+      "index": 17,
+      "status": 0
+    },
+    {
+      "accepted": 35,
+      "backtracks": 1,
+      "index": 18,
+      "status": 0
+    },
+    {
+      "accepted": 37,
+      "backtracks": 1,
+      "index": 19,
+      "status": 0
+    },
+    {
+      "accepted": 39,
+      "backtracks": 1,
+      "index": 20,
+      "status": 0
+    },
+    {
+      "accepted": 41,
+      "backtracks": 1,
+      "index": 21,
+      "status": 0
+    },
+    {
+      "accepted": 43,
+      "backtracks": 1,
+      "index": 22,
+      "status": 0
+    },
+    {
+      "accepted": 45,
+      "backtracks": 1,
+      "index": 23,
+      "status": 0
+    },
+    {
+      "accepted": 47,
+      "backtracks": 1,
+      "index": 24,
+      "status": 0
+    },
+    {
+      "accepted": 49,
+      "backtracks": 1,
+      "index": 25,
+      "status": 0
+    },
+    {
+      "accepted": 51,
+      "backtracks": 1,
+      "index": 26,
+      "status": 0
+    },
+    {
+      "accepted": 53,
+      "backtracks": 1,
+      "index": 27,
+      "status": 0
+    },
+    {
+      "accepted": 55,
+      "backtracks": 1,
+      "index": 28,
+      "status": 0
+    },
+    {
+      "accepted": 57,
+      "backtracks": 1,
+      "index": 29,
+      "status": 0
+    },
+    {
+      "accepted": 59,
+      "backtracks": 1,
+      "index": 30,
+      "status": 0
+    },
+    {
+      "accepted": 61,
+      "backtracks": 1,
+      "index": 31,
+      "status": 0
+    },
+    {
+      "accepted": 63,
+      "backtracks": 1,
+      "index": 32,
+      "status": 0
+    },
+    {
+      "accepted": 66,
+      "backtracks": 1,
+      "index": 33,
+      "status": 0
+    },
+    {
+      "accepted": 67,
+      "backtracks": 1,
+      "index": 34,
+      "status": 0
+    },
+    {
+      "accepted": 68,
+      "backtracks": 1,
+      "index": 35,
+      "status": 0
+    },
+    {
+      "accepted": 70,
+      "backtracks": 1,
+      "index": 36,
+      "status": 0
+    },
+    {
+      "accepted": 72,
+      "backtracks": 1,
+      "index": 37,
+      "status": 0
+    },
+    {
+      "accepted": 74,
+      "backtracks": 1,
+      "index": 38,
+      "status": 0
+    },
+    {
+      "accepted": 76,
+      "backtracks": 1,
+      "index": 39,
+      "status": 0
+    },
+    {
+      "accepted": 78,
+      "backtracks": 1,
+      "index": 40,
+      "status": 0
+    },
+    {
+      "accepted": 80,
+      "backtracks": 1,
+      "index": 41,
+      "status": 0
+    },
+    {
+      "accepted": 82,
+      "backtracks": 1,
+      "index": 42,
+      "status": 0
+    },
+    {
+      "accepted": 84,
+      "backtracks": 1,
+      "index": 43,
+      "status": 0
+    },
+    {
+      "accepted": 86,
+      "backtracks": 1,
+      "index": 44,
+      "status": 0
+    },
+    {
+      "accepted": 88,
+      "backtracks": 1,
+      "index": 45,
+      "status": 0
+    },
+    {
+      "accepted": 90,
+      "backtracks": 1,
+      "index": 46,
+      "status": 0
+    },
+    {
+      "accepted": 92,
+      "backtracks": 1,
+      "index": 47,
+      "status": 0
+    },
+    {
+      "accepted": 94,
+      "backtracks": 1,
+      "index": 48,
+      "status": 0
+    },
+    {
+      "accepted": 96,
+      "backtracks": 1,
+      "index": 49,
+      "status": 0
+    },
+    {
+      "accepted": 98,
+      "backtracks": 1,
+      "index": 50,
+      "status": 0
+    },
+    {
+      "accepted": 100,
+      "backtracks": 1,
+      "index": 51,
+      "status": 0
+    },
+    {
+      "accepted": 102,
+      "backtracks": 1,
+      "index": 52,
+      "status": 0
+    },
+    {
+      "accepted": 104,
+      "backtracks": 1,
+      "index": 53,
+      "status": 0
+    },
+    {
+      "accepted": 106,
+      "backtracks": 1,
+      "index": 54,
+      "status": 0
+    },
+    {
+      "accepted": 108,
+      "backtracks": 1,
+      "index": 55,
+      "status": 0
+    },
+    {
+      "accepted": 110,
+      "backtracks": 1,
+      "index": 56,
+      "status": 0
+    },
+    {
+      "accepted": 112,
+      "backtracks": 1,
+      "index": 57,
+      "status": 0
+    },
+    {
+      "accepted": 114,
+      "backtracks": 1,
+      "index": 58,
+      "status": 0
+    },
+    {
+      "accepted": 116,
+      "backtracks": 1,
+      "index": 59,
+      "status": 0
+    },
+    {
+      "accepted": 118,
+      "backtracks": 1,
+      "index": 60,
+      "status": 0
+    },
+    {
+      "accepted": 120,
+      "backtracks": 1,
+      "index": 61,
+      "status": 0
+    },
+    {
+      "accepted": 122,
+      "backtracks": 1,
+      "index": 62,
+      "status": 0
+    },
+    {
+      "accepted": 124,
+      "backtracks": 1,
+      "index": 63,
+      "status": 0
+    }
+  ],
+  "rebases_proved": 60,
+  "reference_contexts_proved": 0,
+  "reused_analytic_validation": {
+    "bytes": 33524,
+    "path": "runs/canonical15_active_window_20261004/core_validation/diagnostic/result.json",
+    "sha256": "f66b245affc814c81c9549617be5a09950162a7e98de580a9847f3f4dea22b42"
+  },
+  "scope": "Canonical15 continuation from R56 best fresh1_start400_minimum_change actual441 trajectory, preserving first400physicalcontrols/states byte-exact. Compare two selectors primary minimax and secondary minimum-action-change with explicitly declared checked-primary fallback on secondaryfailure; fixed runtimefullR54K scale1, no redesign. Allactive41native derivative rows freshlyrebuilt forinitial andeachrefinement; earlier400A/Bcached provedexact. Pose radii.0001/.001/.01, velocity/action10x; IPM120sprimary plus120ssecondary, epigraphslack1e-9. Saveprimaryvectorbeforesecondary, save successfulsecondary separately andappliedvector; retain everyfailure/status. Selectbest3radii, up to32refinements with26backtracks each, stop onnoaccepted improvement or150planningpass. Preservefirst149capturebounds. F64native RK4.005/frame_skip4/50Hz, F32actuation,80N/3m,canonicalgeometry/.149planning/.15capture unchanged. Actual uninterrupted30s attempts with unchangedR39maintenance after441, fullstate/action/nativequery/virtualdefect/optimizerhistory/counters/replay. Onlyreusednominal20265100, no noisy/reserved. Search andproof3Mtransition-equivalent ceilings each. This is selected-source continuation, not balancedcomparison withR56earlierarms, and shortcomponent doesnotaccept15record.",
+  "selected_outcomes": [
+    {
+      "active_start": 400,
+      "actual_hanging_start_episode_steps": 476,
+      "armkey": "fresh1_start400_minimax",
+      "full_nominal_gate_passed": false,
+      "hold_seconds": 3.0,
+      "label": "fresh1_start400_minimax_h441",
+      "maximum_cart": 3.0116127833857105,
+      "runtime": "fresh1",
+      "selected_forecast": 64,
+      "selection": "minimax",
+      "simulation_error": null,
+      "tape": {
+        "bytes": 122109,
+        "path": "runs/canonical15_active_continuation_20261004/execution/diagnostic/fresh1_start400_minimax_h441_actual.npz",
+        "sha256": "6e0d87f4fbc12d1f0f35929b17e8182b767c6f33ee7642a202ff324861c2e22e"
+      },
+      "termination_reason": "rail_violation"
+    },
+    {
+      "active_start": 400,
+      "actual_hanging_start_episode_steps": 474,
+      "armkey": "fresh1_start400_minimum_change",
+      "full_nominal_gate_passed": false,
+      "hold_seconds": 3.0,
+      "label": "fresh1_start400_minimum_change_h441",
+      "maximum_cart": 3.064074726170762,
+      "runtime": "fresh1",
+      "selected_forecast": 125,
+      "selection": "minimum_change",
+      "simulation_error": null,
+      "tape": {
+        "bytes": 121575,
+        "path": "runs/canonical15_active_continuation_20261004/execution/diagnostic/fresh1_start400_minimum_change_h441_actual.npz",
+        "sha256": "116cc45358ebd0145186e4e9529077dc29b89ca2d856b3b9240b50a7bdcd2179"
+      },
+      "termination_reason": "rail_violation"
+    }
+  ],
+  "source_actual_ticks_proved": 950,
+  "status": "finished",
+  "studies": [
+    {
+      "actual_hanging_start_episode_steps": 950,
+      "authoritative_exec_session_id": 68688,
+      "directory": "runs/canonical15_active_continuation_20261004/execution",
+      "execution": {
+        "bytes": 160776,
+        "path": "runs/canonical15_active_continuation_20261004/execution/execution.json",
+        "sha256": "34c37b134db4380a5b0888dfe8bc91363df10eb78d9feb74b2d425448024b7e4"
+      },
+      "inclusive_accounting": {
+        "bytes": 871,
+        "path": "runs/canonical15_active_continuation_20261004/execution/inclusive_accounting.json",
+        "sha256": "7712b0280b7574ebaf8b84ae7855cf3783c41bb6beee03a7c67b342dac264925"
+      },
+      "native_physics_substeps": 1586460,
+      "result": {
+        "bytes": 914499,
+        "path": "runs/canonical15_active_continuation_20261004/execution/diagnostic/result.json",
+        "sha256": "682c96132fffccb7d594a6fdf533d3c13bc656990ce0b33e1dd5dcd70bf18aaa"
+      },
+      "returncode": 0,
+      "role": "primitive",
+      "status": "finished",
+      "total_native_transition_calls": 396615.0
+    },
+    {
+      "actual_hanging_start_episode_steps": 0,
+      "authoritative_exec_session_id": 64519,
+      "directory": "runs/canonical15_active_continuation_20261004/independent_audit",
+      "execution": {
+        "bytes": 364113,
+        "path": "runs/canonical15_active_continuation_20261004/independent_audit/execution.json",
+        "sha256": "84df6b154836e2845795f2cdb2c9f88ef04d77614c570a98a729ee37272c6ef7"
+      },
+      "inclusive_accounting": {
+        "bytes": 849,
+        "path": "runs/canonical15_active_continuation_20261004/independent_audit/inclusive_accounting.json",
+        "sha256": "ae7dd8936705414fe9d19c24f94e3e3516baf2fe189076ea3d7b466343343214"
+      },
+      "native_physics_substeps": 1582660,
+      "result": {
+        "bytes": 9858,
+        "path": "runs/canonical15_active_continuation_20261004/independent_audit/diagnostic/result.json",
+        "sha256": "20461e61b0970c2667e62cb84c98dff2c5749575418de02074841144352696e2"
+      },
+      "returncode": 0,
+      "role": "primitive",
+      "status": "finished",
+      "total_native_transition_calls": 395665.0
+    }
+  ],
+  "total_native_transition_calls": 395665.0,
+  "total_new_native_physics_substeps": 3169120,
+  "total_new_native_transition_calls": 792280.0
+}

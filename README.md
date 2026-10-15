@@ -2,6 +2,23 @@
 
 > **A single bounded cart force swings up and holds 7 through 14 passive serial links from noisy hanging starts on a finite rail.**
 
+October 15, 2026: **15-link development update — 3.00 seconds upright, UNSOLVED.**
+The best recorded nominal hold is 150 consecutive commands at 50 Hz, below the
+required 250 commands (5 seconds). Every published attempt later exceeds the
+±3 m rail before completing the required 30-second episode. Fourteen remains
+the highest accepted count. These are reused nominal development starts;
+there is no passing noisy or reserved 15-link cohort.
+
+[Full failed attempt video](runs/fifteen_link_partial_20261015/fifteen_link_partial_full_attempt.mp4) ·
+[Evidence and limitations](docs/fifteen_link_partial_result.md) ·
+[Partial-result manifest](runs/fifteen_link_partial_20261015/manifest.json)
+
+<p align="center">
+  <a href="runs/fifteen_link_partial_20261015/fifteen_link_partial_full_attempt.mp4">
+    <img src="assets/fifteen-link-partial.gif" alt="Unsolved 15-link development attempt: three seconds upright followed by loss of capture and rail failure" width="760">
+  </a>
+</p>
+
 October 2, 2026: **fourteen links** passed the frozen-source reserved noisy
 **20/20**, disjoint **100/100**, exact **20/20**, and held-out full 30-second
 video. Every episode holds upright for **8.16 seconds** at unchanged 50 Hz,

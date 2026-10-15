@@ -1,0 +1,93 @@
+{
+  "action_epsilon": 0.0005,
+  "action_radius_multiplier": 10.0,
+  "active_starts": [
+    400
+  ],
+  "angle_limit": 0.149,
+  "audit_native_transition_ceiling": 3000000,
+  "backtrack_powers": 26,
+  "capture_offset": 291,
+  "center_tape": {
+    "bytes": 126841,
+    "path": "runs/canonical15_active_window_20261004/execution/diagnostic/fresh1_start400_minimum_change_h441_actual.npz",
+    "sha256": "249247fe0c0c1951fe011ff4fe916b7d0e4f9775f2583b8b8f8ab2310d16a8d9"
+  },
+  "config": {
+    "bytes": 1789,
+    "path": "configs/swingup15_uniform.yaml",
+    "sha256": "d55219b82f6288d5e5ff10539d83aefebdbb88d09703d3708e25ed1906695d3c"
+  },
+  "controller_source": {
+    "bytes": 3377981,
+    "path": "runs/frontier_campaign_20261001/n15_adjacent_best_refined2p2_tracking_value_identity/result.json",
+    "sha256": "c5f0474401da0ba19d3833ca48dbadf257ba53473d4485f1d098d2cf4188853e"
+  },
+  "design_audit": {
+    "bytes": 32206,
+    "path": "runs/canonical15_active_window_20261004/verified.json",
+    "sha256": "0476ee6d9f58fb9e886a6dae95ee020470b176aa8bb148e436e6706dfd11be3e"
+  },
+  "execution_native_transition_ceiling": 3000000,
+  "feedback_scales": {
+    "fresh1": 1.0
+  },
+  "gain_source": {
+    "bytes": 21287430,
+    "path": "runs/canonical15_early_full_arrival_20261004/execution/diagnostic/result.json",
+    "sha256": "f537c78cbc289766cdc43c1aaec35b172e3f2272ff2d59134128126ea1f653dc"
+  },
+  "horizon": 441,
+  "lp_method": "highs-ipm",
+  "lp_seconds": 120.0,
+  "lp_small_matrix_value": 1e-12,
+  "maintenance": {
+    "angle_scale": 0.05,
+    "backoff_powers": 18,
+    "rate_scale": 0.75
+  },
+  "native_design": {
+    "bytes": 3733367,
+    "path": "runs/canonical15_active_continuation_20261004/inherited_native_design.npz",
+    "sha256": "bd98834fddfea3fee75a8f318dcde5eb86fbe780f47f23183de01fad84843644"
+  },
+  "nominal_seed": 20265100,
+  "pose_radii": [
+    0.0001,
+    0.001,
+    0.01
+  ],
+  "primary_vectors_saved_before_selection": true,
+  "protected_steps": 149,
+  "rail_limit": 3.0,
+  "refinement_iterations": 32,
+  "scope": "Canonical15 continuation from R56 best fresh1_start400_minimum_change actual441 trajectory, preserving first400physicalcontrols/states byte-exact. Compare two selectors primary minimax and secondary minimum-action-change with explicitly declared checked-primary fallback on secondaryfailure; fixed runtimefullR54K scale1, no redesign. Allactive41native derivative rows freshlyrebuilt forinitial andeachrefinement; earlier400A/Bcached provedexact. Pose radii.0001/.001/.01, velocity/action10x; IPM120sprimary plus120ssecondary, epigraphslack1e-9. Saveprimaryvectorbeforesecondary, save successfulsecondary separately andappliedvector; retain everyfailure/status. Selectbest3radii, up to32refinements with26backtracks each, stop onnoaccepted improvement or150planningpass. Preservefirst149capturebounds. F64native RK4.005/frame_skip4/50Hz, F32actuation,80N/3m,canonicalgeometry/.149planning/.15capture unchanged. Actual uninterrupted30s attempts with unchangedR39maintenance after441, fullstate/action/nativequery/virtualdefect/optimizerhistory/counters/replay. Onlyreusednominal20265100, no noisy/reserved. Search andproof3Mtransition-equivalent ceilings each. This is selected-source continuation, not balancedcomparison withR56earlierarms, and shortcomponent doesnotaccept15record.",
+  "secondary_epigraph_slack": 1e-09,
+  "secondary_failure_fallback": "Use checked original primary if secondary fails; record failure/status and applied selector explicitly. No fallback if primary lacks checked vector.",
+  "selections": [
+    "minimax",
+    "minimum_change"
+  ],
+  "source": {
+    "bytes": 1340514,
+    "path": "runs/frontier_campaign_20261001/n15_native_fresh_suffix_plan64_then_baseline_full30/result.json",
+    "sha256": "8bcf7cd2d86e2ef6a30d1d096178bddfebd3a0e7d84fb902f334e89061964914"
+  },
+  "source_audit": {
+    "bytes": 6045,
+    "path": "runs/canonical15_direct_convergence_20261004/verified.json",
+    "sha256": "d0d6ba37ac00d62ca19478937d3d4962815ff51a85288eb3c357cfd00f8dc20f"
+  },
+  "source_comparison_audit": {
+    "bytes": 32206,
+    "path": "runs/canonical15_active_window_20261004/verified.json",
+    "sha256": "0476ee6d9f58fb9e886a6dae95ee020470b176aa8bb148e436e6706dfd11be3e"
+  },
+  "source_extraction": {
+    "bytes": 2024,
+    "path": "runs/canonical15_active_continuation_20261004/source_extraction.json",
+    "sha256": "a99b0c7dfb4f4557585f1e919e62f705d118c3a5dfd410f3cc66865bc0643fb8"
+  },
+  "state_epsilon": 0.0002,
+  "velocity_radius_multiplier": 10.0
+}

@@ -1,0 +1,142 @@
+{
+  "actor": {
+    "bytes": 43540,
+    "path": "runs/analytic_derivative_native_20261010/execution/diagnostic/result.json",
+    "sha256": "c26596a1ef29cb9f121d398523f7db29364a93615625efcfae20d7a4d3789cbb"
+  },
+  "canonical_release_evidence": false,
+  "cold_proof": {
+    "bytes": 7518,
+    "path": "runs/analytic_derivative_native_20261010/independent_audit/diagnostic/result.json",
+    "sha256": "19b92d3dad4ac7791faee74d06b0c7835a809ab6ee5c9e18e0bceb179a1b9c28"
+  },
+  "design_binding": {
+    "bytes": 1013,
+    "path": "runs/analytic_derivative_native_20261010/design_binding.json",
+    "sha256": "3c132f3a5154162141b9c1a79aeff44e454a4681d72e9a0ff68e672112b8d128"
+  },
+  "generated_at": "2026-10-11T03:16:32+00:00",
+  "model_design": {
+    "bytes": 8189,
+    "path": "runs/analytic_derivative_native_20261010/model_design/diagnostic/result.json",
+    "sha256": "7bdfc2389d29dab5c366f91903ba65895e30a14e3c9af0c3fb977b7d586abc94"
+  },
+  "not_solution": true,
+  "passed": true,
+  "scope": "R118 fixedQR/cost/bank/source derivative-provider comparison; noactualcaptureextension. StaticMPderivatives costbridge retains3s; phase-localselectedactual1.9s; source3s. Finitefamilies, notaccuracy/robustness/impossibility.",
+  "studies": [
+    {
+      "actual_hanging_start_episode_steps": 0,
+      "authoritative_exec_session_id": 91784,
+      "canonical_release_evidence": false,
+      "directory": "runs/analytic_derivative_native_20261010/core_validation",
+      "guarded_inclusive_native_accounting": {
+        "bytes": 635,
+        "path": "runs/analytic_derivative_native_20261010/core_validation/inclusive_accounting.json",
+        "sha256": "d50e69116eda7a2d3cbc970a962320fea8b93ca0be9058815d54c0694e7af44b"
+      },
+      "native_physics_substeps": 0,
+      "not_solution": true,
+      "primitive_execution": {
+        "bytes": 236889,
+        "path": "runs/analytic_derivative_native_20261010/core_validation/execution.json",
+        "sha256": "b8a82dba97689097800f07b00d0872cb02b7da959cd8cc6194bd1d90ddca42f3"
+      },
+      "result": {
+        "bytes": 2515,
+        "path": "runs/analytic_derivative_native_20261010/core_validation/diagnostic/result.json",
+        "sha256": "17dd57f787df306007faa9e2c734fd54f91fa9fb734d1aaec0194544dab8d992"
+      },
+      "returncode": 0,
+      "role": "primitive",
+      "status": "finished",
+      "total_native_transition_calls": 0
+    },
+    {
+      "actual_hanging_start_episode_steps": 0,
+      "authoritative_exec_session_id": 64157,
+      "canonical_release_evidence": false,
+      "directory": "runs/analytic_derivative_native_20261010/model_design",
+      "guarded_inclusive_native_accounting": {
+        "bytes": 716,
+        "path": "runs/analytic_derivative_native_20261010/model_design/inclusive_accounting.json",
+        "sha256": "50529060d6d24dff089496fb6c2b37dac2f5f803465f229c33a13cf1173e349b"
+      },
+      "native_physics_substeps": 0,
+      "not_solution": true,
+      "primitive_execution": {
+        "bytes": 237345,
+        "path": "runs/analytic_derivative_native_20261010/model_design/execution.json",
+        "sha256": "d95b9288251834efd5fd68302fc838bf26b0c8466c4d8aa6b4a508f23bae9d81"
+      },
+      "result": {
+        "bytes": 8189,
+        "path": "runs/analytic_derivative_native_20261010/model_design/diagnostic/result.json",
+        "sha256": "7bdfc2389d29dab5c366f91903ba65895e30a14e3c9af0c3fb977b7d586abc94"
+      },
+      "returncode": 0,
+      "role": "primitive",
+      "status": "finished",
+      "total_native_transition_calls": 0
+    },
+    {
+      "actual_hanging_start_episode_steps": 1564,
+      "authoritative_exec_session_id": 91345,
+      "canonical_release_evidence": false,
+      "directory": "runs/analytic_derivative_native_20261010/execution",
+      "guarded_inclusive_native_accounting": {
+        "bytes": 856,
+        "path": "runs/analytic_derivative_native_20261010/execution/inclusive_accounting.json",
+        "sha256": "96025030519adc9976c4109fbe6417989e3442a237bcc856b1701d3bdcde6f44"
+      },
+      "native_physics_substeps": 29080,
+      "not_solution": true,
+      "primitive_execution": {
+        "bytes": 240467,
+        "path": "runs/analytic_derivative_native_20261010/execution/execution.json",
+        "sha256": "637ae997e33efb0aa043c9f0d895a2075d5dca88bb984a12e7f8e72792f2854d"
+      },
+      "result": {
+        "bytes": 43540,
+        "path": "runs/analytic_derivative_native_20261010/execution/diagnostic/result.json",
+        "sha256": "c26596a1ef29cb9f121d398523f7db29364a93615625efcfae20d7a4d3789cbb"
+      },
+      "returncode": 0,
+      "role": "primitive",
+      "status": "finished",
+      "total_native_transition_calls": 7270.0
+    },
+    {
+      "actual_hanging_start_episode_steps": 0,
+      "authoritative_exec_session_id": 3460,
+      "canonical_release_evidence": false,
+      "directory": "runs/analytic_derivative_native_20261010/independent_audit",
+      "guarded_inclusive_native_accounting": {
+        "bytes": 836,
+        "path": "runs/analytic_derivative_native_20261010/independent_audit/inclusive_accounting.json",
+        "sha256": "90c41292b5d6922990b1e7cf1f5961b26336002e06dbdaab881fa175cc34786a"
+      },
+      "native_physics_substeps": 22824,
+      "not_solution": true,
+      "primitive_execution": {
+        "bytes": 254330,
+        "path": "runs/analytic_derivative_native_20261010/independent_audit/execution.json",
+        "sha256": "2ea7fe6cadc8681ec497e589177062544afd52175e4398895207ff08081cfa50"
+      },
+      "result": {
+        "bytes": 7518,
+        "path": "runs/analytic_derivative_native_20261010/independent_audit/diagnostic/result.json",
+        "sha256": "19b92d3dad4ac7791faee74d06b0c7835a809ab6ee5c9e18e0bceb179a1b9c28"
+      },
+      "returncode": 0,
+      "role": "primitive",
+      "status": "finished",
+      "total_native_transition_calls": 5706.0
+    }
+  ],
+  "summary": {
+    "bytes": 39630,
+    "path": "runs/analytic_derivative_native_20261010/native_summary.json",
+    "sha256": "8d69c99b7520e816447444793435fdb3247713f7555be9ee09418de45d47bd6b"
+  }
+}

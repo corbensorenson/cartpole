@@ -1,0 +1,60 @@
+{
+  "evidence_integrity_passed": true,
+  "canonical15_solved": false,
+  "best_observed_hold_seconds": 3.0,
+  "highest_accepted_n_links": 14,
+  "files_verified": 24,
+  "source_members": 812,
+  "cases": [
+    {
+      "label": "minimax",
+      "ticks": 476,
+      "elapsed_seconds": 9.52,
+      "upright_ticks": 150,
+      "upright_seconds": 3.0,
+      "in_rail_upright_ticks": 150,
+      "maximum_cart_m": 3.0116127833857105,
+      "termination": "rail_violation",
+      "nominal_task_passed": false,
+      "longest_streak_end_poststate": 441
+    },
+    {
+      "label": "minimum_change",
+      "ticks": 474,
+      "elapsed_seconds": 9.48,
+      "upright_ticks": 150,
+      "upright_seconds": 3.0,
+      "in_rail_upright_ticks": 150,
+      "maximum_cart_m": 3.064074726170762,
+      "termination": "rail_violation",
+      "nominal_task_passed": false,
+      "longest_streak_end_poststate": 441
+    },
+    {
+      "label": "recent_baseline",
+      "ticks": 544,
+      "elapsed_seconds": 10.88,
+      "upright_ticks": 150,
+      "upright_seconds": 3.0,
+      "in_rail_upright_ticks": 150,
+      "maximum_cart_m": 3.015750889943744,
+      "termination": "rail_violation",
+      "nominal_task_passed": false,
+      "longest_streak_end_poststate": 441
+    },
+    {
+      "label": "recent_analytic_static_protected_center",
+      "ticks": 506,
+      "elapsed_seconds": 10.12,
+      "upright_ticks": 150,
+      "upright_seconds": 3.0,
+      "in_rail_upright_ticks": 150,
+      "maximum_cart_m": 3.0752142455116847,
+      "termination": "rail_violation",
+      "nominal_task_passed": false,
+      "longest_streak_end_poststate": 441
+    }
+  ],
+  "new_native_transition_calls": 0,
+  "scope": "Whole saved tapes, hashes, recordedF32 delivery, gate metrics and selected441-tick prefixes audited. No fresh dynamics integration, noisy cohort or robustness claim."
+}

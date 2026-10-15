@@ -1,0 +1,238 @@
+{
+  "actual_hanging_start_episode_steps": 0,
+  "actual_records": [
+    {
+      "action_plan_sha256": "679d54d198343ee35dffcd969433da7659194bd82938a31456c9d64e6f3a14e2",
+      "actual_hanging_start_episode_steps": 544,
+      "full_nominal_gate_passed": false,
+      "hold_seconds": 3.0,
+      "index": 0,
+      "label": "baseline",
+      "maximum_cart": 3.015750889943744,
+      "replay_query_end": 996,
+      "replay_query_start": 452,
+      "runtime_error": null,
+      "simulation_error": false,
+      "status": "complete",
+      "tape": {
+        "bytes": 142630,
+        "path": "runs/analytic_derivative_native_20261010/execution/diagnostic/private/actual_000.npz",
+        "sha256": "dfc4ea0bc0ec3e03e6b378ba6ea55eb7027fc4c852d5c427e93ad0e8b9e3c477"
+      },
+      "termination_reason": "rail_violation"
+    },
+    {
+      "action_plan_sha256": "bb327efe5d2935a774690b042ff0695f0003445a2a4619953d1fdb5120ea5db1",
+      "actual_hanging_start_episode_steps": 506,
+      "full_nominal_gate_passed": false,
+      "hold_seconds": 3.0,
+      "index": 1,
+      "label": "analytic_static_protected_center",
+      "maximum_cart": 3.0752142455116847,
+      "replay_query_end": 3522,
+      "replay_query_start": 3016,
+      "runtime_error": null,
+      "simulation_error": false,
+      "status": "complete",
+      "tape": {
+        "bytes": 132627,
+        "path": "runs/analytic_derivative_native_20261010/execution/diagnostic/private/actual_001.npz",
+        "sha256": "8cce04b0ff138b1a4523f55f01b25fece5fd345dda9e0f716976ed0a923b4b2f"
+      },
+      "termination_reason": "rail_violation"
+    },
+    {
+      "action_plan_sha256": "2570938f67b2dc4d5302bf99f6455ac40e0de85faafb83e1d83069e3137f1681",
+      "actual_hanging_start_episode_steps": 514,
+      "full_nominal_gate_passed": false,
+      "hold_seconds": 1.9000000000000001,
+      "index": 2,
+      "label": "analytic_wide100_exploratory_preloss_cost",
+      "maximum_cart": 3.114307376327441,
+      "replay_query_end": 5706,
+      "replay_query_start": 5192,
+      "runtime_error": null,
+      "simulation_error": false,
+      "status": "complete",
+      "tape": {
+        "bytes": 134528,
+        "path": "runs/analytic_derivative_native_20261010/execution/diagnostic/private/actual_002.npz",
+        "sha256": "09c64dd39ec94a8dfbc51db11f84f6f08722af2ecaf6951cd92343ab9229edf2"
+      },
+      "termination_reason": "rail_violation"
+    }
+  ],
+  "actual_tapes_proved": 3,
+  "all_native_queries_proved": 5706,
+  "arms": [
+    {
+      "actual_selections": [
+        {
+          "actual_record": 1,
+          "center": 1,
+          "role": "protected_center",
+          "trial": null
+        },
+        {
+          "actual_record": 1,
+          "center": null,
+          "role": "exploratory_preloss_cost",
+          "trial": 1
+        }
+      ],
+      "gamma": 8.2896245047169e-05,
+      "initial_center": 0,
+      "initial_design": {
+        "bytes": 1724665,
+        "path": "runs/analytic_derivative_native_20261010/model_design/diagnostic/private/design_analytic_static.npz",
+        "sha256": "677f18e568c1544ad5bc93e82b8786412863edd091f833063f9c9efa19d1a35d"
+      },
+      "initial_trace": {
+        "bytes": 5187066,
+        "path": "runs/analytic_derivative_native_20261010/model_design/diagnostic/private/trace_analytic_static.npz",
+        "sha256": "de45458302639cffda4c4d72733bcab77552051592d2b99d409cf8d42a462804"
+      },
+      "iterations": [
+        {
+          "accepted_trial": 1,
+          "arm": "analytic_static",
+          "center_after": 1,
+          "center_before": 0,
+          "design": 0,
+          "iteration": 0,
+          "trials": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      ],
+      "kind": "static",
+      "name": "analytic_static",
+      "selected_center": 1,
+      "strength": 1.0
+    },
+    {
+      "actual_selections": [],
+      "gamma": 0.0,
+      "initial_center": 0,
+      "initial_design": {
+        "bytes": 1724371,
+        "path": "runs/analytic_derivative_native_20261010/model_design/diagnostic/private/design_analytic_zero.npz",
+        "sha256": "257aeff5c02995887f48e1efaabc4391da29f5aec9f7eda5648bd0cecb35e2de"
+      },
+      "initial_trace": {
+        "bytes": 5172720,
+        "path": "runs/analytic_derivative_native_20261010/model_design/diagnostic/private/trace_analytic_zero.npz",
+        "sha256": "ba27c9eb5bde01ab4f675b732c31d60d46b7f0ba7950f2ee1d2e8e0c00b6d662"
+      },
+      "iterations": [
+        {
+          "accepted_trial": null,
+          "arm": "analytic_zero",
+          "center_after": 0,
+          "center_before": 0,
+          "design": 1,
+          "iteration": 0,
+          "trials": [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        }
+      ],
+      "kind": "static",
+      "name": "analytic_zero",
+      "selected_center": 0,
+      "strength": 0.0
+    },
+    {
+      "actual_selections": [
+        {
+          "actual_record": 2,
+          "center": null,
+          "role": "exploratory_preloss_cost",
+          "trial": 23
+        }
+      ],
+      "gamma": 0.008289624504716899,
+      "initial_center": 0,
+      "initial_design": {
+        "bytes": 1770526,
+        "path": "runs/analytic_derivative_native_20261010/model_design/diagnostic/private/design_analytic_wide100.npz",
+        "sha256": "5564eb1781672b16f3b38d08366912651a72a7ebb29ea8a7c1c1e6b0ad0a2bf3"
+      },
+      "initial_trace": {
+        "bytes": 5176188,
+        "path": "runs/analytic_derivative_native_20261010/model_design/diagnostic/private/trace_analytic_wide100.npz",
+        "sha256": "8cc131f62a58a99ee8d728e64bda3f06f229ebbc944e0e75b8549b9869b508c2"
+      },
+      "iterations": [
+        {
+          "accepted_trial": null,
+          "arm": "analytic_wide100",
+          "center_after": 0,
+          "center_before": 0,
+          "design": 2,
+          "iteration": 0,
+          "trials": [
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ]
+        }
+      ],
+      "kind": "wide",
+      "name": "analytic_wide100",
+      "selected_center": 0,
+      "strength": 100.0
+    }
+  ],
+  "failed_native_queries_proved": 0,
+  "generated_at": "2026-10-11T03:14:33+00:00",
+  "native_physics_substeps": 22824,
+  "passed": true,
+  "scope": "Cold separate-class query/error/poststate/time/substep proof; literal external-cache equality, sharedstencil reconstruction/costfactors/QR withMP100samples, protected/exploratory selection and fullhanging raw/F32/prefix/tail/gate/count checks. No derivative accuracy/robustness/optimality/impossibility or release certificate.",
+  "source_result": {
+    "bytes": 43540,
+    "path": "runs/analytic_derivative_native_20261010/execution/diagnostic/result.json",
+    "sha256": "c26596a1ef29cb9f121d398523f7db29364a93615625efcfae20d7a4d3789cbb"
+  },
+  "total_native_transition_calls": 5706.0,
+  "trace_checks": [
+    {
+      "MP100_sampled_steps": 14,
+      "design": 0,
+      "maximum_MP100_relative_error": "5.09176023021969e-16",
+      "steps": 202
+    },
+    {
+      "MP100_sampled_steps": 14,
+      "design": 1,
+      "maximum_MP100_relative_error": "7.85898422965261e-16",
+      "steps": 202
+    },
+    {
+      "MP100_sampled_steps": 14,
+      "design": 2,
+      "maximum_MP100_relative_error": "6.3811490637599e-16",
+      "steps": 202
+    }
+  ],
+  "wall_seconds": 3.6638828329996613
+}
