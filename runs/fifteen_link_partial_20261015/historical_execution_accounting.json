@@ -1,0 +1,24 @@
+{
+  "actual_hanging_start_episode_steps": 950,
+  "canonical_release_evidence": false,
+  "command": [
+    "scripts/solve_canonical15_active_continuation.py",
+    "--manifest",
+    "runs/canonical15_active_continuation_20261004/manifest_execution.json",
+    "--directory",
+    "runs/canonical15_active_continuation_20261004/execution/diagnostic"
+  ],
+  "finished_at": "2026-10-04T17:41:47+00:00",
+  "generated_at": "2026-10-04T17:39:41+00:00",
+  "native_physics_substeps": 1586460,
+  "native_transition_ceiling": 3000000,
+  "not_solution": true,
+  "partial_transition_substeps": 0,
+  "script": {
+    "bytes": 1832,
+    "path": "/Users/corbensorenson/Documents/cartpole/scripts/run_counted_native_feedback_arrival.py",
+    "sha256": "c58dba4fca86e851c735748976c32eb820533cf0a94154f93153ca475d4c8f17"
+  },
+  "status": "finished",
+  "total_native_transition_calls": 396615.0
+}

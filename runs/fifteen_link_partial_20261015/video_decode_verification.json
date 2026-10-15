@@ -1,0 +1,11 @@
+{
+  "decoded_frames": 477,
+  "size": [
+    1280,
+    900
+  ],
+  "fps": 50.0,
+  "passed": true,
+  "scope": "Decode integrity and cadence only; source state metric audit is separate.",
+  "new_native_transition_calls": 0
+}

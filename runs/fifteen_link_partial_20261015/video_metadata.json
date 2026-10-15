@@ -1,0 +1,14 @@
+{
+  "status": "partial_unsolved",
+  "state_tape_sha256": "6e0d87f4fbc12d1f0f35929b17e8182b767c6f33ee7642a202ff324861c2e22e",
+  "video_sha256": "9446fbf9992c17beab5c3f737e4fbe19d38c3af6a5e77b21eca4aa429f8acff4",
+  "states_rendered": 477,
+  "fps": 50,
+  "first_state_time_seconds": 0.0,
+  "last_state_time_seconds": 9.52,
+  "video_duration_seconds": 9.54,
+  "all_states_in_original_order": true,
+  "skipped_states": 0,
+  "new_native_transition_calls": 0,
+  "source": "Complete recorded minimax failed episode, including final out-of-rail state. Schematic geometry follows recorded cumulative joint angles; no new physics, interpolated state, resets or teleports."
+}

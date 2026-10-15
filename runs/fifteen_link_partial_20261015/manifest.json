@@ -1,0 +1,327 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-15",
+  "n_links": 15,
+  "status": "partial_result_unsolved",
+  "not_solution": true,
+  "canonical_release_evidence": false,
+  "highest_accepted_n_links": 14,
+  "best_observed_hold_seconds": 3.0,
+  "initialization": "Exact nominal hanging state, reused seed20265100; no noisy development or reserved success cohort.",
+  "nominal_seed": 20265100,
+  "command_rate_hz": 50,
+  "timestep_seconds": 0.005,
+  "frame_skip": 4,
+  "integrator": "MuJoCo RK4, float64 states",
+  "delivered_action_dtype": "float32 normalized command, recorded as exact float64 values",
+  "force_limit_N": 80.0,
+  "rail_limit_m": 3.0,
+  "total_length_m": 3.0,
+  "total_chain_mass_kg": 1.0,
+  "cart_mass_kg": 1.0,
+  "link_radius_m": 0.025,
+  "joint_armature": 0.0005,
+  "total_link_damping": 0.015,
+  "cart_damping": 0.02,
+  "upright_absolute_angle_limit_rad": 0.15,
+  "required_hold_seconds": 5.0,
+  "required_episode_seconds": 30.0,
+  "cases": [
+    {
+      "label": "minimax",
+      "tape": "runs/fifteen_link_partial_20261015/actual_minimax.npz",
+      "selected_forecast": "runs/fifteen_link_partial_20261015/selected_minimax.npz",
+      "reported_hold_seconds": 3.0,
+      "reported_ticks": 476,
+      "reported_maximum_cart_m": 3.0116127833857105,
+      "reported_termination": "rail_violation",
+      "full_nominal_gate_passed": false
+    },
+    {
+      "label": "minimum_change",
+      "tape": "runs/fifteen_link_partial_20261015/actual_minimum_change.npz",
+      "selected_forecast": "runs/fifteen_link_partial_20261015/selected_minimum_change.npz",
+      "reported_hold_seconds": 3.0,
+      "reported_ticks": 474,
+      "reported_maximum_cart_m": 3.064074726170762,
+      "reported_termination": "rail_violation",
+      "full_nominal_gate_passed": false
+    },
+    {
+      "label": "recent_baseline",
+      "tape": "runs/fifteen_link_partial_20261015/recent_baseline.npz",
+      "selected_forecast": null,
+      "reported_hold_seconds": 3.0,
+      "reported_ticks": 544,
+      "reported_maximum_cart_m": 3.015750889943744,
+      "reported_termination": "rail_violation",
+      "full_nominal_gate_passed": false
+    },
+    {
+      "label": "recent_analytic_static_protected_center",
+      "tape": "runs/fifteen_link_partial_20261015/recent_analytic_static_protected_center.npz",
+      "selected_forecast": null,
+      "reported_hold_seconds": 3.0,
+      "reported_ticks": 506,
+      "reported_maximum_cart_m": 3.0752142455116847,
+      "reported_termination": "rail_violation",
+      "full_nominal_gate_passed": false
+    }
+  ],
+  "files": [
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/actual_minimax.npz",
+        "bytes": 122109,
+        "sha256": "6e0d87f4fbc12d1f0f35929b17e8182b767c6f33ee7642a202ff324861c2e22e"
+      },
+      "original": {
+        "path": "runs/canonical15_active_continuation_20261004/execution/diagnostic/fresh1_start400_minimax_h441_actual.npz",
+        "bytes": 122109,
+        "sha256": "6e0d87f4fbc12d1f0f35929b17e8182b767c6f33ee7642a202ff324861c2e22e"
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/selected_minimax.npz",
+        "bytes": 224676,
+        "sha256": "c9c8bbcc23a97bc69c141142b376098af44c62912ba22157052885a59d4f6db4"
+      },
+      "original": {
+        "path": "runs/canonical15_active_continuation_20261004/execution/diagnostic/private/forecast_00064.npz",
+        "bytes": 224676,
+        "sha256": "c9c8bbcc23a97bc69c141142b376098af44c62912ba22157052885a59d4f6db4"
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/actual_minimum_change.npz",
+        "bytes": 121575,
+        "sha256": "116cc45358ebd0145186e4e9529077dc29b89ca2d856b3b9240b50a7bdcd2179"
+      },
+      "original": {
+        "path": "runs/canonical15_active_continuation_20261004/execution/diagnostic/fresh1_start400_minimum_change_h441_actual.npz",
+        "bytes": 121575,
+        "sha256": "116cc45358ebd0145186e4e9529077dc29b89ca2d856b3b9240b50a7bdcd2179"
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/selected_minimum_change.npz",
+        "bytes": 224670,
+        "sha256": "6ce0e6c2aaa3694db7b88de79ac3798d6410824c056ceb7498e2feb59747eabc"
+      },
+      "original": {
+        "path": "runs/canonical15_active_continuation_20261004/execution/diagnostic/private/forecast_00125.npz",
+        "bytes": 224670,
+        "sha256": "6ce0e6c2aaa3694db7b88de79ac3798d6410824c056ceb7498e2feb59747eabc"
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/native_design.npz",
+        "bytes": 3733367,
+        "sha256": "bd98834fddfea3fee75a8f318dcde5eb86fbe780f47f23183de01fad84843644"
+      },
+      "original": {
+        "path": "runs/canonical15_active_continuation_20261004/inherited_native_design.npz",
+        "bytes": 3733367,
+        "sha256": "bd98834fddfea3fee75a8f318dcde5eb86fbe780f47f23183de01fad84843644"
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/source_config.yaml",
+        "bytes": 1789,
+        "sha256": "d55219b82f6288d5e5ff10539d83aefebdbb88d09703d3708e25ed1906695d3c"
+      },
+      "original": {
+        "path": "configs/swingup15_uniform.yaml",
+        "bytes": 1789,
+        "sha256": "d55219b82f6288d5e5ff10539d83aefebdbb88d09703d3708e25ed1906695d3c"
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/historical_verification.json",
+        "bytes": 14087,
+        "sha256": "b3fbdea6f534b100b6dfbb334bb1d78a8fbaa71489526a9d664342294049dc74"
+      },
+      "original": {
+        "path": "runs/canonical15_active_continuation_20261004/verified.json",
+        "bytes": 14087,
+        "sha256": "b3fbdea6f534b100b6dfbb334bb1d78a8fbaa71489526a9d664342294049dc74"
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/historical_experiment_manifest.json",
+        "bytes": 4516,
+        "sha256": "48e3cc0f3f3479bb1333493411255bc8fc85154a608ea098271df19946df595c"
+      },
+      "original": {
+        "path": "runs/canonical15_active_continuation_20261004/manifest_execution.json",
+        "bytes": 4516,
+        "sha256": "48e3cc0f3f3479bb1333493411255bc8fc85154a608ea098271df19946df595c"
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/historical_execution_accounting.json",
+        "bytes": 871,
+        "sha256": "7712b0280b7574ebaf8b84ae7855cf3783c41bb6beee03a7c67b342dac264925"
+      },
+      "original": {
+        "path": "runs/canonical15_active_continuation_20261004/execution/inclusive_accounting.json",
+        "bytes": 871,
+        "sha256": "7712b0280b7574ebaf8b84ae7855cf3783c41bb6beee03a7c67b342dac264925"
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/historical_execution_journal.json",
+        "bytes": 160776,
+        "sha256": "34c37b134db4380a5b0888dfe8bc91363df10eb78d9feb74b2d425448024b7e4"
+      },
+      "original": {
+        "path": "runs/canonical15_active_continuation_20261004/execution/execution.json",
+        "bytes": 160776,
+        "sha256": "34c37b134db4380a5b0888dfe8bc91363df10eb78d9feb74b2d425448024b7e4"
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/original_synthesis_source.tar.gz",
+        "bytes": 1345104,
+        "sha256": "e3c18bfef5939681ebb7a8a7d6534b1fff2a026053ed7ce81bcaa2921c6990e1"
+      },
+      "original": {
+        "path": "runs/canonical15_active_continuation_20261004/execution/snapshot",
+        "scope": "Byte-exact individual frozen code/config members in gzip container; original container is new.",
+        "members": 812
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/recent_baseline.npz",
+        "bytes": 142630,
+        "sha256": "dfc4ea0bc0ec3e03e6b378ba6ea55eb7027fc4c852d5c427e93ad0e8b9e3c477"
+      },
+      "original": {
+        "path": "runs/analytic_derivative_native_20261010/execution/diagnostic/private/actual_000.npz",
+        "bytes": 142630,
+        "sha256": "dfc4ea0bc0ec3e03e6b378ba6ea55eb7027fc4c852d5c427e93ad0e8b9e3c477"
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/recent_analytic_static_protected_center.npz",
+        "bytes": 132627,
+        "sha256": "8cce04b0ff138b1a4523f55f01b25fece5fd345dda9e0f716976ed0a923b4b2f"
+      },
+      "original": {
+        "path": "runs/analytic_derivative_native_20261010/execution/diagnostic/private/actual_001.npz",
+        "bytes": 132627,
+        "sha256": "8cce04b0ff138b1a4523f55f01b25fece5fd345dda9e0f716976ed0a923b4b2f"
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/recent_historical_verification.json",
+        "bytes": 6031,
+        "sha256": "d6dd524b8029dfc7247dd2beda14dd6257bb02af1d10ef701460f1514030d9ee"
+      },
+      "original": {
+        "path": "runs/analytic_derivative_native_20261010/verified.json",
+        "bytes": 6031,
+        "sha256": "d6dd524b8029dfc7247dd2beda14dd6257bb02af1d10ef701460f1514030d9ee"
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/recent_cold_replay_report.json",
+        "bytes": 7518,
+        "sha256": "19b92d3dad4ac7791faee74d06b0c7835a809ab6ee5c9e18e0bceb179a1b9c28"
+      },
+      "original": {
+        "path": "runs/analytic_derivative_native_20261010/independent_audit/diagnostic/result.json",
+        "bytes": 7518,
+        "sha256": "19b92d3dad4ac7791faee74d06b0c7835a809ab6ee5c9e18e0bceb179a1b9c28"
+      }
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/fifteen_link_partial_full_attempt.mp4",
+        "bytes": 769585,
+        "sha256": "9446fbf9992c17beab5c3f737e4fbe19d38c3af6a5e77b21eca4aa429f8acff4"
+      },
+      "origin": "New packaging/render/audit artifact; no new scientific execution."
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/video_metadata.json",
+        "bytes": 664,
+        "sha256": "0000024f1a64e396714a15a755efb26b24592aea35b672154155927ddec616bd"
+      },
+      "origin": "New packaging/render/audit artifact; no new scientific execution."
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/video_decode_verification.json",
+        "bytes": 220,
+        "sha256": "2fa7d6a867ec60ea16bc2d18407ef83ab1bc5ae37642b53efcef3598426c7e04"
+      },
+      "origin": "New packaging/render/audit artifact; no new scientific execution."
+    },
+    {
+      "published": {
+        "path": "assets/fifteen-link-partial.gif",
+        "bytes": 5548060,
+        "sha256": "c58a95117ab143158f098ebcd4c9f87052e588bbf3349942a0badc71133e27cb"
+      },
+      "origin": "New packaging/render/audit artifact; no new scientific execution."
+    },
+    {
+      "published": {
+        "path": "scripts/render_fifteen_partial.py",
+        "bytes": 4432,
+        "sha256": "9cac5b034c7f27ab5fc9b794a578f8bb93980adb4bbb9f826d480ada9382a1b5"
+      },
+      "origin": "New packaging/render/audit artifact; no new scientific execution."
+    },
+    {
+      "published": {
+        "path": "scripts/verify_fifteen_partial.py",
+        "bytes": 3611,
+        "sha256": "c3038153d0754b772156b5a37dc29da535bb7a9071462213a1eea3c70a465345"
+      },
+      "origin": "New packaging/render/audit artifact; no new scientific execution."
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/video_frame_0000.png",
+        "bytes": 42049,
+        "sha256": "600bdce2324725b6c132b1e2617899a129472a504b135baed908bca04111eba6"
+      },
+      "origin": "New packaging/render/audit artifact; no new scientific execution."
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/video_frame_0441.png",
+        "bytes": 43359,
+        "sha256": "f892ef10798306123fd511b0c5b62a9adefdb3b41f88aebd8e58b64b00fa3f48"
+      },
+      "origin": "New packaging/render/audit artifact; no new scientific execution."
+    },
+    {
+      "published": {
+        "path": "runs/fifteen_link_partial_20261015/video_frame_0476.png",
+        "bytes": 42713,
+        "sha256": "b38f77b18d4b4c024a207b63465aa0c85c4889251f01059f36ed8edbe03019f5"
+      },
+      "origin": "New packaging/render/audit artifact; no new scientific execution."
+    }
+  ],
+  "new_native_transition_calls": 0,
+  "scope": "Public selected-result evidence, not a new solve. The verifier audits full saved tapes and original source hashes without running physics. Historical verification/accounting/journal references identify the retained full local research archive; omitted search artifacts are not falsely represented as bundled. Historical passed means its audit passed, never15 task acceptance. Selected forecast plus saved gains describe pre-handoff feedback; post-h441 maintenance algorithm is in the frozen source. Entire uninterrupted failed actual tapes are bundled. Two later nominal episodes from the analytic-derivative study also match3.00s; their complete tapes and historical cold replay report are included. They are additional reused-seed development cases, not independent reserved validation."
+}
