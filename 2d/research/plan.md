@@ -117,3 +117,15 @@ n2_002 reference/gains with world_balance=true; no trajectory or gain changes.
 Test 32 fresh seeds 20261316..20261347 with the same reset distribution and
 30s/5s/plane/force/native replay gates. Budget 48000 actual and equal proof
 control transitions. Publish a second explicitly 2D release only after 32/32.
+
+## Amendment before three-link transfer
+
+Two-link world-coordinate handoff qualifies 32/32 fresh starts, 21.68s hold.
+Transfer only its XY force sequence to three links and resynthesize using the
+corrected SO(3) cost gradient, native batch centered differences, 8s horizon,
+world-coordinate stationary handoff, up to 120 iterations. Keep all plant totals,
+scoring and spatial reset noise fixed. Budget <=15M design physics steps, plus
+nominal+12 development episodes and independent proofs. Development seeds remain
+20261116..27; final qualification, if earned, will use a new count-specific cohort.
+Prediction: transfer gives a useful initializer, but a pass is not guaranteed;
+failure may require joint arrival/maintenance optimization or longer route timing.

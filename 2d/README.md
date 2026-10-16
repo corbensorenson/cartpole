@@ -4,19 +4,23 @@ A cart moves over an XY plane, driven by two forces. Every link has a passive,
 unlimited ball joint: it can tilt in both directions and twist about its axis.
 This is a separate benchmark from the one-dimensional cart and hinge chain.
 
-**One-link hanging-start swing-up is qualified:** 32/32 fresh noisy 3D starts,
-in addition to the nominal start and 12 development checks. Every episode runs
-30 seconds and holds upright continuously for 21.74 seconds. All delivered-action
+**One- and two-link hanging-start swing-ups are qualified:** 32/32 fresh noisy
+3D starts at each count, in addition to nominal and development checks. Episodes
+run 30 seconds; one link holds for 21.74s and two for 21.68s. All delivered-action
 tapes replay exactly. Both cart axes are used. Full-state simulation feedback,
 not a learned policy or a hardware demonstration.
 
 [Full one-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-1-link-v1/2d-cartpole-1-link-swingup.mp4)
 · [GitHub release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-1-link-v1)
 
+[Full two-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-2-link-v1/2d-cartpole-2-link-swingup.mp4)
+· [Two-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-2-link-v1)
+
 | Milestone | Current evidence |
 |---|---|
 | One-link hanging-start swing-up | 32/32 final qualification; full video |
-| Two-link hanging-start swing-up | In development |
+| Two-link hanging-start swing-up | 32/32 final qualification; full video |
+| Three-link hanging-start swing-up | In development |
 | Near-upright balance, 1–3 links | 12/12 local perturbed starts at each count |
 | Near-upright balance, 4 links | 9/12; incomplete, not accepted |
 
@@ -42,6 +46,12 @@ Re-evaluate the frozen one-link controller on a new cohort:
 
 Local development uses `output/swing_n1_001/route.npz` before publication packaging.
 Output directories must be new; failed runs are preserved.
+
+For the qualified two-link controller use
+`evidence/n2_world_handoff_001/controller.npz` with `evaluate`; its saved
+`world_balance=true` selects the physical world tilt/rate coordinate map for
+the stationary handoff. The original two-link local-quaternion handoff failed.
+The frozen route and trajectory gains are identical between these two tests.
 
 Start a count ladder or optimize a swing route:
 
@@ -84,6 +94,9 @@ The released one-link controller was synthesized with the initial approximate
 cost gradient. The current optimizer includes a tested SO(3) cost-gradient
 correction for later experiments. Frozen synthesis source and gains are retained
 in its evidence directory; qualification does not regenerate its gains.
+Two-link synthesis uses the corrected cost gradient and the world-coordinate
+stationary handoff. The failed baseline and failed local-coordinate handoff
+remain in the evidence alongside the successful continuation.
 
 Each experiment freezes source, arguments, runtime and the pre-experiment memo,
 then records optimizer history, states, raw/delivered forces, tilts, counts,

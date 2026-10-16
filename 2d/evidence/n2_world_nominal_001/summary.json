@@ -1,0 +1,28 @@
+{
+  "n_links": 2,
+  "passes": 1,
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 4.4703483581542975e-08,
+      "best_hold_seconds": 21.68,
+      "plane_margin": 2.0255391029022163,
+      "physics_warning": false,
+      "success": true,
+      "steps": 1500,
+      "native_steps": 6000,
+      "wall_seconds": 0.7143914999996923,
+      "max_xy": [
+        0.5722583629110564,
+        0.97416430077042
+      ],
+      "max_force_norm": 36.89677047729492,
+      "final_tilt": 4.4703483581542975e-08,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 6000
+    }
+  ]
+}
