@@ -4,9 +4,10 @@ A cart moves over an XY plane, driven by two forces. Every link has a passive,
 unlimited ball joint: it can tilt in both directions and twist about its axis.
 This is a separate benchmark from the one-dimensional cart and hinge chain.
 
-**One- through four-link hanging-start swing-ups are qualified:** 32/32 fresh
+**One- through five-link hanging-start swing-ups are qualified:** 32/32 fresh
 noisy 3D starts at each count, in addition to nominal and development checks.
-Episodes run 30 seconds; the respective holds are 21.74s, 21.68s, 6.78s, and 7.22s. All delivered-action
+Episodes run 30 seconds; the respective holds are 21.74s, 21.68s, 6.78s, 7.22s,
+and 21.70s. All delivered-action
 tapes replay exactly. Both cart axes are used. Full-state simulation feedback,
 not a learned policy or a hardware demonstration.
 
@@ -22,13 +23,17 @@ not a learned policy or a hardware demonstration.
 [Full four-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-4-link-v1/2d-cartpole-4-link-swingup.mp4)
 · [Four-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-4-link-v1)
 
+[Full five-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-5-link-v1/2d-cartpole-5-link-swingup.mp4)
+· [Five-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-5-link-v1)
+
 | Milestone | Current evidence |
 |---|---|
 | One-link hanging-start swing-up | 32/32 final qualification; full video |
 | Two-link hanging-start swing-up | 32/32 final qualification; full video |
 | Three-link hanging-start swing-up | 32/32 fresh final qualification; full video |
 | Four-link hanging-start swing-up | 32/32 fresh final qualification; full video |
-| Five-link hanging-start swing-up | Next development count |
+| Five-link hanging-start swing-up | 32/32 fresh final qualification; full video |
+| Six-link hanging-start swing-up | Next development count |
 | Near-upright balance, 1–3 links | 12/12 local perturbed starts at each count |
 | Near-upright balance, 4 links | 9/12; incomplete, not accepted |
 
@@ -73,6 +78,11 @@ For four links use `evidence/qualify_n4_001/frozen_route.npz`. It tracks a
 23.04-second repaired motion immediately from the noisy hanging state and then
 uses world-coordinate upright feedback. No preliminary conditioning or axial
 alignment is required. Its fresh qualification seeds are 20261516..20261547.
+
+For five links use `evidence/qualify_n5_001/frozen_route.npz`. The repaired
+motion lasts 8.42 seconds, starts immediately, and then uses world-coordinate
+upright feedback. Qualification seeds are 20261616..20261647. No preliminary
+conditioning or gauge alignment is required.
 
 Start a count ladder or optimize a swing route:
 
@@ -138,6 +148,14 @@ before actual outcomes, passed nominal plus 12 development starts, then passed
 all 32 reserved starts. A later lower tracking-cost policy also passes the
 development cohort but is not substituted into this release. Direct transfer,
 mechanical continuation and unsuccessful defect-aware alternatives are retained.
+
+Five links uses the same fixed-target native repair, directly from a lifted
+historical nominal proposal. Its old planar reference reaches 3.33m and was
+only valid on a wider rail. The new optimizer repairs both the dynamics and
+cart excursion under the spatial benchmark's unchanged 3m boundary. The final
+31-iteration controller passes nominal, 12 development starts, and 32 reserved
+starts. All 32 initial states are distinct. Maximum cart excursion over final
+qualification is 2.731121m; no wider rail or extended episode is used.
 
 Each experiment freezes source, arguments, runtime and the pre-experiment memo,
 then records optimizer history, states, raw/delivered forces, tilts, counts,

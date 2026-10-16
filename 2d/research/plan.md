@@ -594,3 +594,50 @@ integrity; <=384000 actual+proof physics steps. On a complete pass render the
 entire first qualification tape at 50fps, preserve failures and all alternate
 experiments, and publish as explicitly 2D four-link evidence/video. If this gate
 fails it becomes development, and a revised policy requires a new seed cohort.
+
+## Amendment before five-link spatial transfer and native tracking repair
+
+Four links is qualified and published. Advance to five using the curated
+n5_route_solver.json and its declared source n5_route_solver_rail45_full_fddp.json
+from the read-only historical checkout. Source selected morphology is uniform:
+five 0.6m / 0.2kg links; old damping 0.015, slide armature 0.0005. The source
+actual run used a 4.5m rail and reached 3.331747m, so it is NOT a pass of our
+3m spatial boundary. Its short 421-command / 8.42s motion is only a proposal.
+Freeze the original config/spec and source files; verify the coordinate lift
+and shared nominal arrays using the reference-only importer. Budget <=150k
+native design steps plus nominal-first actual gates and 12 shared development
+starts if nominal passes. All new simulations use uniform free five-link
+benchmark mechanics, two cart forces, and the unchanged strict 30s clock.
+
+Then, irrespective of the direct transfer outcome, repair that frozen geometric
+proposal with the SAME fixed-target tracking method and weights as four:
+40 iterations, four workers, <=15M design physics steps; actual float32 nominal
+and 12 shared development starts. The nominal target may have gaps and cross
+our boundary; the separate actual execution must pass every original gate.
+Prediction: bounded affine corrections plus the 2.7m cart soft penalty can
+bring the inherited 3.33m excursion inside the square while preserving its
+short arrival. This is empirical, not assumed. Reserved five-link seeds
+20261616..20261647 remain untouched until a controller is frozen after passing
+all development episodes.
+
+Conditional five-link robustness intervention: if the repaired route passes
+nominal but fails any noisy development starts, retain that failure and apply
+the already tested hanging-feedback/axial-frame alignment wrapper. Use 12s
+parking plus its 8.42s route, entirely within the fixed 30s episode. Rebuild
+the hanging stationary LQR on the unchanged five-link model; test nominal plus
+the same shared 44 development starts (20261116..27 and 20261416..47), with
+<=1000 design steps and <=540000 actual+proof steps. No reserved seeds are used
+for this intervention; a complete pass must still be frozen before fresh
+qualification. Do not condition or alter the route if all raw development
+episodes already pass.
+
+## Five-link frozen qualification (before reserved execution)
+
+tracking_repair_n5_001 passes nominal plus all 12 shared noisy development
+starts, every episode complete with 21.70s hold and exact replay. Freeze its
+final route.npz with no conditioning or additional modification. Run exactly
+32 reserved hanging starts, seeds 20261616..20261647, noise 0.02, strict 30s
+episode and unchanged model. Require 32/32 success and exact replay; <=384000
+actual+proof physics steps. On full pass render the entire first reserved tape
+and publish explicitly 2D five-link source, evidence and video. A failed gate
+becomes development and any revised policy requires new qualification seeds.

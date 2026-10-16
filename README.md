@@ -8,7 +8,7 @@ chain. Both start hanging, use full-state feedback, and must finish an
 uninterrupted episode within the cart boundary.
 
 [![1D: 14 links qualified](https://img.shields.io/badge/1D-14_links_qualified-2563eb)](#1d-cart-pole)
-[![2D: 4 links qualified](https://img.shields.io/badge/2D-4_links_qualified-7c3aed)](#2d-cart-pole)
+[![2D: 5 links qualified](https://img.shields.io/badge/2D-5_links_qualified-7c3aed)](#2d-cart-pole)
 [![MuJoCo 3.3.5](https://img.shields.io/badge/MuJoCo-3.3.5-059669)](https://mujoco.readthedocs.io/en/3.3.5/)
 
 [1D results](#1d-cart-pole) · [2D results](#2d-cart-pole) ·
@@ -22,15 +22,15 @@ uninterrupted episode within the cart boundary.
   </tr>
   <tr>
     <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/fourteen-link-canonical-20261002"><img src="assets/fourteen-link-swingup.gif" alt="Fourteen passive planar links swing up and hold; preview runs at twice speed" width="360"></a></td>
-    <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-4-link-v1"><img src="2d/videos/2d-cartpole-4-link-preview.gif" alt="Four passive spatial links swing up and hold on an XY cart" width="360"></a></td>
+    <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-5-link-v1"><img src="2d/videos/2d-cartpole-5-link-preview.gif" alt="Five passive spatial links swing up and hold on an XY cart" width="360"></a></td>
   </tr>
   <tr>
     <td><strong>14 links qualified.</strong> Full 30-second episodes; 8.16 seconds upright. Preview at 2× speed.</td>
-    <td><strong>4 links qualified.</strong> Full 30-second episodes; 7.22 seconds upright. Preview shows the full episode at normal speed.</td>
+    <td><strong>5 links qualified.</strong> Full 30-second episodes; 21.70 seconds upright. Preview shows the full episode at normal speed.</td>
   </tr>
   <tr>
     <td><a href="runs/swingup14_uniform/fourteen_link_swingup_success.mp4">Full video</a> · <a href="docs/fourteen_link_swingup_paper.md">Technical appendix</a> · <a href="https://github.com/corbensorenson/cartpole/releases/tag/fourteen-link-canonical-20261002">Release</a></td>
-    <td><a href="https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-4-link-v1/2d-cartpole-4-link-swingup.mp4">Full video</a> · <a href="2d/README.md">Method & evidence</a> · <a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-4-link-v1">Release</a></td>
+    <td><a href="https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-5-link-v1/2d-cartpole-5-link-swingup.mp4">Full video</a> · <a href="2d/README.md">Method & evidence</a> · <a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-5-link-v1">Release</a></td>
   </tr>
 </table>
 
@@ -91,8 +91,9 @@ Success requires a complete 30-second episode and every rod's world tilt below
 | 1 link | **32/32** complete episodes | 21.74 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-1-link-v1/2d-cartpole-1-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-1-link-v1) |
 | 2 links | **32/32** complete episodes | 21.68 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-2-link-v1/2d-cartpole-2-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-2-link-v1) |
 | 3 links | **32/32** fresh complete episodes | 6.78 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-3-link-v1/2d-cartpole-3-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-3-link-v1) |
-| **4 links** | **32/32** fresh complete episodes | 7.22 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-4-link-v1/2d-cartpole-4-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-4-link-v1) |
-| 5 links | In development | — | [Progress log](2d/PROGRESS.md) |
+| 4 links | **32/32** fresh complete episodes | 7.22 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-4-link-v1/2d-cartpole-4-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-4-link-v1) |
+| **5 links** | **32/32** fresh complete episodes | 21.70 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-5-link-v1/2d-cartpole-5-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-5-link-v1) |
+| 6 links | In development | — | [Progress log](2d/PROGRESS.md) |
 
 Native MuJoCo finite differences feed iLQR trajectory optimization. A finite
 feedback table tracks the swing, then hands off to upright discrete LQR.
@@ -111,6 +112,11 @@ immediately from the noisy hanging state, then switches to world-coordinate
 upright feedback. The frozen first repaired checkpoint passes nominal plus
 12 development starts and a fresh 32-start cohort. Altered-mechanics components
 and failed alternatives remain separate in the evidence.
+
+Five links uses the same native tracking repair on an 8.42-second historical
+motion proposal, correcting its mechanical mismatch and bringing the inherited
+3.33m cart excursion inside the unchanged 3m boundary. It passes nominal plus
+12 development starts and a fresh 32-start cohort without preliminary conditioning.
 
 The final qualification uses fresh 3D hanging-start perturbations and checks
 actual float32 forces, full state/action tapes, and independent replay.

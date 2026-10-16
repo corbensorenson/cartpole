@@ -76,6 +76,8 @@ if a.links == 3:
     body += '\nThe earlier unconditioned three-link policy failed qualification at 25/32. Its failures were retained and reused only as development data; this release passes a genuinely new 32-start cohort.\n'
 if a.links == 4:
     body += '\nFour-link synthesis uses a historical altered-mechanics motion only as a geometric target. Native affine tracking repair restores the exact benchmark dynamics. The first repaired checkpoint was frozen before actual outcomes and passed nominal plus 12 development starts, followed by the fresh 32-start cohort. Its 23.04s motion starts immediately; no extra conditioning time or state reset is used. Altered-plant diagnostics and failed optimizer alternatives are retained separately.\n'
+if a.links == 5:
+    body += '\nFive-link synthesis uses a lifted historical motion only as a geometric proposal. The source reached 3.33m on a wider rail and is not accepted as this benchmark. Native affine tracking repair produces an 8.42s swing on the exact spatial model inside the unchanged 3m boundary. The frozen final controller passes nominal plus 12 development starts and the fresh 32-start cohort. No preliminary conditioning, gauge alignment or extra episode time is used. Maximum final-cohort cart coordinate is 2.731121m.\n'
 try:
     release = request(base+'/releases/tags/'+tag)
 except HTTPError as exc:

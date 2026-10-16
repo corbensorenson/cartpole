@@ -14,7 +14,7 @@ from spatialpole.experiment import freeze_inputs,episode,write_json
 
 p = argparse.ArgumentParser()
 p.add_argument('--route',required=True)
-p.add_argument('--tape',required=True)
+p.add_argument('--tape')
 p.add_argument('--out',required=True)
 p.add_argument('--iterations',type=int,default=40)
 p.add_argument('--workers',type=int,default=4)
@@ -22,14 +22,21 @@ p.add_argument('--physics-budget',type=int,default=15000000)
 a = p.parse_args()
 out = Path(a.out)
 freeze_inputs(out,a)
-shutil.copy2(a.tape,out/'target_actual_tape.npz')
-write_json(out/'target_input.json',{'source':a.tape,'sha256':hashlib.sha256(Path(a.tape).read_bytes()).hexdigest()})
-source,tape = np.load(a.route),np.load(a.tape)
+source = np.load(a.route)
 base = Config(**json.loads(str(source['config'])))
-assert Config(**json.loads(str(tape['config']))) == base
 config = Config(n_links=base.n_links)
 assert replace(base,joint_damping=config.joint_damping,cart_armature=config.cart_armature)==config
 H = len(source['actions'])
+if a.tape:
+    shutil.copy2(a.tape,out/'target_actual_tape.npz')
+    write_json(out/'target_input.json',{'source':a.tape,'sha256':hashlib.sha256(Path(a.tape).read_bytes()).hexdigest(),
+                                      'target_kind':'recorded actual motion'})
+    tape = np.load(a.tape)
+    assert Config(**json.loads(str(tape['config']))) == base
+    target,target_controls = tape['states'][:H+1],tape['actions'][:H]
+else:
+    target,target_controls = source['states'],source['actions']
+    write_json(out/'target_input.json',{'source':a.route,'target_kind':'nominal proposal; not assumed dynamically feasible'})
 env = SpatialCartpole(config)
 env.derivative_workers = a.workers
 initial,_ = env.reset(seed=20261016,options={'mode':'hanging','angle_noise':0.})
@@ -46,8 +53,8 @@ def checkpoint(iteration,states,actions,gains):
                         actions=actions,gains=gains,config=json.dumps(asdict(config)))
 
 try:
-    xs,us,K,design,history,proposal = repair_tracking(env,initial,tape['states'][:H+1],
-        tape['actions'][:H],a.iterations,log,checkpoint,a.physics_budget)
+    xs,us,K,design,history,proposal = repair_tracking(env,initial,target,
+        target_controls,a.iterations,log,checkpoint,a.physics_budget)
 except Exception as exc:
     write_json(out/'failure.json',{'status':'failed','type':type(exc).__name__,'message':str(exc),
                                   'native_steps':env.native_steps})
@@ -66,6 +73,6 @@ if rows[0]['success'] and rows[0]['replay_exact']:
 write_json(out/'summary.json',{'n_links':config.n_links,'passes':sum(r['success'] and r['replay_exact'] for r in rows),
     'results':rows,'design_native_steps':native_design,'optimizer_iterations':len(history),
     'last_optimizer_record':history[-1] if history else None,'wall_seconds':time.perf_counter()-start,
-    'scope':'altered-plant tape is a geometric target only; actual gates use the unchanged benchmark'})
+    'scope':'input motion is a geometric target only; actual gates use the unchanged benchmark'})
 write_json(out/'completed.json',{'status':'completed'})
 print(json.dumps({'passes':sum(r['success'] for r in rows),'results':rows}),flush=True)

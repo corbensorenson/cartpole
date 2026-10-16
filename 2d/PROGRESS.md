@@ -145,6 +145,27 @@ The one-dimensional benchmark at D:/ChatGPT/cartpole remains separate.
   remains byte-identical in states, forces and tilts in
   `output/regression_n3_cart_armature_001`. Packaging and publication reject
   any altered final Config. Current source passes 33 tests.
+- Four-link release is public at `2d-cartpole-4-link-v1`, commit
+  `cac969fdaf37d0279fbaa2d547e9418328c2567f`. Full video and 188.57MB ZIP
+  uploaded. Both public asset SHA256 digests match; 1141 staged/archive files
+  verify. Published source passes 33 tests and reproduces the first held-out
+  episode byte-for-byte. Root overview now features four; all 1D content remains.
+- `output/planar_lift_n5_001`: reference-only lift from the old uniform five-link
+  motion passes direction reconstruction (6.66e-16); direct new-plant nominal
+  fails at 3.46s. Old source used a wider rail and reached 3.331747m, so its old
+  success cannot promote this count. Source config, coordinates and hashes remain.
+- `output/tracking_repair_n5_001`: same fixed-target affine repair on the
+  unchanged five-link plant, 31 iterations / 4,043,576 native design steps.
+  Nominal plus all 12 noisy development starts complete with 21.70s hold and
+  exact replay. No parking or gauge wrapper is needed or used.
+- `output/qualify_n5_001`: frozen final repaired controller on NEW seeds
+  20261616..20261647 passes 32/32 full 30s episodes and exact replay, all with
+  21.70s hold. All initial states are distinct. Maximum cart coordinate
+  2.731120998m; minimum substep margin 0.267718018m. This earns the five-link
+  2D release, with its own full held-out video and evidence archive.
+- Full five-link held-out video has 1501 frames / 50fps / 30.02s encoding,
+  SHA256 `f413c17a880d6cf5537509886af213c22caa8820690864b48ffb1b600ef3aade`.
+  A normal-speed full-duration GIF and contact sheet were generated and inspected.
 
 ## Publication policy
 
@@ -160,17 +181,18 @@ established. Thirty-two reset-noise trials do not certify arbitrary disturbances
 
 ## Resume checkpoint
 
-All four-link experiments are terminal. The GOAL stays active at a qualified
-frontier of FOUR. Complete the isolated
-four-link GitHub publication, including the full video and evidence ZIP, then
-advance to five. Historical planar route proposals are available in the original
-read-only checkout; inspect their geometry, dynamics and timing before transfer.
+Four- and five-link experiments are terminal. Four-link publication is complete;
+prepare/publish the separate five-link release next. The GOAL stays active at a
+qualified frontier of FIVE. Next advance to six, beginning with its short
+historical route proposal and the successful fixed-target native repair.
+Historical planar route proposals are available in the original read-only
+checkout; inspect their geometry, dynamics and timing before transfer.
 The successful new tool is native fixed-target affine trajectory repair,
 not force-only transfer. Preserve the strict 30s clock and all physical freedoms.
 Record the chosen method, warm start, seeds and compute limit BEFORE execution.
 Do not restart an experiment while its process is alive or its completed marker
-exists. Checkpoints are proposals until full actual float32 gates pass. Five-link
-reserved qualification seeds will be 20261616..20261647, untouched at this entry.
+exists. Checkpoints are proposals until full actual float32 gates pass. Six-link
+reserved qualification seeds will be 20261716..20261747, untouched at this entry.
 All future successful count releases require an explicitly 2D label, full video,
 state/action evidence and hashes. No upper frontier has been established.
 
