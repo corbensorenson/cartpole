@@ -21,8 +21,8 @@ uninterrupted episode within the cart boundary.
     <th width="50%">2D cart · spatial ball-joint chain</th>
   </tr>
   <tr>
-    <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/fourteen-link-canonical-20261002"><img src="assets/fourteen-link-swingup.gif" alt="Fourteen passive planar links swing up and hold; preview runs at twice speed" width="480"></a></td>
-    <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-2-link-v1"><img src="2d/videos/2d-cartpole-2-link-preview.gif" alt="Two passive spatial links swing up and hold on an XY cart" width="480"></a></td>
+    <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/fourteen-link-canonical-20261002"><img src="assets/fourteen-link-swingup.gif" alt="Fourteen passive planar links swing up and hold; preview runs at twice speed" width="360"></a></td>
+    <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-2-link-v1"><img src="2d/videos/2d-cartpole-2-link-preview.gif" alt="Two passive spatial links swing up and hold on an XY cart" width="360"></a></td>
   </tr>
   <tr>
     <td><strong>14 links qualified.</strong> Full 30-second episodes; 8.16 seconds upright. Preview at 2× speed.</td>
