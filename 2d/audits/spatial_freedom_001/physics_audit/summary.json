@@ -1,0 +1,525 @@
+{
+  "compiled_models": [
+    {
+      "n_links": 1,
+      "nq": 6,
+      "nv": 5,
+      "nu": 2,
+      "neq": 0,
+      "joint_types": [
+        2,
+        2,
+        1
+      ],
+      "joint_limits": [
+        0,
+        0,
+        0
+      ],
+      "slide_axes": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ]
+      ],
+      "actuator_joint_ids": [
+        0,
+        1
+      ],
+      "actuator_gear": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "dof_damping": [
+        0.02,
+        0.02,
+        0.0075,
+        0.0075,
+        0.0075
+      ],
+      "dof_armature": [
+        0.0,
+        0.0,
+        0.0005,
+        0.0005,
+        0.0005
+      ]
+    },
+    {
+      "n_links": 3,
+      "nq": 14,
+      "nv": 11,
+      "nu": 2,
+      "neq": 0,
+      "joint_types": [
+        2,
+        2,
+        1,
+        1,
+        1
+      ],
+      "joint_limits": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "slide_axes": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ]
+      ],
+      "actuator_joint_ids": [
+        0,
+        1
+      ],
+      "actuator_gear": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "dof_damping": [
+        0.02,
+        0.02,
+        0.0025,
+        0.0025,
+        0.0025,
+        0.0025,
+        0.0025,
+        0.0025,
+        0.0025,
+        0.0025,
+        0.0025
+      ],
+      "dof_armature": [
+        0.0,
+        0.0,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005
+      ]
+    },
+    {
+      "n_links": 7,
+      "nq": 30,
+      "nv": 23,
+      "nu": 2,
+      "neq": 0,
+      "joint_types": [
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "joint_limits": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "slide_axes": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ]
+      ],
+      "actuator_joint_ids": [
+        0,
+        1
+      ],
+      "actuator_gear": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "dof_damping": [
+        0.02,
+        0.02,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715,
+        0.0010714285714285715
+      ],
+      "dof_armature": [
+        0.0,
+        0.0,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005,
+        0.0005
+      ]
+    }
+  ],
+  "independent_native_probes": [
+    {
+      "n_links": 1,
+      "axis_rotation_error": 5.551115123125783e-17,
+      "cart_path_minor_major_ratio": 0.5967940241637123,
+      "rod_horizontal_minor_major_ratio": 0.15550071080570904,
+      "max_cart_xy": [
+        0.4202188046806708,
+        0.49495824624208457
+      ],
+      "max_rod_xy": [
+        0.09879894113103908,
+        0.3992111771419169
+      ],
+      "each_joint_transverse_response": [
+        {
+          "joint": 0,
+          "local_axis": 0,
+          "horizontal_rod_component": 0.11952899474673195
+        },
+        {
+          "joint": 0,
+          "local_axis": 1,
+          "horizontal_rod_component": 0.11952899474673195
+        }
+      ],
+      "passive_spin_increment": 0.009130508495418608,
+      "persistent_native_vs_environment_replay_exact": true
+    },
+    {
+      "n_links": 3,
+      "axis_rotation_error": 2.55351295663786e-15,
+      "cart_path_minor_major_ratio": 0.6637212185514507,
+      "rod_horizontal_minor_major_ratio": 0.3248455882658099,
+      "max_cart_xy": [
+        0.4036949404553147,
+        0.46085962085998056
+      ],
+      "max_rod_xy": [
+        0.2992396660895534,
+        0.5383698953504856
+      ],
+      "each_joint_transverse_response": [
+        {
+          "joint": 0,
+          "local_axis": 0,
+          "horizontal_rod_component": 0.1191942488597468
+        },
+        {
+          "joint": 0,
+          "local_axis": 1,
+          "horizontal_rod_component": 0.1191942488597468
+        },
+        {
+          "joint": 1,
+          "local_axis": 0,
+          "horizontal_rod_component": 0.11869078361347242
+        },
+        {
+          "joint": 1,
+          "local_axis": 1,
+          "horizontal_rod_component": 0.11869078361347242
+        },
+        {
+          "joint": 2,
+          "local_axis": 0,
+          "horizontal_rod_component": 0.11895410802777465
+        },
+        {
+          "joint": 2,
+          "local_axis": 1,
+          "horizontal_rod_component": 0.11895410802777465
+        }
+      ],
+      "passive_spin_increment": 0.009582202432086503,
+      "persistent_native_vs_environment_replay_exact": true
+    },
+    {
+      "n_links": 7,
+      "axis_rotation_error": 2.4424906541753444e-15,
+      "cart_path_minor_major_ratio": 0.6877234760888176,
+      "rod_horizontal_minor_major_ratio": 0.32056985667153826,
+      "max_cart_xy": [
+        0.40103032524212473,
+        0.4594135798881309
+      ],
+      "max_rod_xy": [
+        0.43558864396971175,
+        0.5524032078115912
+      ],
+      "each_joint_transverse_response": [
+        {
+          "joint": 0,
+          "local_axis": 0,
+          "horizontal_rod_component": 0.11858360879671985
+        },
+        {
+          "joint": 0,
+          "local_axis": 1,
+          "horizontal_rod_component": 0.11858360879671984
+        },
+        {
+          "joint": 1,
+          "local_axis": 0,
+          "horizontal_rod_component": 0.11544693515830592
+        },
+        {
+          "joint": 1,
+          "local_axis": 1,
+          "horizontal_rod_component": 0.11544693515830588
+        },
+        {
+          "joint": 2,
+          "local_axis": 0,
+          "horizontal_rod_component": 0.11603450537034217
+        },
+        {
+          "joint": 2,
+          "local_axis": 1,
+          "horizontal_rod_component": 0.11603450537034216
+        },
+        {
+          "joint": 3,
+          "local_axis": 0,
+          "horizontal_rod_component": 0.11665667039717388
+        },
+        {
+          "joint": 3,
+          "local_axis": 1,
+          "horizontal_rod_component": 0.11665667039717388
+        },
+        {
+          "joint": 4,
+          "local_axis": 0,
+          "horizontal_rod_component": 0.1173026415066691
+        },
+        {
+          "joint": 4,
+          "local_axis": 1,
+          "horizontal_rod_component": 0.11730264150666908
+        },
+        {
+          "joint": 5,
+          "local_axis": 0,
+          "horizontal_rod_component": 0.1179727260411512
+        },
+        {
+          "joint": 5,
+          "local_axis": 1,
+          "horizontal_rod_component": 0.1179727260411512
+        },
+        {
+          "joint": 6,
+          "local_axis": 0,
+          "horizontal_rod_component": 0.11837360897712157
+        },
+        {
+          "joint": 6,
+          "local_axis": 1,
+          "horizontal_rod_component": 0.11837360897712157
+        }
+      ],
+      "passive_spin_increment": 0.00980254043111849,
+      "persistent_native_vs_environment_replay_exact": true
+    }
+  ],
+  "recorded_qualification_motion": [
+    {
+      "n_links": 1,
+      "qualification_passes": 32,
+      "episodes": 32,
+      "controller_sha256": "dc41fdb176bc244474e9e106b88e4ddec52e1052870dda05df89d8c0ed2cc316",
+      "reference_cart_minor_major_ratio": 0.06019725098433494,
+      "reference_max_abs_y": 0.14231521930360555,
+      "reference_max_abs_force_y": 5.84486463205712,
+      "reference_max_abs_rod_direction_y": 0.06040537067634461,
+      "actual_max_abs_y": 0.552034457031542,
+      "actual_max_abs_force_y": 5.881481647491455,
+      "actual_max_abs_rod_direction_y": 0.07706362340771401
+    },
+    {
+      "n_links": 2,
+      "qualification_passes": 32,
+      "episodes": 32,
+      "controller_sha256": "083ce77040018f7e70c443d732a35711135ccee09f0a9977caf22c90509edc13",
+      "reference_cart_minor_major_ratio": 0.6477527530014046,
+      "reference_max_abs_y": 0.974164297795728,
+      "reference_max_abs_force_y": 35.44686267286332,
+      "reference_max_abs_rod_direction_y": 0.994237362061448,
+      "actual_max_abs_y": 0.9827095537977034,
+      "actual_max_abs_force_y": 35.6541862487793,
+      "actual_max_abs_rod_direction_y": 0.9946784794038612
+    },
+    {
+      "n_links": 3,
+      "qualification_passes": 32,
+      "episodes": 32,
+      "controller_sha256": "14c5e1c7df964185a9b47628f71a6a635f6429942124e8cd0d75cd9fb45601d3",
+      "reference_cart_minor_major_ratio": 0.08214421063556189,
+      "reference_max_abs_y": 0.154956935269778,
+      "reference_max_abs_force_y": 33.23631354855652,
+      "reference_max_abs_rod_direction_y": 0.3664346000365547,
+      "actual_max_abs_y": 0.15495694117981873,
+      "actual_max_abs_force_y": 33.23631286621094,
+      "actual_max_abs_rod_direction_y": 0.3664346016076129
+    },
+    {
+      "n_links": 4,
+      "qualification_passes": 32,
+      "episodes": 32,
+      "controller_sha256": "f17e107b33a4c5acab32430b62fe195ab99e6951519a74694137792ab4e24d24",
+      "reference_cart_minor_major_ratio": 7.039347201600862e-12,
+      "reference_max_abs_y": 4.0825910880112424e-11,
+      "reference_max_abs_force_y": 2.869435223491289e-08,
+      "reference_max_abs_rod_direction_y": 4.957165650868314e-11,
+      "actual_max_abs_y": 0.13510272885746716,
+      "actual_max_abs_force_y": 42.58699035644531,
+      "actual_max_abs_rod_direction_y": 0.06999928221121038
+    },
+    {
+      "n_links": 5,
+      "qualification_passes": 32,
+      "episodes": 32,
+      "controller_sha256": "700969c19ac2cd410631a1a4663d801badb83a1a837366c5e9934d2ca3ba3e4b",
+      "reference_cart_minor_major_ratio": 1.1845852161764391e-10,
+      "reference_max_abs_y": 1.448532605890811e-09,
+      "reference_max_abs_force_y": 2.9567727800965962e-06,
+      "reference_max_abs_rod_direction_y": 2.4392479590585595e-09,
+      "actual_max_abs_y": 0.06261447134433738,
+      "actual_max_abs_force_y": 25.086349487304688,
+      "actual_max_abs_rod_direction_y": 0.08176840084347037
+    },
+    {
+      "n_links": 6,
+      "qualification_passes": 32,
+      "episodes": 32,
+      "controller_sha256": "fb14f58842ca5ee335856b8da171bf6955f8c7f934ea211c06bf26207c092c39",
+      "reference_cart_minor_major_ratio": 1.3902121650117088e-10,
+      "reference_max_abs_y": 1.1644130626609262e-09,
+      "reference_max_abs_force_y": 5.578816089981173e-06,
+      "reference_max_abs_rod_direction_y": 2.253272697235611e-09,
+      "actual_max_abs_y": 0.09864111730168114,
+      "actual_max_abs_force_y": 4.9764933586120605,
+      "actual_max_abs_rod_direction_y": 0.077237459009241
+    },
+    {
+      "n_links": 7,
+      "qualification_passes": 31,
+      "episodes": 32,
+      "controller_sha256": "f5159ea7b18d3cba1ba22d5194826848e065e85670b40514361a49c4ca214fc6",
+      "reference_cart_minor_major_ratio": 4.303887513168523e-08,
+      "reference_max_abs_y": 3.520604857008018e-07,
+      "reference_max_abs_force_y": 0.0007318188242023903,
+      "reference_max_abs_rod_direction_y": 4.74898467721176e-07,
+      "actual_max_abs_y": 3.0529865160028917,
+      "actual_max_abs_force_y": 79.98399353027344,
+      "actual_max_abs_rod_direction_y": 0.9876196546252418
+    }
+  ],
+  "physics_steps": 4420,
+  "kinematic_forward_queries": 338968,
+  "scope": "Plant freedom audit; references may be planar and full 3D noisy success is a separate finite-sample claim"
+}

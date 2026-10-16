@@ -124,6 +124,14 @@ before a 4.18-second repaired swing. All phases fit inside the same 30-second
 episode. The raw controller failed four of 12 noisy starts; the conditioned
 policy passes all 44 development starts and a new 32-start qualification cohort.
 
+**Why some videos look planar:** the plant has independent XY cart motion and
+unrestricted ball joints, but the four- through six-link nominal swing references
+are essentially planar. Y feedback corrects spatial disturbances. The
+[independent physics audit](2d/audits/spatial_freedom_001) checks every joint's
+transverse freedom, passive spin and persistent native two-axis dynamics.
+Its [controlled six-link XY-loop video](2d/audits/spatial_freedom_001/controlled_xy_orbit.mp4)
+shows deliberate motion across both axes while keeping all six rods upright.
+
 The final qualification uses fresh 3D hanging-start perturbations and checks
 actual float32 forces, full state/action tapes, and independent replay.
 Near-upright balance studies have their own results and do not promote a
