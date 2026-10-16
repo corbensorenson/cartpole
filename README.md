@@ -8,7 +8,7 @@ chain. Both start hanging, use full-state feedback, and must finish an
 uninterrupted episode within the cart boundary.
 
 [![1D: 14 links qualified](https://img.shields.io/badge/1D-14_links_qualified-2563eb)](#1d-cart-pole)
-[![2D: 8 links qualified](https://img.shields.io/badge/2D-8_links_qualified-7c3aed)](#2d-cart-pole)
+[![2D: 9 links qualified](https://img.shields.io/badge/2D-9_links_qualified-7c3aed)](#2d-cart-pole)
 [![MuJoCo 3.3.5](https://img.shields.io/badge/MuJoCo-3.3.5-059669)](https://mujoco.readthedocs.io/en/3.3.5/)
 
 [1D results](#1d-cart-pole) · [2D results](#2d-cart-pole) ·
@@ -22,15 +22,15 @@ uninterrupted episode within the cart boundary.
   </tr>
   <tr>
     <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/fourteen-link-canonical-20261002"><img src="assets/fourteen-link-swingup.gif" alt="Fourteen passive planar links swing up and hold; preview runs at twice speed" width="360"></a></td>
-    <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-8-link-v1"><img src="2d/videos/2d-cartpole-8-link-preview.gif" alt="Eight passive spatial links swing up and hold on an unrestricted XY cart" width="360"></a></td>
+    <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-9-link-v1"><img src="2d/videos/2d-cartpole-9-link-preview.gif" alt="Nine passive spatial links swing up and hold on an unrestricted XY cart" width="360"></a></td>
   </tr>
   <tr>
     <td><strong>14 links qualified.</strong> Full 30-second episodes; 8.16 seconds upright. Preview at 2× speed.</td>
-    <td><strong>8 links qualified.</strong> Full 30-second episodes; 14.20 seconds upright after 12 seconds hanging preparation. Preview at normal speed.</td>
+    <td><strong>9 links qualified.</strong> Full 30-second episodes; 8.18 seconds upright after 18 seconds hanging preparation. Preview at normal speed.</td>
   </tr>
   <tr>
     <td><a href="runs/swingup14_uniform/fourteen_link_swingup_success.mp4">Full video</a> · <a href="docs/fourteen_link_swingup_paper.md">Technical appendix</a> · <a href="https://github.com/corbensorenson/cartpole/releases/tag/fourteen-link-canonical-20261002">Release</a></td>
-    <td><a href="https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-8-link-v1/2d-cartpole-8-link-swingup.mp4">Full video</a> · <a href="2d/README.md">Method & evidence</a> · <a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-8-link-v1">Release</a></td>
+    <td><a href="https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-9-link-v1/2d-cartpole-9-link-swingup.mp4">Full video</a> · <a href="2d/README.md">Method & evidence</a> · <a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-9-link-v1">Release</a></td>
   </tr>
 </table>
 
@@ -95,8 +95,9 @@ Success requires a complete 30-second episode and every rod's world tilt below
 | 5 links | **32/32** fresh complete episodes | 21.70 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-5-link-v1/2d-cartpole-5-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-5-link-v1) |
 | 6 links | **32/32** fresh complete episodes | 14.06 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-6-link-v1/2d-cartpole-6-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-6-link-v1) |
 | 7 links | **32/32** fresh complete episodes | 13.48 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-7-link-v1/2d-cartpole-7-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-7-link-v1) |
-| **8 links** | **32/32** fresh complete episodes | 14.20 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-8-link-v1/2d-cartpole-8-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-8-link-v1) |
-| 9 links | In development | — | [Progress log](2d/PROGRESS.md) |
+| 8 links | **32/32** fresh complete episodes | 14.20 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-8-link-v1/2d-cartpole-8-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-8-link-v1) |
+| **9 links** | **32/32** fresh complete episodes | 8.18 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-9-link-v1/2d-cartpole-9-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-9-link-v1) |
+| 10 links | In development | — | [Progress log](2d/PROGRESS.md) |
 
 Native MuJoCo finite differences feed iLQR trajectory optimization. A finite
 feedback table tracks the swing, then hands off to upright discrete LQR.
@@ -127,7 +128,7 @@ episode. The raw controller failed four of 12 noisy starts; the conditioned
 policy passes all 44 development starts and a new 32-start qualification cohort.
 
 **Why some videos look planar:** the plant has independent XY cart motion and
-unrestricted ball joints, but the four- through eight-link nominal swing references
+unrestricted ball joints, but the four- through nine-link nominal swing references
 are essentially planar. Y feedback corrects spatial disturbances. The
 [independent physics audit](2d/audits/spatial_freedom_001) checks every joint's
 transverse freedom, passive spin and persistent native two-axis dynamics.
@@ -144,6 +145,13 @@ Eight links uses 12 seconds hanging preparation followed by a 3.94-second native
 repaired swing and upright feedback. The raw policy failed all 12 noisy starts;
 the conditioned policy passes nominal plus 44 development starts and 32 fresh
 qualification starts. All complete 30 seconds with 14.20 seconds upright.
+
+Nine links uses 18 seconds hanging preparation followed by a 3.94-second native
+repaired swing and upright feedback. The raw controller again failed all 12
+noisy starts; the frozen prepared controller passes nominal plus 44 development
+starts and 32 fresh qualification starts. Every final episode holds upright
+for 8.18 seconds. Maximum cart coordinate is 2.716248m. Native physical-freedom
+regression checks now include nine links; 52 tests pass.
 
 The final qualification uses fresh 3D hanging-start perturbations and checks
 actual float32 forces, full state/action tapes, and independent replay.

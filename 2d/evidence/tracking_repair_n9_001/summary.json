@@ -1,0 +1,353 @@
+{
+  "n_links": 9,
+  "passes": 1,
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 5.372690074837192e-08,
+      "best_hold_seconds": 26.18,
+      "plane_margin": 0.2835076451592231,
+      "physics_warning": false,
+      "success": true,
+      "steps": 1500,
+      "native_steps": 6000,
+      "wall_seconds": 1.2600214000012784,
+      "max_xy": [
+        2.716246657975196,
+        2.86531920487082e-05
+      ],
+      "max_force_norm": 79.99999237060547,
+      "final_tilt": 5.372690074837192e-08,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 6000
+    },
+    {
+      "seed": 20261116,
+      "initialization": "hanging",
+      "angle_noise": 0.02,
+      "max_tilt": 2.9125779787114054,
+      "best_hold_seconds": 0.08,
+      "plane_margin": -0.06527638529858715,
+      "physics_warning": false,
+      "success": false,
+      "steps": 257,
+      "native_steps": 1028,
+      "wall_seconds": 0.15721750000011525,
+      "max_xy": [
+        3.065276385298587,
+        2.669404596380907
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.9125779787114054,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 1028
+    },
+    {
+      "seed": 20261117,
+      "initialization": "hanging",
+      "angle_noise": 0.02,
+      "max_tilt": 2.7773679712453254,
+      "best_hold_seconds": 0.04,
+      "plane_margin": -0.15604665102107607,
+      "physics_warning": false,
+      "success": false,
+      "steps": 245,
+      "native_steps": 980,
+      "wall_seconds": 0.14147229999798583,
+      "max_xy": [
+        3.156046651021076,
+        1.0600692313804512
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.7773679712453254,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 980
+    },
+    {
+      "seed": 20261118,
+      "initialization": "hanging",
+      "angle_noise": 0.02,
+      "max_tilt": 3.053931939464181,
+      "best_hold_seconds": 0.02,
+      "plane_margin": -0.005437775650119825,
+      "physics_warning": false,
+      "success": false,
+      "steps": 228,
+      "native_steps": 912,
+      "wall_seconds": 0.1265869000017119,
+      "max_xy": [
+        3.00543777565012,
+        0.3533293880230511
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 3.053931939464181,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 912
+    },
+    {
+      "seed": 20261119,
+      "initialization": "hanging",
+      "angle_noise": 0.02,
+      "max_tilt": 2.7459644598189006,
+      "best_hold_seconds": 0.2,
+      "plane_margin": -0.12637710489395548,
+      "physics_warning": false,
+      "success": false,
+      "steps": 258,
+      "native_steps": 1032,
+      "wall_seconds": 0.1540257999986352,
+      "max_xy": [
+        3.1263771048939555,
+        2.2676071307921135
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.7459644598189006,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 1032
+    },
+    {
+      "seed": 20261120,
+      "initialization": "hanging",
+      "angle_noise": 0.02,
+      "max_tilt": 2.125655613417506,
+      "best_hold_seconds": 0.04,
+      "plane_margin": -0.006744500953768995,
+      "physics_warning": false,
+      "success": false,
+      "steps": 251,
+      "native_steps": 1004,
+      "wall_seconds": 0.1479895000011311,
+      "max_xy": [
+        3.006744500953769,
+        1.6907570180578397
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.125655613417506,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 1004
+    },
+    {
+      "seed": 20261121,
+      "initialization": "hanging",
+      "angle_noise": 0.02,
+      "max_tilt": 2.4250699362972954,
+      "best_hold_seconds": 0.04,
+      "plane_margin": -0.07672974724866455,
+      "physics_warning": false,
+      "success": false,
+      "steps": 244,
+      "native_steps": 976,
+      "wall_seconds": 0.1508209000021452,
+      "max_xy": [
+        3.0767297472486645,
+        1.720242311008334
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.4250699362972954,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 976
+    },
+    {
+      "seed": 20261122,
+      "initialization": "hanging",
+      "angle_noise": 0.02,
+      "max_tilt": 2.5566073145496553,
+      "best_hold_seconds": 0.08,
+      "plane_margin": -0.07499156327566725,
+      "physics_warning": false,
+      "success": false,
+      "steps": 251,
+      "native_steps": 1004,
+      "wall_seconds": 0.23384209999858285,
+      "max_xy": [
+        2.722978459635485,
+        3.0749915632756673
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.5566073145496553,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 1004
+    },
+    {
+      "seed": 20261123,
+      "initialization": "hanging",
+      "angle_noise": 0.02,
+      "max_tilt": 2.216199613599533,
+      "best_hold_seconds": 0.02,
+      "plane_margin": -0.06368860262878284,
+      "physics_warning": false,
+      "success": false,
+      "steps": 242,
+      "native_steps": 968,
+      "wall_seconds": 0.3204442000023846,
+      "max_xy": [
+        3.063688602628783,
+        0.5651671118372308
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.216199613599533,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 968
+    },
+    {
+      "seed": 20261124,
+      "initialization": "hanging",
+      "angle_noise": 0.02,
+      "max_tilt": 1.432744476565046,
+      "best_hold_seconds": 0.04,
+      "plane_margin": -0.09008368004451173,
+      "physics_warning": false,
+      "success": false,
+      "steps": 249,
+      "native_steps": 996,
+      "wall_seconds": 0.22599280000213184,
+      "max_xy": [
+        3.0900836800445117,
+        1.8738354745639532
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 1.432744476565046,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 996
+    },
+    {
+      "seed": 20261125,
+      "initialization": "hanging",
+      "angle_noise": 0.02,
+      "max_tilt": 2.3961227160462766,
+      "best_hold_seconds": 0.04,
+      "plane_margin": -0.06179580649429406,
+      "physics_warning": false,
+      "success": false,
+      "steps": 242,
+      "native_steps": 968,
+      "wall_seconds": 0.16862309999851277,
+      "max_xy": [
+        3.061795806494294,
+        0.5329431310988959
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.3961227160462766,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 968
+    },
+    {
+      "seed": 20261126,
+      "initialization": "hanging",
+      "angle_noise": 0.02,
+      "max_tilt": 2.9131717076005788,
+      "best_hold_seconds": 0.08,
+      "plane_margin": -0.030967586983123407,
+      "physics_warning": false,
+      "success": false,
+      "steps": 233,
+      "native_steps": 932,
+      "wall_seconds": 0.14404350000040722,
+      "max_xy": [
+        2.712663189644839,
+        3.0309675869831234
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.9131717076005788,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 932
+    },
+    {
+      "seed": 20261127,
+      "initialization": "hanging",
+      "angle_noise": 0.02,
+      "max_tilt": 2.692578940256911,
+      "best_hold_seconds": 0.22,
+      "plane_margin": -0.09931440058817165,
+      "physics_warning": false,
+      "success": false,
+      "steps": 273,
+      "native_steps": 1092,
+      "wall_seconds": 0.16873849999683443,
+      "max_xy": [
+        3.0993144005881716,
+        1.9817335655717299
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.692578940256911,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 1092
+    }
+  ],
+  "design_native_steps": 5901028,
+  "optimizer_iterations": 60,
+  "last_optimizer_record": {
+    "iteration": 59,
+    "cost": 17.98862370719254,
+    "defect_value": 1.0362884184346876e-29,
+    "max_scaled_defect": 5.180992569755442e-16,
+    "penalty": 1000000.0,
+    "trust": 3333.333333333334,
+    "alpha": 0.01,
+    "accepted": true,
+    "bounded_steps": 4,
+    "native_steps": 5900240,
+    "reference_max_cart": 2.7162466289871627,
+    "trials": [
+      {
+        "alpha": 1.0,
+        "cost": 21.04713778271678,
+        "defect_value": 5.494963988318465e-30,
+        "max_scaled_defect": 3.694977915145099e-16,
+        "max_cart": 2.716232685532361
+      },
+      {
+        "alpha": 0.5,
+        "cost": 18.764431630287756,
+        "defect_value": 6.490660477630076e-30,
+        "max_scaled_defect": 3.9694193227463703e-16,
+        "max_cart": 2.716239727605641
+      },
+      {
+        "alpha": 0.25,
+        "cost": 18.18059571436811,
+        "defect_value": 8.199750415255979e-30,
+        "max_scaled_defect": 4.975325833351439e-16,
+        "max_cart": 2.7162432487001538
+      },
+      {
+        "alpha": 0.1,
+        "cost": 18.017516041888506,
+        "defect_value": 9.900654420156967e-30,
+        "max_scaled_defect": 4.892250327964174e-16,
+        "max_cart": 2.716245361375373
+      },
+      {
+        "alpha": 0.05,
+        "cost": 17.99502409084064,
+        "defect_value": 1.0222360100034014e-29,
+        "max_scaled_defect": 5.051819736768327e-16,
+        "max_cart": 2.7162460656035234
+      },
+      {
+        "alpha": 0.01,
+        "cost": 17.98862370719254,
+        "defect_value": 1.0362884184346876e-29,
+        "max_scaled_defect": 5.180992569755442e-16,
+        "max_cart": 2.7162466289871627
+      }
+    ]
+  },
+  "wall_seconds": 115.53311369999938,
+  "scope": "input motion is a geometric target only; actual gates use the unchanged benchmark"
+}

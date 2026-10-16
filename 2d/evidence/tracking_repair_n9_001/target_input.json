@@ -1,0 +1,4 @@
+{
+  "source": "output/planar_lift_n9_001/route.npz",
+  "target_kind": "nominal proposal; not assumed dynamically feasible"
+}

@@ -1,0 +1,19 @@
+{
+  "url": "https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-8-link-v1",
+  "tag": "2d-cartpole-8-link-v1",
+  "commit": "29095220cd47f2fd52aa45a8668c4b9e1ad78f38",
+  "assets": [
+    {
+      "name": "2d-cartpole-8-link-swingup.mp4",
+      "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-8-link-v1/2d-cartpole-8-link-swingup.mp4",
+      "sha256": "665abc541ae53675c5a9c51e03b0cef9c07aa5c1227b3c82567e3fb62acfe0a1",
+      "size": 1162121
+    },
+    {
+      "name": "2d-cartpole-8-link-evidence.zip",
+      "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-8-link-v1/2d-cartpole-8-link-evidence.zip",
+      "sha256": "27cf81ffd922a3e6d18720617846597b3ca63b6ac3cd22d5f2aa51d74fade8de",
+      "size": 481906765
+    }
+  ]
+}

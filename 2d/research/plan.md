@@ -841,3 +841,67 @@ Preserve all raw failures. Any failed qualification becomes development, and
 a revised policy requires a newly preregistered untouched qualification cohort.
 Compiled eight-link freedoms, persistent native multiaxis replay, axis symmetry
 and every joint's transverse motion/spin are now covered: 48 tests pass.
+
+## Amendment before nine-link spatial transfer and native tracking repair
+
+Eight is qualified and publicly released with its full video and evidence.
+Use n9_fddp_terminal_angle20_widerail.json from the read-only checkout, uniform
+nine links, original swingup9 config and coordinate scales. The 197-command /
+3.94s nominal motion reaches 2.980098m and was synthesized on a wider rail;
+it is only a proposal. Freeze source as route/parent, verify coordinate lift,
+and test direct transfer on the unchanged spatial benchmark: <=150k design
+steps, actual float32 nominal-first/replay and 12 shared noisy starts if nominal
+passes. Then repair the original lifted reference using the same weights,
+initial gap penalty 100000, 60 iterations, four workers, <=15M design steps.
+Require full actual nominal/replay plus all 12 noisy development starts.
+
+If nominal passes but any noisy start fails, test a separately frozen hanging
+and axial-gauge wrapper on nominal plus 44 shared development starts. Choose
+18s preparation for this higher-count robustness trial before observing nine's
+outcomes: eight's raw controller failed all noisy starts, and longer native
+hanging contraction may improve the smaller capture basin while leaving over
+8s for upright hold inside the SAME 30s clock (18+3.94s route). This changes
+the controller timing only; no state resets, locks, mechanics/force/boundary
+changes or episode extension. Budget <=1000 design and <=540000 actual+proof
+steps for this wrapper. Fresh nine-link reserved seeds 20262016..20262047 remain
+untouched until a controller passes development and is frozen. Preserve the
+documented distinction between near-planar references and free spatial physics.
+
+## Ten-link continuation plan, recorded before any ten-link execution
+
+After nine qualifies and its video/evidence are published, use the historical
+`runs/generalized_solver/n10_fddp_refined_route_feedback100.json` as route and
+parent, with `configs/swingup10_uniform.yaml` and the same coordinate-scale
+specification. Its nominal arrays contain 401 states / 400 commands (8s),
+maximum nominal cart 2.023276m. The historical ten-link release also used a
+settled launch; none of its success is assumed on the new spatial plant.
+Freeze/validate the coordinate lift and test direct transfer nominal first,
+then 12 shared noisy starts only if nominal passes. Budget <=300k design steps.
+Repair this proposal on the canonical spatial plant with fixed-target native
+tracking, the same weights, initial gap penalty 100000, 80 iterations, four
+workers, <=30M design physics steps. Require actual full nominal/replay and
+all 12 shared noisy development starts. If nominal passes but noisy starts
+fail, separately test a frozen 16s hanging/gauge wrapper on nominal plus the
+44 shared development starts. Six seconds remain after the 8s route within
+the unchanged 30s clock. The 16s duration is selected before any ten-link
+outcome, informed by the historical route timing and present settled-launch
+experience. Budget <=1200 wrapper-design and <=540k actual+proof steps.
+No plant, force, boundary, noise or hold relaxation. Keep all failures.
+Reserve NEW ten-link qualification seeds 20262116..20262147; do not use them
+until the controller passes development and is frozen under a new memo.
+
+## Nine-link frozen qualification (before reserved execution)
+
+Native repair passes nominal with 26.18s hold but fails all 12 raw noisy
+development starts. Its separately frozen 18s hanging/gauge wrapper passes
+nominal plus all 44 shared noisy development starts, 45/45 full 30s episodes,
+8.18s hold each and exact cold replay. Freeze conditioned_n9_001/route.npz
+unchanged. Run exactly 32 NEW reserved noisy hanging starts, seeds
+20262016..20262047, noise 0.02 and unchanged canonical physics, clock, force,
+substep boundary and hold gates; <=384000 actual+proof physics steps.
+Require 32/32 success/replay before rendering the full first held-out tape
+and publishing explicitly 2D nine-link source/controller/evidence/video.
+Retain every raw failure. Failed qualification becomes development; any
+revised policy needs a new untouched qualification cohort. Nine-link compiled
+freedoms, persistent native multiaxis replay, X/Y symmetry and each joint's
+transverse motion/spin now pass within the 52-test suite.

@@ -10,7 +10,7 @@ from spatialpole.transfer import lift_planar_state
 from spatialpole.conditioning import axial_gauge_state,axial_gauge_route
 
 
-@pytest.mark.parametrize("n", [1, 2, 5, 7, 8])
+@pytest.mark.parametrize("n", [1, 2, 5, 7, 8, 9])
 def test_unrestricted_physics(n):
     e = SpatialCartpole(Config(n_links=n))
     assert e.model.nq == 2+4*n and e.model.nv == 2+3*n
