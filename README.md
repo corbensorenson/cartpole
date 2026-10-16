@@ -1,671 +1,165 @@
-# 14-Link Cart-Pole: Reset-Free Swing-Up and Hold
+# Cart-Pole · 1D & 2D Control
 
-> **A single bounded cart force swings up and holds 7 through 14 passive serial links from noisy hanging starts on a finite rail.**
+**Swinging up passive chains with bounded cart forces in MuJoCo.**
 
-October 16, 2026: **2D cart / spatial ball-joint chain: TWO LINKS QUALIFIED.**
-The cart moves across an XY plane; every passive joint tilts freely in both
-horizontal directions and twists. One and two links each pass **32/32 fresh
-noisy 3D hanging starts**, holding upright for 21.74s and 21.68s respectively
-within every full 30s episode. Three-link swing-up is in development.
-These counts are separate from the one-dimensional hinge-chain records below.
+Two control benchmarks share this repository: a cart on a **1D rail** carrying a
+planar hinge chain, and a cart on a **2D plane** carrying a spatial ball-joint
+chain. Both start hanging, use full-state feedback, and must finish an
+uninterrupted episode within the cart boundary.
 
-[2D environment, method and evidence](2d/README.md) ·
-[Two-link full video](2d/videos/2d-cartpole-2-link-swingup.mp4) ·
-[Two-link release / evidence ZIP](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-2-link-v1) ·
-[One-link release / video](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-1-link-v1)
+[![1D: 14 links qualified](https://img.shields.io/badge/1D-14_links_qualified-2563eb)](#1d-cart-pole)
+[![2D: 2 links qualified](https://img.shields.io/badge/2D-2_links_qualified-7c3aed)](#2d-cart-pole)
+[![MuJoCo 3.3.5](https://img.shields.io/badge/MuJoCo-3.3.5-059669)](https://mujoco.readthedocs.io/en/3.3.5/)
 
-[![2D two-link spatial swing-up and hold](2d/videos/2d-cartpole-2-link-preview.gif)](2d/videos/2d-cartpole-2-link-swingup.mp4)
+[1D results](#1d-cart-pole) · [2D results](#2d-cart-pole) ·
+[Get started](#get-started) · [Repository map](#repository-map) ·
+[Development](DEVELOPMENT.md)
 
-October 15, 2026: **15-link development update — 3.00 seconds upright, UNSOLVED.**
-The best recorded nominal hold is 150 consecutive commands at 50 Hz, below the
-required 250 commands (5 seconds). Every published attempt later exceeds the
-±3 m rail before completing the required 30-second episode. Fourteen remains
-the highest accepted count. These are reused nominal development starts;
-there is no passing noisy or reserved 15-link cohort.
+<table>
+  <tr>
+    <th width="50%">1D cart · planar hinge chain</th>
+    <th width="50%">2D cart · spatial ball-joint chain</th>
+  </tr>
+  <tr>
+    <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/fourteen-link-canonical-20261002"><img src="assets/fourteen-link-swingup.gif" alt="Fourteen passive planar links swing up and hold; preview runs at twice speed" width="360"></a></td>
+    <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-2-link-v1"><img src="2d/videos/2d-cartpole-2-link-preview.gif" alt="Two passive spatial links swing up and hold on an XY cart" width="360"></a></td>
+  </tr>
+  <tr>
+    <td><strong>14 links qualified.</strong> Full 30-second episodes; 8.16 seconds upright. Preview at 2× speed.</td>
+    <td><strong>2 links qualified.</strong> Full 30-second episodes; 21.68 seconds upright.</td>
+  </tr>
+  <tr>
+    <td><a href="runs/swingup14_uniform/fourteen_link_swingup_success.mp4">Full video</a> · <a href="docs/fourteen_link_swingup_paper.md">Technical appendix</a> · <a href="https://github.com/corbensorenson/cartpole/releases/tag/fourteen-link-canonical-20261002">Release</a></td>
+    <td><a href="https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-2-link-v1/2d-cartpole-2-link-swingup.mp4">Full video</a> · <a href="2d/README.md">Method & evidence</a> · <a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-2-link-v1">Release</a></td>
+  </tr>
+</table>
 
-[Full failed attempt video](runs/fifteen_link_partial_20261015/fifteen_link_partial_full_attempt.mp4) ·
-[Evidence and limitations](docs/fifteen_link_partial_result.md) ·
-[Partial-result manifest](runs/fifteen_link_partial_20261015/manifest.json)
+*Published status: October 16, 2026. Link counts belong to their respective
+benchmarks; their plants and qualification cohorts differ.*
 
-<p align="center">
-  <a href="runs/fifteen_link_partial_20261015/fifteen_link_partial_full_attempt.mp4">
-    <img src="assets/fifteen-link-partial.gif" alt="Unsolved 15-link development attempt: three seconds upright followed by loss of capture and rail failure" width="760">
-  </a>
-</p>
+## 1D cart-pole
 
-October 2, 2026: **fourteen links** passed the frozen-source reserved noisy
-**20/20**, disjoint **100/100**, exact **20/20**, and held-out full 30-second
-video. Every episode holds upright for **8.16 seconds** at unchanged 50 Hz,
-±80 N force and ±3 m rail; maximum cart excursion is **1.863169 m**.
-Fifteen is next in the campaign through twenty.
+One force moves a cart along a finite rail. The links are passive revolute
+joints, so the chain moves in a vertical plane. The canonical plant has a
+3 m / 1 kg uniform chain, a 1 kg cart, **±80 N** force and **±3 m** rail.
+Control runs at **50 Hz**, with native MuJoCo RK4 integration at 200 Hz.
 
-[Watch fourteen](runs/swingup14_uniform/fourteen_link_swingup_success.mp4) ·
-[Experiment appendix](docs/fourteen_link_swingup_paper.md) ·
-[Manifest](runs/swingup14_uniform/fourteen_link_swingup_manifest.json) ·
-[Clean source bundle](runs/swingup14_uniform/fourteen_link_source.bundle)
+**Seven through fourteen links have published accepted results.** The latest,
+fourteen, passes reserved noisy **20/20**, disjoint noisy **100/100**, exact
+**20/20**, and a held-out video episode. All 141 episodes finish 30 seconds and
+hold every link's absolute world angle below 0.15 rad for 8.16 consecutive
+seconds. Maximum cart excursion is 1.863169 m.
 
-<p align="center">
-  <a href="runs/swingup14_uniform/fourteen_link_swingup_success.mp4">
-    <img src="assets/fourteen-link-swingup.gif" alt="Fourteen-link canonical noisy hanging-start swing-up and sustained hold; full-episode preview at twice speed" width="760">
-  </a>
-</p>
+The controller combines a settled launch, a trajectory with time-varying
+feedback, and upright capture/maintenance. Higher-count synthesis transfers
+predecessor routes, repairs them on the exact target plant, and rebuilds
+feedback from physical execution. Delivered actions are float32; simulation
+and stored physical states are binary64. The fourteen-link capture gain uses
+100-digit Riccati design. Saved-controller validation and automatic
+re-synthesis are separate claims.
 
-[Download the fourteen-link release and full video](https://github.com/corbensorenson/cartpole/releases/tag/fourteen-link-canonical-20261002).
+| Milestone | Status | Evidence |
+| :--- | :--- | :--- |
+| 7–10 links | Accepted; historical regression references | [Consolidated paper](output/pdf/seven_to_ten_link_swingup_paper.pdf) · [Result index](docs/one-dimensional-guide.md#published-results) |
+| 11–13 links | Accepted; full release bundles | [11](docs/eleven_link_swingup_paper.md) · [12](docs/twelve_link_swingup_paper.md) · [13](docs/thirteen_link_swingup_paper.md) |
+| **14 links** | **Highest accepted 1D count in this repository** | [Appendix](docs/fourteen_link_swingup_paper.md) · [Manifest](runs/swingup14_uniform/fourteen_link_swingup_manifest.json) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/fourteen-link-canonical-20261002) |
+| 15 links | **Unsolved:** published nominal partial hold of 3.00 s | [Failure analysis](docs/fifteen_link_partial_result.md) · [Full attempt](runs/fifteen_link_partial_20261015/fifteen_link_partial_full_attempt.mp4) |
 
-Simply repeating the thirteen-link timing failed despite small dynamics gaps.
-A declared timing bracket recovers a physical route using the same shared
-transfer, residual shooting, handoff and exact rebuilding tools. The successful
-offline initializer uses an eight-second swing; the delivered tracking route
-lasts nine seconds. Failed timing, precision and cadence probes accompany the
-result. Higher control frequency was not required for this accepted controller.
+The fifteen-link partial result is below the required five-second hold. Every
+published attempt later exits the rail before the full episode ends; no noisy
+or reserved fifteen-link cohort has passed. The [1D campaign](ROADMAP.md)
+targets sequential qualification through twenty links.
 
-October 2, 2026: **thirteen links** passed the frozen-source reserved noisy
-**20/20** and disjoint **100/100**, exact **20/20**, and held-out full
-30-second video. Every episode holds upright for 7.50 seconds at unchanged
-50 Hz control, ±80 N force and ±3 m rail; maximum cart excursion is
-1.943463 m. Fourteen was the next frontier at that stage.
+**Explore 1D:** [Results & reproduction guide](docs/one-dimensional-guide.md) ·
+[Shared solver](docs/generalized_solver.md) · [Campaign contract](ROADMAP.md)
 
-[Watch thirteen](runs/swingup13_uniform/thirteen_link_swingup_success.mp4) ·
-[Experiment appendix](docs/thirteen_link_swingup_paper.md) ·
-[Manifest](runs/swingup13_uniform/thirteen_link_swingup_manifest.json) ·
-[Clean source bundle](runs/swingup13_uniform/thirteen_link_source.bundle)
+## 2D cart-pole
 
-<p align="center">
-  <a href="runs/swingup13_uniform/thirteen_link_swingup_success.mp4">
-    <img src="assets/thirteen-link-swingup.gif" alt="Thirteen-link canonical noisy hanging-start swing-up and sustained hold; full-episode preview at twice speed" width="760">
-  </a>
-</p>
+Two forces move a cart across an XY plane. Each link has an **unrestricted
+passive ball joint**: it can tilt in both horizontal directions and twist.
+This is spatial motion, with quaternion orientations and tangent-rotation
+feedback differences.
 
-[Download the thirteen-link release and full video](https://github.com/corbensorenson/cartpole/releases/tag/thirteen-link-canonical-20261002).
+The uniform chain is 3 m / 1 kg and the cart is 1 kg. The **total XY force norm
+is capped at 80 N**, and the cart must stay inside a **6 m × 6 m square**,
+including physics substeps. Commands run at 50 Hz; RK4 integrates at 200 Hz.
+Success requires a complete 30-second episode and every rod's world tilt below
+0.15 rad for five consecutive seconds. Free twist is not scored as tilt.
 
-The shared repair now compares nonlinear model agreement before updating its
-trust region. This closes trajectory gaps that native QP convergence alone
-left unresolved. An earlier unchanged-prefix maintenance handoff and an exact
-physical feedback rebuild then recover the complete episode. Count-specific
-controllers remain outputs of shared code; independent rediscovery and
-arbitrary morphology generalization remain separate research gates.
+| Milestone | Fresh noisy qualification | Upright hold | Evidence |
+| :--- | :--- | :--- | :--- |
+| 1 link | **32/32** complete episodes | 21.74 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-1-link-v1/2d-cartpole-1-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-1-link-v1) |
+| **2 links** | **32/32** complete episodes | 21.68 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-2-link-v1/2d-cartpole-2-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-2-link-v1) |
+| 3 links | In development | — | [Progress log](2d/PROGRESS.md) |
 
-October 2, 2026: **twelve links** passed frozen-source reserved noisy
-**20/20** and disjoint **100/100**, exact **20/20**, and a held-out full
-30-second video. Every episode holds upright for 7.50 seconds at unchanged
-50 Hz control, ±80 N force and ±3 m rail; maximum cart excursion is
-1.863891 m. Thirteen was the next frontier at that stage.
+Native MuJoCo finite differences feed iLQR trajectory optimization. A finite
+feedback table tracks the swing, then hands off to upright discrete LQR.
+The two-link result uses world tilt/rate coordinates for stationary feedback;
+the failed local-coordinate handoff is preserved alongside it.
 
-[Watch twelve](runs/swingup12_uniform/twelve_link_swingup_success.mp4) ·
-[Experiment appendix](docs/twelve_link_swingup_paper.md) ·
-[Manifest](runs/swingup12_uniform/twelve_link_swingup_manifest.json) ·
-[Clean source bundle](runs/swingup12_uniform/twelve_link_source.bundle)
+The final qualification uses fresh 3D hanging-start perturbations and checks
+actual float32 forces, full state/action tapes, and independent replay.
+Near-upright balance studies have their own results and do not promote a
+hanging-start swing-up count.
 
-<p align="center">
-  <a href="runs/swingup12_uniform/twelve_link_swingup_success.mp4">
-    <img src="assets/twelve-link-swingup.gif" alt="Twelve-link canonical noisy hanging-start swing-up and sustained hold; preview runs at twice speed" width="760">
-  </a>
-</p>
+**Explore 2D:** [Setup, physics & method](2d/README.md) ·
+[Progress](2d/PROGRESS.md) · [Research plan](2d/research/plan.md) ·
+[Frozen evidence](2d/evidence)
 
-[Download the twelve-link release and full video](https://github.com/corbensorenson/cartpole/releases/tag/twelve-link-canonical-20261002).
+## Get started
 
-The recovery combines full-horizon factored residual multiple shooting with
-an earlier maintenance handoff and an exact physical feedback rebuild.
-Count-specific controllers are outputs of the shared phased procedure;
-automatic re-synthesis and morphology generalization remain separate tests.
+### Watch or inspect a result
 
-October 1, 2026: eleven links passed the internal canonical noisy `20/20`
-and disjoint `100/100` gates, exact `20/20`, and a reset-free 30-second
-held-out video at the unchanged 50 Hz, ±80 N and ±3 m rail. Every accepted
-episode holds upright for 7.50 seconds. The frozen eleven source bundle,
-evidence and full video are included here. Twelve
-was the next frontier at that stage.
+Start with a release above for the full video and downloadable evidence.
+The [1D guide](docs/one-dimensional-guide.md) indexes historical results and
+explains frozen-source reproduction. The [2D guide](2d/README.md) includes
+installation, controller evaluation, and video commands.
 
-[Watch eleven](runs/swingup11_uniform/eleven_link_swingup_success.mp4) ·
-[Experiment appendix](docs/eleven_link_swingup_paper.md) ·
-[Manifest](runs/swingup11_uniform/eleven_link_swingup_manifest.json) ·
-[Clean source bundle](runs/swingup11_uniform/eleven_link_source.bundle)
+### Run the 2D environment
 
-<p align="center">
-  <a href="runs/swingup11_uniform/eleven_link_swingup_success.mp4">
-    <img src="assets/eleven-link-swingup.gif" alt="Eleven-link canonical noisy hanging-start swing-up followed by a 7.5-second upright hold" width="760">
-  </a>
-</p>
+From the repository root on Windows, create its separate Python 3.11 environment:
 
-[Download the eleven-link release and full video](https://github.com/corbensorenson/cartpole/releases/tag/eleven-link-canonical-20261001).
-
-<p align="center">
-  <strong><a href="output/pdf/seven_to_ten_link_swingup_paper.pdf">Read the consolidated 7-10 link technical paper (PDF)</a></strong>
-  · <a href="docs/seven_link_swingup_paper.md">Markdown</a>
-  · <a href="#reproduce-the-result">Reproduce the results</a>
-</p>
-
-<p align="center">
-  <a href="runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4">
-    <img src="assets/ten-link-swingup.gif" alt="Ten-link cart-pole swinging from a noisy hanging start and holding upright" width="760">
-  </a>
-</p>
-
-<p align="center">
-  <strong><a href="runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4">Watch the full ten-link run</a></strong>
-  · <a href="docs/ten_link_swingup_paper.md">Ten-link experiment appendix</a>
-  · <a href="runs/generalized_solver/ten_link_swingup_manifest.json">Inspect the ten-link manifest</a>
-</p>
-
-<p align="center">
-  <a href="runs/generalized_solver/nine_link_swingup_success.mp4">
-    <img src="assets/nine-link-swingup.gif" alt="Nine-link cart-pole swinging from a noisy hanging start and holding upright" width="760">
-  </a>
-</p>
-
-<p align="center">
-  <strong><a href="runs/generalized_solver/nine_link_swingup_success.mp4">Watch the full nine-link run</a></strong>
-  · <a href="docs/nine_link_swingup_paper.md">Nine-link experiment appendix</a>
-  · <a href="runs/generalized_solver/nine_link_swingup_manifest.json">Inspect the nine-link manifest</a>
-</p>
-
-<p align="center">
-  <a href="runs/generalized_solver/eight_link_swingup_success.mp4">
-    <img src="assets/eight-link-swingup.gif" alt="Eight-link cart-pole swinging from a noisy hanging start and holding upright" width="760">
-  </a>
-</p>
-
-<p align="center">
-  <strong><a href="runs/generalized_solver/eight_link_swingup_success.mp4">Watch the full eight-link run</a></strong>
-  · <a href="docs/eight_link_swingup_paper.md">Eight-link experiment appendix</a>
-  · <a href="runs/generalized_solver/eight_link_swingup_manifest.json">Inspect the eight-link manifest</a>
-</p>
-
-<p align="center">
-  <a href="runs/swingup7_uniform/seven_link_swingup_success.mp4">
-    <img src="assets/seven-link-swingup.gif" alt="Seven-link cart-pole swinging from a noisy hanging start and holding upright" width="760">
-  </a>
-</p>
-
-<p align="center">
-  <strong><a href="runs/swingup7_uniform/seven_link_swingup_success.mp4">Watch the full seven-link run</a></strong>
-  · <a href="docs/seven_link_swingup_paper.md">Read the consolidated paper</a>
-  · <a href="runs/swingup7_uniform/seven_link_swingup_manifest.json">Inspect the seven-link manifest</a>
-</p>
-
-This repository demonstrates reset-free swing-up and sustained hold of uniform
-seven-, eight-, nine-, and ten-link cart-poles in MuJoCo. Each frozen hybrid controller passed
-disjoint `20/20` and `100/100` noisy hanging-start gates on its declared plant:
-`480/480` noisy episodes in total, with zero rail failures and zero mid-episode
-state resets. The four videos above are held-out, uninterrupted 30-second
-replays; click any animated preview for its source MP4. Controllers, hashes,
-negative controls, manifests, and reproduction commands are public.
-
-| Result | Noisy 20-episode gate | Disjoint noisy 100-episode gate | Held-out video | Method |
-|---|---:|---:|---|---|
-| **12 links — highest verified internal count** | **20/20** | **100/100** | [MP4](runs/swingup12_uniform/twelve_link_swingup_success.mp4) | [appendix](docs/twelve_link_swingup_paper.md) |
-| **11 links — preserved public predecessor** | **20/20** | **100/100** | [MP4](runs/swingup11_uniform/eleven_link_swingup_success.mp4) | [appendix](docs/eleven_link_swingup_paper.md) |
-| **10 links — frozen public predecessor** | **20/20** | **100/100** | [MP4](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4) | [paper](docs/seven_link_swingup_paper.md) |
-| **9 links** | **20/20** | **100/100** | [MP4](runs/generalized_solver/nine_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |
-| **8 links** | **20/20** | **100/100** | [MP4](runs/generalized_solver/eight_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |
-| **7 links** | **20/20** | **100/100** | [MP4](runs/swingup7_uniform/seven_link_swingup_success.mp4) | [paper](docs/seven_link_swingup_paper.md) |
-
-As of 2026-09-14, we claim a **provisional public link-count record** for the
-precisely frozen simulated benchmark documented here. To our knowledge, no
-public result shows as many passive serial links under a directly comparable
-bounded-force, bounded-rail, noisy-start, sustained-hold, reset-free protocol.
-There is no recognized registry for this problem, so the claim is deliberately
-falsifiable and does not extend across unmatched plants or rules. See the
-[claim boundary and literature search](docs/seven_link_swingup_paper.md#8-public-record-claim-and-literature-boundary).
-
-## The seven-link frozen record
-
-| Benchmark property | Result |
-|---|---:|
-| Links | **7** |
-| 20-episode gate | **20/20 (100%)** |
-| 100-episode gate | **100/100 (100%)** |
-| Resets inside episodes | **0** |
-| Rail failures in the 100-episode gate | **0** |
-| First upright | **14.54 s** |
-| Upright hold after first upright | **15.48 s** |
-| Maximum cart excursion across 100 episodes | **2.3708 m** |
-
-The frozen contract uses a uniform seven-link plant, continuous `±80 N`
-force, a `±3 m` rail, 50 Hz control, a noisy hanging start, and a five-second
-upright requirement. This is the repository's canonical benchmark record. It
-has not yet been certified against an external competition's exact plant and
-submission rules, so we do not present it as a universal world-record claim.
-See the [fairness notes](docs/yacine_fairness_notes.md) and
-[public release checklist](docs/public_release_checklist.md) for that boundary.
-
-## How it works
-
-```text
-noisy hanging start
-        │
-        ▼
-16 s hanging-equilibrium LQR conditioning
-        │
-        ▼
-8.0 s Box-FDDP swing route with time-varying feedback
-        │
-        ▼
-terminal LQR capture and upright hold
+```powershell
+cd 2d
+py -3.11 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-lock.txt
+.\.venv\Scripts\python.exe -m pip install -e .
+$env:OPENBLAS_NUM_THREADS='1'
+$env:OMP_NUM_THREADS='1'
+.\.venv\Scripts\python.exe -m pytest -q
 ```
 
-The latest ten-link release uses a 16-second hanging-equilibrium park at `-0.05 m`,
-an 8-second Box-FDDP route with saved time-varying feedback, and a terminal LQR
-around the same parked target. It is a two-expert controller with no state reset
-between phases. See the [ten-link experiment appendix](docs/ten_link_swingup_paper.md)
-for its exact contract and the [consolidated 7-10 link report](docs/seven_link_swingup_paper.md)
-for the common method, comparative results, and claim boundary.
+Then follow the [frozen-controller evaluation commands](2d/README.md#run-on-windows).
+Use a new output directory for each run.
 
-## Evidence
+### Reproduce a 1D release
 
-| Artifact | What it establishes |
-|---|---|
-| [Held-out video](runs/swingup7_uniform/seven_link_swingup_success.mp4) | 30-second noisy-start replay, reset-free, all seven links visible |
-| [Video metadata](runs/swingup7_uniform/seven_link_swingup_success.video.json) | Seed, runtime, frame count, reset count, final metrics, and hashes |
-| [20-episode evaluation](runs/swingup7_uniform/eval_swingup7_20.json) | First canonical acceptance gate: 20/20 |
-| [100-episode evaluation](runs/swingup7_uniform/eval_swingup7_100.json) | Final canonical acceptance gate: 100/100 |
-| [Robustness sweep](runs/swingup7_uniform/robustness_sweep.json) | Paired-seed stress tests outside the canonical claim boundary |
-| [No-settle negative control](runs/eval_swingup7_fddp_two_expert_canonical20.json) | Same noisy-start gate without conditioning: 0/20 |
-| [Controller manifest](runs/swingup7_uniform/seven_link_swingup_manifest.json) | Conditioning, swing, capture, switching rules, preprocessing, and hashes |
-| [SHA-256 manifest](runs/swingup7_uniform/SHA256SUMS) | Integrity hashes for the complete release bundle |
-| [Verification report](runs/swingup7_uniform/verification.json) | Clean-commit benchmark and artifact audit with zero errors |
-| [Frozen release controller](runs/swingup7_uniform/seven_link_release_controller.json) | Nominal states, controls, and Box-FDDP feedback gains |
-| [Method paper](docs/seven_link_swingup_paper.md) | Benchmark, method, results, limitations, and reproduction |
-
-The stress sweep is deliberately separate from the canonical result. With 20
-paired seeds per condition, the frozen controller retained `20/20` success at
-initial-noise standard deviations `0.10` and `0.20`, and at an 8-second
-conditioning phase; it scored `19/20` with 6 seconds. It failed the tested
-force, morphology, damping, sensor-noise, and control-delay perturbations. This
-is a strong benchmark result with a narrow plant-and-timing contract, not a
-claim of broad robustness.
-
-## The nine-link record extension
-
-The same parked-launch, feedback-route, and delayed-capture architecture now
-reaches nine links on the repository's canonical uniform plant. It is the
-second-highest frozen result in the 7-10 link progression:
-
-| Benchmark property | Result |
-|---|---:|
-| Links | **9** |
-| 20-episode noisy gate | **20/20 (100%)** |
-| 100-episode noisy gate | **100/100 (100%)** |
-| Exact 20-episode check | **20/20 (100%)** |
-| Resets inside episodes | **0** |
-| Rail failures in the 100-episode gate | **0** |
-| First upright in held-out video | **17.84 s** |
-| Upright hold through video end | **12.18 s** |
-| Maximum cart excursion across 100 noisy episodes | **2.9800 m** |
-
-The nine-link launch parks the hanging cart at `-0.05 m` for `14.0 s`, runs a
-`3.94 s` Box-FDDP route with saved time-varying feedback, and hands off to an
-upright LQR around the parked cart target. The route's terminal objective
-weights absolute angle `20x` and hinge rate `4x`, producing a genuinely quiet
-handoff. See the [nine-link method paper](docs/nine_link_swingup_paper.md).
-
-| Artifact | What it establishes |
-|---|---|
-| [Zoomed-out 30-second video](runs/generalized_solver/nine_link_swingup_success.mp4) | Reset-free noisy hanging-start replay with all nine links visible |
-| [Video metadata](runs/generalized_solver/nine_link_swingup_success.video.json) | Held-out seed, zero resets, frame count, hashes, and final metrics |
-| [20-episode noisy gate](runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_20.json) | First nine-link acceptance gate: 20/20 |
-| [100-episode noisy gate](runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_100.json) | Nine-link final statistical gate: 100/100 |
-| [Exact 20-episode check](runs/generalized_solver/n9_fddp_terminal_angle20_parked_target005_exact20.json) | Deterministic no-noise replay: 20/20 |
-| [Nine-link manifest](runs/generalized_solver/nine_link_swingup_manifest.json) | Frozen phase timings, controller hash, config hash, and evidence links |
-| [Nine-link method paper](docs/nine_link_swingup_paper.md) | Method, terminal-angle refinement, negative controls, limitations, and reproduction commands |
-
-## The ten-link record extension
-
-The same settled-launch, feedback-route, and delayed-capture architecture now
-passes the repository's uniform ten-link benchmark. This remains the frozen
-public predecessor to the new local eleven-link result, not a claim about an external
-competition record.
-
-| Benchmark property | Result |
-|---|---:|
-| Links | **10** |
-| 20-episode noisy gate | **20/20 (100%)** |
-| 100-episode noisy gate | **100/100 (100%)** |
-| Exact 20-episode check | **20/20 (100%)** |
-| Resets inside episodes | **0** |
-| Rail failures in the 100-episode gate | **0** |
-| Parked launch | **16.0 s at -0.05 m** |
-| Swing route | **400 steps / 8.0 s** |
-| Maximum cart excursion across 100 noisy episodes | **1.9976 m** |
-| Held-out video | **30.0 s, 1,500 frames, zero resets** |
-
-The ten-link controller was obtained by exact target-plant Box-FDDP refinement
-of a two-second endpoint-shaped route. The decisive change was to optimize the
-route feedback and the terminal arrival together; the earlier single-sample
-endpoint route passed exact replay but had no usable noisy capture basin.
-
-| Artifact | What it establishes |
-|---|---|
-| [Zoomed-out 30-second video](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.mp4) | Held-out noisy hanging-start replay with all ten links visible |
-| [Video metadata](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005.video.json) | Seed, 1,500 frames, zero resets, final success, and hashes |
-| [20-episode noisy gate](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005_20.json) | First ten-link acceptance gate: 20/20 |
-| [100-episode noisy gate](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005_100.json) | Ten-link final statistical gate: 100/100 |
-| [Exact 20-episode check](runs/generalized_solver/n10_fddp_refined_route_feedback100_park16_targetm005_exact20.json) | Deterministic no-noise replay: 20/20 |
-| [Ten-link controller](runs/generalized_solver/n10_fddp_refined_route_feedback100.json) | Target-plant Box-FDDP route, nominal states, and time-varying feedback |
-| [Ten-link manifest](runs/generalized_solver/ten_link_swingup_manifest.json) | Frozen contract, hashes, seeds, method, and limitations |
-| [Ten-link SHA-256 checksums](runs/generalized_solver/n10_release_SHA256SUMS) | Release checksum list for the config, controller, gates, video, metadata, manifest, paper, and verifier |
-| [Ten-link method paper](docs/ten_link_swingup_paper.md) | Method, evidence, negative controls, and reproduction commands |
-
-## The eight-link record extension
-
-The same two-expert idea reaches eight links on the repository's canonical
-uniform plant. This remains a verified internal benchmark, not a claim about
-an external competition record:
-
-| Benchmark property | Result |
-|---|---:|
-| Links | **8** |
-| 20-episode noisy gate | **20/20 (100%)** |
-| 100-episode noisy gate | **100/100 (100%)** |
-| Exact 20-episode check | **20/20 (100%)** |
-| Resets inside episodes | **0** |
-| Rail failures in the 100-episode gate | **0** |
-| First upright in held-out video | **17.80 s** |
-| Upright hold through video end | **12.22 s** |
-| Maximum cart excursion across 100 noisy episodes | **2.9300 m** |
-
-The eight-link launch parks the hanging cart at `-0.15 m` for `14.0 s`, runs a
-`3.94 s` Box-FDDP route with saved time-varying feedback, and hands off to an
-upright LQR around the parked cart target. Parking is a controller phase, not
-a reset or a changed initial state. See the [eight-link method paper](docs/eight_link_swingup_paper.md).
-
-| Artifact | What it establishes |
-|---|---|
-| [Zoomed-out 30-second video](runs/generalized_solver/eight_link_swingup_success.mp4) | Reset-free noisy hanging-start replay with all eight links visible |
-| [Video metadata](runs/generalized_solver/eight_link_swingup_success.video.json) | Held-out seed, zero resets, frame count, hashes, and final metrics |
-| [20-episode noisy gate](runs/generalized_solver/n8_fddp_parked_target015_14s_noisy20.json) | First eight-link acceptance gate: 20/20 |
-| [100-episode noisy gate](runs/generalized_solver/n8_fddp_parked_target015_14s_noisy100.json) | Eight-link final statistical gate: 100/100 |
-| [Exact 20-episode check](runs/generalized_solver/n8_fddp_parked_target015_14s_exact20.json) | Deterministic no-noise replay: 20/20 |
-| [Eight-link manifest](runs/generalized_solver/eight_link_swingup_manifest.json) | Frozen phase timings, controller hash, config hash, and evidence links |
-| [Eight-link SHA-256 manifest](runs/generalized_solver/SHA256SUMS) | Integrity hashes for the route, gates, video, and manifest |
-| [Eight-link method paper](docs/eight_link_swingup_paper.md) | Method, negative controls, limitations, and reproduction commands |
-
-## Generalized solver ladder (development)
-
-Separate from the frozen seven-link record, the repository now includes a
-bottom-up, morphology-aware solver track. It starts at one link, promotes a
-controller only after an uninterrupted noisy gate, then uses that accepted
-route to initialize the next link count. The deterministic layer supplies
-dimensionless scaling, exact mass-matrix partial feedback linearization,
-arc-length state/feedback transfer, Box-FDDP refinement, Riccati capture, and
-exact left/right symmetry. The thin online layer consists of exact-model route
-selection plus bounded action-direction system identification; neither learns
-the swing trajectory.
-
-| Uniform chain | Current gate | Body-aware required rail ratio |
-|---:|---:|---:|
-| 1 link | **20/20** through shared evaluator | 0.951 |
-| 2 links | **20/20** | 1.013 |
-| 3 links | **20/20** | 1.001 |
-| 4 links | **20/20** | 0.995 |
-| 5 links | **20/20** | 1.171 |
-| 6 links | **20/20** | 1.093 |
-| 7 links | **20/20** through shared evaluator; canonical release is **100/100** | 0.850 |
-| 8 links | Separate parked-launch release is **100/100** | 1.037 |
-| 9 links | Separate parked-launch release is **100/100** | 1.053 |
-| 10 links | Separate parked-launch release is **100/100** | 0.726 |
-
-The shared-evaluator rows are development results and remain separate from the
-four frozen record releases above. See the
-[generalized solver design and honest frontier](docs/generalized_solver.md),
-including why total chain energy and one aggregate phase variable stop being
-sufficient as internal modes appear. Rail length is solved jointly with the
-route: n=5 needed a 4.5 m half-rail for its tested controller, while the new
-n=6 route passed on a 4.0 m half-rail and measured a 1.093 body-aware ratio.
-For n=6, a morphology-derived modal seed, bounded exact-model residual search,
-full-rank endpoint Gauss--Newton correction, Box-FDDP feedback, Riccati
-capture, and exact planar mirror passed all 20 uninterrupted noisy episodes.
-The n=7 row reuses the frozen record controller through this shared evaluator;
-it does not claim that the new modal synthesis has independently regenerated
-the record route. The n=8 row is the separate parked-launch promotion and its
-`1.037` body-aware ratio is `(2.9300 m + 0.18 m) / 3 m`; the n=9 row is the
-same parked-launch promotion with a `1.053` body-aware ratio from the noisy
-100-episode maximum. Neither is an independent modal-synthesis regeneration.
-Arbitrary unequal morphologies and n>=11 remain active work.
-
-The n=1 rung now uses the same saved-route, exact mirror, forward-model
-selection, bounded-action execution, LQR capture, and uninterrupted noisy gate
-interface as n=2 through n=7. Its analytic energy controller acts only as a
-deterministic route teacher. A hash-bound verifier checks all controller
-dimensions and action bounds, exact symmetry, selector predictions, rail
-measurements, unique seeds, and uninterrupted outcomes: the shared contract is
-currently **140/140** with prediction matching execution in all **140/140**
-episodes. See the [verified uniform ladder](runs/generalized_solver/uniform_ladder_n1_n7.json)
-and [n=1 shared-evaluator gate](runs/generalized_solver/n1_gate_20_shared.json).
-This verifies one execution architecture, not one unchanged force trace or one
-route-synthesis primitive for every morphology.
-
-Physical scale is now executable too. The same dimensionless one-link
-energy/PFL controller and exact LQR capture passed **80/80** noisy episodes on
-the full half/double-length x half/double-mass grid with no controller retuning.
-An analytically transformed two-link feedback route then passed another
-**20/20** episodes at double length and half mass. The deliberately harder
-seven-link version initially failed **0/5** after blind transfer; the same
-count-independent exact-target refinement, analytic mirror, and automatically
-RMS-normalized feedback pipeline then passed **20/20** fresh noisy starts. The
-refined route held for `36.034 s`, prediction matched execution in all 20, and
-its maximum body-aware rail requirement was `0.8584` times total chain length.
-That brings the scale-family certificate to **120/120** across links one, two,
-and seven.
-
-The four-link route now also exercises an adaptive physical-scale continuation
-instead of one blind endpoint jump. It materializes the feedback-corrected
-swing **and** analytic maintenance tail that actually passed, advances through
-the dimensionless length/mass family with an adaptive step, and screens only a
-bounded set of global or swing/tail feedback multipliers when a direct transfer
-fails. There are no four-link branches or learned swing parameters. Starting
-from the ordinary four-link route, it reached **2x total length and 0.5x total
-mass** on the original `R/L = 1.0` rail and passed a fresh **20/20** noisy
-promotion gate. Prediction matched execution in all 20, minimum upright hold
-was `8.457 s`, and maximum body-aware rail demand was `0.995762 L`. See the
-[portable verification manifest](runs/generalized_solver/similarity_n4_l2_m05_continuation_verified.json),
-[20-episode gate](runs/generalized_solver/similarity_n4_l2_m05_continuation_gate20.json),
-and [derivation and limits](docs/generalized_solver.md).
-
-The generator preserves force authority, natural-time/control-rate, damping,
-armature, cart/rail geometry, and initial-noise groups exactly; the verifier
-also checks body-aware rail demand, normalized capture timing, and the
-transferred-feedback authority envelope. See the
-[dynamic-similarity certificate](runs/generalized_solver/similarity_ladder_n1_n2_n7.json),
-[seven-link pipeline manifest](runs/generalized_solver/similarity_n7_l2_m05_refined_pipeline.json),
-and [derivation and limits](docs/generalized_solver.md). This proves the
-declared cases, not arbitrary unequal morphologies or arbitrary link count;
-target-model feedback/refinement and noisy gating remain mandatory before a
-transferred route is promoted.
-
-The count-agnostic locked-split continuation has also crossed its deliberately
-hard n=2 to unequal-n=3 topology boundary. Direct equality relaxation reached
-`p=0.99954875` but rejected the discontinuous endpoint. A deterministic
-dimensionless support ladder then completed from `kappa=1`, `d=0.01` to
-`kappa=10`, `d=0.1`; at that support the equality was removed completely and
-the exact nonlinear replay held upright for `19.38 s` with `4.507433 m` peak
-cart travel. This is a fully unlocked three-link topology, but it is still a
-physically supported plant—not the unsupported target.
-
-Support removal is now measured on two declared paths. Coupled spring/damping
-relaxation has an exact-pass frontier at `p=0.966604614` (hold `20.52 s`), while
-the more stable axis-separated schedule removed `99.375%` of spring stiffness
-at fixed damping and held for `19.96 s` with `3.917783 m` peak cart travel.
-The zero-stiffness endpoint remains rejected, so damping removal and the final
-unsupported noisy gate have not started. Here `p` is only a homotopy coordinate,
-not percent completion of the general-solver task. See the
-[compact hash-bound support frontier](runs/generalized_solver/supported_unlock_frontier.json),
-which publishes the final accepted and nearest rejected checkpoints without
-shipping hundreds of megabytes of optimizer scratch history.
-
-The capture gate is also now actuator-aware. On freshly replayed handoffs from
-the proven n=7, n=8, and n=9 routes, the same exact five-second saturated-LQR
-audit used zero saturated steps and completed the requested hold. The current
-n=10 terminal-arrival proposal is a useful negative control: its raw feedback
-demand is `738.673` for an actuator limited to `1`, and the minimum stabilizing
-gain scale is about `699.4x` larger than the maximum initially nonsaturating
-scale. It saturates continuously and hits the rail after `1.04 s`. This tells
-the next deterministic optimizer to reshape the arrival into the feasible
-capture set rather than merely shrinking the LQR gain. An exact logarithmic
-ray scan now quantifies that target: this particular arrival direction first
-fails at `1.91994e-5` of its current error, so its origin-connected five-second
-capture interval is roughly `52,085x` smaller than the proposed error vector.
-This is a directional basin measurement, not a global basin certificate. The
-same audit now emits an optimizer-ready linear-feedback residual over one
-natural time: it predicts zero saturated steps for n=7 through n=9, but all
-`28/28` steps saturated for this n=10 arrival. See the
-[n=7 audit](runs/generalized_solver/n7_release_actual_handoff_capture_geometry.json),
-[n=8 audit](runs/generalized_solver/n8_release_actual_handoff_capture_geometry.json),
-[n=9 audit](runs/generalized_solver/n9_release_actual_handoff_capture_geometry.json),
-[n=10 negative control](runs/generalized_solver/n10_centered_terminal8_capture_geometry.json), and
-[generalized solver notes](docs/generalized_solver.md).
-
-The same bounded actuator adapter has also passed a paired development check at
-every rung. A hidden map `delivered = 1.18 * commanded + 0.06` broke all 21
-unadapted trials, while four seconds of deterministic calibration followed by
-a frozen gain/bias estimate recovered **21/21** trials. Controller routes and
-energy parameters were unchanged, the largest action correction was `0.204`
-against a hard `0.35` bound, and the largest fitted-parameter error was
-`0.0026`. See the [verified adaptation ladder](runs/generalized_solver/adaptation_ladder_n1_n7.json).
-This is a deliberately small, fully compensable actuator diagnostic—not proof
-of arbitrary morphology robustness. Lost force authority at saturation and
-residuals outside the modeled action direction still require replanning.
-
-The first unequal-morphology promotion now exercises that replan path. For a
-two-link chain with lengths `[1.2, 1.8] m` and masses `[0.35, 0.65] kg`, direct
-arc-length transfer scored **0/5**. Refining the transferred route on the exact
-measured plant with the same Box-FDDP, Riccati-capture, and mirror architecture
-then passed **20/20** noisy uninterrupted episodes, with prediction matching
-execution on all 20. Its maximum body-aware required rail ratio was `1.193` on
-the declared `1.5` configured ratio. The [verified unequal-morphology artifact](runs/generalized_solver/n2_unequal_frontier.json)
-keeps this result separate from the uniform ladder and explicitly limits the
-claim to this one plant. A new parameterized pipeline command now performs the
-whole transfer -> exact-target refinement -> mirror -> noisy-gate -> verifier
-sequence from source controller and target morphology files; it contains no
-link-count branch or per-count controller constants.
-
-The next deliberately stronger three-link target is still unsolved at full
-strength. Its lengths `[0.75, 1.0, 1.25] m` and masses `[0.2, 0.3, 0.5] kg`
-caused direct transfer and direct exact refinement to fail, so the one-shot
-pipeline correctly stops before promotion. See the
-[one-command n=3 negative frontier](runs/generalized_solver/n3_unequal_pipeline.json).
-The uniform n=3 gate above remains valid. Deterministic continuation now
-repairs nearby routes through adaptive exact-model waypoint horizons before the
-full-horizon feedback pass. When the original `0.48 s` horizon hit a trajectory
-branch wall, the same generic driver automatically tried `0.96 s` and `1.92 s`
-lookahead rather than adding a per-morphology controller. The curated n=3
-checkpoint has now advanced the strong-morphology path from `p=0.02500` to
-`p=0.0360234`; its exact hanging replay held upright for `18.78 s`. The
-analytic route pair alone passed **19/20**, leaving one start outside both
-immediate-launch basins. The new bounded selector tests the pair over a fixed
-grid of hanging-LQR durations expressed in morphology natural-time units and
-executes the shortest predicted success. It then passed **20/20** and a
-disjoint **100/100**, with prediction matching execution every time. Of the
-100 episodes, 99 launched immediately and one used only the first `0.25 tau`
-rung; maximum required rail ratio was `1.369`. The selector uses zero learned
-parameters and no link-count constants. A 50-trial continuation ledger contains
-27 accepted and 23 rejected proposals; every rejected final replay hit the
-rail, exposing rail length as an active continuation coordinate rather than a
-link-count constant. The joint driver has now advanced exact replay to
-`p=0.0362145` on the original rail, with an `18.78 s` hold and a measured
-body-aware rail ratio of `1.593`. This newest point is exact-only development
-evidence. The earlier `p=0.0360548` route passed a fresh **20/20** cohort but
-scored **96/100** on the disjoint larger gate; all four failures were predicted
-by the exact selector and ended at the rail. It is therefore retained as a
-negative robustness boundary, while `p=0.0360234` remains the robust
-**100/100** checkpoint. A new normalized-clearance guard also stops rail
-expansion when a failed optimizer merely follows the wider boundary outward;
-that case now shrinks the morphology step instead of being misclassified as a
-physical rail requirement. This is a verified partial-morphology frontier, not
-a solution of the `p=1` target. See the
-[adaptive checkpoint](runs/generalized_solver/n3_unequal_adaptive_checkpoint.json),
-[packaged route](runs/generalized_solver/n3_unequal_p036023_route.json), and
-[100-episode adaptive gate](runs/generalized_solver/n3_unequal_p036023_adaptive100.json).
-The [measured morphology/rail frontier](runs/generalized_solver/n3_unequal_rail_frontier.json)
-keeps successful route requirements separate from failed-controller excursions.
-The resumable
-[`run_joint_morphology_rail_homotopy.py`](scripts/run_joint_morphology_rail_homotopy.py)
-expands rail only after a measured rail collision, continues morphology, then
-contracts rail toward the requested target; expanded-rail passes remain
-development evidence until the final target-rail replay succeeds.
-The newer [exact route](runs/generalized_solver/n3_unequal_p036055_route.json),
-[20-episode pass](runs/generalized_solver/n3_unequal_p036055_adaptive20.json),
-and [96/100 negative gate](runs/generalized_solver/n3_unequal_p036055_adaptive100.json)
-make that promotion boundary inspectable. The newer
-[`p=0.0362145` exact-only route](runs/generalized_solver/n3_unequal_p036214_route.json)
-and [exact replay](runs/generalized_solver/n3_unequal_p036214_exact1.json) keep
-the continuing deterministic frontier separate from the robust claim.
-
-## Next frontier: twelve links
-
-Eleven links has passed the repository's internal evidence bundle. The next
-active frontier is **twelve links**, and it must use the same discipline: start
-hanging, apply the settled-cart launch, swing with saved feedback, capture in
-the same episode, and pass fresh exact and noisy gates on the canonical rail.
-The eleven-link route is a warm start for target-plant re-optimization, not a
-literal dimension-lifted controller. Earlier transfer, tail-search, and
-training-wheel artifacts remain preserved as negative controls in the
-experiment ledger.
-
-- [`configs/swingup10_uniform.yaml`](configs/swingup10_uniform.yaml)
-- [`runs/generalized_solver/n10_fddp_refined_route_feedback100.json`](runs/generalized_solver/n10_fddp_refined_route_feedback100.json)
-- [`runs/generalized_solver/ten_link_swingup_manifest.json`](runs/generalized_solver/ten_link_swingup_manifest.json)
-- [`docs/ten_link_swingup_paper.md`](docs/ten_link_swingup_paper.md)
-- [`ROADMAP.md`](ROADMAP.md)
-
-The project advances one link only after the same evidence bundle passes. Eleven
-links is the highest verified internal benchmark; twelve links is now the
-active frontier. The provisional public record claim remains scoped to the
-frozen ten-link benchmark; no broader universal record is claimed.
-
-## Reproduce the result
-
-Requirements: Python 3.10+, MuJoCo, and a local environment capable of running
-Crocoddyl/Box-FDDP. The recorded setup targets Apple Silicon; see
-[`requirements-fddp.txt`](requirements-fddp.txt) and
-[`scripts/setup_aligator.sh`](scripts/setup_aligator.sh) for the planner stack.
-
-```bash
-git clone https://github.com/corbensorenson/cartpole.git
-cd cartpole
-
-make setup-aligator
-make release-swingup7
-
-# Verify the original seven-link release when reproducing that release.
-make verify-swingup7
-
-# Verify the released internal ten-link controller, gates, video, and manifest.
-make verify-ten-link-release
-sha256sum -c runs/generalized_solver/n10_release_SHA256SUMS
-
-# Rebuild the consolidated 7-10 link PDF.
-make setup-paper
-make render-record-paper
-```
-
-`release-swingup7` regenerates the original seven-link release and intentionally
-refuses to run when tracked source files are dirty. The ten-link command above
-audits the frozen internal bundle without regenerating it; the manifest records
-that its source tree was dirty at generation, so the exact artifact hashes are
-the authority for this release.
-For individual replay commands and the evidence contract, follow the
-[consolidated paper's reproduction section](docs/seven_link_swingup_paper.md#9-reproduction-and-artifact-map).
-The [eight-link reproduction section](docs/eight_link_swingup_paper.md#6-reproduction)
-contains the exact parked-launch evaluation and rendering commands.
-The [nine-link reproduction section](docs/nine_link_swingup_paper.md#6-reproduction)
-contains the current frontier's exact commands and terminal-angle settings.
-The [ten-link reproduction section](docs/ten_link_swingup_paper.md#4-reproduction)
-contains the exact parked-route gates, held-out render, and release verifier.
+Use that release's **frozen source bundle, recorded runtime, and command file**.
+The latest repository combines ongoing work and several optimizer environments;
+installing one generic environment is not a substitute for a release's recorded
+setup. Begin with the [fourteen-link reproduction notes](docs/one-dimensional-guide.md#reproduce-the-fourteen-link-release).
 
 ## Repository map
 
 | Path | Purpose |
-|---|---|
-| [`src/gcartpole`](src/gcartpole) | MuJoCo environment, controllers, optimizers, and evidence code |
-| [`configs`](configs) | Frozen benchmark and curriculum configurations |
-| [`scripts`](scripts) | Training, search, evaluation, replay, and rendering entry points |
-| [`tests`](tests) | Dynamics, optimizer, morphology, and evidence-contract tests |
-| [`docs`](docs) | Paper, roadmap support, experiment ledger, and reproduction notes |
-| [`runs/generalized_solver`](runs/generalized_solver) | Curated n=1..10 gates, routes, videos, and honest frontier records |
-| [`runs/swingup7_uniform`](runs/swingup7_uniform) | Curated public seven-link evidence bundle |
+| :--- | :--- |
+| [`src/gcartpole/`](src/gcartpole) | 1D environment and controllers |
+| [`configs/`](configs) · [`scripts/`](scripts) | 1D plants, synthesis, evaluation and verification |
+| [`docs/`](docs) | 1D papers, method notes and evidence guides |
+| [`runs/`](runs) | Reviewed public 1D controllers, manifests, tapes and videos |
+| [`2d/src/spatialpole/`](2d/src/spatialpole) | 2D spatial environment and controller tools |
+| [`2d/evidence/`](2d/evidence) · [`2d/videos/`](2d/videos) | Frozen 2D evidence and full videos |
+| [`2d/research/`](2d/research) | 2D experiment contracts and research records |
+| [`tests/`](tests) · [`2d/tests/`](2d/tests) | Each track's tests |
+| [`DEVELOPMENT.md`](DEVELOPMENT.md) | Contribution, worktree and publication workflow |
 
-Research history is intentionally preserved, including negative results. Start
-with the [method paper](docs/seven_link_swingup_paper.md) for the clean narrative
-and [`docs/levers_and_pitfalls.md`](docs/levers_and_pitfalls.md) for the full
-experiment ledger.
+## Evidence and citation
+
+Accepted results include frozen controllers and source identities, declared
+cohorts, complete episodes, and full videos. Failed attempts and partial results
+keep their original status. A passing reset-noise cohort establishes performance
+on that distribution; broader disturbance robustness and indefinite balance
+require separate experiments.
+
+Use [CITATION.cff](CITATION.cff) to cite the project, and include the relevant
+release tag or source commit when reporting a numerical result.
