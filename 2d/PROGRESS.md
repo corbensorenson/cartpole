@@ -189,6 +189,60 @@ The one-dimensional benchmark at D:/ChatGPT/cartpole remains separate.
 - Six-link full held-out video: 1501 frames / 50fps / 30.02s encoding, SHA256
   `6dd2771d6b791293b93d84336924d63aace5e8bed1070bcc40847f0b556c520b`.
   A full-duration 30s preview and phase-labeled contact sheet were inspected.
+- Six-link release is public at `2d-cartpole-6-link-v1`, commit
+  `0f15e3979e469b378bea2d8928baa56d8fa42e30`. Full video and 273.22MB
+  evidence ZIP uploaded, with both public asset SHA256 digests matching.
+  All 1438 staged/archive files verify; published source passes 33 tests and
+  reproduces the first held-out state/action/tilt tape byte-for-byte.
+- `output/planar_lift_n7_001`: frozen historical seven-link route/parent nominal
+  arrays match and coordinate reconstruction passes; direct spatial transfer
+  fails at 5.08s with exact replay. Source motion is a proposal only.
+- `output/tracking_repair_n7_001`: first fixed-target repair stalls after 19
+  iterations with unresolved gaps and fails actual nominal at 5.34s. Native
+  design costs 1,782,436 steps. No seven-link success from this policy.
+- `output/tracking_repair_n7_002`: initial feasibility penalty raised from
+  1000 to 100000, otherwise same weights/model/target; detailed line-search
+  diagnostics added. Forty iterations / 3,667,540 design steps. Nominal plus
+  all 12 noisy development starts pass full 30s with 25.48s hold and exact replay.
+  No parking/gauge wrapper is required or used. Source now passes 34 tests.
+- `output/qualify_n7_001`: frozen second repaired policy, 32 NEW seeds
+  20261816..20261847, finishes at 31/32. Seed 20261831 exits in Y at 4.04s.
+  This policy is NOT accepted or published. These seeds are development now.
+- User-requested `output/spatial_audit_001`: compiled 1,3,7-link models have
+  independent X/Y slides, free ball joints, no equality/limit/joint-actuator
+  constraints. All per-joint transverse perturbations and passive spin respond.
+  Matched X/Y force probes agree under 90-degree rotation within 2.56e-15.
+  Persistent native MuJoCo matches environment transition states bit-for-bit.
+  Changing-direction forces yield cart path minor/major ratios 0.60..0.69 and
+  nonplanar rod motion. 4420 physics steps; all recorded cohort kinematics checked.
+  Counts 4..6 have essentially planar nominal references; Y feedback is active
+  under spatial noise. Count two already has substantial nominal two-axis motion.
+- `output/nonplanar_demo_n6_001`: new controlled XY loop after t=18s, same
+  physical plant and six-link swing/parking prefix. Nominal+3 noisy starts all
+  pass full 30s with exact replay, 14.06s hold; post-capture cart spans at least
+  1.11556m X and 0.911999m Y, minor/major ratio >=0.7779748. Maximum world rod
+  tilt throughout the orbit is 0.0233697rad. This is an audit demonstration,
+  not an additional count qualification. Full phase-labeled video rendered and
+  inspected; SHA256 0aa0e1d7900caf25f3dceb79a0346961e17b41761661957b901e53c86537e296.
+  New spatial-freedom regression checks bring the suite to 44 passing tests.
+- Spatial audit and controlled XY-loop bundle is public under
+  `2d/audits/spatial_freedom_001`, commit
+  `788b876d6d1f9bb61e7deca7e586889058ca223a`. Its 114 files verify, bundled
+  source passes 44 tests, audit metrics and all four controlled tapes reproduce
+  exactly. The original six-link release's 1438 staged/archive hashes remain
+  unchanged. Root overview now explains the planar-reference scope.
+- `output/conditioned_n7_001`: 12s hanging feedback plus axial-frame alignment;
+  nominal and all 76 noisy development starts pass (77/77), including the entire
+  failed first reserved cohort. All hold 13.48s and replay exactly. No state
+  reset, lock or clock extension. Extra development summary is frozen/hashed.
+- `output/qualify_n7_002`: frozen conditioned controller on NEW untouched seeds
+  20271816..20271847 passes 32/32 full 30s episodes and exact replay, all holding
+  13.48s. All initial states are distinct. Maximum cart coordinate 2.366482402m;
+  minimum substep margin 0.631862733m; maximum launch tilt from down 1.43734e-5rad.
+  This earns the explicitly 2D seven-link release.
+- Full first final-cohort video: 1501 frames / 50fps / 30.02s encoding,
+  SHA256 `5a5a18fe16e68436fd46df0391f86ea1d3a24069bd0f2a0320835c9ba54054e8`.
+  Full-duration preview and phase-labeled contact sheet were inspected.
 
 ## Publication policy
 
@@ -204,9 +258,16 @@ established. Thirty-two reset-noise trials do not certify arbitrary disturbances
 
 ## Resume checkpoint
 
-Six-link experiments and qualification are terminal, with a qualified frontier
-of SIX. Prepare/publish its full video and evidence release next. Then advance
-to seven under a pre-recorded plan. The frozen historical seven-link release
+Seven-link and audit experiments are terminal, with a qualified frontier of
+SEVEN. The audit/demo bundle is public; prepare/publish the separate seven-link
+qualified full video and evidence release. Its final cohort is NEW, distinct
+from the preserved 31/32 failure. User explicitly requests this publication and
+continued higher counts. Next inspect the eight-link historical route
+`runs/generalized_solver/n8_capture_fddp_feedback120.json`: 197 commands / 3.94s,
+uniform eight links, source nominal cart maximum 3.059733m on a wider rail.
+It is only a proposal for unchanged spatial mechanics. Record the next native
+repair recipe and fresh seeds before execution. No simulation is still running.
+The historical release
 controller is runs/swingup7_uniform/seven_link_release_controller.json in the
 read-only checkout, 228 commands / 4.56s, maximum nominal cart 2.370306m. Its
 development_origin points to runs/swingup7_fddp_full_hanging_ilqr_terminal100k_deferred_lqr1.json;
@@ -217,8 +278,8 @@ The successful new tool is native fixed-target affine trajectory repair,
 not force-only transfer. Preserve the strict 30s clock and all physical freedoms.
 Record the chosen method, warm start, seeds and compute limit BEFORE execution.
 Do not restart an experiment while its process is alive or its completed marker
-exists. Checkpoints are proposals until full actual float32 gates pass. Seven-link
-reserved qualification seeds will be 20261816..20261847, untouched at this entry.
+exists. Checkpoints are proposals until full actual float32 gates pass. Eight-link
+reserved qualification seeds will be 20261916..20261947, untouched at this entry.
 All future successful count releases require an explicitly 2D label, full video,
 state/action evidence and hashes. No upper frontier has been established.
 

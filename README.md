@@ -8,7 +8,7 @@ chain. Both start hanging, use full-state feedback, and must finish an
 uninterrupted episode within the cart boundary.
 
 [![1D: 14 links qualified](https://img.shields.io/badge/1D-14_links_qualified-2563eb)](#1d-cart-pole)
-[![2D: 6 links qualified](https://img.shields.io/badge/2D-6_links_qualified-7c3aed)](#2d-cart-pole)
+[![2D: 7 links qualified](https://img.shields.io/badge/2D-7_links_qualified-7c3aed)](#2d-cart-pole)
 [![MuJoCo 3.3.5](https://img.shields.io/badge/MuJoCo-3.3.5-059669)](https://mujoco.readthedocs.io/en/3.3.5/)
 
 [1D results](#1d-cart-pole) · [2D results](#2d-cart-pole) ·
@@ -22,15 +22,15 @@ uninterrupted episode within the cart boundary.
   </tr>
   <tr>
     <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/fourteen-link-canonical-20261002"><img src="assets/fourteen-link-swingup.gif" alt="Fourteen passive planar links swing up and hold; preview runs at twice speed" width="360"></a></td>
-    <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-6-link-v1"><img src="2d/videos/2d-cartpole-6-link-preview.gif" alt="Six passive spatial links swing up and hold on an XY cart" width="360"></a></td>
+    <td><a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-7-link-v1"><img src="2d/videos/2d-cartpole-7-link-preview.gif" alt="Seven passive spatial links swing up and hold on an unrestricted XY cart" width="360"></a></td>
   </tr>
   <tr>
     <td><strong>14 links qualified.</strong> Full 30-second episodes; 8.16 seconds upright. Preview at 2× speed.</td>
-    <td><strong>6 links qualified.</strong> Full 30-second episodes; 14.06 seconds upright after 12 seconds hanging preparation. Preview at normal speed.</td>
+    <td><strong>7 links qualified.</strong> Full 30-second episodes; 13.48 seconds upright after 12 seconds hanging preparation. Preview at normal speed.</td>
   </tr>
   <tr>
     <td><a href="runs/swingup14_uniform/fourteen_link_swingup_success.mp4">Full video</a> · <a href="docs/fourteen_link_swingup_paper.md">Technical appendix</a> · <a href="https://github.com/corbensorenson/cartpole/releases/tag/fourteen-link-canonical-20261002">Release</a></td>
-    <td><a href="https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-6-link-v1/2d-cartpole-6-link-swingup.mp4">Full video</a> · <a href="2d/README.md">Method & evidence</a> · <a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-6-link-v1">Release</a></td>
+    <td><a href="https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-7-link-v1/2d-cartpole-7-link-swingup.mp4">Full video</a> · <a href="2d/README.md">Method & evidence</a> · <a href="https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-7-link-v1">Release</a></td>
   </tr>
 </table>
 
@@ -93,8 +93,9 @@ Success requires a complete 30-second episode and every rod's world tilt below
 | 3 links | **32/32** fresh complete episodes | 6.78 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-3-link-v1/2d-cartpole-3-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-3-link-v1) |
 | 4 links | **32/32** fresh complete episodes | 7.22 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-4-link-v1/2d-cartpole-4-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-4-link-v1) |
 | 5 links | **32/32** fresh complete episodes | 21.70 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-5-link-v1/2d-cartpole-5-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-5-link-v1) |
-| **6 links** | **32/32** fresh complete episodes | 14.06 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-6-link-v1/2d-cartpole-6-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-6-link-v1) |
-| 7 links | In development | — | [Progress log](2d/PROGRESS.md) |
+| 6 links | **32/32** fresh complete episodes | 14.06 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-6-link-v1/2d-cartpole-6-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-6-link-v1) |
+| **7 links** | **32/32** fresh complete episodes | 13.48 s | [Full video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-7-link-v1/2d-cartpole-7-link-swingup.mp4) · [Release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-7-link-v1) |
+| 8 links | In development | — | [Progress log](2d/PROGRESS.md) |
 
 Native MuJoCo finite differences feed iLQR trajectory optimization. A finite
 feedback table tracks the swing, then hands off to upright discrete LQR.
@@ -125,12 +126,18 @@ episode. The raw controller failed four of 12 noisy starts; the conditioned
 policy passes all 44 development starts and a new 32-start qualification cohort.
 
 **Why some videos look planar:** the plant has independent XY cart motion and
-unrestricted ball joints, but the four- through six-link nominal swing references
+unrestricted ball joints, but the four- through seven-link nominal swing references
 are essentially planar. Y feedback corrects spatial disturbances. The
 [independent physics audit](2d/audits/spatial_freedom_001) checks every joint's
 transverse freedom, passive spin and persistent native two-axis dynamics.
 Its [controlled six-link XY-loop video](2d/audits/spatial_freedom_001/controlled_xy_orbit.mp4)
 shows deliberate motion across both axes while keeping all six rods upright.
+
+Seven links passes nominal plus 76 noisy development starts, then a NEW 32-start
+qualification cohort. Its raw predecessor failed at 31/32; those seeds were
+reused only as development. The final policy combines 12 seconds hanging
+preparation, a 4.56-second repaired swing and upright feedback within the same
+30-second clock. All world tilts stay below 0.15rad for 13.48 consecutive seconds.
 
 The final qualification uses fresh 3D hanging-start perturbations and checks
 actual float32 forces, full state/action tapes, and independent replay.

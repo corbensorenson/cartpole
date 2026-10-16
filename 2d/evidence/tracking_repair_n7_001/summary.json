@@ -1,0 +1,45 @@
+{
+  "n_links": 7,
+  "passes": 0,
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 2.9244255223731535,
+      "best_hold_seconds": 0.06,
+      "plane_margin": -0.09928194921444033,
+      "physics_warning": false,
+      "success": false,
+      "steps": 267,
+      "native_steps": 1068,
+      "wall_seconds": 0.13171589999910793,
+      "max_xy": [
+        3.0992819492144403,
+        0.00016980133784125318
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.9244255223731535,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 1068
+    }
+  ],
+  "design_native_steps": 1782436,
+  "optimizer_iterations": 19,
+  "last_optimizer_record": {
+    "iteration": 18,
+    "cost": 2.9358692648487033,
+    "defect_value": 0.00199549128217847,
+    "max_scaled_defect": 0.012289165681315817,
+    "penalty": 10000.0,
+    "trust": 24300000000.0,
+    "alpha": 0.0,
+    "accepted": false,
+    "bounded_steps": 18,
+    "native_steps": 1781524,
+    "reference_max_cart": 2.3684453495660374
+  },
+  "wall_seconds": 32.778785000002244,
+  "scope": "input motion is a geometric target only; actual gates use the unchanged benchmark"
+}

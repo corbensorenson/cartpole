@@ -2,6 +2,7 @@
 import argparse
 from dataclasses import asdict
 import json
+import hashlib
 from pathlib import Path
 import numpy as np
 from spatialpole import Config,SpatialCartpole
@@ -14,6 +15,7 @@ p.add_argument('--route',required=True)
 p.add_argument('--out',required=True)
 p.add_argument('--park-seconds',type=float,default=12.)
 p.add_argument('--no-align',action='store_true')
+p.add_argument('--extra-development-summary')
 a = p.parse_args()
 out = Path(a.out)
 freeze_inputs(out,a)
@@ -35,11 +37,23 @@ factory = lambda e: ParkedRoutePolicy(e,source['states'],source['actions'],sourc
 rows = [episode(config,factory,20261016,'hanging',0.,out/'nominal.npz')]
 print('nominal: '+json.dumps({k:v for k,v in rows[0].items() if k!='policy_metadata'}),flush=True)
 seeds = list(range(20261116,20261128))+list(range(20261416,20261448))
+if a.extra_development_summary:
+    original = Path(a.extra_development_summary)
+    payload = original.read_bytes()
+    (out/'extra_development_summary.json').write_bytes(payload)
+    extra = json.loads(payload)
+    assert extra['n_links']==config.n_links
+    added = [r['seed'] for r in extra['results']]
+    assert all(isinstance(seed,int) for seed in added) and len(set(added))==len(added)
+    seeds = list(dict.fromkeys(seeds+added))
+    write_json(out/'extra_development_input.json',{'source':str(original),
+        'sha256':hashlib.sha256(payload).hexdigest(),'scope':'explicitly reused as development, never qualification'})
 for k,seed in enumerate(seeds):
     rows.append(episode(config,factory,seed,'hanging',0.02,out/f'seed{seed}.npz'))
     write_json(out/'summary.json',{'n_links':config.n_links,'passes':sum(x['success'] and x['replay_exact'] for x in rows),
         'results':rows,'parking_closed_loop_radius':parking['closed_loop_radius'],
-        'design_native_steps':env.native_steps,'cohort_scope':'shared 12 plus shared 32 development seed indices; explicitly non-reserved'})
+        'design_native_steps':env.native_steps,'cohort_scope':'shared 44 plus any explicitly supplied reused development seeds; non-reserved',
+        'development_seeds':seeds})
     if k%8==0:
         print(json.dumps({'development_episodes':k+1,'passes':sum(x['success'] and x['replay_exact'] for x in rows)}),flush=True)
 write_json(out/'completed.json',{'status':'completed','episodes':len(rows)})

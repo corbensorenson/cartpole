@@ -4,12 +4,19 @@ A cart moves over an XY plane, driven by two forces. Every link has a passive,
 unlimited ball joint: it can tilt in both directions and twist about its axis.
 This is a separate benchmark from the one-dimensional cart and hinge chain.
 
-**One- through six-link hanging-start swing-ups are qualified:** 32/32 fresh
+**One- through seven-link hanging-start swing-ups are qualified:** 32/32 fresh
 noisy 3D starts at each count, in addition to nominal and development checks.
 Episodes run 30 seconds; the respective holds are 21.74s, 21.68s, 6.78s, 7.22s,
-21.70s, and 14.06s. All delivered-action
+21.70s, 14.06s, and 13.48s. All delivered-action
 tapes replay exactly. Both cart axes are used. Full-state simulation feedback,
 not a learned policy or a hardware demonstration.
+
+The benchmark permits arbitrary XY cart motion and unrestricted ball joints,
+but does not require a nonplanar nominal swing. The four- through seven-link
+reference swings are essentially planar; Y feedback handles spatial start
+perturbations. This is a controller/reference bias, not a locked simulator axis.
+The independent [spatial freedom audit](https://github.com/corbensorenson/cartpole/tree/master/2d/audits/spatial_freedom_001)
+checks native two-axis motion and includes a controlled six-link XY loop.
 
 [Full one-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-1-link-v1/2d-cartpole-1-link-swingup.mp4)
 · [GitHub release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-1-link-v1)
@@ -29,6 +36,9 @@ not a learned policy or a hardware demonstration.
 [Full six-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-6-link-v1/2d-cartpole-6-link-swingup.mp4)
 · [Six-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-6-link-v1)
 
+[Full seven-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-7-link-v1/2d-cartpole-7-link-swingup.mp4)
+· [Seven-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-7-link-v1)
+
 | Milestone | Current evidence |
 |---|---|
 | One-link hanging-start swing-up | 32/32 final qualification; full video |
@@ -37,7 +47,8 @@ not a learned policy or a hardware demonstration.
 | Four-link hanging-start swing-up | 32/32 fresh final qualification; full video |
 | Five-link hanging-start swing-up | 32/32 fresh final qualification; full video |
 | Six-link hanging-start swing-up | 32/32 fresh final qualification; full video |
-| Seven-link hanging-start swing-up | Next development count |
+| Seven-link hanging-start swing-up | 32/32 fresh final qualification; full video |
+| Eight-link hanging-start swing-up | Next development count |
 | Near-upright balance, 1–3 links | 12/12 local perturbed starts at each count |
 | Near-upright balance, 4 links | 9/12; incomplete, not accepted |
 
@@ -92,6 +103,12 @@ For six links use `evidence/qualify_n6_001/frozen_route.npz`. Its policy applies
 12 seconds of hanging feedback and measured axial-frame alignment before a
 4.18-second repaired swing, followed by world-coordinate upright feedback.
 All phases fit inside 30 seconds. Fresh seeds are 20261716..20261747.
+
+For seven links use `evidence/qualify_n7_002/frozen_route.npz`. It applies
+12 seconds of hanging feedback and axial-frame alignment, a 4.56-second
+repaired swing and world-coordinate upright feedback. Fresh final seeds are
+20271816..20271847. The raw first qualification failed 31/32 and is retained
+separately; those seeds were reused as development only.
 
 Start a count ladder or optimize a swing route:
 
@@ -170,6 +187,15 @@ Six-link native repair passes nominal but fails four of 12 raw noisy starts.
 The frozen hanging/gauge wrapper passes nominal plus 44 development starts,
 then all 32 fresh qualification starts. Maximum final-cohort cart coordinate
 is 2.729448m and all holds are 14.06s. The original raw failures are retained.
+
+Seven's first repair stalls; a stronger initial gap penalty closes its dynamics
+gaps. That raw policy passes all 12 development starts but fails its first
+reserved cohort at 31/32. The conditioned policy passes nominal plus 76 noisy
+development starts, including that old cohort, then all 32 NEW final starts.
+All final holds are 13.48s; maximum cart coordinate is 2.366483m. The spatial
+freedom audit adds independent native dynamics and each-joint regression checks,
+and its controlled six-link XY-loop demonstration deliberately exercises both
+cart axes while balancing. The current suite has 44 passing tests.
 
 Each experiment freezes source, arguments, runtime and the pre-experiment memo,
 then records optimizer history, states, raw/delivered forces, tilts, counts,

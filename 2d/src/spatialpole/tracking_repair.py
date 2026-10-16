@@ -5,12 +5,14 @@ from .fddp import affine_backward, reference_gaps, gap_transport, gap_rollout
 
 
 def repair_tracking(env, initial, target, target_actions, iterations=40,
-                    callback=None, checkpoint=None, physics_budget=15000000):
+                    callback=None, checkpoint=None, physics_budget=15000000, penalty=1000.):
     target, target_actions = np.array(target, float), np.array(target_actions, float)
     H, nv = len(target_actions), env.model.nv
     nx = 2*nv
     if target.shape != (H+1, env.model.nq+nv) or H > env.config.horizon:
         raise ValueError('invalid target trajectory')
+    if not np.isfinite(penalty) or penalty<=0:
+        raise ValueError('penalty must be finite and positive')
     states, actions = target.copy(), target_actions.copy()
     states[0] = initial
     design = balance_design(env)
@@ -20,7 +22,7 @@ def repair_tracking(env, initial, target, target_actions, iterations=40,
         Q[nv+4+3*j,nv+4+3*j] = .005
     P, R = 10*design['P']+Q, .001*np.eye(2)
     scales = np.r_[[3.,3.],np.full(nv-2,.15),[4.,4.],np.full(nv-2,15.)]
-    rho, trust = 1000., 1.
+    rho, trust = float(penalty), 1.
     history, gains = [], np.zeros((H,2,nx))
 
     def objective(xs, us):
@@ -57,6 +59,7 @@ def repair_tracking(env, initial, target, target_actions, iterations=40,
         cost = objective(states,actions)
         merit = cost+rho*value
         accepted,alpha_used = False,0.
+        trials = []
         try:
             feed,K,active = affine_backward(models,offsets,actions,gradients,hessians,tg,th,R,0.,
                 env.config.force_limit,trust*Q,trust*.001,action_reference=target_actions)
@@ -72,6 +75,8 @@ def repair_tracking(env, initial, target, target_actions, iterations=40,
                     continue
                 candidate_cost = objective(xs,us)
                 candidate_defect,candidate_max = defect(xs,fx)
+                trials.append(dict(alpha=alpha,cost=candidate_cost,defect_value=candidate_defect,
+                    max_scaled_defect=candidate_max,max_cart=float(np.max(np.abs(xs[:,:2])))))
                 if candidate_cost+rho*candidate_defect < merit-1e-10:
                     states,actions,gains = xs,us,K
                     cost,value,maximum = candidate_cost,candidate_defect,candidate_max
@@ -86,7 +91,7 @@ def repair_tracking(env, initial, target, target_actions, iterations=40,
         row = dict(iteration=iteration,cost=cost,defect_value=value,max_scaled_defect=maximum,
                    penalty=rho,trust=trust,alpha=alpha_used,accepted=accepted,
                    bounded_steps=int(active),native_steps=env.native_steps,
-                   reference_max_cart=float(np.max(np.abs(states[:,:2]))))
+                   reference_max_cart=float(np.max(np.abs(states[:,:2]))),trials=trials)
         history.append(row)
         if callback:
             callback(row)

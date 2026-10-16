@@ -19,6 +19,7 @@ p.add_argument('--out',required=True)
 p.add_argument('--iterations',type=int,default=40)
 p.add_argument('--workers',type=int,default=4)
 p.add_argument('--physics-budget',type=int,default=15000000)
+p.add_argument('--penalty',type=float,default=1000.)
 a = p.parse_args()
 out = Path(a.out)
 freeze_inputs(out,a)
@@ -54,7 +55,7 @@ def checkpoint(iteration,states,actions,gains):
 
 try:
     xs,us,K,design,history,proposal = repair_tracking(env,initial,target,
-        target_controls,a.iterations,log,checkpoint,a.physics_budget)
+        target_controls,a.iterations,log,checkpoint,a.physics_budget,a.penalty)
 except Exception as exc:
     write_json(out/'failure.json',{'status':'failed','type':type(exc).__name__,'message':str(exc),
                                   'native_steps':env.native_steps})

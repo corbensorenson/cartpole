@@ -144,7 +144,8 @@ def test_repair_rebuild_is_gap_free_on_native_one_link():
     e.close()
 
 
-def test_tracking_repair_closes_native_defects():
+@pytest.mark.parametrize('penalty',[1000.,100000.])
+def test_tracking_repair_closes_native_defects(penalty):
     from spatialpole.tracking_repair import repair_tracking
     e = SpatialCartpole()
     initial = e.upright_state()
@@ -156,7 +157,7 @@ def test_tracking_repair_closes_native_defects():
     delta = np.zeros(2*e.model.nv)
     delta[3] = .01
     target[10] = e.integrate(target[10],delta)
-    xs,us,_,_,history,_ = repair_tracking(e,initial,target,controls,iterations=6)
+    xs,us,_,_,history,_ = repair_tracking(e,initial,target,controls,iterations=6,penalty=penalty)
     for t,u in enumerate(us):
         np.testing.assert_array_equal(e.transition(xs[t],u,quantize=False),xs[t+1])
     assert min(r['max_scaled_defect'] for r in history)<1e-8

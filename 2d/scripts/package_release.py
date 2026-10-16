@@ -49,7 +49,7 @@ for count in range(3,a.links+1):
     for source in sorted((root/'output').iterdir()):
         prefixes = (f'swing_n{count}_',f'planar_lift_n{count}_',f'qualify_n{count}_',
                     f'conditioned_n{count}_',f'fddp_n{count}_',f'n{count}_',
-                    f'tracking_repair_n{count}_',f'checkpoint_n{count}_',
+                    f'tracking_repair_n{count}_',f'checkpoint_n{count}_',f'nonplanar_demo_n{count}_',
                     f'split_n{count-1}_to_n{count}_')
         if source.is_dir() and source.name.startswith(prefixes):
             shutil.copytree(source,evidence/source.name,dirs_exist_ok=True)
@@ -69,7 +69,7 @@ if preview.exists():
     shutil.copy2(preview,videos/preview.name)
 (evidence/f'{a.links}_link_model.xml').write_text(SpatialCartpole(config).xml,encoding='utf-8')
 def release_files():
-    allowed = {'src','tests','research','scripts','evidence','videos','manifests','publication'}
+    allowed = {'src','tests','research','scripts','evidence','videos','manifests','publication','audits'}
     for path in sorted(target.rglob('*')):
         relative = path.relative_to(target)
         if not path.is_file() or len(relative.parts)>1 and relative.parts[0] not in allowed:

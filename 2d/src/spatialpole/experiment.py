@@ -122,7 +122,8 @@ def render_tape(tape, output):
             img = Image.fromarray(env.render())
             d = ImageDraw.Draw(img)
             d.rectangle((0, 0, 1280, 114), fill=(10, 18, 29))
-            d.text((30, 13), f"2D CARTPOLE  /  {config.n_links} {'LINK' if config.n_links == 1 else 'LINKS'}  /  SPATIAL BALL JOINTS", font=title_font, fill=(235, 244, 255))
+            label = 'CONTROLLED XY DEMONSTRATION' if 'demonstration' in policy_metadata else 'SPATIAL BALL JOINTS'
+            d.text((30, 13), f"2D CARTPOLE  /  {config.n_links} {'LINK' if config.n_links == 1 else 'LINKS'}  /  {label}", font=title_font, fill=(235, 244, 255))
             max_tilt = float(np.max(env.tilts()))
             if i:
                 streak = streak + 1 if np.max(tilts[i-1]) < config.angle_threshold else 0
@@ -132,6 +133,8 @@ def render_tape(tape, output):
                 park = policy_metadata['park_seconds']
                 route_seconds = policy_metadata.get('route_seconds',11.28)
                 phase = 'phase: HANGING CONDITIONING' if i*config.dt < park else 'phase: SWING TRACKING' if i*config.dt < park+route_seconds else 'phase: UPRIGHT FEEDBACK'
+            if 'orbit_start_seconds' in policy_metadata and i*config.dt>=policy_metadata['orbit_start_seconds']:
+                phase = 'phase: CONTROLLED XY ORBIT'
             text = f"t {i*config.dt:5.2f}s    tilt {max_tilt:5.3f} rad    best hold {best*config.dt:5.2f}s    {phase}"
             d.text((30, 65), text, font=font, fill=(150, 220, 245))
             # Top-down inset proves both dimensions are physically free, and

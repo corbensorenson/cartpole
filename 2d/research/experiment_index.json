@@ -1,6 +1,14 @@
 {
   "experiments": [
     {
+      "directory": "output/audit_reproduction_001",
+      "status": "completed",
+      "summary_sha256": "bcdcadcadff1ca103868b91cd999c40e137f87480bed47171e02931778946bfa",
+      "passes": null,
+      "n_links": null,
+      "source_manifest": "output/audit_reproduction_001/inputs.json"
+    },
+    {
       "directory": "output/balance_001",
       "status": "completed",
       "summary_sha256": "bccfce11fc99a906991c716a114242c86035884f589dd83e734a147482a05708",
@@ -39,6 +47,14 @@
       "passes": 45,
       "n_links": 6,
       "source_manifest": "output/conditioned_n6_001/inputs.json"
+    },
+    {
+      "directory": "output/conditioned_n7_001",
+      "status": "completed",
+      "summary_sha256": "aa4abb22530209c91b57240110acaf5e61d5b32cf8d3279a791bd7c7fd68a832",
+      "passes": 77,
+      "n_links": 7,
+      "source_manifest": "output/conditioned_n7_001/inputs.json"
     },
     {
       "directory": "output/energy_n1_001",
@@ -145,6 +161,22 @@
       "source_manifest": "output/n4_plant_parity_001/inputs.json"
     },
     {
+      "directory": "output/nonplanar_demo_n6_001",
+      "status": "completed",
+      "summary_sha256": "c4314cb5a206146a5b33de3291361699e3bc5affe011db983375d49c31c1a173",
+      "passes": 4,
+      "n_links": 6,
+      "source_manifest": "output/nonplanar_demo_n6_001/inputs.json"
+    },
+    {
+      "directory": "output/nonplanar_demo_reproduction_001",
+      "status": "completed",
+      "summary_sha256": "d3f011e948b154d22aacb9be16c7cd745fc496bd61f27fc483572d64193d1382",
+      "passes": 4,
+      "n_links": 6,
+      "source_manifest": "output/nonplanar_demo_reproduction_001/inputs.json"
+    },
+    {
       "directory": "output/planar_lift_n3_001",
       "status": "failed",
       "summary_sha256": "be170ffaa1d147d80e00408c19d5949a52a770139c0463288f85ab4eb0d73ace",
@@ -199,6 +231,14 @@
       "passes": 0,
       "n_links": 6,
       "source_manifest": "output/planar_lift_n6_001/inputs.json"
+    },
+    {
+      "directory": "output/planar_lift_n7_001",
+      "status": "completed",
+      "summary_sha256": "9004b4a288b8d569021a6abfa810dd7495686d948dd635dc30f967a4c4a08f0c",
+      "passes": 0,
+      "n_links": 7,
+      "source_manifest": "output/planar_lift_n7_001/inputs.json"
     },
     {
       "directory": "output/qualify_n1_001",
@@ -257,6 +297,22 @@
       "source_manifest": "output/qualify_n6_001/inputs.json"
     },
     {
+      "directory": "output/qualify_n7_001",
+      "status": "completed",
+      "summary_sha256": "d4e7d6b207148c5ce7177643cd8c01a0ed25f02f7e254121b65dc3fe4bc0bdc0",
+      "passes": 31,
+      "n_links": 7,
+      "source_manifest": "output/qualify_n7_001/inputs.json"
+    },
+    {
+      "directory": "output/qualify_n7_002",
+      "status": "completed",
+      "summary_sha256": "b13d4b2944eda5716fa2e3d7690d0d0e0c55a3957b209b698a56a10643919c2a",
+      "passes": 32,
+      "n_links": 7,
+      "source_manifest": "output/qualify_n7_002/inputs.json"
+    },
+    {
       "directory": "output/regression_n3_cart_armature_001",
       "status": "completed",
       "summary_sha256": "a6bf43a27c10fcd984664382cbb50baf8f7d64100bb6633676dca105e123dc55",
@@ -279,6 +335,22 @@
       "passes": 1,
       "n_links": 5,
       "source_manifest": "output/release5_reproduction_001/inputs.json"
+    },
+    {
+      "directory": "output/release6_reproduction_001",
+      "status": "completed",
+      "summary_sha256": "e20c0c4646f96e239932d6c03003b1e227ac293134c9dc5ddc6e78a6a9c13707",
+      "passes": 1,
+      "n_links": 6,
+      "source_manifest": "output/release6_reproduction_001/inputs.json"
+    },
+    {
+      "directory": "output/spatial_audit_001",
+      "status": "completed",
+      "summary_sha256": "bcdcadcadff1ca103868b91cd999c40e137f87480bed47171e02931778946bfa",
+      "passes": null,
+      "n_links": null,
+      "source_manifest": "output/spatial_audit_001/inputs.json"
     },
     {
       "directory": "output/split_n3_to_n4_001",
@@ -399,6 +471,22 @@
       "passes": 9,
       "n_links": 6,
       "source_manifest": "output/tracking_repair_n6_001/inputs.json"
+    },
+    {
+      "directory": "output/tracking_repair_n7_001",
+      "status": "completed",
+      "summary_sha256": "49ef31ce507c50c04b3427ca65986a3594f32da113ce9b41ea84b6ae01e65b68",
+      "passes": 0,
+      "n_links": 7,
+      "source_manifest": "output/tracking_repair_n7_001/inputs.json"
+    },
+    {
+      "directory": "output/tracking_repair_n7_002",
+      "status": "completed",
+      "summary_sha256": "2f73cbada4165b53a846167b5f3569d4d69400ce7b98aa398d3bbb91274fc0ed",
+      "passes": 13,
+      "n_links": 7,
+      "source_manifest": "output/tracking_repair_n7_002/inputs.json"
     }
   ],
   "publications": [
@@ -475,6 +563,25 @@
           "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-5-link-v1/2d-cartpole-5-link-evidence.zip",
           "sha256": "9063dc386065ab3562b12e1025c241171052bd8bbf37fc8b196bc2162ff9dcde",
           "size": 217018334
+        }
+      ]
+    },
+    {
+      "url": "https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-6-link-v1",
+      "tag": "2d-cartpole-6-link-v1",
+      "commit": "0f15e3979e469b378bea2d8928baa56d8fa42e30",
+      "assets": [
+        {
+          "name": "2d-cartpole-6-link-swingup.mp4",
+          "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-6-link-v1/2d-cartpole-6-link-swingup.mp4",
+          "sha256": "6dd2771d6b791293b93d84336924d63aace5e8bed1070bcc40847f0b556c520b",
+          "size": 1154311
+        },
+        {
+          "name": "2d-cartpole-6-link-evidence.zip",
+          "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-6-link-v1/2d-cartpole-6-link-evidence.zip",
+          "sha256": "3cd2406e24a9f968e4736e4bbc38bfef34a90525facf3158ceb43561855170ba",
+          "size": 273217382
         }
       ]
     },

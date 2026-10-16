@@ -678,3 +678,129 @@ Require 32/32 full success and replay. On pass render the full first reserved
 tape, retain the raw failures, and publish explicitly 2D six-link controller,
 source, evidence archive and video. Any failed qualification becomes development
 and a revised policy must receive a new reserved cohort.
+
+## Amendment before seven-link spatial transfer and native tracking repair
+
+Six links is published. Use the frozen historical seven-link release controller
+runs/swingup7_uniform/seven_link_release_controller.json and its declared
+development_origin runs/swingup7_fddp_full_hanging_ilqr_terminal100k_deferred_lqr1.json,
+from the read-only checkout. The nominal arrays match exactly; 228 commands /
+4.56s, nominal cart maximum 2.370306m. This is still a proposal, not new spatial
+evidence. Freeze both files, the source config and coordinate scales; verify
+reference-only geometry/shared nominal arrays. New mechanics are the unchanged
+uniform seven-link benchmark with free XY cart and unrestricted ball joints.
+
+Test direct transfer (<=150k design physics steps, actual float32 nominal-first
+and 12 shared noisy development starts if nominal passes). Then independently
+apply the same fixed-target native tracking repair, 40 iterations, four workers,
+<=15M design physics steps, nominal-first full actual gates plus 12 shared
+development starts. If nominal passes but any noisy start fails, retain that
+failure and test a separately frozen 12s hanging/gauge wrapper on nominal plus
+44 shared development starts, <=1000 design and <=540000 actual+proof steps.
+All phases must fit the unchanged 30s clock, with no state resets or locks.
+Prediction: the native affine correction can adapt the old mechanics while
+preserving a useful short swing. Seven-link reserved seeds 20261816..20261847
+remain untouched until a frozen policy passes every development gate.
+
+## Amendment before seven-link stronger initial feasibility penalty
+
+Seven-link direct transfer fails nominal at 5.08s. First tracking repair stalls
+after 19 iterations: normalized gap sum 0.0019955, maximum scaled gap 0.012289,
+trust grows beyond 1e10 before the next scheduled penalty increase. Its separate
+native gap-free rebuild fails actual nominal at 5.34s. These failures remain.
+
+Restart from the ORIGINAL lifted seven-link proposal with the same tracking
+weights and mechanics, but initial gap penalty 100000 (previously 1000).
+Expose this as a validated configurable solver argument, default unchanged,
+and retain every finite line-search trial's cost, gap and maximum cart position
+in the optimizer journal. A native defect-closure test exercises both penalty
+values. Budget 40 iterations / <=15M design steps, four workers; same actual
+float32 nominal-first and 12 shared development starts, with no reserved seeds.
+Prediction: stronger feasibility pressure allows larger gap-closing steps before
+trust regularization stalls the solver. A closed-gap proposal remains insufficient;
+the full native actual and spatial noise gates are still mandatory.
+
+## Seven-link frozen qualification (before reserved execution)
+
+The stronger-penalty repair closes the native gaps and passes nominal plus all
+12 noisy development starts, full 30s episodes, 25.48s hold, exact cold replay.
+Freeze tracking_repair_n7_002/route.npz unchanged. No hanging/gauge wrapper is
+needed or applied. Run exactly 32 reserved noisy hanging starts, seeds
+20261816..20261847, noise 0.02, unchanged spatial benchmark and strict clock;
+<=384000 actual+proof physics steps. Require 32/32 success/replay, then render
+the entire first held-out tape and publish explicitly 2D seven-link source,
+controller, evidence archive and video. Retain the failed first repair. A failed
+qualification becomes development and a revised controller needs new seeds.
+
+## User-requested spatial physics audit before further publication
+
+The user observes that the videos often follow a line and requests verification
+of the simulator. Hold seven-link publication until this audit is resolved;
+its already-running reserved evaluation may finish unchanged. Inspect compiled
+canonical models at 1,3,7 links, serialized reference/actual tapes and native
+responses. Verify two independent slide actuators, three DOFs per ball joint,
+no equality/joint limits or joint motors, no axis clamping in state transitions.
+
+Run matched X-only/Y-only force probes from hanging and compare physical cart
+and rod responses after a 90-degree rotation. Perturb each joint separately
+about both transverse axes, and verify passive axial spin evolves. Drive a
+changing-direction XY force sequence for 3s and record native states, forces,
+world rod directions and replay; require a rank-two cart path and rod motion.
+These are diagnostic components, not swing-up successes. Budget <30000 native
+physics steps. Quantify lateral cart/force/rod motion in each accepted count's
+frozen reference and all qualification tapes. Save source, configuration and
+all audit results. Explain any planar bias in the controller separately from
+physical freedoms. If a constraint/axis bug exists, fix it and re-evaluate
+affected results before publication. Otherwise strengthen documentation and
+produce a visibly nonplanar controlled demonstration on the same plant.
+
+The independent audit passes: compiled 1,3,7 models are free; persistent native
+MuJoCo matches the environment bit-for-bit; every ball joint responds to both
+transverse perturbations and passive spin. Changing-direction forces produce
+rank-two cart/rod motion. References 4,5,6 are essentially planar, while the
+two-link reference has substantial two-axis motion. Record this distinction.
+
+For a controlled higher-count demonstration, keep the qualified six-link
+controller unchanged until t=18s, then command a smooth XY orbit using its
+existing world-coordinate upright feedback. Orbit radius ramps as
+0.35*(1-exp(-tau/2))^2, angle 0.6*tau; desired position is
+radius*[cos(angle)-1,sin(angle)]. Subtract desired cart position/velocity from
+the physical feedback error and add total-mass*desired-acceleration feedforward.
+All rods still target upright; no state resets, constraints or joint actuation.
+Test nominal plus three fixed shared noisy development starts 20261116..18,
+unchanged 30s/force/boundary/hold gates, <=48000 actual+proof physics steps.
+Require post-18s cart trajectory minor/major ratio >0.1 and both XY spans >0.1m,
+plus full success and exact replay before rendering a clearly labeled controlled
+orbit demonstration. This is a separate audit task, not a new link-count record.
+
+## Amendment before seven-link conditioned robustness repair
+
+The audit finds no axis-locking bug, and the controlled six-link XY-loop task
+passes nominal plus three noisy starts. User explicitly requests publication
+of seven and continued higher counts. Seven's raw first reserved cohort failed
+at 31/32, so retain the failure and repair robustness before solved publication.
+
+Apply 12s hanging LQR and causal axial-frame alignment to the unchanged
+tracking_repair_n7_002 motion. Test nominal plus the shared 44 noisy development
+starts AND all 32 seeds from failed qualify_n7_001, explicitly reused as
+development: 76 distinct noisy starts, 77 total episodes. Freeze/hash the extra
+development summary as an input. Budget <1000 design steps and <=924000
+actual+proof steps. Strict unchanged 30s clock, force/boundary/hold criteria.
+If all pass, freeze the controller and separately prerecord qualification on
+NEW untouched seeds 20271816..20271847. Never reuse the failed cohort as final
+qualification. Publish the physics-audit scope explanation alongside a successful
+seven-link release; then continue toward higher counts.
+
+## Seven-link corrected frozen qualification (before new reserved execution)
+
+The conditioned policy passes nominal plus ALL 76 noisy development starts,
+including the entire old failed reserved cohort: 77/77 full 30s episodes,
+13.48s hold each, exact replay. Freeze conditioned_n7_001/route.npz unchanged.
+Run exactly 32 NEW reserved noisy hanging starts, seeds 20271816..20271847,
+noise 0.02, unchanged plant/clock/force/boundary/hold gates, <=384000 actual+proof
+steps. Require 32/32 before publishing the explicitly 2D seven-link solved
+release and full first held-out video. The original 31/32 failure remains
+separate and publicly preserved in the spatial audit. Audit and controlled
+six-link XY demonstration are now public, with original six-link release files
+verified unchanged. If this new gate fails, retain it as development and
+prerecord another untouched cohort only after a revised policy passes development.

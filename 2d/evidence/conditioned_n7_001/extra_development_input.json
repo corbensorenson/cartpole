@@ -1,0 +1,5 @@
+{
+  "source": "output\\qualify_n7_001\\summary.json",
+  "sha256": "d4e7d6b207148c5ce7177643cd8c01a0ed25f02f7e254121b65dc3fe4bc0bdc0",
+  "scope": "explicitly reused as development, never qualification"
+}
