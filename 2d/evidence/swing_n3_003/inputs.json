@@ -1,0 +1,53 @@
+{
+  "args": {
+    "task": "swing",
+    "links": 3,
+    "max_links": 8,
+    "episodes": 12,
+    "noise": 0.02,
+    "seed": 20261016,
+    "iterations": 100,
+    "route_seconds": 8.0,
+    "amplitude": 12.0,
+    "frequency": 0.45,
+    "out": "output/swing_n3_003",
+    "route": "output/swing_n3_002/route.npz",
+    "tape": null,
+    "world_feedback": true,
+    "world_terminal": true,
+    "extend_seconds": 5.0,
+    "hold_start": 8.0
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "control.py": "8923c5296552ebf12bd20b44f3639d9a5e53f8e16dab7a3f5d714a0700e4443c",
+    "env.py": "49dc552f699db3551af078d1b485918e0a2e679b8e101396b7b5970d9e42ad00",
+    "experiment.py": "5b65e0845a06459ff1a55d74b64573af1797bf38de63e8477a2fb245f1541506",
+    "physical.py": "a611a89ee72ad8d8ac70a17b7b01ce86036469424c3f1c2098eb8ea73f972838"
+  },
+  "utc": "2026-10-16T21:56:14.249486+00:00",
+  "command": [
+    "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\src\\spatialpole\\experiment.py",
+    "swing",
+    "--links",
+    "3",
+    "--iterations",
+    "100",
+    "--world-feedback",
+    "--world-terminal",
+    "--hold-start",
+    "8",
+    "--extend-seconds",
+    "5",
+    "--route",
+    "output/swing_n3_002/route.npz",
+    "--out",
+    "output/swing_n3_003"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5"
+  }
+}

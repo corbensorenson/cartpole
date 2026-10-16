@@ -1,0 +1,7 @@
+{
+  "source_tape": "nominal.npz",
+  "source_sha256": "768f38fcafd88ea5a485126a601b95d181ada68cd146c2924d83d46b62d0fa0c",
+  "prefix_commands": 564,
+  "new_plant_actual_delivered_actions": true,
+  "claim": "optimizer initializer only; nominal continuation failed"
+}

@@ -199,6 +199,10 @@ class SpatialCartpole(gym.Env):
         return self.renderer.render()
 
     def close(self):
+        if hasattr(self,'_fd_rollout'):
+            self._fd_rollout.close()
+            del self._fd_rollout
+            del self._fd_data
         if self.renderer is not None:
             self.renderer.close()
             self.renderer = None

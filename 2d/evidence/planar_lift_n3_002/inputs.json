@@ -1,0 +1,40 @@
+{
+  "args": {
+    "links": 3,
+    "out": "output/planar_lift_n3_002",
+    "route": "D:/ChatGPT/cartpole/runs/generalized_solver/n3_route.json",
+    "full_source": "D:/ChatGPT/cartpole/runs/generalized_solver/n3_full_fddp_controller.json",
+    "spec": "D:/ChatGPT/cartpole/benchmarks/p1_capture_envelope.yaml",
+    "source_config": "D:/ChatGPT/cartpole/runs/generalized_solver/n3_uniform_exact.yaml"
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "control.py": "8923c5296552ebf12bd20b44f3639d9a5e53f8e16dab7a3f5d714a0700e4443c",
+    "env.py": "49dc552f699db3551af078d1b485918e0a2e679b8e101396b7b5970d9e42ad00",
+    "experiment.py": "5b65e0845a06459ff1a55d74b64573af1797bf38de63e8477a2fb245f1541506",
+    "physical.py": "a611a89ee72ad8d8ac70a17b7b01ce86036469424c3f1c2098eb8ea73f972838",
+    "transfer.py": "f304ce6f63ee6d08e7399c4b10cb7cca37e1916f448e790f5c9e44f62ed5288b"
+  },
+  "utc": "2026-10-16T22:00:08.789693+00:00",
+  "command": [
+    "scripts/import_planar.py",
+    "--links",
+    "3",
+    "--route",
+    "D:/ChatGPT/cartpole/runs/generalized_solver/n3_route.json",
+    "--full-source",
+    "D:/ChatGPT/cartpole/runs/generalized_solver/n3_full_fddp_controller.json",
+    "--spec",
+    "D:/ChatGPT/cartpole/benchmarks/p1_capture_envelope.yaml",
+    "--source-config",
+    "D:/ChatGPT/cartpole/runs/generalized_solver/n3_uniform_exact.yaml",
+    "--out",
+    "output/planar_lift_n3_002"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5"
+  }
+}

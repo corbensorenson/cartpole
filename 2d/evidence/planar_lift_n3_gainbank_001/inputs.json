@@ -1,0 +1,28 @@
+{
+  "args": {
+    "route": "output/planar_lift_n3_002/route.npz",
+    "out": "output/planar_lift_n3_gainbank_001"
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "control.py": "4f183df8178720bc942401c97e9971e7764a720aa7fa0b470f1df1f35d9ae0ce",
+    "env.py": "7f18279e83e045e2dd35286394d9c6d9133c4c6a7c9f0a59eaff50389a8f3356",
+    "experiment.py": "3ccce4996db25cc5832bd209d672b577f6e044689de20e333453fd2ccdd12d48",
+    "physical.py": "a611a89ee72ad8d8ac70a17b7b01ce86036469424c3f1c2098eb8ea73f972838",
+    "transfer.py": "f304ce6f63ee6d08e7399c4b10cb7cca37e1916f448e790f5c9e44f62ed5288b"
+  },
+  "utc": "2026-10-16T22:03:15.829677+00:00",
+  "command": [
+    "scripts/gain_bank.py",
+    "--route",
+    "output/planar_lift_n3_002/route.npz",
+    "--out",
+    "output/planar_lift_n3_gainbank_001"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5"
+  }
+}

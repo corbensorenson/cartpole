@@ -1,0 +1,7 @@
+{
+  "status": "failed",
+  "stage": "foreign nominal/actual reconstruction guard before new-plant execution",
+  "maximum_mixed_component_error": 2.0425312108329763e-07,
+  "original_tolerance": 1e-08,
+  "actual_episode_steps": 0
+}

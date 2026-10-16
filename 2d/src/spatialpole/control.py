@@ -10,6 +10,7 @@ import mujoco.rollout
 import mujoco as mj
 from scipy.linalg import solve_discrete_are
 from .env import SpatialCartpole
+from .physical import world_errors, world_cost_derivatives,direction_residuals,direction_cost_derivatives
 
 
 def linearize(env: SpatialCartpole, state, force, eps=1e-5):
@@ -27,7 +28,12 @@ def linearize(env: SpatialCartpole, state, force, eps=1e-5):
         d[j] = eps
         hi = env.transition(state, force + d, quantize=False)
         lo = env.transition(state, force - d, quantize=False)
-        B[:, j] = (env.difference(hi, base) - env.difference(lo, base)) / (2 * eps)
+        if force[j]+eps > env.config.force_limit:
+            B[:,j] = -env.difference(lo,base)/eps
+        elif force[j]-eps < -env.config.force_limit:
+            B[:,j] = env.difference(hi,base)/eps
+        else:
+            B[:, j] = (env.difference(hi, base) - env.difference(lo, base)) / (2 * eps)
     return A, B
 
 
@@ -51,7 +57,11 @@ def linearize_many(env, states, actions, eps=1e-5):
             control.extend([force+d,force-d])
     initial = np.c_[np.zeros(len(initial)), np.array(initial)]
     controls = np.repeat(np.asarray(control)[:,None,:], env.config.frame_skip, axis=1)
-    full, _ = mujoco.rollout.rollout(env.model, env.data, initial, controls)
+    workers = getattr(env,'derivative_workers',1)
+    if not hasattr(env,'_fd_rollout'):
+        env._fd_rollout = mujoco.rollout.Rollout(nthread=workers if workers>1 else 0)
+        env._fd_data = [mj.MjData(env.model) for _ in range(workers)]
+    full, _ = env._fd_rollout.rollout(env.model, env._fd_data, initial, controls)
     # A stalled native rollout would repeat timestamps. Do not call it valid.
     times = np.diff(np.c_[np.zeros(len(initial)),full[:,:,0]],axis=1)
     env.native_steps += int(np.count_nonzero(times > 0))
@@ -59,11 +69,47 @@ def linearize_many(env, states, actions, eps=1e-5):
         raise RuntimeError("invalid native derivative batch")
     results = full[:,-1,1:].reshape(count,width,-1)
     models = []
-    for row in results:
+    for row,force in zip(results,actions):
         columns = [(env.difference(row[1+2*j],row[0])-env.difference(row[2+2*j],row[0]))/(2*eps) for j in range(nx+2)]
         matrix = np.array(columns).T
+        for j in range(2):
+            column = nx+j
+            if force[j]+eps > env.config.force_limit:
+                matrix[:,column] = -env.difference(row[2+2*column],row[0])/eps
+            elif force[j]-eps < -env.config.force_limit:
+                matrix[:,column] = env.difference(row[1+2*column],row[0])/eps
         models.append((matrix[:,:nx],matrix[:,nx:]))
     return models
+
+
+def bounded_action_step(u,gradient,hessian,cross,limit):
+    """Exact two-dimensional SPD quadratic step inside a circular force bound.
+
+    The scalar KKT multiplier is solved in the Hessian eigenbasis. The feedback
+    derivative obeys the active circle's tangent constraint.
+    """
+    k = -np.linalg.solve(hessian,gradient)
+    if np.linalg.norm(u+k) <= limit:
+        return k,np.linalg.solve(hessian,cross),False
+    values,vectors = np.linalg.eigh(hessian)
+    if values[0] <= 0:
+        raise np.linalg.LinAlgError('action Hessian is not positive definite')
+    rhs = hessian@u-gradient
+    coeff = vectors.T@rhs
+    low,high = 0.,max(np.linalg.norm(rhs)/limit-values[0],1e-12)
+    for _ in range(45):
+        middle = (low+high)/2
+        if np.linalg.norm(coeff/(values+middle)) > limit:
+            low = middle
+        else:
+            high = middle
+    v = vectors@(coeff/(values+high))
+    H = hessian+high*np.eye(2)
+    K = np.linalg.solve(H,cross)
+    normal = v/limit
+    col = np.linalg.solve(H,normal)
+    K -= np.outer(col,normal@K)/(normal@col)
+    return v-u,K,True
 
 
 def state_cost(env, angle_weight=20., cart_weight=1., velocity_weight=0.15):
@@ -103,8 +149,8 @@ def cost_derivatives(env, state, reference, weight):
     return jac.T@weight@error, jac.T@weight@jac
 
 
-def balance_design(env, r=0.01, angle_weight=20., cart_weight=1.):
-    ref = env.upright_state()
+def balance_design(env, r=0.01, angle_weight=20., cart_weight=1., reference=None):
+    ref = env.upright_state() if reference is None else np.asarray(reference).copy()
     A, B = linearize(env, ref, np.zeros(2))
     Q = state_cost(env, angle_weight, cart_weight)
     R = r * np.eye(2)
@@ -136,7 +182,7 @@ class WorldBalancePolicy(BalancePolicy):
     This changes the nonlinear feedback law, not the plant or LQR design. It
     removes a coordinate artifact when passive ball-joint twist accumulates.
     """
-    def __call__(self, state, step=0):
+    def error(self, state):
         e, nv = self.env, self.env.model.nv
         e.set_state(state)
         error = np.zeros(2*nv)
@@ -150,7 +196,9 @@ class WorldBalancePolicy(BalancePolicy):
             x,y,z = direction
             radius = np.hypot(x,y)
             if radius < 1e-7:
-                tilt = np.array([-y,x])
+                # At the south pole the shortest tilt axis is ambiguous, but
+                # its magnitude is pi, never zero. Choose a fixed finite axis.
+                tilt = np.array([-y,x]) if z >= 0 else np.array([np.pi,0.])
                 rate = np.array([-dd[1],dd[0]])
             else:
                 angle = np.arctan2(radius,z)
@@ -162,7 +210,10 @@ class WorldBalancePolicy(BalancePolicy):
             j = 2+3*i
             error[j:j+2], error[nv+j:nv+j+2] = tilt-last_tilt, rate-last_rate
             last_tilt, last_rate = tilt, rate
-        return -self.design["K"] @ error
+        return error
+
+    def __call__(self, state, step=0):
+        return -self.design["K"] @ self.error(state)
 
 
 class RoutePolicy:
@@ -176,7 +227,7 @@ class RoutePolicy:
         return self.actions[step] - self.gains[step] @ self.env.difference(state, self.states[step])
 
 
-def optimize_route(env, initial, actions, iterations=80, callback=None, terminal_scale=1.):
+def optimize_route(env, initial, actions, iterations=80, callback=None, terminal_scale=1., world_terminal=False, checkpoint=None, hold_start=None,bounded_backward=False,direction_cost=False):
     """iLQR with native RK4 rollout, tangent-space feedback, and line search.
 
     Starts feasible. The selected route is later rebuilt/qualified with actual
@@ -190,10 +241,37 @@ def optimize_route(env, initial, actions, iterations=80, callback=None, terminal
     P = design["P"] * terminal_scale
     reg = 1e-3
     history = []
+    world_policy = WorldBalancePolicy(env,design)
+    hold_q = state_cost(env,angle_weight=20.,cart_weight=1.,velocity_weight=0.3)
+    direction_q = np.diag(np.r_[np.full(nv,0.08),np.full(nv,0.015)])
+    direction_q[:2,:2] = np.eye(2)*0.3
+    direction_hold_q = np.diag(np.r_[np.full(nv,20.),np.full(nv,0.3)])
+    direction_hold_q[:2,:2] = np.eye(2)
 
-    def cost(x, u=None, final=False):
-        e = env.difference(x, ref)
-        val = 0.5 * e @ (P if final else Q) @ e
+    def direction_derivatives(xs):
+        split = hold_start if hold_start is not None else len(xs)
+        g,h = direction_cost_derivatives(env,xs[:split],direction_q)
+        if split < len(xs):
+            tail_g,tail_h = direction_cost_derivatives(env,xs[split:],direction_hold_q)
+            g,h = np.concatenate([g,tail_g]),np.concatenate([h,tail_h])
+        return g,h
+
+    def terminal_derivatives(x):
+        if not world_terminal:
+            return cost_derivatives(env,x,ref,P)
+        grads,hess = world_cost_derivatives(env,np.array([x]),P)
+        return grads[0],hess[0]
+
+    def cost(x, u=None, final=False, t=0):
+        hold = hold_start is not None and t >= hold_start
+        if direction_cost and not final:
+            e = direction_residuals(env,np.array([x]))[0]
+            weight = direction_hold_q if hold else direction_q
+        else:
+            physical = (final and world_terminal) or (not final and hold)
+            e = world_errors(env,np.array([x]))[0] if physical else env.difference(x, ref)
+            weight = P if final else hold_q if hold else Q
+        val = 0.5 * e @ weight @ e
         if not final:
             val += 0.5 * u @ R @ u
             # Smooth penalty outside a conservative optimization boundary.
@@ -208,7 +286,7 @@ def optimize_route(env, initial, actions, iterations=80, callback=None, terminal
             if ks is not None:
                 u += alpha * ks[t] - Ks[t] @ env.difference(out[-1], xs[t])
             u *= min(1., env.config.force_limit / max(np.linalg.norm(u), 1e-30))
-            total += cost(out[-1], u)
+            total += cost(out[-1], u,t=t)
             xn = env.transition(out[-1], u, quantize=False)
             if not np.isfinite(xn).all() or np.max(np.abs(xn)) > 1e5:
                 return None, None, float("inf")
@@ -221,12 +299,20 @@ def optimize_route(env, initial, actions, iterations=80, callback=None, terminal
     final_gains = np.zeros((H, 2, nx))
     for iteration in range(iterations):
         models = linearize_many(env, states[:-1], actions)
-        Vx, Vxx = cost_derivatives(env,states[-1],ref,P)
+        Vx, Vxx = terminal_derivatives(states[-1])
         gains, feed = np.zeros((H, 2, nx)), np.zeros((H, 2))
+        bounded_steps = 0
+        hold_derivatives = world_cost_derivatives(env,states[hold_start:-1],hold_q) if hold_start is not None else None
+        direction_stage = direction_derivatives(states[:-1]) if direction_cost else None
         try:
             for t in range(H - 1, -1, -1):
                 A, B = models[t]
-                lx, lxx = cost_derivatives(env,states[t],ref,Q)
+                if direction_cost:
+                    lx,lxx = direction_stage[0][t].copy(),direction_stage[1][t].copy()
+                elif hold_start is not None and t >= hold_start:
+                    lx,lxx = hold_derivatives[0][t-hold_start].copy(),hold_derivatives[1][t-hold_start].copy()
+                else:
+                    lx, lxx = cost_derivatives(env,states[t],ref,Q)
                 for j in range(2):
                     over = max(abs(states[t, j]) - 2.7, 0.)
                     if over:
@@ -236,7 +322,11 @@ def optimize_route(env, initial, actions, iterations=80, callback=None, terminal
                 qxx, quu, qux = lxx + A.T @ Vxx @ A, R + B.T @ Vxx @ B, B.T @ Vxx @ A
                 h = quu + reg * np.eye(2)
                 np.linalg.cholesky(h)
-                k, K = -np.linalg.solve(h, qu), np.linalg.solve(h, qux)
+                if bounded_backward:
+                    k,K,active = bounded_action_step(actions[t],qu,h,qux,env.config.force_limit)
+                    bounded_steps += active
+                else:
+                    k, K = -np.linalg.solve(h, qu), np.linalg.solve(h, qux)
                 # The feedback sign convention is u_new = u + k - K dx.
                 Vx = qx - K.T @ qu + qux.T @ k - K.T @ quu @ k
                 Vxx = qxx - K.T @ qux - qux.T @ K + K.T @ quu @ K
@@ -260,20 +350,24 @@ def optimize_route(env, initial, actions, iterations=80, callback=None, terminal
             improvement = 0.
         row = {"iteration": iteration, "merit": merit, "reg": reg, "accepted": accepted,
                "terminal_error": float(np.linalg.norm(env.difference(states[-1], ref))),
-               "native_steps": env.native_steps}
+               "native_steps": env.native_steps,"bounded_steps":bounded_steps}
         history.append(row)
         if callback:
             callback(row)
+        if checkpoint is not None and iteration % 10 == 0:
+            checkpoint(iteration,states,actions)
         if reg > 1e9 or (accepted and improvement < 1e-7):
             break
     # Recompute feedback at the FINAL trajectory, not the preceding nominal.
-    _, V = cost_derivatives(env,states[-1],ref,P)
+    _, V = terminal_derivatives(states[-1])
     models = linearize_many(env, states[:-1], actions)
+    hold_derivatives = world_cost_derivatives(env,states[hold_start:-1],hold_q) if hold_start is not None else None
+    direction_stage = direction_derivatives(states[:-1]) if direction_cost else None
     for t in range(H - 1, -1, -1):
         A, B = models[t]
         K = np.linalg.solve(R + B.T @ V @ B, B.T @ V @ A)
         final_gains[t] = K
-        _, local_q = cost_derivatives(env,states[t],ref,Q)
+        local_q = direction_stage[1][t] if direction_cost else hold_derivatives[1][t-hold_start] if hold_start is not None and t >= hold_start else cost_derivatives(env,states[t],ref,Q)[1]
         V = local_q + K.T @ R @ K + (A - B @ K).T @ V @ (A - B @ K)
         V = (V + V.T) / 2
     return states, actions, final_gains, design, history

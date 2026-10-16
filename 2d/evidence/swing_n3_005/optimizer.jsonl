@@ -1,0 +1,14 @@
+{"iteration": 0, "merit": 2047.7207371443187, "reg": 0.01, "accepted": false, "terminal_error": 3.423106080697664, "native_steps": 126532, "bounded_steps": 7}
+{"iteration": 1, "merit": 2047.7207371443187, "reg": 0.1, "accepted": false, "terminal_error": 3.423106080697664, "native_steps": 250612, "bounded_steps": 5}
+{"iteration": 2, "merit": 2047.7207371443187, "reg": 1.0, "accepted": false, "terminal_error": 3.423106080697664, "native_steps": 374692, "bounded_steps": 1}
+{"iteration": 3, "merit": 2047.7207371443187, "reg": 10.0, "accepted": false, "terminal_error": 3.423106080697664, "native_steps": 498772, "bounded_steps": 0}
+{"iteration": 4, "merit": 2047.7207371443187, "reg": 100.0, "accepted": false, "terminal_error": 3.423106080697664, "native_steps": 622852, "bounded_steps": 0}
+{"iteration": 5, "merit": 2047.7207371443187, "reg": 1000.0, "accepted": false, "terminal_error": 3.423106080697664, "native_steps": 746932, "bounded_steps": 0}
+{"iteration": 6, "merit": 2047.7207371443187, "reg": 10000.0, "accepted": false, "terminal_error": 3.423106080697664, "native_steps": 871012, "bounded_steps": 0}
+{"iteration": 7, "merit": 2047.7207371443187, "reg": 100000.0, "accepted": false, "terminal_error": 3.423106080697664, "native_steps": 995092, "bounded_steps": 0}
+{"iteration": 8, "merit": 2047.7207371443187, "reg": 1000000.0, "accepted": false, "terminal_error": 3.423106080697664, "native_steps": 1119172, "bounded_steps": 0}
+{"iteration": 9, "merit": 2047.7207371443187, "reg": 10000000.0, "accepted": false, "terminal_error": 3.423106080697664, "native_steps": 1243252, "bounded_steps": 0}
+{"iteration": 10, "merit": 2047.7207371443187, "reg": 100000000.0, "accepted": false, "terminal_error": 3.423106080697664, "native_steps": 1367332, "bounded_steps": 0}
+{"iteration": 11, "merit": 2047.7207371443187, "reg": 1000000000.0, "accepted": false, "terminal_error": 3.423106080697664, "native_steps": 1491412, "bounded_steps": 0}
+{"iteration": 12, "merit": 2047.7057759255301, "reg": 333333333.3333333, "accepted": true, "terminal_error": 3.423018598873551, "native_steps": 1613236, "bounded_steps": 0}
+{"iteration": 13, "merit": 2047.7057759255301, "reg": 3333333333.333333, "accepted": false, "terminal_error": 3.423018598873551, "native_steps": 1737316, "bounded_steps": 0}

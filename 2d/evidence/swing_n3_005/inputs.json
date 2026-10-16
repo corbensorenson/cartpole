@@ -1,0 +1,55 @@
+{
+  "args": {
+    "task": "swing",
+    "links": 3,
+    "max_links": 8,
+    "episodes": 12,
+    "noise": 0.02,
+    "seed": 20261016,
+    "iterations": 120,
+    "route_seconds": 8.0,
+    "amplitude": 12.0,
+    "frequency": 0.45,
+    "out": "output/swing_n3_005",
+    "route": "output/swing_n3_004/route.npz",
+    "tape": null,
+    "world_feedback": true,
+    "world_terminal": true,
+    "extend_seconds": 0.0,
+    "hold_start": null,
+    "derivative_workers": 4,
+    "bounded_backward": true
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "control.py": "f3a3da5cae76ce747cb011245ee253cf12cb2b06625d9617e1498a594ac6c96e",
+    "env.py": "7f18279e83e045e2dd35286394d9c6d9133c4c6a7c9f0a59eaff50389a8f3356",
+    "experiment.py": "66e713f8442b60be483f958b9bd9cfcc40ba3ba50199a80e431d820d822715ff",
+    "physical.py": "a611a89ee72ad8d8ac70a17b7b01ce86036469424c3f1c2098eb8ea73f972838",
+    "transfer.py": "f304ce6f63ee6d08e7399c4b10cb7cca37e1916f448e790f5c9e44f62ed5288b"
+  },
+  "utc": "2026-10-16T22:04:48.284832+00:00",
+  "command": [
+    "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\src\\spatialpole\\experiment.py",
+    "swing",
+    "--links",
+    "3",
+    "--iterations",
+    "120",
+    "--world-feedback",
+    "--world-terminal",
+    "--bounded-backward",
+    "--derivative-workers",
+    "4",
+    "--route",
+    "output/swing_n3_004/route.npz",
+    "--out",
+    "output/swing_n3_005"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5"
+  }
+}

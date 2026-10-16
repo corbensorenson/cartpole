@@ -1,0 +1,68 @@
+{
+  "args": {
+    "task": "evaluate",
+    "links": 1,
+    "max_links": 8,
+    "episodes": 32,
+    "noise": 0.02,
+    "seed": 20261416,
+    "iterations": 60,
+    "route_seconds": 8.0,
+    "amplitude": 12.0,
+    "frequency": 0.45,
+    "out": "output/qualify_n3_001",
+    "route": "output/swing_n3_007/route.npz",
+    "tape": null,
+    "world_feedback": false,
+    "world_terminal": false,
+    "extend_seconds": 0.0,
+    "hold_start": null,
+    "derivative_workers": 1,
+    "bounded_backward": false,
+    "direction_cost": false,
+    "terminal_scale": 1.0
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "control.py": "e122264b2d90abf9e3f5679fc7c1d2d1344dbd6f6e18e8214a35222f465f8078",
+    "env.py": "7f18279e83e045e2dd35286394d9c6d9133c4c6a7c9f0a59eaff50389a8f3356",
+    "experiment.py": "e9cc9f9ebe3d3714ea8016ed1ad76d7980a14e81d47c4833b0e63200ffc5b6eb",
+    "physical.py": "f05858d25a76279cb09271c3e13ef76e966b542aeca5612e1f7c2e7f288d860d",
+    "transfer.py": "f304ce6f63ee6d08e7399c4b10cb7cca37e1916f448e790f5c9e44f62ed5288b"
+  },
+  "input_artifacts_sha256": {
+    "driver.py": "e9cc9f9ebe3d3714ea8016ed1ad76d7980a14e81d47c4833b0e63200ffc5b6eb",
+    "pyproject.toml": "1219ab00e087e3d51a95cd257425983cbcad689c3abc13dcad32e91dd549b51f",
+    "requirements-lock.txt": "dc59359748d15aed6894cda3f60a9e1a2f2005385af44b76aa47d071ef35ffe7",
+    "input_route.npz": "8e5962546929b26ff5255060aebd78b177f1f3f7d87041455cd2f2ed38a9df5a"
+  },
+  "utc": "2026-10-16T22:11:23.832588+00:00",
+  "command": [
+    "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\src\\spatialpole\\experiment.py",
+    "evaluate",
+    "--route",
+    "output/swing_n3_007/route.npz",
+    "--episodes",
+    "32",
+    "--seed",
+    "20261416",
+    "--out",
+    "output/qualify_n3_001"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5",
+    "packages": {
+      "scipy": "1.17.1",
+      "gymnasium": "1.4.0",
+      "imageio": "2.38.1",
+      "pillow": "12.3.0"
+    },
+    "thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1"
+    }
+  }
+}

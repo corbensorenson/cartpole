@@ -4,9 +4,9 @@ A cart moves over an XY plane, driven by two forces. Every link has a passive,
 unlimited ball joint: it can tilt in both directions and twist about its axis.
 This is a separate benchmark from the one-dimensional cart and hinge chain.
 
-**One- and two-link hanging-start swing-ups are qualified:** 32/32 fresh noisy
-3D starts at each count, in addition to nominal and development checks. Episodes
-run 30 seconds; one link holds for 21.74s and two for 21.68s. All delivered-action
+**One-, two-, and three-link hanging-start swing-ups are qualified:** 32/32 fresh
+noisy 3D starts at each count, in addition to nominal and development checks.
+Episodes run 30 seconds; the respective holds are 21.74s, 21.68s, and 6.78s. All delivered-action
 tapes replay exactly. Both cart axes are used. Full-state simulation feedback,
 not a learned policy or a hardware demonstration.
 
@@ -16,11 +16,15 @@ not a learned policy or a hardware demonstration.
 [Full two-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-2-link-v1/2d-cartpole-2-link-swingup.mp4)
 · [Two-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-2-link-v1)
 
+[Full three-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-3-link-v1/2d-cartpole-3-link-swingup.mp4)
+· [Three-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-3-link-v1)
+
 | Milestone | Current evidence |
 |---|---|
 | One-link hanging-start swing-up | 32/32 final qualification; full video |
 | Two-link hanging-start swing-up | 32/32 final qualification; full video |
-| Three-link hanging-start swing-up | In development |
+| Three-link hanging-start swing-up | 32/32 fresh final qualification; full video |
+| Four-link hanging-start swing-up | In development |
 | Near-upright balance, 1–3 links | 12/12 local perturbed starts at each count |
 | Near-upright balance, 4 links | 9/12; incomplete, not accepted |
 
@@ -53,6 +57,14 @@ For the qualified two-link controller use
 the stationary handoff. The original two-link local-quaternion handoff failed.
 The frozen route and trajectory gains are identical between these two tests.
 
+For three links use `evidence/qualify_n3_002/frozen_route.npz` with `evaluate`.
+Its policy applies **12 seconds of hanging LQR**, aligns the reference's passive
+axial coordinate frames from the observed launch state, tracks an 11.28-second
+swing, and then applies upright feedback. Every physical state evolves through
+legal cart forces; there is no state reset or joint lock at either switch.
+The new final seeds are 20271416..20271447. The earlier raw-route qualification
+failed at 25/32 and is retained separately as `qualify_n3_001`.
+
 Start a count ladder or optimize a swing route:
 
 ```powershell
@@ -84,8 +96,9 @@ not mean every cumulative world tilt is independently bounded by 0.02rad.
 ## Method and evidence
 
 Native MuJoCo finite differences feed iLQR trajectory optimization. A finite
-feedback table tracks the swing, then switches at eight seconds to an upright
-discrete LQR controller. Cyclic unactuated twist coordinates are excluded from
+feedback table tracks the swing, then switches to an upright discrete LQR
+controller. The first two counts switch at eight seconds; three uses the
+conditioning and timing described above. Cyclic unactuated twist coordinates are excluded from
 the upright Riccati design; this does not add a twist actuator or constraint.
 The optimizer uses smooth force derivatives. Qualification uses actual float32
 forces and complete nonlinear episodes, followed by independent open-loop replay.
@@ -97,11 +110,17 @@ in its evidence directory; qualification does not regenerate its gains.
 Two-link synthesis uses the corrected cost gradient and the world-coordinate
 stationary handoff. The failed baseline and failed local-coordinate handoff
 remain in the evidence alongside the successful continuation.
+Three-link synthesis starts from an earlier planar route proposal, repairs it
+on the new spatial model, and uses smooth world-direction/rate running costs
+plus a circular force-constrained backward pass. Direct policy transfer failed.
+The conditioned launch was developed on 44 starts, then passed a new 32-start
+cohort. Axial-frame alignment rotates reference quaternions, velocities and gains
+consistently; native physics and feedback equivalence are tested at 1,3,6 links.
 
 Each experiment freezes source, arguments, runtime and the pre-experiment memo,
 then records optimizer history, states, raw/delivered forces, tilts, counts,
 timing, failures and replay checks. See `research/plan.md` and `PROGRESS.md`.
-The 32 final seeds were disjoint from development. This establishes performance
+The final 32-seed cohort at each count was disjoint from its development data. This establishes performance
 under that reset distribution; arbitrary disturbances and indefinite balance
 remain untested. MuJoCo 3.3.5 / Python 3.11 / Windows was used for this release.
 

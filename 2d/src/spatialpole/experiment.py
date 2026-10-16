@@ -7,6 +7,8 @@ import hashlib
 import json
 from pathlib import Path
 import platform
+import os
+import importlib.metadata
 import shutil
 import sys
 import time
@@ -18,6 +20,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from .env import Config, SpatialCartpole
 from .control import BalancePolicy, WorldBalancePolicy, RoutePolicy, balance_design, optimize_route
+from .conditioning import ParkedRoutePolicy
 
 
 def write_json(path, data):
@@ -32,9 +35,27 @@ def freeze_inputs(out, args):
     if memo.exists():
         shutil.copy(memo, out / "plan.md")
     hashes = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((out / "source").glob("*.py"))}
+    artifacts = {}
+    driver = Path(sys.argv[0])
+    if driver.is_file():
+        shutil.copy2(driver,out/'driver.py')
+        artifacts['driver.py'] = hashlib.sha256((out/'driver.py').read_bytes()).hexdigest()
+    for name in ('pyproject.toml','requirements-lock.txt'):
+        original = Path(name)
+        if original.is_file():
+            shutil.copy2(original,out/name)
+            artifacts[name] = hashlib.sha256((out/name).read_bytes()).hexdigest()
+    route = getattr(args,'route',None)
+    if route and Path(route).is_file():
+        filename = 'input_route'+Path(route).suffix
+        shutil.copy2(route,out/filename)
+        artifacts[filename] = hashlib.sha256((out/filename).read_bytes()).hexdigest()
     write_json(out / "inputs.json", {"args": vars(args), "source_sha256": hashes,
+               "input_artifacts_sha256":artifacts,
                "utc": datetime.now(timezone.utc).isoformat(), "command": sys.argv,
-               "runtime": {"python": sys.version, "platform": platform.platform(), "numpy": np.__version__, "mujoco": mj.__version__}})
+               "runtime": {"python": sys.version, "platform": platform.platform(), "numpy": np.__version__, "mujoco": mj.__version__,
+                           "packages":{k:importlib.metadata.version(k) for k in ('scipy','gymnasium','imageio','pillow')},
+                           "thread_environment":{k:os.environ[k] for k in ('OPENBLAS_NUM_THREADS','OMP_NUM_THREADS','MKL_NUM_THREADS') if k in os.environ}}})
 
 
 def episode(config, policy_factory, seed, mode="upright", noise=0.02, tape=None):
@@ -71,9 +92,11 @@ def episode(config, policy_factory, seed, mode="upright", noise=0.02, tape=None)
     result["replay_exact"] = bool(np.array_equal(np.asarray(states), np.array(replay)))
     result["replay_max_error"] = float(np.max(np.abs(np.asarray(states) - replay)))
     result["proof_native_steps"] = proof.native_steps
+    if hasattr(policy,'metadata'):
+        result['policy_metadata'] = policy.metadata
     if tape:
         np.savez_compressed(tape, states=states, actions=np.asarray(actions, np.float32), raw_actions=raw_actions,
-                            tilts=tilts, config=json.dumps(asdict(config)))
+                            tilts=tilts, config=json.dumps(asdict(config)),policy_metadata=json.dumps(getattr(policy,'metadata',{})))
     env.close()
     proof.close()
     return result
@@ -85,6 +108,7 @@ def render_tape(tape, output):
     env = SpatialCartpole(config)
     frames = data["states"]
     tilts = data["tilts"]
+    policy_metadata = json.loads(str(data['policy_metadata'])) if 'policy_metadata' in data else {}
     try:
         font = ImageFont.truetype("C:/Windows/Fonts/segoeui.ttf", 23)
         title_font = ImageFont.truetype("C:/Windows/Fonts/segoeuib.ttf", 34)
@@ -103,7 +127,12 @@ def render_tape(tape, output):
             if i:
                 streak = streak + 1 if np.max(tilts[i-1]) < config.angle_threshold else 0
                 best = max(best, streak)
-            text = f"t {i*config.dt:5.2f}s    tilt {max_tilt:5.3f} rad    best hold {best*config.dt:5.2f}s    XY cart + passive ball joints"
+            phase = 'XY cart + passive ball joints'
+            if 'park_seconds' in policy_metadata:
+                park = policy_metadata['park_seconds']
+                route_seconds = policy_metadata.get('route_seconds',11.28)
+                phase = 'phase: HANGING CONDITIONING' if i*config.dt < park else 'phase: SWING TRACKING' if i*config.dt < park+route_seconds else 'phase: UPRIGHT FEEDBACK'
+            text = f"t {i*config.dt:5.2f}s    tilt {max_tilt:5.3f} rad    best hold {best*config.dt:5.2f}s    {phase}"
             d.text((30, 65), text, font=font, fill=(150, 220, 245))
             # Top-down inset proves both dimensions are physically free, and
             # shows the complete cart path rather than a camera-tracked illusion.
@@ -140,6 +169,13 @@ def main():
     p.add_argument("--route")
     p.add_argument("--tape")
     p.add_argument("--world-feedback", action="store_true")
+    p.add_argument("--world-terminal", action="store_true")
+    p.add_argument("--extend-seconds", type=float, default=0.)
+    p.add_argument("--hold-start", type=float)
+    p.add_argument("--derivative-workers",type=int,default=1)
+    p.add_argument("--bounded-backward",action="store_true")
+    p.add_argument("--direction-cost",action="store_true")
+    p.add_argument("--terminal-scale",type=float,default=1.)
     a = p.parse_args()
     out = Path(a.out)
     if a.task == "video":
@@ -152,7 +188,11 @@ def main():
         config = Config(**json.loads(str(saved["config"])))
         design = {k:saved[k] for k in ("reference","K","P","Q","R")}
         world_balance = a.world_feedback or (bool(saved["world_balance"]) if "world_balance" in saved else False)
-        factory = lambda e: RoutePolicy(e,saved["states"],saved["actions"],saved["gains"],design,world_balance)
+        if 'park_steps' in saved:
+            parking = {'reference':saved['parking_reference'],'K':saved['parking_K']}
+            factory = lambda e: ParkedRoutePolicy(e,saved['states'],saved['actions'],saved['gains'],design,parking,int(saved['park_steps']),bool(saved['align_gauge']))
+        else:
+            factory = lambda e: RoutePolicy(e,saved["states"],saved["actions"],saved["gains"],design,world_balance)
         shutil.copy(a.route,out / "frozen_route.npz")
         rows = []
         for k in range(a.episodes):
@@ -190,6 +230,9 @@ def main():
     else:
         config = Config(n_links=a.links)
         env = SpatialCartpole(config)
+        if a.derivative_workers < 1:
+            raise ValueError("derivative_workers must be positive")
+        env.derivative_workers = a.derivative_workers
         initial, _ = env.reset(seed=a.seed, options={"mode":"hanging", "angle_noise":0.})
         H = round(a.route_seconds / config.dt)
         if a.route:
@@ -199,15 +242,29 @@ def main():
             t = np.arange(H) * config.dt
             actions = np.zeros((H, 2))
             actions[:, 0] = a.amplitude * np.sin(2*np.pi*a.frequency*t)
+        if a.extend_seconds < 0:
+            raise ValueError("extension duration must be nonnegative")
+        if a.extend_seconds:
+            actions = np.vstack([actions,np.zeros((round(a.extend_seconds/config.dt),2))])
+        hold_start = round(a.hold_start/config.dt) if a.hold_start is not None else None
+        if hold_start is not None and not 0 <= hold_start < len(actions):
+            raise ValueError("hold start must fall inside the optimized route")
+        if len(actions) > config.horizon:
+            raise ValueError("optimized route must fit inside the episode")
         def log(row):
             with (out / "optimizer.jsonl").open("a", encoding="utf-8") as f:
                 f.write(json.dumps(row)+"\n")
             if row["iteration"] % 5 == 0:
                 print(json.dumps(row), flush=True)
-        states, actions, gains, design, history = optimize_route(env, initial, actions, a.iterations, log)
+        def checkpoint(iteration,xs,us):
+            (out / "checkpoints").mkdir(exist_ok=True)
+            np.savez_compressed(out / "checkpoints" / f"iteration_{iteration:03d}.npz", states=xs,actions=us,config=json.dumps(asdict(config)))
+        states, actions, gains, design, history = optimize_route(env, initial, actions, a.iterations, log,
+                                                              terminal_scale=a.terminal_scale,world_terminal=a.world_terminal,checkpoint=checkpoint,hold_start=hold_start,bounded_backward=a.bounded_backward,direction_cost=a.direction_cost)
         np.savez_compressed(out / "route.npz", states=states, actions=actions, gains=gains,
                             **design, config=json.dumps(asdict(config)),world_balance=a.world_feedback)
         native_design = env.native_steps
+        env.close()
         factory = lambda e: RoutePolicy(e, states, actions, gains, design,a.world_feedback)
         rows = [episode(config, factory, a.seed, "hanging", 0., out / "nominal.npz")]
         print("nominal: " + json.dumps(rows[0]), flush=True)

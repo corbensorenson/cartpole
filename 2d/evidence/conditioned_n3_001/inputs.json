@@ -1,0 +1,49 @@
+{
+  "args": {
+    "route": "output/swing_n3_007/route.npz",
+    "out": "output/conditioned_n3_001",
+    "park_seconds": 12.0,
+    "no_align": false
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "conditioning.py": "dd31aab8243578398fc314a3edf41c2b073c17763d7a9f11620240a9ec3baa1b",
+    "control.py": "380f0135f6b722183d3d1521916e8a5a042a84224bd2ea7a3e582370b4a451f8",
+    "env.py": "7f18279e83e045e2dd35286394d9c6d9133c4c6a7c9f0a59eaff50389a8f3356",
+    "experiment.py": "291ad72442cdb447249bbee501215e2aca4b5e35f919157fe56e22560732093c",
+    "physical.py": "f05858d25a76279cb09271c3e13ef76e966b542aeca5612e1f7c2e7f288d860d",
+    "transfer.py": "f304ce6f63ee6d08e7399c4b10cb7cca37e1916f448e790f5c9e44f62ed5288b"
+  },
+  "input_artifacts_sha256": {
+    "driver.py": "0fa9c579604fd6b5d69d70d4e56bdf061bbc484997ad818de6c3bdfaee3a6611",
+    "pyproject.toml": "1219ab00e087e3d51a95cd257425983cbcad689c3abc13dcad32e91dd549b51f",
+    "requirements-lock.txt": "dc59359748d15aed6894cda3f60a9e1a2f2005385af44b76aa47d071ef35ffe7",
+    "input_route.npz": "8e5962546929b26ff5255060aebd78b177f1f3f7d87041455cd2f2ed38a9df5a"
+  },
+  "utc": "2026-10-16T22:15:41.127704+00:00",
+  "command": [
+    "scripts/condition_route.py",
+    "--route",
+    "output/swing_n3_007/route.npz",
+    "--park-seconds",
+    "12",
+    "--out",
+    "output/conditioned_n3_001"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5",
+    "packages": {
+      "scipy": "1.17.1",
+      "gymnasium": "1.4.0",
+      "imageio": "2.38.1",
+      "pillow": "12.3.0"
+    },
+    "thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1"
+    }
+  }
+}
