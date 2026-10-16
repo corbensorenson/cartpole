@@ -17,6 +17,14 @@
       "source_manifest": "output/balance_world_001/inputs.json"
     },
     {
+      "directory": "output/checkpoint_n4_tracking_001",
+      "status": "completed",
+      "summary_sha256": "d5c93fdf77b86d576f14aed413d1422616c87076f34395bab7fd3b8b953de8ae",
+      "passes": 13,
+      "n_links": 4,
+      "source_manifest": "output/checkpoint_n4_tracking_001/inputs.json"
+    },
+    {
       "directory": "output/conditioned_n3_001",
       "status": "completed",
       "summary_sha256": "3e6450f192e0503a052329ecb237657d23e60fdb43ff226b5dd410a8f62521d7",
@@ -33,6 +41,54 @@
       "source_manifest": null
     },
     {
+      "directory": "output/fddp_n4_001",
+      "status": "interrupted",
+      "summary_sha256": "a3efb3e1269cb8bef1c5f37a683c6888cd1adedaafcf9376a034f51a04a04db6",
+      "passes": null,
+      "n_links": null,
+      "source_manifest": "output/fddp_n4_001/inputs.json"
+    },
+    {
+      "directory": "output/fddp_n4_002",
+      "status": "interrupted",
+      "summary_sha256": "69f14eaa7ae71691b2b3788cc78b6f5c9cedb7ed3bef1e966bcce5087e350c61",
+      "passes": null,
+      "n_links": null,
+      "source_manifest": "output/fddp_n4_002/inputs.json"
+    },
+    {
+      "directory": "output/fddp_n4_003",
+      "status": "completed",
+      "summary_sha256": "b1721c4f1c09333ef96a73b621161ac10a3e7a42daf54c16f5372908cbb57b3e",
+      "passes": 0,
+      "n_links": 4,
+      "source_manifest": "output/fddp_n4_003/inputs.json"
+    },
+    {
+      "directory": "output/fddp_n4_004",
+      "status": "completed",
+      "summary_sha256": "00e4b20e41bd1486972710b0faac3d7a008c71dd4d05bb4f3d181104aeeb2b62",
+      "passes": 0,
+      "n_links": 4,
+      "source_manifest": "output/fddp_n4_004/inputs.json"
+    },
+    {
+      "directory": "output/fddp_n4_005",
+      "status": "completed",
+      "summary_sha256": "e59a5dd1a405b56eb60146c0126e3361a50139e7519c830cf4daf5493f0fba22",
+      "passes": 1,
+      "n_links": 4,
+      "source_manifest": "output/fddp_n4_005/inputs.json"
+    },
+    {
+      "directory": "output/fddp_n4_006",
+      "status": "completed",
+      "summary_sha256": "165a9e072ee2f003a82e703f0f199bec4610d643449e4a381679f3abf29cbdb9",
+      "passes": 0,
+      "n_links": 4,
+      "source_manifest": "output/fddp_n4_006/inputs.json"
+    },
+    {
       "directory": "output/n2_world_handoff_001",
       "status": "completed",
       "summary_sha256": "37a5ac93398866952ae89633a228f4682f814ae3857baaf2e6508ae816bc6505",
@@ -47,6 +103,38 @@
       "passes": 1,
       "n_links": 2,
       "source_manifest": "output/n2_world_nominal_001/inputs.json"
+    },
+    {
+      "directory": "output/n4_foreign_defects_001",
+      "status": "completed",
+      "summary_sha256": "f459a54fbde01b96c74f5ffe4092126bb4dff8ae02725123acbd72dc2e4948a7",
+      "passes": null,
+      "n_links": 4,
+      "source_manifest": "output/n4_foreign_defects_001/inputs.json"
+    },
+    {
+      "directory": "output/n4_mechanics_continuation_001",
+      "status": "completed",
+      "summary_sha256": "b16617f1dd54d6cc1b78952d65e67c369818e4bdde7537a12d3e1d8ed3bd2088",
+      "passes": null,
+      "n_links": 4,
+      "source_manifest": "output/n4_mechanics_continuation_001/inputs.json"
+    },
+    {
+      "directory": "output/n4_old_mechanics_replay_001",
+      "status": "completed",
+      "summary_sha256": "b6f056c7579fe07d8595c7e27a9bc55ef62b34f414e09fbf287d0dc92f9df5a4",
+      "passes": 1,
+      "n_links": 4,
+      "source_manifest": "output/n4_old_mechanics_replay_001/inputs.json"
+    },
+    {
+      "directory": "output/n4_plant_parity_001",
+      "status": "completed",
+      "summary_sha256": "20e3091e11206aedd59f2d1ddf63ed073aab7eab4bedab9bd315ffbeae7997dd",
+      "passes": null,
+      "n_links": 4,
+      "source_manifest": "output/n4_plant_parity_001/inputs.json"
     },
     {
       "directory": "output/planar_lift_n3_001",
@@ -71,6 +159,22 @@
       "passes": null,
       "n_links": 3,
       "source_manifest": "output/planar_lift_n3_gainbank_001/inputs.json"
+    },
+    {
+      "directory": "output/planar_lift_n4_001",
+      "status": "failed",
+      "summary_sha256": "6630127cc57e5266f98f400e00627f3ab89a1cc640a4c669a1b3a12ccf4f0390",
+      "passes": null,
+      "n_links": null,
+      "source_manifest": "output/planar_lift_n4_001/inputs.json"
+    },
+    {
+      "directory": "output/planar_lift_n4_002",
+      "status": "completed",
+      "summary_sha256": "4bef4ab34b7b57e42d83650cd6a46047ffa8c0e8964ebec4cab29ab9d88d2ec4",
+      "passes": 0,
+      "n_links": 4,
+      "source_manifest": "output/planar_lift_n4_002/inputs.json"
     },
     {
       "directory": "output/qualify_n1_001",
@@ -103,6 +207,30 @@
       "passes": 32,
       "n_links": 3,
       "source_manifest": "output/qualify_n3_002/inputs.json"
+    },
+    {
+      "directory": "output/qualify_n4_001",
+      "status": "completed",
+      "summary_sha256": "089cd8a08b5c70dcbaf915d4f4bd8bd91b3385cc98cf513454a73a67c10997ac",
+      "passes": 32,
+      "n_links": 4,
+      "source_manifest": "output/qualify_n4_001/inputs.json"
+    },
+    {
+      "directory": "output/regression_n3_cart_armature_001",
+      "status": "completed",
+      "summary_sha256": "a6bf43a27c10fcd984664382cbb50baf8f7d64100bb6633676dca105e123dc55",
+      "passes": 1,
+      "n_links": 3,
+      "source_manifest": "output/regression_n3_cart_armature_001/inputs.json"
+    },
+    {
+      "directory": "output/split_n3_to_n4_001",
+      "status": "completed",
+      "summary_sha256": "55f8b953020df1854ffcc4d1e948ede4104bd00383b51d3ce49268be8b87f511",
+      "passes": null,
+      "n_links": 4,
+      "source_manifest": "output/split_n3_to_n4_001/inputs.json"
     },
     {
       "directory": "output/swing_n1_001",
@@ -186,11 +314,19 @@
     },
     {
       "directory": "output/swing_n4_001",
-      "status": "incomplete",
-      "summary_sha256": "f590cb7468ea830675cb886fcdd2fa0afc7ee1b07ef6f4b7c101dba2e69c29e9",
-      "passes": null,
-      "n_links": null,
+      "status": "completed",
+      "summary_sha256": "342b00f984c029cd5df621babf8eaaef7f5d13955c26d28071b5516585143c83",
+      "passes": 0,
+      "n_links": 4,
       "source_manifest": "output/swing_n4_001/inputs.json"
+    },
+    {
+      "directory": "output/tracking_repair_n4_001",
+      "status": "completed",
+      "summary_sha256": "b63ed74ac9ebf4bc38a8169d8a2f2d49073241373dd6ec6c894041d879c4f8e4",
+      "passes": 13,
+      "n_links": 4,
+      "source_manifest": "output/tracking_repair_n4_001/inputs.json"
     }
   ],
   "publications": [
@@ -210,6 +346,25 @@
           "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-2-link-v1/2d-cartpole-2-link-evidence.zip",
           "sha256": "f56c37ae283735863e85e0b0cb784d69aaa97072b0d515a2345cd8ac11c4091f",
           "size": 24966167
+        }
+      ]
+    },
+    {
+      "url": "https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-3-link-v1",
+      "tag": "2d-cartpole-3-link-v1",
+      "commit": "b119c020b43852012c307a2a82bb1932a601a4ed",
+      "assets": [
+        {
+          "name": "2d-cartpole-3-link-swingup.mp4",
+          "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-3-link-v1/2d-cartpole-3-link-swingup.mp4",
+          "sha256": "bcfb0b1fb95ce58fe244f6950a187432bee5d97c90eae468a764b10091397fb4",
+          "size": 1393069
+        },
+        {
+          "name": "2d-cartpole-3-link-evidence.zip",
+          "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-3-link-v1/2d-cartpole-3-link-evidence.zip",
+          "sha256": "5a5b71359d76a0d8df51c74fe988fc59aa75069f28e67a3ee0d90ddf4cbff6ce",
+          "size": 90858688
         }
       ]
     },

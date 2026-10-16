@@ -37,7 +37,7 @@ def linearize(env: SpatialCartpole, state, force, eps=1e-5):
     return A, B
 
 
-def linearize_many(env, states, actions, eps=1e-5):
+def linearize_many(env, states, actions, eps=1e-5, return_next=False):
     """Same centered stencil in a native C rollout batch (RK4, four substeps)."""
     nx, count = 2*env.model.nv, len(actions)
     width = 1+2*nx+4
@@ -79,7 +79,7 @@ def linearize_many(env, states, actions, eps=1e-5):
             elif force[j]-eps < -env.config.force_limit:
                 matrix[:,column] = env.difference(row[1+2*column],row[0])/eps
         models.append((matrix[:,:nx],matrix[:,nx:]))
-    return models
+    return (models,results[:,0].copy()) if return_next else models
 
 
 def bounded_action_step(u,gradient,hessian,cross,limit):
@@ -137,6 +137,13 @@ def cost_derivatives(env, state, reference, weight):
     log is not identity. Its right-Jacobian inverse matters during spatial swing.
     """
     error = env.difference(state,reference)
+    jac = difference_jacobian(env,state,reference)
+    return jac.T@weight@error, jac.T@weight@jac
+
+
+def difference_jacobian(env,state,reference):
+    """Derivative of reference-relative coordinates under a local increment."""
+    error = env.difference(state,reference)
     jac = np.eye(2*env.model.nv)
     for i in range(env.config.n_links):
         j = 2+3*i
@@ -146,7 +153,7 @@ def cost_derivatives(env, state, reference, weight):
         hat = np.array([[0.,-z,y],[z,0.,-x],[-y,x,0.]])
         coef = 1/12+angle**2/720 if angle < 1e-4 else (1-0.5*angle/np.tan(0.5*angle))/angle**2
         jac[j:j+3,j:j+3] = np.eye(3)+0.5*hat+coef*(hat@hat)
-    return jac.T@weight@error, jac.T@weight@jac
+    return jac
 
 
 def balance_design(env, r=0.01, angle_weight=20., cart_weight=1., reference=None):

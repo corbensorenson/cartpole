@@ -1,0 +1,31 @@
+{
+  "n_links": 4,
+  "altered_plant": true,
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 2.4537032271215115e-05,
+      "best_hold_seconds": 7.22,
+      "plane_margin": 0.19169569029853273,
+      "physics_warning": false,
+      "success": true,
+      "steps": 1500,
+      "native_steps": 6000,
+      "wall_seconds": 0.6639682999993965,
+      "max_xy": [
+        2.806028879416473,
+        4.374029978639513e-14
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.4537032271215115e-05,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 6000
+    }
+  ],
+  "passes": 1,
+  "design_native_steps": 281332,
+  "scope": "mechanical-variant component; not a new benchmark link count"
+}

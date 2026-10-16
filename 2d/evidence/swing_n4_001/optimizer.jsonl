@@ -1,0 +1,17 @@
+{"iteration": 0, "merit": 207221484.02819246, "reg": 0.0003333333333333333, "accepted": true, "terminal_error": 74.64023463778445, "native_steps": 151396, "bounded_steps": 116}
+{"iteration": 1, "merit": 207221484.02819246, "reg": 0.003333333333333333, "accepted": false, "terminal_error": 74.64023463778445, "native_steps": 302548, "bounded_steps": 443}
+{"iteration": 2, "merit": 207221484.02819246, "reg": 0.03333333333333333, "accepted": false, "terminal_error": 74.64023463778445, "native_steps": 453700, "bounded_steps": 450}
+{"iteration": 3, "merit": 207221484.02819246, "reg": 0.3333333333333333, "accepted": false, "terminal_error": 74.64023463778445, "native_steps": 604852, "bounded_steps": 435}
+{"iteration": 4, "merit": 207221484.02819246, "reg": 3.333333333333333, "accepted": false, "terminal_error": 74.64023463778445, "native_steps": 756004, "bounded_steps": 369}
+{"iteration": 5, "merit": 172901322.66308913, "reg": 1.111111111111111, "accepted": true, "terminal_error": 60.89337542582869, "native_steps": 904900, "bounded_steps": 337}
+{"iteration": 6, "merit": 172901322.66308913, "reg": 11.111111111111109, "accepted": false, "terminal_error": 60.89337542582869, "native_steps": 1056052, "bounded_steps": 352}
+{"iteration": 7, "merit": 73654809.94410339, "reg": 3.703703703703703, "accepted": true, "terminal_error": 83.66800199153325, "native_steps": 1202692, "bounded_steps": 287}
+{"iteration": 8, "merit": 73654809.94410339, "reg": 37.03703703703703, "accepted": false, "terminal_error": 83.66800199153325, "native_steps": 1353844, "bounded_steps": 290}
+{"iteration": 9, "merit": 73654809.94410339, "reg": 370.3703703703703, "accepted": false, "terminal_error": 83.66800199153325, "native_steps": 1504996, "bounded_steps": 233}
+{"iteration": 10, "merit": 73654809.94410339, "reg": 3703.7037037037035, "accepted": false, "terminal_error": 83.66800199153325, "native_steps": 1656148, "bounded_steps": 202}
+{"iteration": 11, "merit": 73654809.94410339, "reg": 37037.03703703704, "accepted": false, "terminal_error": 83.66800199153325, "native_steps": 1807300, "bounded_steps": 192}
+{"iteration": 12, "merit": 73654809.94410339, "reg": 370370.37037037034, "accepted": false, "terminal_error": 83.66800199153325, "native_steps": 1958452, "bounded_steps": 203}
+{"iteration": 13, "merit": 73654809.94410339, "reg": 3703703.7037037034, "accepted": false, "terminal_error": 83.66800199153325, "native_steps": 2109604, "bounded_steps": 212}
+{"iteration": 14, "merit": 73654809.94410339, "reg": 37037037.03703703, "accepted": false, "terminal_error": 83.66800199153325, "native_steps": 2260756, "bounded_steps": 209}
+{"iteration": 15, "merit": 73654809.94410339, "reg": 370370370.37037027, "accepted": false, "terminal_error": 83.66800199153325, "native_steps": 2411908, "bounded_steps": 220}
+{"iteration": 16, "merit": 73654809.94410339, "reg": 3703703703.703703, "accepted": false, "terminal_error": 83.66800199153325, "native_steps": 2563060, "bounded_steps": 204}

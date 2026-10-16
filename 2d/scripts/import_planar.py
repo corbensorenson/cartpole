@@ -24,6 +24,7 @@ p.add_argument('--route',required=True)
 p.add_argument('--full-source',required=True)
 p.add_argument('--spec',required=True)
 p.add_argument('--source-config',required=True)
+p.add_argument('--reference-only',action='store_true')
 a = p.parse_args()
 out = Path(a.out)
 freeze_inputs(out,a)
@@ -60,7 +61,20 @@ for row in coords:
 reference = np.array(reference)
 check = np.array([lift_planar_state(env,row['qpos'],row['qvel']) for row in full['result']['trajectory'][:len(reference)-1]])
 max_error = max(np.max(np.abs(env.difference(x,y))) for x,y in zip(reference[1:],check))
-if max_error > 2e-6:
+if a.reference_only:
+    parent_coords = np.asarray(full['search']['nominal_coordinate_states'])
+    if not np.array_equal(coords,parent_coords):
+        raise ValueError('historical nominal arrays differ between source and route')
+    max_direction_error = 0.
+    for state,row in zip(reference,coords):
+        env.set_state(state)
+        directions = env.data.xmat[env.link_ids].reshape(-1,3,3)[:,:,2]
+        theta = row[1:n+1]*scales['angle']
+        desired = np.c_[np.sin(theta),np.zeros(n),np.cos(theta)]
+        max_direction_error = max(max_direction_error,float(np.max(np.abs(directions-desired))))
+    if max_direction_error > 1e-10:
+        raise ValueError('lifted physical world directions disagree with historical coordinates')
+elif max_error > 2e-6:
     raise ValueError(f'foreign coordinate reconstruction disagrees with stored physical tape: {max_error}')
 actions = np.c_[np.array(route['controller']['controls'])*80.,np.zeros(len(reference)-1)]
 design = balance_design(env)
@@ -80,6 +94,8 @@ if rows[0]['success']:
 write_json(out/'summary.json',{'n_links':n,'passes':sum(x['success'] and x['replay_exact'] for x in rows),
     'results':rows,'design_native_steps':env.native_steps,'foreign_reconstruction_error':max_error,
     'source_scales':scales,
+    'reference_only':a.reference_only,
+    'coordinate_direction_error':max_direction_error if a.reference_only else None,
     'source_plant_difference':'old total damping 0.015 vs new 0.0075; old slide armature 0.0005 vs new 0; ball joints and XY cart free',
     'wall_seconds':time.perf_counter()-start})
 write_json(out/'completed.json',{'status':'completed','wall_seconds':time.perf_counter()-start})

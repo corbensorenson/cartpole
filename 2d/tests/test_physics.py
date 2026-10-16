@@ -116,6 +116,15 @@ def test_physical_terminal_error_distinguishes_hanging_from_upright():
     assert np.linalg.norm(policy.error(e.upright_state())[2:4]) == 0
 
 
+def test_cart_armature_is_explicit_and_zero_in_the_benchmark():
+    e = SpatialCartpole(Config(n_links=4))
+    np.testing.assert_array_equal(e.model.dof_armature[:2],0.)
+    altered = SpatialCartpole(Config(n_links=4,cart_armature=0.0005))
+    np.testing.assert_array_equal(altered.model.dof_armature[:2],0.0005)
+    with pytest.raises(ValueError):
+        Config(cart_armature=np.nan)
+
+
 @pytest.mark.parametrize("n",[1,3,6])
 def test_batched_physical_kinematics_match_native(n):
     e = SpatialCartpole(Config(n_links=n))

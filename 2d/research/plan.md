@@ -349,3 +349,248 @@ four-link final qualification is reserved as 20261516..20261547 and remains
 unused until a controller is frozen. All force, plane, sampling, reset-noise and
 full-episode gates stay fixed. Prediction: count transfer supplies a useful
 initializer, while the conditioned launch avoids repeating the raw-start failure.
+
+## Amendment before four-link planar-source lift
+
+The direct three-to-four force transfer stops at 17 iterations; its nominal
+actual exits at 3.58s without upright hold. Its initial single-shooting trajectory
+develops large boundary and terminal errors, so the next initializer should use
+the original four-link motion rather than continue polishing this force trace.
+
+Apply the already documented planar-source adapter to n4_route.json and
+n4_full_fddp_controller.json, n4_uniform_exact.yaml, and the frozen historical
+capture specification. Use the same 2e-6 nominal/actual reconstruction guard,
+old X gain conversion and new native spatial Y gain synthesis. Keep all new
+plant parameters unchanged. Budget <=500k design physics steps plus one nominal
+episode/proof, then 12 spatial starts only if nominal succeeds. Retain any input
+guard failure or new-plant execution failure. A lifted reference is a proposal,
+never a claim of a new four-link spatial solve.
+
+Four-link lift V1 stops on a 77.32 mixed-component nominal/actual discrepancy.
+Inspection shows that the parent full artifact's stored actual episode failed
+with tracking_gain_scale=0, whereas the published route library uses the curated
+`n4_route_solver.json` with gain scale 1. The source hashes match; the failed
+parent execution is not a valid parity comparator for that curated controller.
+Its 23.04s nominal reference also differs fundamentally in timing from three.
+The historical library adds 15s conditioning outside its configured 30s route
+episode; do not import that as a 30s total spatial task or change our clock.
+
+V2 uses the curated solver as a REFERENCE PROPOSAL ONLY. Require byte-identical
+nominal coordinate arrays between parent and curated artifact, parse frozen
+scales, and verify every lifted rod world direction against those coordinates
+with native forward kinematics (1e-10 tolerance). Record the large old actual
+discrepancy and reference-only scope; do not waive or relabel the V1 failure as
+physical parity. Then synthesize new spatial Y feedback and execute the unchanged
+new plant, same <=500k design / nominal-first budget. No four-link claim follows
+from the historical gate, which used a different initialization/timing protocol.
+
+## Amendment before four-link proposal defect measurement
+
+The curated-reference lift validates coordinate directions, but the new plant's
+nominal actual exits at 4.08s without upright hold. Measure independent native
+one-command transitions at all 1152 foreign reference nodes on the unchanged
+new plant, with its saved smooth forces. Budget 4608 physics steps, no controller
+search or success cohort. Save full predicted states and tangent defects with
+separate m/rad/m-per-s/rad-per-s summaries. Hypothesis: local discrepancies are
+modest while long feasible shooting amplifies them, favoring defect-aware
+multiple shooting or FDDP initialized by the geometric reference. If the local
+reference is grossly inconsistent, prefer a new geometric initializer instead.
+This diagnostic is not an actual episode, robustness result or four-link solve.
+
+## Amendment before defect-aware four-link repair — 2026-10-16
+
+Question: can retaining the curated four-link state path while closing its
+measured native transition errors avoid the early divergence of force-only
+shooting? Initial proposal is planar_lift_n4_002/route.npz (1152 commands,
+23.04s). Keep the unchanged spatial plant, 80N force norm, +/-3m square,
+50Hz commands, 200Hz RK4 and strict total 30s / 5s hold gate.
+
+Implement an FDDP-inspired manifold forward pass: keep a fraction (1-alpha) of
+each current dynamics gap during optimization, and set all gaps to zero at a
+full step. Backward models include the affine native defect and the Jacobian
+mapping successor tangents into reference-relative coordinates. Use the tested
+circular action quadratic and physical periodic direction/rate running costs;
+physical terminal Riccati multiplier 10. Acceptance uses actual scalar cost plus
+a normalized gap penalty, initially 1000 and increased tenfold every ten
+iterations if necessary. This differs from Crocoddyl's exact expected-improvement
+acceptance rule; do not describe it as an exact Crocoddyl reproduction.
+
+Sources consulted before implementation: Mastalli et al., Crocoddyl / FDDP,
+https://arxiv.org/abs/1909.04947 and the official FDDP forward-pass / DDP backward
+source at https://gepettoweb.laas.fr/doc/loco-3d/crocoddyl/devel/doxygen-html/.
+Tests compare the affine backward pass against a separately condensed global
+quadratic optimum, verify quaternion gap contraction at alpha=0/.5/1, verify
+reference-relative Jacobians, and require a gap-free rebuilt native tape. The
+test caught a zero-increment quaternion renormalization; full native steps now
+retain their exact bytes rather than applying a zero retraction.
+
+Budget: <=80 iterations / 25M design physics steps, four persistent native
+workers. Preserve optimizer history and shooting state/action/gap checkpoints.
+At the end, separately rebuild a native gap-free feedback route, then test a
+full exact hanging-start actual episode with float32 forces and independent
+replay. Only if nominal passes, test the shared 12 spatial development starts.
+An inconsistent optimizer proposal is never executed as a physical state reset
+or counted as a solve. Final four-link qualification seeds remain untouched.
+Prediction: defects should contract while the useful arrival remains nearby.
+If true rollout still fails, examine objective/feedback/handoff and defect
+directions, not just scalar merit. No quiet tail or extra parking time is granted.
+
+## Amendment before continuous three-to-four geometric split
+
+The long historical reference leaves little time for launch contraction inside
+our 30s episode. Build shorter four-link state proposals from the solved three's
+11.28s base motion, not just its forces. For each source link index 0,1,2,
+insert a new target ball with identity relative rotation and zero relative rate
+in the REFERENCE ONLY. This continuously duplicates that body's world direction
+and rate. The real four-link plant is fully unlocked, uniform, unchanged, with
+total length/mass fixed; there is no equality or spring keeping the added joint
+straight. The state proposal is explicitly allowed to be dynamically inconsistent.
+
+Verify direction/rate preservation, then measure native local defects for all
+three proposals (<=6768 physics steps). Select the lowest fixed normalized gap
+sum, using the same scales as the repair solver. This is initializer selection,
+not a success test. Freeze it, then use the SAME defect-aware repair recipe as
+the historical-reference experiment: 80 iterations, terminal multiplier 10,
+initial penalty 1000, four workers, <=25M design steps, nominal-first actual
+validation/proof and the shared 12 development starts if nominal passes.
+Prediction: this preserves a useful short arrival while giving the new joint
+room to change, avoiding a discontinuous spatial interpolation or a force-only
+rollout that immediately loses the predecessor's motion.
+
+## Correction and restart of the first defect-aware experiments
+
+The two initial repair runs are intentionally interrupted after identifying a
+manifold linearization error. The implementation mapped native successor
+perturbations using only the right-log Jacobian, while treating the optimized
+successor's defect Jacobian as identity. Eliminating BOTH Jacobians yields
+Ad(exp(c)) on each ball rotation block, c=log(q_ref^-1 q_F), with additive
+cart/velocity blocks. This also matches the derivative of the actual
+gap-preserving forward map at alpha=0. A new test compares the complete native
+map (state AND force perturbations) against that transport, including nonzero
+quaternion defects; it passes. The separate affine optimum, gap contraction and
+gap-free native rebuild tests continue to pass.
+
+Keep the original source, histories and checkpoints. Record interrupted design
+accounting as a known lower bound plus a one-iteration upper bound; do not claim
+an exact final step count while termination may interrupt a native batch. No
+actual validation episode was reached by either old run.
+
+Restart each from its last saved checkpoint using the corrected solver and the
+penalty recorded at that checkpoint (the standard initial regularization is
+restarted). These are new experiment identities, not continuations pretending
+to use unchanged code. Each receives <=80 additional iterations / 25M new design
+physics steps and the same nominal-first actual gates. This is a correctness
+repair; any performance change remains empirical, not assumed.
+
+## Amendment before finite four-link mechanical parity comparison
+
+Compare independent reference-node transitions for three models: unchanged
+benchmark, old total joint damping 0.015, and old damping plus slide armature
+0.0005. All still have free XY slides and unrestricted ball joints. The last
+two are ALTERED-PLANT diagnostics only. Save exact overridden arrays, successor
+states and defects, <=13824 physics steps, no episode or success claim.
+Prediction: restoring the historical mechanical values should reduce the
+reference's one-command defect sharply if those values explain the mismatch.
+If it does not, inspect reference construction/other parameters before attempting
+parameter continuation. No new count is accepted until the unchanged benchmark
+is restored and all original full-episode/noise/video gates pass.
+
+The finite comparison gives a maximum joint-rate defect 0.2552rad/s on the
+benchmark, 0.001448rad/s after restoring old damping, and 9.63e-8rad/s after
+also restoring slide armature. This is finite local parity evidence, not a
+complete replay. Add an explicit cart_armature config field, default zero;
+the benchmark model is unchanged. Verify old qualified tape parity as a
+regression. Both packaging and release publication now reject any config that
+differs from the unchanged benchmark, preventing altered-plant promotion.
+
+Before attempting continuation, replay the curated route with old damping
+0.015 and slide armature 0.0005 on the fully spatial model. Rebuild its Y
+tracking feedback on that model, retain transferred X feedback, and regenerate
+its upright gain. Budget <=500k design physics steps plus one actual full
+episode/proof. Save the positive armature in actual/proof configuration. A pass
+is an altered-plant COMPONENT only; a failure must be diagnosed before assuming
+parameter homotopy can start from it.
+
+## Amendment before continuous restoration of four-link benchmark mechanics
+
+The old-mechanics spatial replay completes 30s, holds 7.22s and cold-replays
+exactly. This is an ALTERED-PLANT nominal component, not a four-link record.
+Start from its actual delivered 1152-command prefix and actual states, retaining
+the working tracking gain table. Increment a scalar fraction from 0 (damping
+0.015, slide armature 0.0005) to 1 (benchmark 0.0075 and zero). Regenerate only
+the stationary upright gain on each actual plant. A candidate receives one full
+30s nominal episode and independent proof. Retain its new actual reference/forces
+only if full gates pass; failed candidates do not replace the incumbent.
+
+Initial/max fraction step 0.02, halve on failure, increase 1.5-fold after two
+successes up to 0.02; stop below 0.0003125 or after 200 trials. Inclusive ceiling
+<2.5M physics steps for design/actual/proof. Save every controller, actual tape,
+configuration, pass/fail and parameter value. At fraction=1 use the exact default
+benchmark Config, not a numerically near-restored altered plant. No parameter
+changes occur during any one actual episode. Even a final nominal pass requires
+subsequent spatial development and fresh qualification/video before publication.
+Prediction: small actual-execution rebuilds can preserve the quiet arrival while
+removing the old mechanics, instead of asking one long unstable rollout to absorb
+the entire mismatch. If continuation stalls, record its boundary and improve
+feedback/trajectory there; no altered result will be promoted.
+
+## Amendment before state-trust repair of four links
+
+Mechanical continuation stalls after restoring only fraction 0.0025; eight
+trials do not reach the benchmark. Retaining the historical feedback is
+insufficient. Corrected legacy defect repair also fails both actual nominal
+episodes: its closed-gap proposals travel far outside the square. Preserve
+these failures and their complete source/checkpoints.
+
+Try the tested state/control increment regularization, centered on the current
+proposal rather than on upright. Start afresh from the original historical
+spatial reference and, independently, the short three-to-four geometric split.
+Use the unchanged benchmark, initial penalty 1000, terminal scale 10, initial
+trust multiplier 1, four workers, 80 iterations and <=25M design physics steps
+each. Tiny accepted steps increase trust; only steps >=0.5 decrease it. Keep
+the existing actual float32 nominal-first gate and 12 development starts.
+This tests whether suppressing the large nonlinear departure allows defect
+closure while preserving the useful reference geometry. Optimizer feasibility
+or merit alone cannot promote a controller.
+
+## Amendment before fixed-target tracking repair
+
+Add a complementary repair objective that penalizes deviation from the known
+old-mechanics actual motion and its delivered forces, rather than encouraging
+an immediate new swing shape. The target is a proposal only. Every derivative
+and actual episode uses the exact unchanged four-link benchmark. The affine
+backward pass includes force-reference gradients; its optimum is checked
+against independent condensed linear-quadratic optimization. A short native
+test checks defect closure and continuous gap-free execution.
+
+Freeze the historical old-mechanics nominal tape and its 1152-command prefix.
+Use cart position weight 4, local rotation weight 40 (axial 0.1), velocity 0.05
+(axial 0.005), force difference weight 0.001, terminal 10*upright P+Q, cart
+soft penalty beyond 2.7m, initial gap penalty 1000, centered state/control trust
+1. Four workers, 40 iterations, <=15M design physics steps. Preserve all gaps
+in intermediate proposals and rebuild a separate native gap-free execution
+candidate. Require actual float32 nominal, cold replay and the same 12 noisy
+development starts before considering further qualification. Prediction: local
+feedforward corrections can cancel mechanical mismatch while the target cost
+preserves the quiet arrival. This does not promote the altered target plant.
+
+The fixed-target repair closes its gaps on iteration zero and subsequently
+reduces tracking cost. Before the full optimization finishes, freeze its FIRST
+checkpoint (iteration 000, selected without actual outcomes) for a separate
+full-episode float32 nominal-first probe plus 12 shared development starts if
+nominal passes. Rebuild only the stationary upright design, <=244 design
+physics steps. Actual/proof ceiling 156000 steps. Preserve this probe separately
+from the final optimized policy; it receives no reserved qualification seeds.
+
+## Four-link frozen qualification (before reserved execution)
+
+The first-checkpoint probe passes nominal plus all 12 shared development starts,
+with complete 30s episodes and exact cold replay. Select this already frozen
+controller in checkpoint_n4_tracking_001/route.npz; do not substitute a later
+optimizer result after observing qualification. Run exactly 32 reserved noisy
+hanging starts, seeds 20261516..20261547, noise 0.02 under the unchanged model,
+with no parking or timing extension. Require 32/32 full successes and replay
+integrity; <=384000 actual+proof physics steps. On a complete pass render the
+entire first qualification tape at 50fps, preserve failures and all alternate
+experiments, and publish as explicitly 2D four-link evidence/video. If this gate
+fails it becomes development, and a revised policy requires a new seed cohort.

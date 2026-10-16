@@ -1,0 +1,7 @@
+{
+  "status": "failed",
+  "stage": "historical nominal/actual guard before new-plant execution",
+  "mixed_component_discrepancy": 77.32106512882211,
+  "reason": "parent stored actual run failed without tracking; curated solver has different feedback policy",
+  "actual_episode_steps": 0
+}

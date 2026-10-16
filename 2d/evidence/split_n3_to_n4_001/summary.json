@@ -1,0 +1,29 @@
+{
+  "n_links": 4,
+  "selected_index": 0,
+  "candidates": [
+    {
+      "split_index": 0,
+      "normalized_defect_value": 14.031431390744135,
+      "max_scaled_defect": 0.4771158489836784,
+      "direction_preservation_error": 0.0,
+      "direction_rate_preservation_error": 0.0
+    },
+    {
+      "split_index": 1,
+      "normalized_defect_value": 25.385990520759975,
+      "max_scaled_defect": 0.9503727552955016,
+      "direction_preservation_error": 0.0,
+      "direction_rate_preservation_error": 0.0
+    },
+    {
+      "split_index": 2,
+      "normalized_defect_value": 32.27054934448783,
+      "max_scaled_defect": 1.294961076167433,
+      "direction_preservation_error": 0.0,
+      "direction_rate_preservation_error": 0.0
+    }
+  ],
+  "native_physics_steps": 6768,
+  "scope": "geometric state proposal selection by local defects, not an actual episode or solve"
+}

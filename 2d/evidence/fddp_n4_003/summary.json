@@ -1,0 +1,46 @@
+{
+  "n_links": 4,
+  "passes": 0,
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 2.0647987765202136,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.056377070024936415,
+      "physics_warning": false,
+      "success": false,
+      "steps": 119,
+      "native_steps": 476,
+      "wall_seconds": 0.045816699999704724,
+      "max_xy": [
+        3.0563770700249364,
+        1.303770728880245
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.0647987765202136,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 476
+    }
+  ],
+  "design_native_steps": 19916020,
+  "optimizer_iterations": 64,
+  "last_optimizer_record": {
+    "iteration": 63,
+    "cost": 1517431308.9566555,
+    "merit": 1517431308.9566555,
+    "penalty": 1000000000000.0,
+    "defect_value": 1.3168887251941474e-28,
+    "max_scaled_defect": 1.046728305789183e-15,
+    "alpha": 0.0,
+    "accepted": false,
+    "regularization": 33333333333.333324,
+    "bounded_steps": 565,
+    "native_steps": 19911412,
+    "reference_max_cart": 67.91202065570664
+  },
+  "wall_seconds": 425.8004828999983,
+  "scope": "shooting proposal may be infeasible; route is separately rebuilt with zero gaps and actual episodes use float32 forces"
+}

@@ -1,0 +1,45 @@
+{
+  "trial": 0,
+  "fraction": 0.02,
+  "step": 0.02,
+  "accepted": false,
+  "config": {
+    "n_links": 4,
+    "total_length": 3.0,
+    "total_mass": 1.0,
+    "cart_mass": 1.0,
+    "cart_armature": 0.00049,
+    "plane_limit": 3.0,
+    "force_limit": 80.0,
+    "timestep": 0.005,
+    "frame_skip": 4,
+    "episode_seconds": 30.0,
+    "angle_threshold": 0.15,
+    "sustain_seconds": 5.0,
+    "joint_damping": 0.01485,
+    "armature": 0.0005,
+    "link_radius": 0.025
+  },
+  "result": {
+    "seed": 20261016,
+    "initialization": "hanging",
+    "angle_noise": 0.0,
+    "max_tilt": 2.7692217915293487,
+    "best_hold_seconds": 0.0,
+    "plane_margin": -0.07281585872606433,
+    "physics_warning": false,
+    "success": false,
+    "steps": 1186,
+    "native_steps": 4744,
+    "wall_seconds": 0.4612416999989364,
+    "max_xy": [
+      3.0728158587260643,
+      0.3444633255597711
+    ],
+    "max_force_norm": 80.0,
+    "final_tilt": 2.7692217915293487,
+    "replay_exact": true,
+    "replay_max_error": 0.0,
+    "proof_native_steps": 4744
+  }
+}

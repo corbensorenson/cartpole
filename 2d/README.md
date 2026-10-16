@@ -4,9 +4,9 @@ A cart moves over an XY plane, driven by two forces. Every link has a passive,
 unlimited ball joint: it can tilt in both directions and twist about its axis.
 This is a separate benchmark from the one-dimensional cart and hinge chain.
 
-**One-, two-, and three-link hanging-start swing-ups are qualified:** 32/32 fresh
+**One- through four-link hanging-start swing-ups are qualified:** 32/32 fresh
 noisy 3D starts at each count, in addition to nominal and development checks.
-Episodes run 30 seconds; the respective holds are 21.74s, 21.68s, and 6.78s. All delivered-action
+Episodes run 30 seconds; the respective holds are 21.74s, 21.68s, 6.78s, and 7.22s. All delivered-action
 tapes replay exactly. Both cart axes are used. Full-state simulation feedback,
 not a learned policy or a hardware demonstration.
 
@@ -19,12 +19,16 @@ not a learned policy or a hardware demonstration.
 [Full three-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-3-link-v1/2d-cartpole-3-link-swingup.mp4)
 · [Three-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-3-link-v1)
 
+[Full four-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-4-link-v1/2d-cartpole-4-link-swingup.mp4)
+· [Four-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-4-link-v1)
+
 | Milestone | Current evidence |
 |---|---|
 | One-link hanging-start swing-up | 32/32 final qualification; full video |
 | Two-link hanging-start swing-up | 32/32 final qualification; full video |
 | Three-link hanging-start swing-up | 32/32 fresh final qualification; full video |
-| Four-link hanging-start swing-up | In development |
+| Four-link hanging-start swing-up | 32/32 fresh final qualification; full video |
+| Five-link hanging-start swing-up | Next development count |
 | Near-upright balance, 1–3 links | 12/12 local perturbed starts at each count |
 | Near-upright balance, 4 links | 9/12; incomplete, not accepted |
 
@@ -65,6 +69,11 @@ legal cart forces; there is no state reset or joint lock at either switch.
 The new final seeds are 20271416..20271447. The earlier raw-route qualification
 failed at 25/32 and is retained separately as `qualify_n3_001`.
 
+For four links use `evidence/qualify_n4_001/frozen_route.npz`. It tracks a
+23.04-second repaired motion immediately from the noisy hanging state and then
+uses world-coordinate upright feedback. No preliminary conditioning or axial
+alignment is required. Its fresh qualification seeds are 20261516..20261547.
+
 Start a count ladder or optimize a swing route:
 
 ```powershell
@@ -82,6 +91,9 @@ swing below it. There are no hidden supports, locked joints or joint motors.
 Armature is 0.0005 per rotational DOF; total joint damping is 0.0075 per axis
 distributed across links. Capsule radius is 0.025m. These are explicit benchmark
 choices, not an equivalence claim to the old hinge model.
+Both cart slides have zero armature. Altered-mechanics diagnostics are retained
+as development components; the packaging/publishing guards reject altered
+configurations as benchmark results.
 
 Success requires a complete valid 30-second episode, no boundary exit even at
 physics substeps, and every rod's **world** tilt below 0.15rad for at least five
@@ -116,6 +128,16 @@ plus a circular force-constrained backward pass. Direct policy transfer failed.
 The conditioned launch was developed on 44 starts, then passed a new 32-start
 cohort. Axial-frame alignment rotates reference quaternions, velocities and gains
 consistently; native physics and feedback equivalence are tested at 1,3,6 links.
+
+Four-link synthesis identifies the historical damping and slide-armature
+differences, reproduces a nominal motion on that altered plant, and uses its
+actual motion as a geometric target. Native affine tracking repair on the exact
+benchmark cancels the local dynamics defects, with bounded XY commands and
+state/control increment regularization. The first checkpoint was selected
+before actual outcomes, passed nominal plus 12 development starts, then passed
+all 32 reserved starts. A later lower tracking-cost policy also passes the
+development cohort but is not substituted into this release. Direct transfer,
+mechanical continuation and unsuccessful defect-aware alternatives are retained.
 
 Each experiment freezes source, arguments, runtime and the pre-experiment memo,
 then records optimizer history, states, raw/delivered forces, tilts, counts,

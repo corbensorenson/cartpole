@@ -1,0 +1,54 @@
+{
+  "args": {
+    "route": "output/planar_lift_n4_002/route.npz",
+    "out": "output/fddp_n4_005",
+    "iterations": 80,
+    "terminal_scale": 10.0,
+    "penalty": 1000.0,
+    "workers": 4,
+    "physics_budget": 25000000,
+    "state_trust": true
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "conditioning.py": "77e86d78c441936eb6d3e4fb6b19a01c745f1769efeffa586173c15db7be10da",
+    "control.py": "7724915b201ec920c8cc48e8feab007f1dc74868728ece65e400fd30a23f3481",
+    "env.py": "b1ec1618244f143936fa73c60a3ca3dfaf6c0180a995994855cd3de8f3674a23",
+    "experiment.py": "38c78efe5cdbfcd2dedcc1d024f063db8fcab947e81bb6c8dddc084189072737",
+    "fddp.py": "c5d888b35504be680c40c7dd02ba3e76c0cc21dd62375a0cf67df09284a6ad68",
+    "physical.py": "f05858d25a76279cb09271c3e13ef76e966b542aeca5612e1f7c2e7f288d860d",
+    "transfer.py": "416a514a51a0158175c2a1b7527f2b29da33ba053132c31adfcf06afa71d6914"
+  },
+  "input_artifacts_sha256": {
+    "driver.py": "982ac80cccb545c48f127964a55a40b8e4e794ff034fe96d2b70b67c9d915776",
+    "pyproject.toml": "1219ab00e087e3d51a95cd257425983cbcad689c3abc13dcad32e91dd549b51f",
+    "requirements-lock.txt": "dc59359748d15aed6894cda3f60a9e1a2f2005385af44b76aa47d071ef35ffe7",
+    "input_route.npz": "9362fc5fe36bc2f1c15b5a67cb450f21dd2a0f34fe61cb7a1578be55cdf28586"
+  },
+  "utc": "2026-10-16T22:52:28.923002+00:00",
+  "command": [
+    "scripts/repair_reference.py",
+    "--route",
+    "output/planar_lift_n4_002/route.npz",
+    "--out",
+    "output/fddp_n4_005",
+    "--iterations",
+    "80",
+    "--state-trust",
+    "--physics-budget",
+    "25000000"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5",
+    "packages": {
+      "scipy": "1.17.1",
+      "gymnasium": "1.4.0",
+      "imageio": "2.38.1",
+      "pillow": "12.3.0"
+    },
+    "thread_environment": {}
+  }
+}

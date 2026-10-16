@@ -13,6 +13,7 @@ class Config:
     total_length: float = 3.0
     total_mass: float = 1.0
     cart_mass: float = 1.0
+    cart_armature: float = 0.0
     plane_limit: float = 3.0
     force_limit: float = 80.0  # Euclidean force budget, not 80 N independently per axis
     timestep: float = 0.005
@@ -32,8 +33,9 @@ class Config:
         for key in ("total_length", "total_mass", "cart_mass", "plane_limit", "force_limit", "timestep", "episode_seconds", "angle_threshold", "sustain_seconds", "link_radius"):
             if not np.isfinite(getattr(self, key)) or getattr(self, key) <= 0:
                 raise ValueError(f"{key} must be finite and positive")
-        if self.joint_damping < 0 or self.armature < 0:
-            raise ValueError("damping and armature must be nonnegative")
+        for key in ('joint_damping','armature','cart_armature'):
+            if not np.isfinite(getattr(self,key)) or getattr(self,key)<0:
+                raise ValueError(f'{key} must be finite and nonnegative')
 
     @property
     def dt(self):
@@ -55,8 +57,8 @@ def model_xml(c: Config) -> str:
       <material name="floor" texture="grid" texrepeat="12 12" texuniform="true" reflectance="0.1"/></asset>
       <worldbody><light pos="0 -4 8" dir="0 0 -1"/>
       <geom name="floor" type="plane" pos="0 0 -0.09" size="6 6 0.1" material="floor"/>
-      <body name="cart"><joint name="cart_x" type="slide" axis="1 0 0" damping="0.02"/>
-      <joint name="cart_y" type="slide" axis="0 1 0" damping="0.02"/>
+      <body name="cart"><joint name="cart_x" type="slide" axis="1 0 0" damping="0.02" armature="{c.cart_armature}"/>
+      <joint name="cart_y" type="slide" axis="0 1 0" damping="0.02" armature="{c.cart_armature}"/>
       <geom type="box" size="0.18 0.18 0.07" mass="{c.cart_mass}" rgba="0.12 0.6 0.95 1"/>''']
     # The floor is visual only; the chain may swing through z < 0, as in the
     # original no-contact cartpole. No joint limits, equalities, springs or motors.

@@ -1,0 +1,24 @@
+{
+  "n_links": 4,
+  "commands": 1152,
+  "native_physics_steps": 4608,
+  "metrics": {
+    "cart_position_m": {
+      "max": 7.730673950012701e-05,
+      "rms": 1.0595832508188252e-05
+    },
+    "joint_rotation_rad": {
+      "max": 0.002314335038579173,
+      "rms": 0.0003343771635451826
+    },
+    "cart_velocity_m_per_s": {
+      "max": 0.008039316649522732,
+      "rms": 0.001156130243872104
+    },
+    "joint_velocity_rad_per_s": {
+      "max": 0.2552166323188132,
+      "rms": 0.032611662034169916
+    }
+  },
+  "scope": "independent smooth-force native proposal transitions, not an actual episode or solve"
+}

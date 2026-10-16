@@ -1,0 +1,22 @@
+{
+  "route": {
+    "path": "D:\\ChatGPT\\cartpole\\runs\\generalized_solver\\n4_route_solver.json",
+    "copy": "foreign_sources\\n4_route_solver.json",
+    "sha256": "dd40d7b0650e1d259c389dcba3c5339e0ecb7e3fa43ab1b90f619ddb49241266"
+  },
+  "full_source": {
+    "path": "D:\\ChatGPT\\cartpole\\runs\\generalized_solver\\n4_full_fddp_controller.json",
+    "copy": "foreign_sources\\n4_full_fddp_controller.json",
+    "sha256": "ab920ac5fba4901a4aca74b3bb66ed2ff6c1f24cb39b86f3be5321375c63cb76"
+  },
+  "spec": {
+    "path": "D:\\ChatGPT\\cartpole\\benchmarks\\p1_capture_envelope.yaml",
+    "copy": "foreign_sources\\p1_capture_envelope.yaml",
+    "sha256": "4143070757cef38976d064febed34964ee27dcc6678ab8ce5dc0103cdaafdd00"
+  },
+  "source_config": {
+    "path": "D:\\ChatGPT\\cartpole\\runs\\generalized_solver\\n4_uniform_exact.yaml",
+    "copy": "foreign_sources\\n4_uniform_exact.yaml",
+    "sha256": "036ed84fe92dce5fa0b86b21696636bdd8ae49e4afebea79fd6c82cb4709e66f"
+  }
+}

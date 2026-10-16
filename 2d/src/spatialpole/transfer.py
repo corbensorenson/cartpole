@@ -48,3 +48,28 @@ def spatial_tracking_gains(env,states,actions,design):
         V = Q+K.T@R@K+(A-B@K).T@V@(A-B@K)
         V = (V+V.T)/2
     return gains
+
+
+def split_reference_states(source_env,target_env,states,split_index):
+    """Insert a zero-relative-rotation reference body, never a joint constraint.
+
+    This duplicates one source body's world orientation/rate continuously in
+    time. Uniform target lengths/masses are regenerated independently, so the
+    resulting proposal generally has native dynamics defects to repair.
+    """
+    n = source_env.config.n_links
+    if target_env.config.n_links != n+1 or not 0 <= split_index < n:
+        raise ValueError('split requires one additional target link and a valid source index')
+    states = np.asarray(states)
+    result = np.repeat(target_env.upright_state()[None],len(states),axis=0)
+    result[:,:2] = states[:,:2]
+    result[:,target_env.model.nq:target_env.model.nq+2] = states[:,source_env.model.nq:source_env.model.nq+2]
+    target = 0
+    for i in range(n):
+        result[:,2+4*target:6+4*target] = states[:,2+4*i:6+4*i]
+        start,old = target_env.model.nq+2+3*target,source_env.model.nq+2+3*i
+        result[:,start:start+3] = states[:,old:old+3]
+        target += 1
+        if i==split_index:
+            target += 1  # identity quaternion and zero angular rate already set
+    return result

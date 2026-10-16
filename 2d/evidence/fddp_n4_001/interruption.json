@@ -1,0 +1,10 @@
+{
+  "status": "interrupted",
+  "reason": "Manifold gap transport correction; native process termination verified",
+  "actual_validation_episodes": 0,
+  "native_steps_lower_bound": 12944116,
+  "native_steps_upper_bound": 13257460,
+  "accounting_scope": "physics steps; final native batch may have been interrupted",
+  "checkpoint": "output/fddp_n4_001/checkpoints/iteration_040.npz",
+  "checkpoint_penalty": 10000000.0
+}

@@ -1,0 +1,77 @@
+{
+  "args": {
+    "task": "swing",
+    "links": 4,
+    "max_links": 8,
+    "episodes": 12,
+    "noise": 0.02,
+    "seed": 20261016,
+    "iterations": 100,
+    "route_seconds": 8.0,
+    "amplitude": 12.0,
+    "frequency": 0.45,
+    "out": "output/swing_n4_001",
+    "route": "output/conditioned_n3_001/route.npz",
+    "tape": null,
+    "world_feedback": true,
+    "world_terminal": true,
+    "extend_seconds": 0.0,
+    "hold_start": null,
+    "derivative_workers": 4,
+    "bounded_backward": true,
+    "direction_cost": true,
+    "terminal_scale": 10.0
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "conditioning.py": "77e86d78c441936eb6d3e4fb6b19a01c745f1769efeffa586173c15db7be10da",
+    "control.py": "380f0135f6b722183d3d1521916e8a5a042a84224bd2ea7a3e582370b4a451f8",
+    "env.py": "7f18279e83e045e2dd35286394d9c6d9133c4c6a7c9f0a59eaff50389a8f3356",
+    "experiment.py": "38c78efe5cdbfcd2dedcc1d024f063db8fcab947e81bb6c8dddc084189072737",
+    "physical.py": "f05858d25a76279cb09271c3e13ef76e966b542aeca5612e1f7c2e7f288d860d",
+    "transfer.py": "f304ce6f63ee6d08e7399c4b10cb7cca37e1916f448e790f5c9e44f62ed5288b"
+  },
+  "input_artifacts_sha256": {
+    "driver.py": "38c78efe5cdbfcd2dedcc1d024f063db8fcab947e81bb6c8dddc084189072737",
+    "pyproject.toml": "1219ab00e087e3d51a95cd257425983cbcad689c3abc13dcad32e91dd549b51f",
+    "requirements-lock.txt": "dc59359748d15aed6894cda3f60a9e1a2f2005385af44b76aa47d071ef35ffe7",
+    "input_route.npz": "14c5e1c7df964185a9b47628f71a6a635f6429942124e8cd0d75cd9fb45601d3"
+  },
+  "utc": "2026-10-16T22:18:41.575562+00:00",
+  "command": [
+    "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\src\\spatialpole\\experiment.py",
+    "swing",
+    "--links",
+    "4",
+    "--iterations",
+    "100",
+    "--world-feedback",
+    "--world-terminal",
+    "--bounded-backward",
+    "--direction-cost",
+    "--derivative-workers",
+    "4",
+    "--terminal-scale",
+    "10",
+    "--route",
+    "output/conditioned_n3_001/route.npz",
+    "--out",
+    "output/swing_n4_001"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5",
+    "packages": {
+      "scipy": "1.17.1",
+      "gymnasium": "1.4.0",
+      "imageio": "2.38.1",
+      "pillow": "12.3.0"
+    },
+    "thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1"
+    }
+  }
+}
