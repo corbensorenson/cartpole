@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spatial-cartpole"
+version = "0.1.0"
+description = "Two-force planar cart with an unrestricted spatial ball-joint pendulum chain"
+requires-python = ">=3.11"
+dependencies = ["mujoco==3.3.5", "numpy", "scipy", "gymnasium", "imageio", "imageio-ffmpeg", "pillow"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

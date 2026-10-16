@@ -243,6 +243,32 @@ The one-dimensional benchmark at D:/ChatGPT/cartpole remains separate.
 - Full first final-cohort video: 1501 frames / 50fps / 30.02s encoding,
   SHA256 `5a5a18fe16e68436fd46df0391f86ea1d3a24069bd0f2a0320835c9ba54054e8`.
   Full-duration preview and phase-labeled contact sheet were inspected.
+- Seven-link release is public at `2d-cartpole-7-link-v1`, commit
+  `a36bbeb6fb1802fa29ee48d67ddebd1acbed08ca`. Full video and 412.70MB ZIP
+  uploaded with both public SHA256 digests matching; tag resolves to the pushed
+  source commit. All 1868 staged/archive files verify. Published source passes
+  44 tests and reproduces the first final held-out tape byte-for-byte. The
+  physics audit and controlled XY demonstration are included and linked.
+- `output/planar_lift_n8_001`: source world-direction reconstruction passes;
+  direct transfer fails nominal at 2.74s with exact replay. The historical
+  wider-rail source is only a proposal for the unchanged eight-link model.
+- `output/tracking_repair_n8_001`: 60 iterations / 5,332,832 native design steps,
+  initial gap penalty 100000. Native gap-free rebuild passes full nominal with
+  26.20s hold and exact replay, but all 12 noisy development starts fail. This
+  raw controller is not accepted.
+- `output/conditioned_n8_001`: preplanned 12s hanging feedback and causal axial
+  alignment; nominal plus all 44 noisy development starts pass complete 30s
+  episodes with 14.20s hold and exact replay. Design cost 436 native steps;
+  maximum development launch tilt from down 1.94236e-5rad.
+- `output/qualify_n8_001`: frozen conditioned controller on NEW reserved seeds
+  20261916..20261947 passes 32/32 complete 30s episodes and exact replay, every
+  one with 14.20s hold. All initial states are distinct. Maximum cart coordinate
+  2.726040999m; minimum substep margin 0.272202528m; maximum launch tilt from
+  down 1.71736e-5rad. This earns the eight-link 2D release. Full compiled-model
+  freedom and native multiaxis regression checks now include eight; 48 tests pass.
+- Full first eight-link reserved video: 1501 frames / 50fps / 30.02s encoding,
+  SHA256 `665abc541ae53675c5a9c51e03b0cef9c07aa5c1227b3c82567e3fb62acfe0a1`.
+  A normal-speed full-duration preview and contact sheet were inspected.
 
 ## Publication policy
 
@@ -258,15 +284,14 @@ established. Thirty-two reset-noise trials do not certify arbitrary disturbances
 
 ## Resume checkpoint
 
-Seven-link and audit experiments are terminal, with a qualified frontier of
-SEVEN. The audit/demo bundle is public; prepare/publish the separate seven-link
-qualified full video and evidence release. Its final cohort is NEW, distinct
-from the preserved 31/32 failure. User explicitly requests this publication and
-continued higher counts. Next inspect the eight-link historical route
-`runs/generalized_solver/n8_capture_fddp_feedback120.json`: 197 commands / 3.94s,
-uniform eight links, source nominal cart maximum 3.059733m on a wider rail.
-It is only a proposal for unchanged spatial mechanics. Record the next native
-repair recipe and fresh seeds before execution. No simulation is still running.
+Eight-link experiments and qualification are complete, qualified frontier
+EIGHT. Prepare/publish its separate full video/evidence release, then advance
+to nine under a pre-recorded plan. Historical proposal:
+`runs/generalized_solver/n9_fddp_terminal_angle20_widerail.json`, 197 commands /
+3.94s, uniform nine links, nominal cart maximum 2.980098m; source config
+`configs/swingup9_uniform.yaml`. It is only a geometric proposal for unchanged
+spatial mechanics. No simulation is still running. Keep physical freedom and
+near-planar-reference scope explicit. User authorizes continued higher counts.
 The historical release
 controller is runs/swingup7_uniform/seven_link_release_controller.json in the
 read-only checkout, 228 commands / 4.56s, maximum nominal cart 2.370306m. Its
@@ -278,8 +303,8 @@ The successful new tool is native fixed-target affine trajectory repair,
 not force-only transfer. Preserve the strict 30s clock and all physical freedoms.
 Record the chosen method, warm start, seeds and compute limit BEFORE execution.
 Do not restart an experiment while its process is alive or its completed marker
-exists. Checkpoints are proposals until full actual float32 gates pass. Eight-link
-reserved qualification seeds will be 20261916..20261947, untouched at this entry.
+exists. Checkpoints are proposals until full actual float32 gates pass. Nine-link
+reserved qualification seeds will be 20262016..20262047, untouched at this entry.
 All future successful count releases require an explicitly 2D label, full video,
 state/action evidence and hashes. No upper frontier has been established.
 

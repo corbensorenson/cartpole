@@ -4,15 +4,15 @@ A cart moves over an XY plane, driven by two forces. Every link has a passive,
 unlimited ball joint: it can tilt in both directions and twist about its axis.
 This is a separate benchmark from the one-dimensional cart and hinge chain.
 
-**One- through seven-link hanging-start swing-ups are qualified:** 32/32 fresh
+**One- through eight-link hanging-start swing-ups are qualified:** 32/32 fresh
 noisy 3D starts at each count, in addition to nominal and development checks.
-Episodes run 30 seconds; the respective holds are 21.74s, 21.68s, 6.78s, 7.22s,
-21.70s, 14.06s, and 13.48s. All delivered-action
+Episodes run 30 seconds; the latest eight-link controller holds upright for
+14.20 seconds. All delivered-action
 tapes replay exactly. Both cart axes are used. Full-state simulation feedback,
 not a learned policy or a hardware demonstration.
 
 The benchmark permits arbitrary XY cart motion and unrestricted ball joints,
-but does not require a nonplanar nominal swing. The four- through seven-link
+but does not require a nonplanar nominal swing. The four- through eight-link
 reference swings are essentially planar; Y feedback handles spatial start
 perturbations. This is a controller/reference bias, not a locked simulator axis.
 The independent [spatial freedom audit](https://github.com/corbensorenson/cartpole/tree/master/2d/audits/spatial_freedom_001)
@@ -39,18 +39,22 @@ checks native two-axis motion and includes a controlled six-link XY loop.
 [Full seven-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-7-link-v1/2d-cartpole-7-link-swingup.mp4)
 · [Seven-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-7-link-v1)
 
-| Milestone | Current evidence |
-|---|---|
-| One-link hanging-start swing-up | 32/32 final qualification; full video |
-| Two-link hanging-start swing-up | 32/32 final qualification; full video |
-| Three-link hanging-start swing-up | 32/32 fresh final qualification; full video |
-| Four-link hanging-start swing-up | 32/32 fresh final qualification; full video |
-| Five-link hanging-start swing-up | 32/32 fresh final qualification; full video |
-| Six-link hanging-start swing-up | 32/32 fresh final qualification; full video |
-| Seven-link hanging-start swing-up | 32/32 fresh final qualification; full video |
-| Eight-link hanging-start swing-up | Next development count |
-| Near-upright balance, 1–3 links | 12/12 local perturbed starts at each count |
-| Near-upright balance, 4 links | 9/12; incomplete, not accepted |
+[Full eight-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-8-link-v1/2d-cartpole-8-link-swingup.mp4)
+· [Eight-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-8-link-v1)
+
+| Milestone | Current evidence | Upright hold |
+|---|---|---|
+| One-link hanging-start swing-up | 32/32 final qualification; full video | 21.74s |
+| Two-link hanging-start swing-up | 32/32 final qualification; full video | 21.68s |
+| Three-link hanging-start swing-up | 32/32 fresh final qualification; full video | 6.78s |
+| Four-link hanging-start swing-up | 32/32 fresh final qualification; full video | 7.22s |
+| Five-link hanging-start swing-up | 32/32 fresh final qualification; full video | 21.70s |
+| Six-link hanging-start swing-up | 32/32 fresh final qualification; full video | 14.06s |
+| Seven-link hanging-start swing-up | 32/32 fresh final qualification; full video | 13.48s |
+| Eight-link hanging-start swing-up | 32/32 fresh final qualification; full video | 14.20s |
+| Nine-link hanging-start swing-up | Next development count | — |
+| Near-upright balance, 1–3 links | 12/12 local perturbed starts at each count | — |
+| Near-upright balance, 4 links | 9/12; incomplete, not accepted | — |
 
 ## Run on Windows
 
@@ -109,6 +113,11 @@ For seven links use `evidence/qualify_n7_002/frozen_route.npz`. It applies
 repaired swing and world-coordinate upright feedback. Fresh final seeds are
 20271816..20271847. The raw first qualification failed 31/32 and is retained
 separately; those seeds were reused as development only.
+
+For eight links use `evidence/qualify_n8_001/frozen_route.npz`. It applies
+12 seconds of hanging feedback and measured axial-frame alignment, a 3.94-second
+repaired swing and world-coordinate upright feedback. All phases fit inside
+30 seconds. Fresh qualification seeds are 20261916..20261947.
 
 Start a count ladder or optimize a swing route:
 
@@ -195,7 +204,14 @@ development starts, including that old cohort, then all 32 NEW final starts.
 All final holds are 13.48s; maximum cart coordinate is 2.366483m. The spatial
 freedom audit adds independent native dynamics and each-joint regression checks,
 and its controlled six-link XY-loop demonstration deliberately exercises both
-cart axes while balancing. The current suite has 44 passing tests.
+cart axes while balancing. That release had 44 passing tests.
+
+Eight-link native repair passes nominal but fails all 12 raw noisy starts.
+Its conditioned controller passes nominal plus all 44 development starts,
+then all 32 fresh qualification starts, holding upright for 14.20s each.
+Maximum final-cohort cart coordinate is 2.726041m. The physical-freedom checks
+now include the compiled eight-link model, persistent native multiaxis replay,
+X/Y symmetry and each joint's transverse motion/spin: 48 tests pass.
 
 Each experiment freezes source, arguments, runtime and the pre-experiment memo,
 then records optimizer history, states, raw/delivered forces, tilts, counts,

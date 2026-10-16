@@ -804,3 +804,40 @@ separate and publicly preserved in the spatial audit. Audit and controlled
 six-link XY demonstration are now public, with original six-link release files
 verified unchanged. If this new gate fails, retain it as development and
 prerecord another untouched cohort only after a revised policy passes development.
+
+## Amendment before eight-link spatial transfer and native tracking repair
+
+Seven is qualified and publicly released with full video/evidence. Advance to
+the historical n8_capture_fddp_feedback120.json, uniform eight 0.375m / 0.125kg
+links, old damping 0.015 and slide armature 0.0005. Its 197-command / 3.94s
+nominal route reaches 3.059733m on a wider rail; it is only a geometric proposal.
+Freeze the full source as both route and parent plus original swingup8 config
+and coordinate scales. Verify native reference-only world-direction lift.
+
+Test direct transfer on the unchanged spatial benchmark, <=150k design steps,
+nominal-first full float32/replay gates and 12 shared development starts if it
+passes. Then repair the original lifted proposal with fixed-target native
+tracking, initial gap penalty 100000 (the successful seven-link intervention),
+same tracking weights, 60 iterations, four workers, <=15M design physics steps.
+Require full actual nominal/replay and all 12 noisy development starts. If a
+nominal pass fails noisy development, separately freeze/test 12s hanging/gauge
+preparation on nominal plus the 44 shared development starts. No state resets,
+locks, changed mechanics or extra episode time; the 3.94s route fits the 30s clock.
+Eight-link reserved seeds 20261916..20261947 remain untouched until a controller
+passes development and is frozen. Keep planar-reference and deliberate
+nonplanar-motion claims explicit, as established by the spatial freedom audit.
+
+## Eight-link frozen qualification (before reserved execution)
+
+Native repair passes nominal but fails all 12 raw noisy starts. Its separately
+frozen 12s hanging/gauge wrapper passes nominal plus all 44 noisy development
+starts, 45/45 complete 30s episodes, 14.20s hold each and exact cold replay.
+Freeze conditioned_n8_001/route.npz unchanged. Run exactly 32 NEW reserved
+noisy hanging starts, seeds 20261916..20261947, noise 0.02, unchanged spatial
+plant and clock/force/boundary/hold gates; <=384000 actual+proof physics steps.
+Require 32/32 success and replay before rendering the full first reserved tape
+and publishing explicitly 2D eight-link source/controller/evidence/video.
+Preserve all raw failures. Any failed qualification becomes development, and
+a revised policy requires a newly preregistered untouched qualification cohort.
+Compiled eight-link freedoms, persistent native multiaxis replay, axis symmetry
+and every joint's transverse motion/spin are now covered: 48 tests pass.

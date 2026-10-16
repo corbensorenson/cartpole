@@ -82,6 +82,8 @@ if a.links == 6:
     body += '\nThe raw six-link native repair passed nominal but failed four of 12 noisy development starts; those failures are retained. The conditioned frozen policy passes nominal plus all 44 noisy development starts and a fresh 32-start qualification cohort. The historical wider-rail motion is only a geometric proposal. All final episodes use the unchanged spatial model and 3m boundary; maximum final-cohort cart coordinate is 2.729448m.\n'
 if a.links == 7:
     body += '\nThe earlier raw seven-link controller failed reserved qualification at 31/32. Those seeds were reused only as development. The conditioned frozen policy passes nominal plus all 76 noisy development starts, then a NEW untouched 32-start cohort (20271816..20271847). Both failures and the independent spatial-freedom audit are preserved. The nominal swing reference remains essentially planar in unrestricted 3D dynamics; this is not a claim of a deliberately nonplanar swing maneuver. A separate controlled six-link XY-loop demonstration verifies deliberate two-axis motion.\n'
+if a.links == 8:
+    body += '\nThe raw eight-link native repair passed nominal but failed all 12 noisy development starts. Its conditioned frozen policy passes nominal plus all 44 development starts and a fresh 32-start qualification cohort. Maximum final-cohort cart coordinate is 2.726041m. The near-planar nominal reference is tracked in unrestricted spatial dynamics; compiled eight-link freedoms, independent persistent native XY replay, axis symmetry and every joint tilt direction/spin are covered by the 48-test suite. The spatial audit and controlled six-link XY demonstration are included.\n'
 try:
     release = request(base+'/releases/tags/'+tag)
 except HTTPError as exc:
