@@ -2,6 +2,18 @@
 
 > **A single bounded cart force swings up and holds 7 through 14 passive serial links from noisy hanging starts on a finite rail.**
 
+October 16, 2026: **New 2D cart / spatial ball-joint benchmark.**
+The cart moves across an XY plane and its passive joints tilt freely in both
+horizontal directions. **One-link hanging-start swing-up passes 32/32 fresh
+noisy 3D starts**, holding upright for 21.74s in every full 30s episode.
+This count is separate from the one-dimensional hinge-chain records below.
+
+[2D environment, method and evidence](2d/README.md) ·
+[2D one-link full video](2d/videos/2d-cartpole-1-link-swingup.mp4) ·
+[2D release and evidence ZIP](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-1-link-v1)
+
+[![2D one-link spatial swing-up and hold](2d/videos/2d-cartpole-1-link-preview.gif)](2d/videos/2d-cartpole-1-link-swingup.mp4)
+
 October 15, 2026: **15-link development update — 3.00 seconds upright, UNSOLVED.**
 The best recorded nominal hold is 150 consecutive commands at 50 Hz, below the
 required 250 commands (5 seconds). Every published attempt later exceeds the

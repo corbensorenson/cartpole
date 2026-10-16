@@ -1,0 +1,40 @@
+{
+  "args": {
+    "task": "swing",
+    "links": 1,
+    "max_links": 8,
+    "episodes": 12,
+    "noise": 0.02,
+    "seed": 20261016,
+    "iterations": 60,
+    "route_seconds": 8.0,
+    "amplitude": 12.0,
+    "frequency": 0.45,
+    "out": "output/swing_n1_001",
+    "route": null,
+    "tape": null
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "control.py": "8b6d1a7ab3fedef2b99b6b96ea9343d75b64c9cce505449ed7fa9bc4d792bb30",
+    "env.py": "13ca0deadaf75d7bfe3ea7d83d3979cdef84acaf5d8766b45c35257e501d77c8",
+    "experiment.py": "4ccfabdb0d1d5ff15e08fa257f7510f517240da8524d23541a07545f7e673522"
+  },
+  "utc": "2026-10-16T21:35:26.333145+00:00",
+  "command": [
+    "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\src\\spatialpole\\experiment.py",
+    "swing",
+    "--links",
+    "1",
+    "--iterations",
+    "60",
+    "--out",
+    "output/swing_n1_001"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5"
+  }
+}
