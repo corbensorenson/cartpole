@@ -641,3 +641,40 @@ episode and unchanged model. Require 32/32 success and exact replay; <=384000
 actual+proof physics steps. On full pass render the entire first reserved tape
 and publish explicitly 2D five-link source, evidence and video. A failed gate
 becomes development and any revised policy requires new qualification seeds.
+
+## Amendment before six-link spatial transfer and native tracking repair
+
+Five links is published at 2d-cartpole-5-link-v1. Advance to six using the
+historical n6_route_solver.json and its declared source
+n6_constraint_endpoint_gn_stage5_fddp.json. The selected source motion starts
+hanging and uses uniform six 0.5m / 1/6kg links, damping 0.015 and slide
+armature 0.0005. Its old execution used a 12m rail and reached 3.098808m;
+that is not accepted under our unchanged 3m boundary. Its 209 commands / 4.18s
+and corresponding nominal states are proposals only.
+
+Freeze sources/config/spec, verify the reference-only coordinate lift and shared
+nominal arrays, then test direct transfer on the unchanged spatial benchmark
+(<=150k design physics steps plus nominal-first/12 shared development episodes).
+Regardless of direct transfer performance, run the same native fixed-target
+tracking repair as five, 40 iterations, four workers, <=15M design physics
+steps. No initial conditioning in this first repair trial. Test final actual
+float32 nominal, exact cold replay and 12 shared noisy development starts.
+Prediction: the native affine correction and 2.7m soft cart penalty can adapt
+the short motion while retaining its arrival. Reserved six-link seeds
+20261716..20261747 stay unused until a selected frozen controller passes every
+development episode. If raw nominal passes but noisy starts fail, a separately
+frozen 12s hanging/gauge wrapper fits the same strict 30s clock and may be
+tested on the 44 shared development starts before any reserved qualification.
+
+## Six-link frozen qualification (before reserved execution)
+
+The raw repaired policy passed nominal but failed four of 12 noisy development
+starts. Its separate 12s hanging/gauge wrapper now passes nominal plus all 44
+shared development starts, with 14.06s hold in every complete 30s episode and
+exact cold replay. Freeze conditioned_n6_001/route.npz without modification.
+Run exactly 32 reserved noisy hanging starts, seeds 20261716..20261747, noise
+0.02, same unchanged plant and strict clock; <=384000 actual+proof steps.
+Require 32/32 full success and replay. On pass render the full first reserved
+tape, retain the raw failures, and publish explicitly 2D six-link controller,
+source, evidence archive and video. Any failed qualification becomes development
+and a revised policy must receive a new reserved cohort.

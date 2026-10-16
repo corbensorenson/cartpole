@@ -166,6 +166,29 @@ The one-dimensional benchmark at D:/ChatGPT/cartpole remains separate.
 - Full five-link held-out video has 1501 frames / 50fps / 30.02s encoding,
   SHA256 `f413c17a880d6cf5537509886af213c22caa8820690864b48ffb1b600ef3aade`.
   A normal-speed full-duration GIF and contact sheet were generated and inspected.
+- Five-link release is public at `2d-cartpole-5-link-v1`, commit
+  `127d16017a00a80a4e8f0a104f1075619a046b6e`. Full video and 217.02MB
+  evidence ZIP uploaded; both public asset SHA256 digests match. All 1258
+  staged/archive files verify, published source passes 33 tests and reproduces
+  the first held-out tape byte-for-byte. Root 2D overview now features five.
+- `output/planar_lift_n6_001`: direct lifted-policy nominal fails at 1.56s,
+  exact replay. The historical uniform six-link motion reached 3.098808m on a
+  wider rail and is only a proposal. Native coordinate reconstruction passes.
+- `output/tracking_repair_n6_001`: same native fixed-target repair, 40 iterations
+  / 2,892,064 design physics steps. Nominal holds 26.06s but four of 12 noisy
+  development starts fail; nominal plus development is 9/13. Not accepted.
+- `output/conditioned_n6_001`: preplanned 12s hanging LQR plus causal axial-frame
+  alignment on the unchanged repaired 4.18s route. Nominal passes the complete
+  30s episode with 14.06s hold and exact replay. All 44 noisy development starts
+  also pass. Maximum launch tilt from down is 1.42504e-5rad. Design: 340 steps.
+- `output/qualify_n6_001`: frozen conditioned controller on NEW seeds
+  20261716..20261747 passes 32/32 full 30s episodes and exact replay, all with
+  14.06s hold. All initial states are distinct. Maximum cart coordinate
+  2.729448095m; minimum substep boundary margin 0.270551905m; maximum launch
+  tilt from down 1.23419e-5rad. This earns the six-link 2D release.
+- Six-link full held-out video: 1501 frames / 50fps / 30.02s encoding, SHA256
+  `6dd2771d6b791293b93d84336924d63aace5e8bed1070bcc40847f0b556c520b`.
+  A full-duration 30s preview and phase-labeled contact sheet were inspected.
 
 ## Publication policy
 
@@ -181,18 +204,21 @@ established. Thirty-two reset-noise trials do not certify arbitrary disturbances
 
 ## Resume checkpoint
 
-Four- and five-link experiments are terminal. Four-link publication is complete;
-prepare/publish the separate five-link release next. The GOAL stays active at a
-qualified frontier of FIVE. Next advance to six, beginning with its short
-historical route proposal and the successful fixed-target native repair.
+Six-link experiments and qualification are terminal, with a qualified frontier
+of SIX. Prepare/publish its full video and evidence release next. Then advance
+to seven under a pre-recorded plan. The frozen historical seven-link release
+controller is runs/swingup7_uniform/seven_link_release_controller.json in the
+read-only checkout, 228 commands / 4.56s, maximum nominal cart 2.370306m. Its
+development_origin points to runs/swingup7_fddp_full_hanging_ilqr_terminal100k_deferred_lqr1.json;
+the nominal arrays are byte-equal. Both are proposals for the new spatial plant.
 Historical planar route proposals are available in the original read-only
 checkout; inspect their geometry, dynamics and timing before transfer.
 The successful new tool is native fixed-target affine trajectory repair,
 not force-only transfer. Preserve the strict 30s clock and all physical freedoms.
 Record the chosen method, warm start, seeds and compute limit BEFORE execution.
 Do not restart an experiment while its process is alive or its completed marker
-exists. Checkpoints are proposals until full actual float32 gates pass. Six-link
-reserved qualification seeds will be 20261716..20261747, untouched at this entry.
+exists. Checkpoints are proposals until full actual float32 gates pass. Seven-link
+reserved qualification seeds will be 20261816..20261847, untouched at this entry.
 All future successful count releases require an explicitly 2D label, full video,
 state/action evidence and hashes. No upper frontier has been established.
 

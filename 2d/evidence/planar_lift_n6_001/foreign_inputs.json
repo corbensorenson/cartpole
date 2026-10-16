@@ -1,0 +1,22 @@
+{
+  "route": {
+    "path": "D:\\ChatGPT\\cartpole\\runs\\generalized_solver\\n6_route_solver.json",
+    "copy": "foreign_sources\\n6_route_solver.json",
+    "sha256": "867f8d9aaff2593dad0723d35335474ef2f7443a366ac696d44776054400b3bb"
+  },
+  "full_source": {
+    "path": "D:\\ChatGPT\\cartpole\\runs\\generalized_solver\\n6_constraint_endpoint_gn_stage5_fddp.json",
+    "copy": "foreign_sources\\n6_constraint_endpoint_gn_stage5_fddp.json",
+    "sha256": "0baa1828cce1a8e5f3ae0c01b47e2b7cb24ff112d0555bf181f3019b1f15280d"
+  },
+  "spec": {
+    "path": "D:\\ChatGPT\\cartpole\\benchmarks\\p1_capture_envelope.yaml",
+    "copy": "foreign_sources\\p1_capture_envelope.yaml",
+    "sha256": "4143070757cef38976d064febed34964ee27dcc6678ab8ce5dc0103cdaafdd00"
+  },
+  "source_config": {
+    "path": "D:\\ChatGPT\\cartpole\\configs\\swingup7_uniform.yaml",
+    "copy": "foreign_sources\\swingup7_uniform.yaml",
+    "sha256": "1e92bc4621428f2fe343b7483b2c32d7804a82762159483db280e71a526b6c04"
+  }
+}
