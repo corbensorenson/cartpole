@@ -1,0 +1,16 @@
+{
+  "evidence": {
+    "name": "2d-mid-swing-recovery-evidence.zip",
+    "bytes": 270828473,
+    "sha256": "650a78dbdd4deef3b79ae03d5eba12d1378f7723828c2c217c9e36fd959e8806",
+    "files": 846
+  },
+  "video": {
+    "name": "2d-cartpole-5-link-mid-swing-recovery.mp4",
+    "sha256": "69bce08e7b903ed4503167e35e35503014a9d98a299656b667e49d6ba5d2b735",
+    "frames": 1501,
+    "fps": 50
+  },
+  "development": true,
+  "highest_qualified_count": 14
+}
