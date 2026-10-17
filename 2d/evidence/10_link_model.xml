@@ -1,0 +1,56 @@
+<mujoco model="spatial_cartpole_10">
+      <compiler angle="radian"/>
+      <option timestep="0.005" gravity="0 0 -9.81" integrator="RK4"/>
+      <visual><global offwidth="1280" offheight="720"/><headlight ambient="0.4 0.4 0.4"/></visual>
+      <default><geom contype="0" conaffinity="0"/><joint limited="false"/></default>
+      <asset><texture name="grid" type="2d" builtin="checker" width="512" height="512" rgb1="0.11 0.16 0.23" rgb2="0.15 0.21 0.29"/>
+      <material name="floor" texture="grid" texrepeat="12 12" texuniform="true" reflectance="0.1"/></asset>
+      <worldbody><light pos="0 -4 8" dir="0 0 -1"/>
+      <geom name="floor" type="plane" pos="0 0 -0.09" size="6 6 0.1" material="floor"/>
+      <body name="cart"><joint name="cart_x" type="slide" axis="1 0 0" damping="0.02" armature="0.0"/>
+      <joint name="cart_y" type="slide" axis="0 1 0" damping="0.02" armature="0.0"/>
+      <geom type="box" size="0.18 0.18 0.07" mass="1.0" rgba="0.12 0.6 0.95 1"/>
+<body name="link_0" pos="0 0 0.07">
+          <joint name="ball_0" type="ball" damping="0.00075" armature="0.0005"/>
+          <geom name="rod_0" type="capsule" fromto="0 0 0 0 0 0.3" size="0.025" mass="0.1" rgba="1 0.4 0.18 1"/>
+          <site name="tip_0" pos="0 0 0.3" size="0.035" rgba="0.8 0.9 1 1"/>
+<body name="link_1" pos="0 0 0.3">
+          <joint name="ball_1" type="ball" damping="0.00075" armature="0.0005"/>
+          <geom name="rod_1" type="capsule" fromto="0 0 0 0 0 0.3" size="0.025" mass="0.1" rgba="1 0.78 0.15 1"/>
+          <site name="tip_1" pos="0 0 0.3" size="0.035" rgba="0.8 0.9 1 1"/>
+<body name="link_2" pos="0 0 0.3">
+          <joint name="ball_2" type="ball" damping="0.00075" armature="0.0005"/>
+          <geom name="rod_2" type="capsule" fromto="0 0 0 0 0 0.3" size="0.025" mass="0.1" rgba="1 0.4 0.18 1"/>
+          <site name="tip_2" pos="0 0 0.3" size="0.035" rgba="0.8 0.9 1 1"/>
+<body name="link_3" pos="0 0 0.3">
+          <joint name="ball_3" type="ball" damping="0.00075" armature="0.0005"/>
+          <geom name="rod_3" type="capsule" fromto="0 0 0 0 0 0.3" size="0.025" mass="0.1" rgba="1 0.78 0.15 1"/>
+          <site name="tip_3" pos="0 0 0.3" size="0.035" rgba="0.8 0.9 1 1"/>
+<body name="link_4" pos="0 0 0.3">
+          <joint name="ball_4" type="ball" damping="0.00075" armature="0.0005"/>
+          <geom name="rod_4" type="capsule" fromto="0 0 0 0 0 0.3" size="0.025" mass="0.1" rgba="1 0.4 0.18 1"/>
+          <site name="tip_4" pos="0 0 0.3" size="0.035" rgba="0.8 0.9 1 1"/>
+<body name="link_5" pos="0 0 0.3">
+          <joint name="ball_5" type="ball" damping="0.00075" armature="0.0005"/>
+          <geom name="rod_5" type="capsule" fromto="0 0 0 0 0 0.3" size="0.025" mass="0.1" rgba="1 0.78 0.15 1"/>
+          <site name="tip_5" pos="0 0 0.3" size="0.035" rgba="0.8 0.9 1 1"/>
+<body name="link_6" pos="0 0 0.3">
+          <joint name="ball_6" type="ball" damping="0.00075" armature="0.0005"/>
+          <geom name="rod_6" type="capsule" fromto="0 0 0 0 0 0.3" size="0.025" mass="0.1" rgba="1 0.4 0.18 1"/>
+          <site name="tip_6" pos="0 0 0.3" size="0.035" rgba="0.8 0.9 1 1"/>
+<body name="link_7" pos="0 0 0.3">
+          <joint name="ball_7" type="ball" damping="0.00075" armature="0.0005"/>
+          <geom name="rod_7" type="capsule" fromto="0 0 0 0 0 0.3" size="0.025" mass="0.1" rgba="1 0.78 0.15 1"/>
+          <site name="tip_7" pos="0 0 0.3" size="0.035" rgba="0.8 0.9 1 1"/>
+<body name="link_8" pos="0 0 0.3">
+          <joint name="ball_8" type="ball" damping="0.00075" armature="0.0005"/>
+          <geom name="rod_8" type="capsule" fromto="0 0 0 0 0 0.3" size="0.025" mass="0.1" rgba="1 0.4 0.18 1"/>
+          <site name="tip_8" pos="0 0 0.3" size="0.035" rgba="0.8 0.9 1 1"/>
+<body name="link_9" pos="0 0 0.3">
+          <joint name="ball_9" type="ball" damping="0.00075" armature="0.0005"/>
+          <geom name="rod_9" type="capsule" fromto="0 0 0 0 0 0.3" size="0.025" mass="0.1" rgba="1 0.78 0.15 1"/>
+          <site name="tip_9" pos="0 0 0.3" size="0.035" rgba="0.8 0.9 1 1"/>
+</body></body></body></body></body></body></body></body></body></body></body>
+</worldbody>
+<actuator><motor name="force_x" joint="cart_x" gear="1" ctrllimited="true" ctrlrange="-80.0 80.0"/>
+              <motor name="force_y" joint="cart_y" gear="1" ctrllimited="true" ctrlrange="-80.0 80.0"/></actuator></mujoco>

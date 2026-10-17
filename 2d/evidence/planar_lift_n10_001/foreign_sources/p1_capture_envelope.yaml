@@ -1,0 +1,49 @@
+schema_version: 1
+name: uniform6_synthetic_capture_envelope_v1
+generator: gcartpole.capture_envelope:v1
+
+plant:
+  n_links: 6
+  total_length: 3.0
+  total_mass: 1.0
+  cart_mass: 1.0
+  rail_limit: 3.0
+  force_limit: 80.0
+  timestep: 0.005
+  frame_skip: 4
+  episode_seconds: 15.0
+  cart_damping: 0.02
+  cart_frictionloss: 0.0
+  joint_armature: 0.0005
+  link_radius: 0.025
+  total_damping: 0.015
+  total_frictionloss: 0.0
+
+capture_gate:
+  upright_threshold: 0.15
+  sustain_seconds: 5.0
+  required_episodes: 1000
+  required_success_rate: 0.90
+  required_median_upright_hold_seconds: 10.0
+  successful_episode_rail_hits_required: 0
+
+distribution:
+  cart_position: uniform
+  cart_position_abs_max: 1.25
+  absolute_link_angles: independent_uniform
+  absolute_link_angle_abs_max: 0.15
+  cart_velocity: uniform
+  cart_velocity_abs_max: 0.50
+  hinge_velocity: uniform_rms_ball
+  hinge_velocity_rms_max: 0.75
+
+splits:
+  train:
+    seed: 61001
+    count: 20000
+  validation:
+    seed: 61002
+    count: 2000
+  test:
+    seed: 61003
+    count: 1000

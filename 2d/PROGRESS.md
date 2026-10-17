@@ -275,8 +275,6 @@ The one-dimensional benchmark at D:/ChatGPT/cartpole remains separate.
   All 2049 staged/archive files verify; published source passes 48 tests and
   reproduces the first final held-out state/action/tilt tape byte-for-byte.
 
-## Publication policy
-
 Nine-link qualification is complete: the lifted historical route fails nominal
 at 2.86s. Native tracking repair (60 iterations, 5,901,028 design steps)
 completes nominal with 26.18s hold and exact replay, but all 12 raw noisy
@@ -291,6 +289,33 @@ The full first reserved video has 1501 frames at 50fps (30.02s encoding),
 SHA256 `59887f487fa8a35b5a941811b59a0f45feef5e53cfde3123b0448e7f279c55e2`.
 Its 300-frame normal-speed full-duration preview and both general/swing-phase
 contact sheets have been inspected.
+The nine-link release is public at `2d-cartpole-9-link-v1`, commit
+`f875179a15742b854aab9c59627d3d7c03b16730`. The public full video and
+558,116,227-byte ZIP digests match, and the tag resolves to the pushed commit.
+All 2230 staged/archive hashes verify; published source passes 52 tests and
+reproduces the first final held-out state/action/tilt arrays byte-for-byte.
+
+Ten-link direct transfer fails nominal at 3.36s. Fixed-target native repair
+`output/tracking_repair_n10_001` completes 80 iterations and 17,501,332 design
+physics steps. Native proposal gaps close to roundoff; the actual full nominal
+passes with 22.12s hold and exact replay, but all 12 raw noisy starts fail.
+The optimizer emitted a native instability warning during rejected search
+trials; no actual nominal/development episode reports a physics warning.
+The preplanned 16s hanging/gauge wrapper in `output/conditioned_n10_001`
+passes nominal plus all 44 shared noisy development starts, 45/45 full
+30s episodes with 6.12s hold and exact replay. Wrapper design cost 532 native
+steps; maximum development launch tilt from down 6.42840e-6rad.
+The frozen controller passes fresh reserved qualification in
+`output/qualify_n10_001`, seeds 20262116..20262147: 32/32 complete 30s episodes,
+6.12s hold each, exact replay and 32 distinct initial states. Maximum cart
+coordinate 2.022728709m; minimum substep boundary margin 0.977271291m;
+maximum launch tilt from down 5.73604e-6rad. This earns the ten-link release.
+The full first held-out video has 1501 frames / 50fps / 30.02s encoding,
+SHA256 `adafc1b7d48cd4e2dd033243b5d954ffd3e1f98e3a886ad792f653356f584054`.
+The 300-frame normal-speed full-duration preview and general/swing-phase
+contact sheets have been inspected.
+
+## Publication policy
 
 Each new count needs a frozen controller, full nominal/development episode
 tapes, fresh qualification, independent replay, source/runtime/config hashes,
@@ -304,14 +329,15 @@ established. Thirty-two reset-noise trials do not certify arbitrary disturbances
 
 ## Resume checkpoint
 
-Eight-link public video/evidence release is complete. Nine-link experiments
-and qualification are complete, qualified frontier NINE. Prepare/publish its
-separate full video/evidence release, then advance to ten under the recorded
-plan. Historical proposal:
-`runs/generalized_solver/n10_fddp_refined_route_feedback100.json`, 400 commands /
-8s, uniform ten links, nominal cart maximum 2.023276m; source config
-`configs/swingup10_uniform.yaml`. It is only a geometric proposal for unchanged
-spatial mechanics. No simulation is still running; nine's video is rendering.
+Nine-link public video/evidence release is complete. Ten-link experiments and
+qualification are complete, qualified frontier TEN. Render/package/publish
+its separate full video/evidence release, then advance to eleven under the
+recorded plan. Historical proposal:
+`runs/swingup11_uniform/eleven_link_controller.json`, 400 commands / 8s,
+uniform eleven links, nominal cart maximum 2.071342m; source config
+`configs/swingup11_uniform.yaml`. It is only a geometric proposal for unchanged
+spatial mechanics. No simulation is still running; ten's video is rendering.
+Ten-link physical-freedom checks pass: 56 tests total.
 Keep physical freedom and near-planar-reference scope explicit. User authorizes
 continued higher counts. Check live processes/terminal markers before resuming.
 Historical planar route proposals are available in the original read-only
@@ -320,8 +346,8 @@ The successful new tool is native fixed-target affine trajectory repair,
 not force-only transfer. Preserve the strict 30s clock and all physical freedoms.
 Record the chosen method, warm start, seeds and compute limit BEFORE execution.
 Do not restart an experiment while its process is alive or its completed marker
-exists. Checkpoints are proposals until full actual float32 gates pass. Ten-link
-reserved qualification seeds will be 20262116..20262147, untouched at this entry.
+exists. Checkpoints are proposals until full actual float32 gates pass. Eleven-link
+reserved qualification seeds will be 20262216..20262247, untouched at this entry.
 All future successful count releases require an explicitly 2D label, full video,
 state/action evidence and hashes. No upper frontier has been established.
 

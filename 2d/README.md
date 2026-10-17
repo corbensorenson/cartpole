@@ -4,15 +4,15 @@ A cart moves over an XY plane, driven by two forces. Every link has a passive,
 unlimited ball joint: it can tilt in both directions and twist about its axis.
 This is a separate benchmark from the one-dimensional cart and hinge chain.
 
-**One- through nine-link hanging-start swing-ups are qualified:** 32/32 fresh
+**One- through ten-link hanging-start swing-ups are qualified:** 32/32 fresh
 noisy 3D starts at each count, in addition to nominal and development checks.
-Episodes run 30 seconds; the latest nine-link controller holds upright for
-8.18 seconds. All delivered-action
+Episodes run 30 seconds; the latest ten-link controller holds upright for
+6.12 seconds. All delivered-action
 tapes replay exactly. Both cart axes are used. Full-state simulation feedback,
 not a learned policy or a hardware demonstration.
 
 The benchmark permits arbitrary XY cart motion and unrestricted ball joints,
-but does not require a nonplanar nominal swing. The four- through nine-link
+but does not require a nonplanar nominal swing. The four- through ten-link
 reference swings are essentially planar; Y feedback handles spatial start
 perturbations. This is a controller/reference bias, not a locked simulator axis.
 The independent [spatial freedom audit](https://github.com/corbensorenson/cartpole/tree/master/2d/audits/spatial_freedom_001)
@@ -45,6 +45,9 @@ checks native two-axis motion and includes a controlled six-link XY loop.
 [Full nine-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-9-link-v1/2d-cartpole-9-link-swingup.mp4)
 · [Nine-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-9-link-v1)
 
+[Full ten-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-10-link-v1/2d-cartpole-10-link-swingup.mp4)
+· [Ten-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-10-link-v1)
+
 | Milestone | Current evidence | Upright hold |
 |---|---|---|
 | One-link hanging-start swing-up | 32/32 final qualification; full video | 21.74s |
@@ -56,7 +59,8 @@ checks native two-axis motion and includes a controlled six-link XY loop.
 | Seven-link hanging-start swing-up | 32/32 fresh final qualification; full video | 13.48s |
 | Eight-link hanging-start swing-up | 32/32 fresh final qualification; full video | 14.20s |
 | Nine-link hanging-start swing-up | 32/32 fresh final qualification; full video | 8.18s |
-| Ten-link hanging-start swing-up | Next development count | — |
+| Ten-link hanging-start swing-up | 32/32 fresh final qualification; full video | 6.12s |
+| Eleven-link hanging-start swing-up | Next development count | — |
 | Near-upright balance, 1–3 links | 12/12 local perturbed starts at each count | — |
 | Near-upright balance, 4 links | 9/12; incomplete, not accepted | — |
 
@@ -224,6 +228,16 @@ the 3.94s swing and upright feedback fit inside the same 30-second episode;
 every final hold is 8.18s. Maximum cart coordinate is 2.716248m, with a minimum
 substep boundary margin of 0.283506m. All 32 initial states are distinct.
 The native physical-freedom checks now include nine links: 52 tests pass.
+
+Ten-link native repair closes the historical proposal's dynamics gaps and
+passes nominal with 22.12s hold, but all 12 raw noisy starts fail. Its preplanned
+16s hanging/gauge wrapper passes nominal plus all 44 development starts and
+then all 32 fresh qualification starts. The 8s route and upright feedback fit
+inside the same 30s episode; every final hold is 6.12s. Maximum final-cohort
+cart coordinate is 2.022729m, minimum substep boundary margin 0.977271m, and
+all 32 initial states are distinct. Ten-link native freedoms are covered in
+the passing 56-test suite. Native instability warnings arose in rejected
+optimizer search trials; accepted actual episodes report no physics warning.
 
 Each experiment freezes source, arguments, runtime and the pre-experiment memo,
 then records optimizer history, states, raw/delivered forces, tilts, counts,

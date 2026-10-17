@@ -1,0 +1,70 @@
+{
+  "args": {
+    "task": "evaluate",
+    "links": 10,
+    "max_links": 8,
+    "episodes": 32,
+    "noise": 0.02,
+    "seed": 20262116,
+    "iterations": 60,
+    "route_seconds": 8.0,
+    "amplitude": 12.0,
+    "frequency": 0.45,
+    "out": "output/qualify_n10_001",
+    "route": "output/conditioned_n10_001/route.npz",
+    "tape": null,
+    "world_feedback": false,
+    "world_terminal": false,
+    "extend_seconds": 0.0,
+    "hold_start": null,
+    "derivative_workers": 1,
+    "bounded_backward": false,
+    "direction_cost": false,
+    "terminal_scale": 1.0
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "conditioning.py": "77e86d78c441936eb6d3e4fb6b19a01c745f1769efeffa586173c15db7be10da",
+    "control.py": "7724915b201ec920c8cc48e8feab007f1dc74868728ece65e400fd30a23f3481",
+    "env.py": "b1ec1618244f143936fa73c60a3ca3dfaf6c0180a995994855cd3de8f3674a23",
+    "experiment.py": "293743bbd476b7ee3ecaf124bdd1b011f945ae71ab260fa98093045002123d5a",
+    "fddp.py": "3cb6f6c1c927c9de39e2b6d43498959df9db318b15a2c7d9dbfc42d455a17da3",
+    "physical.py": "f05858d25a76279cb09271c3e13ef76e966b542aeca5612e1f7c2e7f288d860d",
+    "tracking_repair.py": "4dda83a48ce4f52ae7cd5aa7d91318a52c62be5921c7419cdb61ee8791320031",
+    "transfer.py": "416a514a51a0158175c2a1b7527f2b29da33ba053132c31adfcf06afa71d6914"
+  },
+  "input_artifacts_sha256": {
+    "driver.py": "293743bbd476b7ee3ecaf124bdd1b011f945ae71ab260fa98093045002123d5a",
+    "pyproject.toml": "1219ab00e087e3d51a95cd257425983cbcad689c3abc13dcad32e91dd549b51f",
+    "requirements-lock.txt": "dc59359748d15aed6894cda3f60a9e1a2f2005385af44b76aa47d071ef35ffe7",
+    "input_route.npz": "ebd982098f5ff3cd259bd7c6f914ba1f05dc333684245f964eff7b1474f6aa52"
+  },
+  "utc": "2026-10-17T00:04:34.080071+00:00",
+  "command": [
+    "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\src\\spatialpole\\experiment.py",
+    "evaluate",
+    "--links",
+    "10",
+    "--route",
+    "output/conditioned_n10_001/route.npz",
+    "--episodes",
+    "32",
+    "--seed",
+    "20262116",
+    "--out",
+    "output/qualify_n10_001"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5",
+    "packages": {
+      "scipy": "1.17.1",
+      "gymnasium": "1.4.0",
+      "imageio": "2.38.1",
+      "pillow": "12.3.0"
+    },
+    "thread_environment": {}
+  }
+}

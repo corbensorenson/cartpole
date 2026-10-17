@@ -905,3 +905,42 @@ Retain every raw failure. Failed qualification becomes development; any
 revised policy needs a new untouched qualification cohort. Nine-link compiled
 freedoms, persistent native multiaxis replay, X/Y symmetry and each joint's
 transverse motion/spin now pass within the 52-test suite.
+
+## Eleven-link continuation plan, before any eleven-link spatial execution
+
+After ten qualifies and its full video/evidence are publicly verified, use
+`runs/swingup11_uniform/eleven_link_controller.json` from the read-only checkout
+as route and parent, `configs/swingup11_uniform.yaml`, and the same scale spec.
+The original nominal has 401 states / 400 commands (8s), cart maximum
+2.071342m. Its continuous angle branches describe the same world directions;
+the importer must verify native geometry before any acceptance test. All
+historical results remain geometric proposals, not new spatial qualifications.
+Test direct transfer nominal first, then 12 shared noisy starts only if it
+passes, <=350k design physics steps. Repair the lifted proposal on the unchanged
+canonical spatial plant using the same fixed-target weights, initial gap
+penalty 100000, 80 iterations, four workers and <=35M design physics steps.
+Gate actual full float32 nominal/replay plus the 12 shared noisy starts.
+If nominal passes but any noisy development fails, separately freeze/test
+16s hanging/gauge preparation, followed by the 8s route and upright feedback,
+on nominal plus all 44 shared development starts. These phases fit in 30s;
+the timing is chosen before any eleven-link outcome from the source route
+and settled-launch recipe, without changing mechanics, noise, forces or gates.
+Budget <=1300 wrapper design and <=540k actual+proof steps. Preserve failures.
+Reserve new eleven-link qualification seeds 20262216..20262247 until a
+development-passing controller is frozen under a separate qualification memo.
+
+## Ten-link frozen qualification (before reserved execution)
+
+The native fixed-target repair completes full nominal with 22.12s hold but
+fails all 12 raw noisy starts. The preplanned 16s hanging/gauge wrapper passes
+nominal plus all 44 shared noisy development starts, 45/45 full episodes,
+6.12s hold each and exact cold replay. Freeze conditioned_n10_001/route.npz
+unchanged. Run exactly 32 NEW noisy hanging starts, seeds 20262116..20262147,
+noise 0.02, canonical unchanged physics and 30s clock/80N norm/3m substep
+boundary/0.15rad five-second hold gates. Budget <=384000 actual+proof steps.
+Require 32/32 full success/replay before rendering the first reserved full
+video and publishing explicitly 2D ten-link source/controller/evidence/video.
+Any failed qualification becomes development only, and a revised policy
+needs a new untouched cohort. Ten-link independent native physical-freedom
+checks are included in the current passing 56-test suite. Retain raw failures
+and distinguish optimizer-trial instability from accepted physical episodes.

@@ -1,0 +1,49 @@
+{
+  "args": {
+    "route": "output/tracking_repair_n10_001/route.npz",
+    "out": "output/conditioned_n10_001",
+    "park_seconds": 16.0,
+    "no_align": false,
+    "extra_development_summary": null
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "conditioning.py": "77e86d78c441936eb6d3e4fb6b19a01c745f1769efeffa586173c15db7be10da",
+    "control.py": "7724915b201ec920c8cc48e8feab007f1dc74868728ece65e400fd30a23f3481",
+    "env.py": "b1ec1618244f143936fa73c60a3ca3dfaf6c0180a995994855cd3de8f3674a23",
+    "experiment.py": "293743bbd476b7ee3ecaf124bdd1b011f945ae71ab260fa98093045002123d5a",
+    "fddp.py": "3cb6f6c1c927c9de39e2b6d43498959df9db318b15a2c7d9dbfc42d455a17da3",
+    "physical.py": "f05858d25a76279cb09271c3e13ef76e966b542aeca5612e1f7c2e7f288d860d",
+    "tracking_repair.py": "4dda83a48ce4f52ae7cd5aa7d91318a52c62be5921c7419cdb61ee8791320031",
+    "transfer.py": "416a514a51a0158175c2a1b7527f2b29da33ba053132c31adfcf06afa71d6914"
+  },
+  "input_artifacts_sha256": {
+    "driver.py": "d95ed97ff1cfe7215ccdc9b7d77c866251808635351c8f6e678f9311de36cb30",
+    "pyproject.toml": "1219ab00e087e3d51a95cd257425983cbcad689c3abc13dcad32e91dd549b51f",
+    "requirements-lock.txt": "dc59359748d15aed6894cda3f60a9e1a2f2005385af44b76aa47d071ef35ffe7",
+    "input_route.npz": "c482a424d82e2589bbe384737cb2f3f0ae229f2a3002edb8094069d38db472c8"
+  },
+  "utc": "2026-10-17T00:03:07.828410+00:00",
+  "command": [
+    "scripts/condition_route.py",
+    "--route",
+    "output/tracking_repair_n10_001/route.npz",
+    "--park-seconds",
+    "16",
+    "--out",
+    "output/conditioned_n10_001"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5",
+    "packages": {
+      "scipy": "1.17.1",
+      "gymnasium": "1.4.0",
+      "imageio": "2.38.1",
+      "pillow": "12.3.0"
+    },
+    "thread_environment": {}
+  }
+}

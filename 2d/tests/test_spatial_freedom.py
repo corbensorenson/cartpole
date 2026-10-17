@@ -5,7 +5,7 @@ import pytest
 from spatialpole import Config,SpatialCartpole
 
 
-@pytest.mark.parametrize('n',[1,3,7,8,9])
+@pytest.mark.parametrize('n',[1,3,7,8,9,10])
 def test_persistent_native_multiaxis_motion_matches_environment(n):
     env = SpatialCartpole(Config(n_links=n))
     initial,_ = env.reset(seed=0,options={'mode':'hanging','angle_noise':0.})
@@ -32,7 +32,7 @@ def test_persistent_native_multiaxis_motion_matches_environment(n):
     env.close()
 
 
-@pytest.mark.parametrize('n',[1,3,7,8,9])
+@pytest.mark.parametrize('n',[1,3,7,8,9,10])
 def test_force_response_has_no_preferred_horizontal_axis(n):
     env = SpatialCartpole(Config(n_links=n))
     initial,_ = env.reset(seed=0,options={'mode':'hanging','angle_noise':0.})
@@ -49,7 +49,7 @@ def test_force_response_has_no_preferred_horizontal_axis(n):
     env.close()
 
 
-@pytest.mark.parametrize('n',[1,3,7,8,9])
+@pytest.mark.parametrize('n',[1,3,7,8,9,10])
 def test_every_ball_joint_retains_both_transverse_directions_and_spin(n):
     env = SpatialCartpole(Config(n_links=n))
     initial,_ = env.reset(seed=0,options={'mode':'hanging','angle_noise':0.})
