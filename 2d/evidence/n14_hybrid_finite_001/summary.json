@@ -1,0 +1,76 @@
+{
+  "n_links": 14,
+  "arms": {
+    "zero_offset": {
+      "passes": 0,
+      "results": [
+        {
+          "seed": 20261016,
+          "initialization": "hanging",
+          "angle_noise": 0.0,
+          "max_tilt": 2.671350874665044,
+          "best_hold_seconds": 0.26,
+          "plane_margin": -0.02157987898220437,
+          "physics_warning": false,
+          "success": false,
+          "steps": 337,
+          "native_steps": 1348,
+          "wall_seconds": 0.19726879999507219,
+          "max_xy": [
+            1.896543941774372,
+            3.0215798789822044
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 2.671350874665044,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 1348,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        }
+      ]
+    },
+    "affine": {
+      "passes": 0,
+      "results": [
+        {
+          "seed": 20261016,
+          "initialization": "hanging",
+          "angle_noise": 0.0,
+          "max_tilt": 2.373267137323501,
+          "best_hold_seconds": 1.84,
+          "plane_margin": -0.11949747333680483,
+          "physics_warning": false,
+          "success": false,
+          "steps": 442,
+          "native_steps": 1768,
+          "wall_seconds": 0.2647376999957487,
+          "max_xy": [
+            2.119550547515131,
+            3.119497473336805
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 2.373267137323501,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 1768,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        }
+      ]
+    }
+  },
+  "design_native_steps": 653412,
+  "inclusive_native_steps": 659644,
+  "claim": "matched development diagnostics only; no reserved seeds or new qualified count"
+}

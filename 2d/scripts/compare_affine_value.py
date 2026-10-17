@@ -21,9 +21,13 @@ p.add_argument('--design-guard',type=int,default=0)
 p.add_argument('--terminal-scale',type=float,default=10.)
 p.add_argument('--arms',nargs='+',choices=['zero_offset','affine','affine_search'],default=['zero_offset','affine','affine_search'])
 p.add_argument('--balance-backend',choices=['dare','finite_qr'],default='dare')
+p.add_argument('--eigenvalue-digits',type=int,default=0)
+p.add_argument('--reflection-model',action='store_true')
 p.add_argument('--planar-reference',action='store_true',help='remove only sub-tolerance off-plane proposal roundoff')
 p.add_argument('--tracking-metric',choices=['relative','directions'],default='relative')
 a = p.parse_args()
+if a.reflection_model and (not a.planar_reference or a.tracking_metric!='relative' or a.terminal_scale!=0):
+    raise ValueError('reflection-model probe requires planar reference, relative cost and terminal scale zero')
 out = Path(a.out)
 freeze_inputs(out,a)
 shutil.copy2(a.hybrid_document,out/'corben-marc-hybrid.md')
@@ -62,7 +66,8 @@ defects = np.array([env.difference(f,x) for f,x in zip(predicted,states[1:])])
 # logarithmic error chart. This is not the virtual-gap forward map transport.
 models = [(difference_jacobian(env,f,x)@A,difference_jacobian(env,f,x)@B)
           for (A,B),f,x in zip(models,predicted,states[1:])]
-design = balance_design(env,axis_separated=True,value_backend=a.balance_backend)
+design = balance_design(env,axis_separated=True,value_backend=a.balance_backend,
+                        eigenvalue_digits=a.eigenvalue_digits)
 nv,nx = env.model.nv,2*env.model.nv
 Q = np.diag(np.r_[[4.,4.],np.full(nv-2,40.),np.full(nv,.05)])
 if a.tracking_metric=='relative':
@@ -87,7 +92,20 @@ else:
         factors,terminal_local = list(physical_factors[:-1]),physical_factors[-1]
 R = np.eye(2)*.001
 root = np.sqrt(a.terminal_scale)*design['value_factor'] if 'value_factor' in design else positive_value_factor(a.terminal_scale*design['P'])[0]
-feed,gains,roots,residuals = affine_tracking_values(models,defects,factors,R,np.vstack((root,terminal_local)))
+if a.reflection_model:
+    from spatialpole.symmetry import reflection_signs,project_reflection_models
+    from spatialpole.affine_value import reflection_tracking_values
+    signs = reflection_signs(env)
+    scales = np.r_[[3.,3.],np.full(nv-2,.15),[4.,4.],np.full(nv-2,15.)]
+    np.savez_compressed(out/'raw_native_models.npz',A=np.array([A for A,B in models]),
+        B=np.array([B for A,B in models]),defects=defects,reflection_signs=signs,state_scales=scales,
+        config=json.dumps(asdict(config)))
+    models,defects,record = project_reflection_models(models,defects,signs,scales,config.force_limit)
+    write_json(out/'model_projection.json',record)
+    feed,gains,roots,residuals = reflection_tracking_values(models,defects,factors,R,
+        np.vstack((root,terminal_local)),signs)
+else:
+    feed,gains,roots,residuals = affine_tracking_values(models,defects,factors,R,np.vstack((root,terminal_local)))
 if a.planar_reference:
     from spatialpole.symmetry import reflection_signs
     parity = reflection_signs(env)
@@ -95,11 +113,13 @@ if a.planar_reference:
         max_transverse_gain_from_in_plane_state=float(np.max(np.abs(gains[:,1,parity>0]))),
         max_in_plane_gain_from_transverse_state=float(np.max(np.abs(gains[:,0,parity<0]))),
         max_transverse_feed=float(np.max(np.abs(feed[:,1]))),
-        scope='fresh full native models; no derivative symmetry projection or physical joint constraint'))
+        scope='reflection-projected planning models; actual spatial plant unchanged' if a.reflection_model else
+              'fresh full native models; no derivative symmetry projection or physical joint constraint'))
 np.savez_compressed(out/'affine_controller.npz',states=states,actions=actions,feed=feed,
     gains=gains,roots=roots,residuals=residuals,tracking_R=R,defects=defects,
     **design,world_balance=True,affine_value=True,native_search=False,swing_steps=len(source['actions']),
     tracking_metric=a.tracking_metric,
+    reflection_projected_model=a.reflection_model,
     config=json.dumps(asdict(config)))
 if a.tracking_metric=='directions':
     np.savez_compressed(out/'observable_tracking_factors.npz',factors=np.array(factors),terminal=terminal_local,weights=np.diag(Q))

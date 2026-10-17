@@ -71,6 +71,8 @@ def episode(config, policy_factory, seed, mode="upright", noise=0.02, tape=None)
         force = policy(state, step)
         delivered = env.deliver(force)
         state, _, terminated, truncated, info = env.step_force(delivered)
+        if hasattr(policy,'observe_transition'):
+            policy.observe_transition(state,step,delivered)
         states.append(state)
         raw_actions.append(force)
         actions.append(delivered)
@@ -194,7 +196,16 @@ def main():
         config = Config(**json.loads(str(saved["config"])))
         design = {k:saved[k] for k in ("reference","K","P","Q","R")}
         world_balance = a.world_feedback or (bool(saved["world_balance"]) if "world_balance" in saved else False)
-        if 'affine_value' in saved and bool(saved['affine_value']):
+        if bool(saved.get('world_coordinate_feedback',False)):
+            from .world_coordinates import world_coordinate_policy_from_payload
+            factory = lambda e: world_coordinate_policy_from_payload(e,saved)
+        elif bool(saved.get('rollout_native_value',False)):
+            from .rollout_value import rollout_value_policy_from_payload
+            factory = lambda e: rollout_value_policy_from_payload(e,saved)
+        elif bool(saved.get('aligned_native_value',False)):
+            from .aligned_value import aligned_value_policy_from_payload
+            factory = lambda e: aligned_value_policy_from_payload(e,saved)
+        elif 'affine_value' in saved and bool(saved['affine_value']):
             from .affine_value import affine_policy_from_payload
             factory = lambda e: affine_policy_from_payload(e,saved)
         elif 'park_steps' in saved:

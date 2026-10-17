@@ -1,0 +1,8 @@
+{
+  "max_normalized_A_change": 5.1736392947532295e-11,
+  "max_normalized_B_change": 1.9737298216322596e-11,
+  "max_normalized_defect_change": 1.329376423756894e-14,
+  "tolerance": 1e-08,
+  "state_coordinates": 88,
+  "scope": "local planning approximation only; actual native spatial dynamics unchanged"
+}

@@ -59,6 +59,27 @@ def affine_tracking_values(models, defects, factors, R, terminal_factor,
     return feed, gains, roots, residuals
 
 
+def reflection_tracking_values(models,defects,factors,R,terminal_factor,signs):
+    """Separate affine QR for an explicitly reflection-projected planning model."""
+    signs,R = np.asarray(signs),np.asarray(R)
+    if R.shape!=(2,2) or not np.array_equal(R,np.diag(np.diag(R))):
+        raise ValueError('reflection-separated values require diagonal two-force cost')
+    H,nx = len(models),len(signs)
+    feed,gains = np.zeros((H,2)),np.zeros((H,2,nx))
+    roots,residuals = np.zeros((H+1,nx,nx)),np.zeros((H+1,nx))
+    for j,sign in enumerate((1.,-1.)):
+        ids = np.flatnonzero(signs==sign)
+        if not len(ids):
+            raise ValueError('both reflection branches must retain state coordinates')
+        local = [(A[np.ix_(ids,ids)],B[ids,j:j+1]) for A,B in models]
+        f,K,S,s = affine_tracking_values(local,np.asarray(defects)[:,ids],
+            [L[:,ids] for L in factors],R[j:j+1,j:j+1],terminal_factor[:,ids])
+        feed[:,j],gains[:,j,ids] = f[:,0],K[:,0,:]
+        for t in range(H+1):
+            roots[t][np.ix_(ids,ids)],residuals[t,ids] = S[t],s[t]
+    return feed,gains,roots,residuals
+
+
 class AffineValuePolicy:
     """Frozen affine law, optionally corrected by <=16 native F32 candidates.
 
@@ -269,6 +290,11 @@ class LaunchAdmissionPolicy:
 
 
 def affine_policy_from_payload(env,payload):
+    if bool(payload.get('controller_bank',False)):
+        from .controller_bank import ControllerBankPolicy
+        return ControllerBankPolicy(env,payload)
+    if bool(payload.get('reflection_averaged_feedback',False)) and bool(payload['native_search']):
+        raise ValueError('original value roots cannot search for reflection-averaged feedback')
     if 'launch_reference_profiles' in payload:
         return LaunchAdmissionPolicy(env,payload)
     if 'park_steps' in payload:

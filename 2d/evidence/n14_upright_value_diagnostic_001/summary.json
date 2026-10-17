@@ -1,0 +1,39 @@
+{
+  "n_links": 14,
+  "results": [
+    {
+      "backend": "dare",
+      "failure": "LinAlgError",
+      "message": "Failed to find a finite solution."
+    },
+    {
+      "backend": "finite_qr",
+      "horizon": 500,
+      "closed_loop_radius": 1.0263836373659296,
+      "gain_max": 24034431556.19102,
+      "value_min_eigenvalue": -6954059.961595109,
+      "value_factor_min_singular": 0.5389868418804973,
+      "wall_seconds": 0.06398500000068452
+    },
+    {
+      "backend": "finite_qr",
+      "horizon": 1500,
+      "closed_loop_radius": 1.0241870521081735,
+      "gain_max": 24035272385.84997,
+      "value_min_eigenvalue": -714645.7877329733,
+      "value_factor_min_singular": 0.5389868386458774,
+      "wall_seconds": 0.1918576000025496
+    },
+    {
+      "backend": "finite_qr",
+      "horizon": 3000,
+      "closed_loop_radius": 1.0183220979597247,
+      "gain_max": 24035270704.53722,
+      "value_min_eigenvalue": -1941087.677306234,
+      "value_factor_min_singular": 0.5389868058210336,
+      "wall_seconds": 0.37341190000006463
+    }
+  ],
+  "design_native_steps": 724,
+  "claim": "upright linear design diagnostic only; no physical episode or new solved count"
+}

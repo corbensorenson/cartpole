@@ -1,0 +1,64 @@
+{
+  "n_links": 14,
+  "native_steps": 75600,
+  "state_models_unchanged": true,
+  "all_base_defects_exact": true,
+  "maximum_probe_force_norms": [
+    69.4150161743164,
+    69.4618911743164,
+    69.6493911743164
+  ],
+  "resolutions": [
+    {
+      "force_spacing_N": 0.0078125,
+      "max_scaled_B_difference": 5.746945475060272e-09,
+      "maximum_next_feedback_input_operator_difference": 0.03395409360599854,
+      "maximum_executed_prefix_operator_difference": 0.03395409360599854
+    },
+    {
+      "force_spacing_N": 0.03125,
+      "max_scaled_B_difference": 5.564159133442104e-09,
+      "maximum_next_feedback_input_operator_difference": 0.03403236641563495,
+      "maximum_executed_prefix_operator_difference": 0.03403236641563495
+    },
+    {
+      "force_spacing_N": 0.125,
+      "max_scaled_B_difference": 5.618282764944619e-09,
+      "maximum_next_feedback_input_operator_difference": 0.0334978958773031,
+      "maximum_executed_prefix_operator_difference": 0.0334978958773031
+    }
+  ],
+  "convergence": [
+    {
+      "spacings_N": [
+        0.0078125,
+        0.03125
+      ],
+      "max_scaled_B_difference": 6.843612193145148e-10,
+      "maximum_next_feedback_operator_difference": 0.004175479930441414
+    },
+    {
+      "spacings_N": [
+        0.03125,
+        0.125
+      ],
+      "max_scaled_B_difference": 1.8032982514644877e-10,
+      "maximum_next_feedback_operator_difference": 0.0011384695802359342
+    },
+    {
+      "spacings_N": [
+        0.0078125,
+        0.125
+      ],
+      "max_scaled_B_difference": 6.550982123663489e-10,
+      "maximum_next_feedback_operator_difference": 0.004332706410014776
+    }
+  ],
+  "inputs_sha256": {
+    "input_route.npz": "3a3f643c4b8af5371c52b6f224393ad2c9c98656b20313ef568ca86274801c17",
+    "input_raw_native_models.npz": "62f56b082593cc262ad98edc29ffafb9a8770cb9538637e205930094aed10c53",
+    "input_affine_controller.npz": "c9ac51484dbc11dc15eb28cd3e3d4699029bd3ae405940ea71e85486f001615d",
+    "input_inputs.json": "4e0e3ac2a22ed3d2a8994b1758ba9d64bbb5fa5b386abd421bd5abe7da4ab4f8"
+  },
+  "claim": "fixed-spacing native input sensitivity diagnostic; not new controller or derivative truth certificate"
+}

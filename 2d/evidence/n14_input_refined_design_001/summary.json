@@ -1,0 +1,25 @@
+{
+  "n_links": 14,
+  "design_native_steps": 0,
+  "force_spacing_N": 0.125,
+  "state_models_and_defects_exact": true,
+  "all_other_controller_and_parking_arrays_exact": true,
+  "projection": {
+    "max_normalized_A_change": 3.4638958368643697e-10,
+    "max_normalized_B_change": 1.514877112866409e-11,
+    "max_normalized_defect_change": 1.3327310275124783e-14,
+    "tolerance": 1e-08,
+    "state_coordinates": 88,
+    "scope": "local planning approximation only; actual native spatial dynamics unchanged"
+  },
+  "maximum_gain": 4405592156.168278,
+  "maximum_gain_change": 744230469.6238205,
+  "input_sha256": {
+    "input_route.npz": "3a3f643c4b8af5371c52b6f224393ad2c9c98656b20313ef568ca86274801c17",
+    "input_quotient_design.npz": "2f76a6eb3aa19d9ae164a2aeab071eece9a44075fbe11a59ccb1bb4e63983036",
+    "diagnostic_input_models.npz": "5ecb23eed8f771d3ee02f89bbc946c5a179049d2ac48b4a6d06d667dea74123c",
+    "diagnostic_input_raw_native_models.npz": "62f56b082593cc262ad98edc29ffafb9a8770cb9538637e205930094aed10c53"
+  },
+  "controller_sha256": "f22e5197bceb802f0340874d34dc7acde361af511b95481871c9aafb63ab9291",
+  "claim": "single input derivative spacing update; not actual task or qualification evidence"
+}

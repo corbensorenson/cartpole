@@ -1,0 +1,62 @@
+{
+  "n_links": 14,
+  "passes": 1,
+  "results": [
+    {
+      "seed": 20262616,
+      "initialization": "hanging",
+      "angle_noise": 0.02,
+      "max_tilt": 0.047826863592059426,
+      "best_hold_seconds": 5.16,
+      "plane_margin": 1.1340462558932412,
+      "physics_warning": false,
+      "success": true,
+      "steps": 1500,
+      "native_steps": 6000,
+      "wall_seconds": 2.3902432000031695,
+      "max_xy": [
+        1.8656050489109037,
+        0.012742042436912324
+      ],
+      "max_force_norm": 69.34660339355469,
+      "final_tilt": 0.047826863592059426,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 6000,
+      "policy_metadata": {
+        "park_steps": 960,
+        "park_seconds": 19.2,
+        "route_seconds": 9.0,
+        "design_steps": 700,
+        "execution_tracking_steps": 540,
+        "align_axial_frames": true,
+        "policy": "observed-launch native controller bank",
+        "online_axial_alignment": true,
+        "online_parking_alignment": false,
+        "align_reference_cart_origin": false,
+        "controller_profiles": 5,
+        "admission_order": "fixed first complete pass",
+        "hardware_realtime_claim": false,
+        "predictor_native_steps": 2160,
+        "verified_selected_transitions": 540,
+        "launch_forecasts": [
+          {
+            "profile": 0,
+            "max_tilt": 0.047826863592059426,
+            "best_hold_seconds": 5.16,
+            "plane_margin": 1.1340462558932412,
+            "physics_warning": false,
+            "success": true,
+            "steps": 1500,
+            "native_steps": 2160,
+            "admitted": true
+          }
+        ],
+        "selected_launch_profile": 0,
+        "launch_admitted": true,
+        "launch_forecast_start_step": 960,
+        "final_selected_transition_verified": true
+      }
+    }
+  ]
+}

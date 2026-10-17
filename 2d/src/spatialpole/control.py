@@ -225,7 +225,7 @@ def difference_jacobian(env,state,reference):
 
 
 def balance_design(env, r=0.01, angle_weight=20., cart_weight=1., reference=None,axis_separated=False,
-                   value_backend='dare',finite_steps=1500):
+                   value_backend='dare',finite_steps=1500,eigenvalue_digits=0):
     if value_backend not in ('dare','finite_qr'):
         raise ValueError('unknown upright value backend')
     if value_backend=='finite_qr' and (not axis_separated or reference is not None or finite_steps<1):
@@ -284,6 +284,11 @@ def balance_design(env, r=0.01, angle_weight=20., cart_weight=1., reference=None
             "axis_separated":bool(axis_separated)}
     if value_backend=='finite_qr':
         result.update(value_factor=value_factor,value_backend=value_backend,finite_value_steps=finite_steps)
+    if eigenvalue_digits:
+        from .spectrum import feedback_spectral_radius
+        result['closed_loop_radius_float64'] = result['closed_loop_radius']
+        result['closed_loop_radius'] = feedback_spectral_radius(ar,br,k,eigenvalue_digits)
+        result['spectral_radius_decimal_digits'] = eigenvalue_digits
     return result
 
 

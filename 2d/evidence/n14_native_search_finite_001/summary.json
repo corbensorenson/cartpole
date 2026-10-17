@@ -1,0 +1,42 @@
+{
+  "n_links": 14,
+  "arms": {
+    "affine_search": {
+      "passes": 0,
+      "results": [
+        {
+          "seed": 20261016,
+          "initialization": "hanging",
+          "angle_noise": 0.0,
+          "max_tilt": 2.810612809719279,
+          "best_hold_seconds": 1.96,
+          "plane_margin": -0.0159536176439401,
+          "physics_warning": false,
+          "success": false,
+          "steps": 485,
+          "native_steps": 1940,
+          "wall_seconds": 4.266378699998313,
+          "max_xy": [
+            1.8965434843707294,
+            3.01595361764394
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 2.810612809719279,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 1940,
+          "policy_metadata": {
+            "policy": "spatial affine native value",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 31040,
+            "max_candidates": 16
+          }
+        }
+      ]
+    }
+  },
+  "design_native_steps": 653412,
+  "inclusive_native_steps": 688332,
+  "claim": "matched development diagnostics only; no reserved seeds or new qualified count"
+}

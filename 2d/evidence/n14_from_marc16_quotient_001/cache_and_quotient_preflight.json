@@ -1,0 +1,52 @@
+{
+  "cache_sha256": {
+    "raw_native_models.npz": "1376500288973f0d30e3a0c506c1271f6cf3162af32bcc1386fc0ef995622fc1",
+    "input_route.npz": "b09a7859c16bb21815fcd9eb4f0d0ba13c520cabfab831087749492596971830",
+    "inputs.json": "6966894b7eeb4f81b109950c39ee08084741454e2109526569dfda07da776c5b",
+    "reference_cleanup.json": "a3de6158dbcc9d6553995fa60569604f0428b169c518b05f6bcf4e4c2c05c379",
+    "model_projection.json": "52a795572c8aa3c50436688d029798fa9d0b5d901a6e73385e5fd13bc8666c2f",
+    "driver.py": "4df3dc7acab3ba8ebee3dfff12dc62fd42025e9cbb2c99484a4595239fa23c6b",
+    "pyproject.toml": "be8fe4f2206d7a9863521d464dedca5e09fe814fc87f1f6bc24f5c5898f2c657",
+    "requirements-lock.txt": "1a9a92293d6169a221ff9f083883093529ae8a64cb0aec9f5bfb44f8d4d074d1",
+    "source/__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "source/affine_value.py": "d8e30d1de4d2768b450e7afff2003d4082a7e8ee13eaf253edb779a9aeed57c8",
+    "source/aligned_value.py": "0f406124bd29f0b5e963e4461e5d25df3024ab1c5df36c6c35518d3fa19c07ec",
+    "source/conditioning.py": "77e86d78c441936eb6d3e4fb6b19a01c745f1769efeffa586173c15db7be10da",
+    "source/control.py": "b1fc06cafdf3bfd794b245eac1c259651a25029a8ed22abff5bc631f2f566fd3",
+    "source/direct_shooting.py": "9b54d5a39cf8fb01d76436ab51d43cb9611e4aa48fb044364f19b29557fe77e8",
+    "source/env.py": "b1ec1618244f143936fa73c60a3ca3dfaf6c0180a995994855cd3de8f3674a23",
+    "source/experiment.py": "e658f3b3d12fc20a4e517caea81711521ec4183edf3c84e7b4ff6493668c8b8a",
+    "source/fddp.py": "e81c6f686a7e4583053c79c0891d09eb2b9b75ded04ae3760a2bd8662e077036",
+    "source/physical.py": "4f60f476c5c55ef889b56f754747b478f33a06f09116294986604a4df588a135",
+    "source/quotient.py": "6936bf5b0eb6dd1e07d218cd0ae4f4686413fbfeace6e567098e5a325ae6b80c",
+    "source/rollout_value.py": "6e1a968430a391630878f086ce9183e0887fc43f75460e920d1c7884ed6f90cf",
+    "source/spectrum.py": "33db9f4292eb3bf33693b4d4d4cd96cd1eb34f555263fcf568791fdb20c2e0b2",
+    "source/symmetry.py": "8e6a7fd49b335ed8188731a4e30e06a133ec639f6d245515a6a8c7b762d19446",
+    "source/tracking_repair.py": "8a42fd0736e1a55c9a83ea5e7fabfe8569b688357f2a496a0b0f4c49efd54bc6",
+    "source/transfer.py": "ddb36aaf32c823866cc32e8ab9349e05841e1a7070534f164b942f5f0f1b8e5a",
+    "source/world_coordinates.py": "7cbcbbec100bab5bcf7c0c9f4543a6e368fd41e64ea450ebf330f86ed1a94166"
+  },
+  "reference_arrays_exact": true,
+  "cleanup": {
+    "max_normalized_state_change": 1.731728524425748e-11,
+    "max_normalized_force_change": 6.440355471148962e-11,
+    "tolerance": 1e-08,
+    "scope": "proposal/reference only; actual full spatial states and physics are untouched"
+  },
+  "projection": {
+    "max_normalized_A_change": 1.1264137770601266e-10,
+    "max_normalized_B_change": 8.408089039827853e-11,
+    "max_normalized_defect_change": 1.331842242575807e-14,
+    "tolerance": 1e-08,
+    "state_coordinates": 88,
+    "scope": "local planning approximation only; actual native spatial dynamics unchanged"
+  },
+  "full_state_coordinates": 88,
+  "planning_coordinates": 74,
+  "planning_even": 30,
+  "planning_odd": 44,
+  "retained_velocity_coordinates": 44,
+  "max_normalized_gauge_flow_error": 4.6259212164538136e-09,
+  "gauge_flow_tolerance": 1e-05,
+  "scope": "quotient planning only; full native joints/velocities/plant unchanged"
+}

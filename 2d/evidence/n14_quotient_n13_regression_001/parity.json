@@ -1,0 +1,14 @@
+{
+  "states": true,
+  "actions": true,
+  "raw_actions": true,
+  "tilts": true,
+  "forecast_0_states": true,
+  "forecast_0_actions": true,
+  "forecast_0_raw_actions": true,
+  "forecast_0_tilts": true,
+  "forecast_1_states": true,
+  "forecast_1_actions": true,
+  "forecast_1_raw_actions": true,
+  "forecast_1_tilts": true
+}

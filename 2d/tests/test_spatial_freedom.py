@@ -6,7 +6,7 @@ from spatialpole import Config,SpatialCartpole
 from spatialpole.control import balance_design,WorldBalancePolicy
 
 
-@pytest.mark.parametrize('n',[1,3,7,8,9,10,11,12,13])
+@pytest.mark.parametrize('n',[1,3,7,8,9,10,11,12,13,14])
 def test_persistent_native_multiaxis_motion_matches_environment(n):
     env = SpatialCartpole(Config(n_links=n))
     initial,_ = env.reset(seed=0,options={'mode':'hanging','angle_noise':0.})
@@ -33,7 +33,7 @@ def test_persistent_native_multiaxis_motion_matches_environment(n):
     env.close()
 
 
-@pytest.mark.parametrize('n',[1,3,7,8,9,10,11,12,13])
+@pytest.mark.parametrize('n',[1,3,7,8,9,10,11,12,13,14])
 def test_force_response_has_no_preferred_horizontal_axis(n):
     env = SpatialCartpole(Config(n_links=n))
     initial,_ = env.reset(seed=0,options={'mode':'hanging','angle_noise':0.})
@@ -50,7 +50,7 @@ def test_force_response_has_no_preferred_horizontal_axis(n):
     env.close()
 
 
-@pytest.mark.parametrize('n',[1,3,7,8,9,10,11,12,13])
+@pytest.mark.parametrize('n',[1,3,7,8,9,10,11,12,13,14])
 def test_every_ball_joint_retains_both_transverse_directions_and_spin(n):
     env = SpatialCartpole(Config(n_links=n))
     initial,_ = env.reset(seed=0,options={'mode':'hanging','angle_noise':0.})
@@ -68,11 +68,18 @@ def test_every_ball_joint_retains_both_transverse_directions_and_spin(n):
     env.close()
 
 
-@pytest.mark.parametrize('n',[3,11,12,13])
+@pytest.mark.parametrize('n',[3,11,12,13,14])
 def test_axis_separated_upright_design_rotates_with_physical_world(n):
     env = SpatialCartpole(Config(n_links=n))
-    design = balance_design(env,axis_separated=True,value_backend='finite_qr' if n>=12 else 'dare')
+    design = balance_design(env,axis_separated=True,value_backend='finite_qr' if n>=12 else 'dare',
+                            eigenvalue_digits=80 if n>=14 else 0)
     assert design['closed_loop_radius']<1.
+    if n>=14:
+        original = balance_design(env,axis_separated=True,value_backend='finite_qr')
+        for key in ('K','P','Q','R','value_factor'):
+            np.testing.assert_array_equal(design[key],original[key])
+        assert design['closed_loop_radius_float64']==original['closed_loop_radius']
+        assert design['closed_loop_radius_float64']>1.
     rng = np.random.default_rng(418)
     state = env.integrate(env.upright_state(),rng.normal(size=2*env.model.nv)*1e-6)
     rotated = state.copy()

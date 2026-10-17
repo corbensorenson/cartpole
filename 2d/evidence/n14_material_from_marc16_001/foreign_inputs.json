@@ -1,0 +1,69 @@
+{
+  "source_root": "D:\\ChatGPT\\cartpole\\research\\external\\neuralyogi_20261016\\arena_update_45326b0",
+  "files": {
+    "synthesis/original-manifest.json": {
+      "sha256": "69ef80e8c4668a79af0921e9977124d3b0f3c7ec482bd24a8df17fa89e853367",
+      "bytes": 36348
+    },
+    "synthesis/export-manifest.json": {
+      "sha256": "96e29711160d0e03ffbd7d1b76a6ba5c309563ae52052b3a1bd08c6f9bc5dacd",
+      "bytes": 26844
+    },
+    "synthesis/README.md": {
+      "sha256": "a0d30bff5bb7b54b7820d8e85a315ae1327ea4c4d81e5e8c8f19b9de04558631",
+      "bytes": 6357
+    },
+    "synthesis/RECIPES.md": {
+      "sha256": "77ab0d25d1b91b1628c1476ec485609b6d925ed970190bbba5711d0dd21793f8",
+      "bytes": 10030
+    },
+    "synthesis/ANSWERS.md": {
+      "sha256": "e20bb406df55855d0ec38a712f2afa1c9684f3e69480447fc4ac93aba07125a2",
+      "bytes": 15457
+    },
+    "synthesis/data/16/probe07-controller.npz": {
+      "sha256": "d71eec45605803395859c780a965497dcd2fbf78fb8857f908012a4bb5522507",
+      "bytes": 422379
+    },
+    "synthesis/data/16/orbit5.npz": {
+      "sha256": "ff9f2df225e3339d0c66365372d4faaf72431cce235b023f9717f5ff68fb23a1",
+      "bytes": 127092
+    },
+    "benchmark/canonical16/frozen-manifest.json": {
+      "sha256": "97366571a60e69a7936ba77033f4d58e1952570fdff714fc239c6de332bb1af1",
+      "bytes": 4994
+    },
+    "benchmark/canonical16/frozen/LICENSE": {
+      "sha256": "175868a772d0f8b95bfd02571e6c54368e2c7d7096380c1c7a80992ba2e74dc6",
+      "bytes": 1079
+    },
+    "evidence/files.json": {
+      "sha256": "2caafd9fe7e56af6a74b005d907c56b85e1582b7d5cb83234764e8ac2a47bff1",
+      "bytes": 386202
+    },
+    "evidence/metadata/identity.json": {
+      "sha256": "36076035602ee2cab11af5e777a977409823ad4a11b52eba0c998c853f93e607",
+      "bytes": 6599
+    },
+    "evidence/payload/configuration.json": {
+      "sha256": "3e8150c964f829022adcc2386f5d064c46b80f6706658376ce383e3f5bc502f8",
+      "bytes": 2517
+    },
+    "evidence/payload/controller.npz": {
+      "sha256": "de5afbb5db053a5094e01bd913bf0f7d2f4b17abd1a2679d3821f341e60ffcdb",
+      "bytes": 408657
+    },
+    "evidence/payload/model.xml": {
+      "sha256": "6351ddc4468533786231ac988cb9707f3bec8e327c46e2c5036cb2f041289639",
+      "bytes": 4270
+    }
+  },
+  "archive": {
+    "path": "D:\\ChatGPT\\cartpole\\research\\external\\neuralyogi_20261016\\downloads\\canonical16-evidence.tar.gz",
+    "sha256": "3f87079284573ac472329af41de8a223aad532675d006b05f6c4144fc6282811",
+    "bytes": 310493275
+  },
+  "source_commit": "45326b078c54fff1265f5dfa4d48408a74ca4a6c",
+  "credit": "Marc / Rage Industries, MIT; selected 1D geometry/force proposal only",
+  "source_url": "https://github.com/marctheshark3/pendulum-arena/tree/45326b078c54fff1265f5dfa4d48408a74ca4a6c/synthesis"
+}

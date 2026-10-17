@@ -1,0 +1,35 @@
+{
+  "candidates": [
+    {
+      "seconds": 19.2,
+      "park_steps": 960,
+      "prefix_steps": 540,
+      "upright_poststates": 248
+    },
+    {
+      "seconds": 19.0,
+      "park_steps": 950,
+      "prefix_steps": 550,
+      "upright_poststates": 258
+    },
+    {
+      "seconds": 18.0,
+      "park_steps": 900,
+      "prefix_steps": 600,
+      "upright_poststates": 308
+    },
+    {
+      "seconds": 17.0,
+      "park_steps": 850,
+      "prefix_steps": 650,
+      "upright_poststates": 358
+    }
+  ],
+  "selected": {
+    "seconds": 19.0,
+    "park_steps": 950,
+    "prefix_steps": 550,
+    "upright_poststates": 258
+  },
+  "scope": "nominal-only saved post-state timing prediction; actual prepared pilot required"
+}

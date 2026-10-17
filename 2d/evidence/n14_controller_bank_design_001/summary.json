@@ -1,0 +1,19 @@
+{
+  "n_links": 14,
+  "design_native_steps": 0,
+  "profiles_sha256": [
+    "3a3f643c4b8af5371c52b6f224393ad2c9c98656b20313ef568ca86274801c17",
+    "65dcc0ef085ddf92e3d502cb797b0b814de642037b6978cff997df3eaed829f8",
+    "33f5005aec74045b298190cc79506867b94785b0cf11771619d05df5c62c68d4"
+  ],
+  "repair_receipts_sha256": {
+    "profile1_summary.json": "ae0f6797cd6135e971d6a8ac1e841056ec1af71ee21231fc7c83faee0643045a",
+    "profile1_design_summary.json": "b3828324524eddf7646a50261eceec655646cd4f9adfe025d251e70be787aa9d",
+    "profile1_prefix_audit.json": "cb2c31925caf471b9b78119797ac9ff571c082785ebe6087a37fd523df6f6ce9",
+    "profile2_summary.json": "9e48c2e64ccbb12c4bf0fc170ea00d323ce8202521fc23d0c3cd740ebaef305f",
+    "profile2_design_summary.json": "4e2a81654de0418d100d1e935fba91f3fb02bc0ed31ef0f2512091df4bbbcd91",
+    "profile2_prefix_audit.json": "b30753edc1e959ef1334eaae7f88017b2ef97b015e9f419ec0b9d8bb88dad729"
+  },
+  "controller_sha256": "b2cd01d9770f194e82d329f471ae11d3a32f7063589a6c79625b5071de47112a",
+  "scope": "fixed observed-state first-passing complete-native-continuation bank; no qualification yet"
+}

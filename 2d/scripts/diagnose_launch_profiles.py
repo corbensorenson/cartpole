@@ -17,7 +17,11 @@ p = argparse.ArgumentParser()
 p.add_argument('--route',required=True)
 p.add_argument('--tape',required=True)
 p.add_argument('--out',required=True)
+p.add_argument('--scales',type=float,nargs='+',default=[.0001,.001])
+p.add_argument('--physics-budget',type=int,default=25000)
 a = p.parse_args()
+if any(not np.isfinite(x) or x<=0 for x in a.scales) or len(set(a.scales))!=len(a.scales):
+    raise ValueError('profile scales must be distinct finite positive values')
 out = Path(a.out)
 freeze_inputs(out,a)
 shutil.copy2(a.tape,out/'input_tape.npz')
@@ -39,8 +43,9 @@ assert prefix.steps==launch and prefix.min_plane_margin>=0 and not prefix.warnin
 past = dict(streak=prefix.streak,best_streak=prefix.best_streak,margin=prefix.min_plane_margin)
 prefix_steps = prefix.native_steps
 prefix.close()
-profiles = [(0.,0.),(.0001,0.),(-.0001,0.),(0.,.0001),(0.,-.0001),
-            (.001,0.),(-.001,0.),(0.,.001),(0.,-.001)]
+profiles = [(0.,0.)]
+for scale in a.scales:
+    profiles.extend([(scale,0.),(-scale,0.),(0.,scale),(0.,-scale)])
 rows = []
 for index,offset in enumerate(profiles):
     env = SpatialCartpole(config)
@@ -73,7 +78,7 @@ for index,offset in enumerate(profiles):
     policy.close()
     env.close()
 total = prefix_steps+sum(r['native_steps'] for r in rows)
-assert total<=25000
+assert total<=a.physics_budget
 write_json(out/'summary.json',dict(n_links=config.n_links,passes=sum(r['success'] for r in rows),results=rows,
     prefix_proof_native_steps=prefix_steps,inclusive_native_steps=total,
     claim='observed-launch native forecast diagnosis on reused development state; no new full episode or qualified count'))

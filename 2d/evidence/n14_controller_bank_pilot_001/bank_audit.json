@@ -1,0 +1,87 @@
+{
+  "controller_sha256": "b2cd01d9770f194e82d329f471ae11d3a32f7063589a6c79625b5071de47112a",
+  "episodes": 8,
+  "all_selected_suffix_bytes_exact": true,
+  "all_final_successors_checked": true,
+  "results": [
+    {
+      "seed": 20261016,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "1d7e4862b6bc96afd9dfe05c2abc339b1e0e1947a01b27260b777d4da9bcd612",
+      "independent_policy_rerun_all_numeric_bytes_exact": true
+    },
+    {
+      "seed": 20261116,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "ea95a3f554608299c02211b2cb84b7292eb474c0b084d24cb1f39d47bf2cc364"
+    },
+    {
+      "seed": 20261117,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "9a5093ad70f4f2b135c6a4f7c47a1eec86b952f04c1e826e705f7cdf6a0ab9d9"
+    },
+    {
+      "seed": 20261118,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "399d8970920e31a0f7210e9cf70020c6e55c7bc7ee91bbf7dd206c127bf5b60b"
+    },
+    {
+      "seed": 20261120,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "60f2d16941a08630e879885f72a504955c597971581190e875d9ec681e835049"
+    },
+    {
+      "seed": 20261121,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "0f20a1713b0a2020ddb684ae20c63f2be94c6bfc2eab6600530168b2f737e312"
+    },
+    {
+      "seed": 20261431,
+      "selected": 1,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 3412,
+      "tape_sha256": "c1a2266e2df6967df0610e6018273199128a7d9a1a5753033f42cd47ef588c0d",
+      "independent_policy_rerun_all_numeric_bytes_exact": true
+    },
+    {
+      "seed": 20261437,
+      "selected": 2,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 4324,
+      "tape_sha256": "4da92f0275d1a48a6225ccc4023b9cd95746be48d818aa929faabedf6f52fd5f",
+      "independent_policy_rerun_all_numeric_bytes_exact": true
+    }
+  ],
+  "original_inclusive_native_steps": 116696,
+  "audit_rerun_native_steps": 45896,
+  "inclusive_native_steps": 162592,
+  "scope": "full conditional forecast/native execution proof, not arbitrary disturbance guarantee"
+}

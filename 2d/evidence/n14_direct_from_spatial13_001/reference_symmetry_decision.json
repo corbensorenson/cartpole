@@ -1,0 +1,8 @@
+{
+  "max_normalized_state_change": 1.8166382373893297e-11,
+  "max_normalized_force_change": 8.853641791104143e-11,
+  "tolerance": 1e-08,
+  "scope": "proposal/reference only; actual full spatial states and physics are untouched",
+  "selected": "planar reference/reflection model",
+  "native_steps": 0
+}

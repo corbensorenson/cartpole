@@ -2088,3 +2088,2017 @@ c87797b5a375c9bac212287e5e2817a5a7a4c727f6088cad2e0521539199976a,
 bind prior immutable12 bundle for unchanged history. All full inventory blobs,
 recursive ZIP coverage, published-source tests and first heldout byte parity
 required before push/release. Never overwrite earlier archives/tags/assets.
+
+## Fourteen native preflight and repair, before execution
+
+Thirteen qualification is terminal32/32; full public source/archive gates pass:
+4589 staged hashes,1102 direct+3487 inherited evidence files, prior12 ZIP exact
+hash/manifest coverage,131 packaged tests, all12 source hashes/controller match
+qualification, first heldout states/actions/raw actions/tilts/forecast tapes
+byte-identical. Source commit79861ded77cd7c0ca8203bab6621398430c0b2de is pushing;
+do not claim public release until upload/public digest/tag checks finish.
+
+After public13 verification, advance to14. Extend native persistent full-spatial
+motion, unrestricted ball/twist, F32 disk, upright rotation/factored design and
+online axial force checks to14;136 total tests required. Thirteen frozen public
+source retains131-test scope and its immutable archive must not be rebuilt.
+
+`planar_lift_n14_001` uses read-only historical
+D:/ChatGPT/cartpole/runs/swingup14_uniform/fourteen_link_controller.json as BOTH
+route/full source, configs/swingup14_uniform.yaml, scale provenance
+benchmarks/p1_capture_envelope.yaml. This marked not_solution/single-state9s
+component is ONLY a proposal. Invert its explicit coordinate matrix, require
+stored physical-tape parity<=2e-6, exact hanging tangent error<=1e-6, native
+world directions<=1e-10, unchanged canonical target14 and450 force guesses.
+No reference-only bypass. Finite_qr axis-separated upright value backend,
+original donor X gains plus fresh native spatial Y gains for this baseline.
+Full nominal30s/cold replay; only if it passes open12 shared noisy development
+starts20261116..27. Inclusive native budget<=750000, BLAS/OMP1. No qualification.
+
+If strict import succeeds, after its authoritative terminal result run
+`n14_direct_repair_001` from its route, regardless of baseline failure. Same
+full88D simultaneous native shooting,20 updates, design ceiling15000000 native
+steps, order4/eps.001/four workers, regularization.001, augmented ridge plus
+bounded LSMR fallback(max1000inner/20outer), same physical residual scaling/
+force disk/worldbox/rotation bounds and line search. Preserve all iterates,
+solver counters and failed actual rebuild. Final native factored design and
+gap-free baseline actual+cold proof separate from planning; no intermediate
+node reset. A subsequent finite-affine controller requires its own memo after
+repair terminal. Fourteen reserved20262516..47 remains untouched.
+
+## Fourteen upright preflight failure and bounded diagnosis, before execution
+
+New136-test preflight is135 pass/1 fail: physical freedoms/native parity and
+online gauge checks pass at14, but the1500-step finite_qr stationary upright
+gain reports closed-loop radius1.036626804, failing the existing strict<1
+assertion. Do not weaken it or claim a stable fourteen balance design. No14
+import/repair/qualification has run. Thirteen's frozen131-test source passes
+and public archive is unchanged. Its upload is still running.
+
+Run `n14_upright_value_diagnostic_001`, same native upright model/Q/R as
+balance_design, compare DARE (retain failure if exception) and finite residual
+QR horizons500/1500/3000, cost factorsCholesky(Q).T, terminalzero. Save model,
+gains/factors/spectra/query counts. <=2000 native steps, no real episodes or
+qualification. A different stable horizon, conditioning or precision approach
+must be frozen explicitly before replacing the failed preflight design. No
+physical damping, armature, force or dimension changes are authorized here.
+
+## Fourteen same-model high-precision spectrum oracle, before execution
+
+Diagnostic001 completes with one native identification (<2000 steps); DARE
+raises LinAlgError, finite QR SISO horizons500/1500/3000 report float64 radii
+1.02638/1.02419/1.01832 despite positive factor singular minima~.53899 and
+gain magnitudes~2.4035e10. These spectra differ from full-spatial radius1.03663;
+high sensitivity makes ordinary eigensolver error a question, not an established
+cause. Do not claim more horizon fixes stability or that fourteen is solved.
+
+Install/pin mpmath1.3.0 for a separate diagnostic (official versioned PyPI
+metadata checked); published13 runtime/lock/ZIP remains immutable. Freeze
+`n14_upright_mp_spectrum_001` with diagnostic001 exact native A/B and stored
+binary64 K. Convert the EXACT stored float values to MP; form A-BK in MP rather
+than promote an already rounded product. Compare SISO500/1500/3000 at80 decimal
+digits and each actual native spatial XY block with1500 K at80 digits. Use
+separate blocks ONLY if all native cross-axis A/B entries are exactlyzero;
+otherwise use the full observable matrix. Repeat1500 SISO/native at120 digits
+and require radius agreement<=1e-30. Keep eigenvalues and all inputs/hashes.
+No new model queries (zero native steps), no gain synthesis/replacement or
+actual physical episode, wall budget<=900s. Stability of a rounded linear model
+does not establish delivered-F32 native nonlinear capture or qualification.
+
+## Fourteen spectrum-oracle result and explicit diagnostic backend
+
+MP oracle001 reports stable SAME rounded gains/models: averaged1500 radius
+.9885085409791293, actual nativeX .9885011835562239/Y .9885158929193543;
+native cross-axis entries are exactlyzero.80/120-digit agreement passes1e-30.
+Thus the failed float64<1 diagnostic does not establish linear instability.
+No controller or native model was changed by this oracle; no physical14 claim.
+
+Add optional eigenvalue_digits=80 to balance_design, using exact input-float
+conversion BEFORE A-BK products and MP spectra. Default0 preserves all prior
+controller generation/metadata. Retain ordinary float64 radius alongside MP
+result; never overwrite its discrepancy. Split independent blocks only from
+exact structural zeros in A and B/K factors. Native14 preflight explicitly
+requests80 digits and requires<1, positive QR factor, world rotation, exact
+gain/Q/R/P parity with default calculation, plus a rational-input product test
+that fails if an already-rounded F64 A-BK product is promoted. Pin MP runtime.
+Importer/direct repair expose --eigenvalue-digits default0;14 registered runs
+use80. This changes a diagnostic, not gains/physics/episode acceptance. After
+the corrected preflight passes, run the already-declared strict import/repair.
+
+## Fourteen corrected preflight outcome and frozen13 regression
+
+139 tests pass. Terminal strict14 import has stored physical-tape parity0,
+hanging0, native directions2.0331e-15,326524 design steps; baseline fails3.66s,
+Y3.066347m/no hold, exact cold replay/no warning. Total327988 inclusive native
+steps within750000 cap. Registered n14_direct_repair_001 is now running with
+explicit --eigenvalue-digits80; do not restart. Thirteen is public and its
+assets/tag independently verify at79861ded77cd7c0ca8203bab6621398430c0b2de.
+
+Before relying on current optional spectrum source for future controllers,
+run `n14_optional_spectrum_n13_regression_001`: original frozen13 controller,
+first heldout seed20262416 only, full30s+cold replay+both causal forecasts,
+<=16400 inclusive native steps. Require states/actions/raw actions/tilts and
+both forecast tapes byte-identical to the original qualification. This is a
+regression on reused data, not new qualification. Published13 remains frozen.
+
+## Fourteen finite-affine comparison, before final proposal execution
+
+Previous goal turn made progress: thirteen was independently verified public,
+fourteen physical preflight/import completed, and native repair started. Current
+repair001 remains live with accepted full-state updates; do not restart or use
+intermediate nodes as physical resets. Optional-spectrum thirteen regression
+is terminal full30s/5.16s hold, states/actions/raw/tilts and BOTH forecast tapes
+byte-identical,16400 inclusive native steps. Source13 ZIP remains immutable.
+
+After repair001's authoritative terminal result, use its FINAL
+shooting_proposal.npz for `n14_hybrid_finite_001`, regardless of the separately
+recorded gap-free baseline outcome. Canonical14/full88D, fresh native
+order4/eps.001/four workers/BLAS OMP1, F32-quantized reference forces, true native
+defects with logarithmic-chart derivative transport. Original relative tracking
+cost: cart4, relative rotations40 with passive axial.1, rates.05 with axial.005,
+R=.001I2. Append exact upright continuation to1500 design commands; terminal
+Riccati scale0 (last local stage factor retained), no guard/search/cleanup.
+Factored finite_qr upright backend with explicit80-digit spectrum diagnostic;
+default gain/value arithmetic unchanged. Freeze full affine QR roots/residuals/
+offsets and compare matched zero-offset versus affine arms on SAME reference,
+gains, Q/R, reset and arithmetic. No preparation/gauge wrapper in this comparison.
+
+Each arm full30s exact nominal20261016+cold replay; only if it passes open12
+shared noisy development starts20261116..27. Inclusive native budget<=2500000,
+all source/runtime/config/driver/document identities, tapes and failures retained.
+Only actual unchanged native physical gate/replay counts as success. No reserved
+fourteen data. After results, separately register timing/launch/continuation
+changes if needed; no inference of noisy capture from tiny proposal defects or
+MP spectra. Fourteen qualification requires a separately frozen new cohort.
+
+## Fourteen two bounded nominal corrections, before execution
+
+Direct repair001 is terminal20 accepted updates/13684324 design steps, final
+defect1.194934e-16/max5.256265e-9; gap-free baseline fails6.58s/Y3.008552m,
+.26s hold, exact cold replay/no warning. Finite001 is terminal: zero-offset
+fails6.74s/.26hold, full affine improves to1.84s hold but fails8.84s/Y3.119497m;
+all exact cold replay.653412 design/659644 inclusive native steps. No noisy or
+reserved14 data opened. Preserve finite001 incumbent and all failed tapes.
+
+Recorded affine tape has Y~4.5e-7m at6s, -1.6e-6m at7s, then1.192m at8s.
+Reference Ymax3.8503e-13m/forceYmax1.9524e-9N, but transverse feedmax.00010161N
+and transverse gain from in-plane coordinates1.363207e8. This motivates a
+reference-only roundoff probe, not a claim that cleanup is the cause or the
+plant is planar. No live state/force projection, no joint lock/symmetry projection.
+
+Two independent bounded probes from SAME final shooting_proposal and finite001
+design recipe (1500 continuation, terminal0, relative metric, full88D native
+order4/.001/four workers/finite_qr/eigenvalue_digits80/BLAS OMP1):
+
+- `n14_planar_reference_finite_001`: change ONLY existing tolerance-guarded
+  --planar-reference flag; keep full affine feedback/no native search. Require
+  normalized reference state/force change<=1e-8 and save reflection gain/feed
+  diagnostics. This changes only the almost-planar proposal, never actual physics.
+- `n14_native_search_finite_001`: ORIGINAL uncleaned reference and same gains/
+  roots/residuals/offsets as finite001; use existing<=16-candidate delivered-F32
+  native one-step value search. Explicitly verify frozen controller array parity
+  with finite001. Full affine residual retained, owned native predictor, all
+  candidates/selected actions/query counts saved; no live reset/seed input.
+
+Both full exact nominal20261016/30s+cold replay, and only a full nominal pass
+opens12 shared noisy starts20261116..27. Each inclusive budget<=2500000 native
+steps, including synthesis, every forecast and cold proofs. No dynamic profile
+selection/parking/gauge addition. These may run concurrently in independent
+environments. If both nominal pass, prefer cleanup for next preparation pilot
+because it uses no online native action queries, BEFORE inspecting noisy cohort
+outcomes; otherwise select the sole nominal passer. No passing incumbent is
+replaced by lower planning merit. After terminal outcomes register any new
+preparation/launch strategy. Reserved14 seeds20262516..47 remain untouched.
+
+## Fourteen reflection-averaged feedback, before implementation/execution
+
+Both probes are terminal failures: cleanup2.00s hold/9.82s exit (657340 total
+native steps), search1.96s/9.70s exit (688332 total incl31040 predictors), exact
+cold replay/no warnings. Search's26 stored controller arrays equal finite001
+byte-for-byte. No noisy/reserved data opened. Cleanup changes normalized state
+5.7933e-12/force2.4405e-11 and reduces transverse-from-in-plane gain1.3632e8
+to2.8560e6, but its transverse feed remains1.4528e-4N. Preserve all outcomes.
+
+Test a NEW feedback family on the cleanup controller: reflection-average the
+fitted affine FORCE law. For tangent reflection T and actuator J=diag(1,-1),
+K_new=(K+J K T)/2, feed_new=(feed+J feed)/2; same planar reference/actions.
+This is the exact average of u(x) and J u(reflect(x)) around a reflection-fixed
+reference, not a modification of native dynamics. All full tangent coordinates
+remain; genuine odd spatial errors still command Y. This removes fitted
+symmetry-inconsistent linear cross-terms and constant Y feed. It does NOT prove
+those terms caused failure or that the averaged law is optimal/robust.
+
+No value search in this family: original QR roots/residuals retained only as
+design provenance, not a value for the changed feedback. Factory must reject
+native_search=True on an averaged payload. No live state projection, boundary
+translation, twist reset, gain-schedule tuning or new force/hold/time limit.
+Tests at1/3/14 must compare actual full quaternion force calculations with the
+two-branch group average, test reflected-force equivariance, preserved inputs/
+live state and nonzero transverse response. Native14 reflection test added.
+All tests required before actual nominal execution; old13 heldout byte parity
+remains a required regression after any core policy guard change.
+
+`n14_reflection_feedback_001` freezes cleaned finite001 controller and new
+driver/source, projects only gains/feed, saves all changes, full exact nominal
+20261016/30s+cold replay and only on success12 shared noisy starts20261116..27.
+<=160000 inclusive native steps, zero online predictor queries, no new native
+model synthesis. Keep original reference exactly; no search or preparation.
+If nominal still fails, retain the result; physical-observable metric or another
+material arrival may be tested only under a new memo. No14 reserved seeds.
+
+Reflection feedback tests complete145/145. The force law matches the independent
+full-quaternion two-branch average at1/3/14, reflected actions transform properly,
+actual transverse response remains nonzero, all input/live state preserved and
+native14 reflection dynamics pass. Native search is rejected for this payload.
+Run `n14_reflection_n13_regression_001` with the original frozen13 controller,
+first recorded heldout20262416, full30s/cold proof/both forecasts, <=16400 total
+native steps. Require all original state/action/raw/tilt and both forecast tape
+arrays byte-identical. This is old-data regression only;13 public stays frozen.
+
+## Fourteen prepared reflection-feedback gate, before execution
+
+Reflection feedback001 is terminal: unchanged canonical spatial plant/full
+nominal30s passes24.16s hold/exact cold replay; all12 raw noisy development
+starts fail. The averaged law is a new tested controller, not an optimum or
+physics restriction. Gains/feed change together under exact group averaging;
+do not attribute success to only one removed coefficient. No reserved14 data.
+
+Use the same nominal-only timing rule already measured for this9s proposal:
+19s preparation if nominal hold>=24.10s (otherwise18s if>=23.10s; otherwise
+redesign arrival). Measured24.16 selects19s, before prepared noisy outcomes.
+Freeze `conditioned_n14_001` from reflection_feedback001/route.npz:950 hanging
+feedback commands, observed launch alignment plus per-command axial reference
+alignment,550 executed commands from the ORIGINAL1500 finite design. Nine-second
+swing plus2s upright tracking all fit inside the SAME30s clock; no regenerated
+shortened value design. Original relative metric, reflection-averaged gains/feed
+and reference kept exactly. No online parking/origin translation/reference
+offset/search/admission selector. Spin and actual3D joint states remain physical.
+
+Full exact nominal20261016 plus44 shared noisy hanging starts20261116..27 and
+20261416..47, <=550000 inclusive native steps including parking design and all
+actual/cold proofs, BLAS OMP1. Save full source/driver/runtime/payload/tapes.
+Only45/45 full physical/no-warning/exact replay passes opens a NEW separately
+frozen32-start reserved qualification20262516..47. If any fail, preserve all
+and register next bounded controller change; no qualified14 claim from nominal.
+
+## Fourteen physical observable cost comparison, before execution
+
+Prepared reflection gate001 remains live; do not restart or cancel. Its first
+16 completed episodes pass only3 (including nominal), so it cannot qualify14;
+still retain the entire declared45-start gate. No reserved data used. New145
+tests and original13 heldout/forecast byte parity pass. Registration here is
+independent bounded work while that complete gate finishes.
+
+Probe gauge-invariant physical tracking cost, whose factor routine already has
+independent native/gauge-null/spin tests. `n14_observable_finite_001` uses SAME
+final direct_repair001 proposal, tolerance-cleaned planar reference and1500
+continuation/terminal0/native88D/order4/.001/four workers/finite_qr/spectrum80/
+BLAS OMP1 as cleanup finite001. Change ONLY tracking metric to `directions`:
+physical WORLD rod directions/transverse rates with existing weights, local
+Jacobian eps1e-5, full state/spin/native dynamics retained.452 distinct kinematic
+centers (swing+bridge+upright),79552 centered observable queries, no extra
+physics integration for cost factors. Save all factors and original Q weights.
+
+Full exact nominal20261016+cold replay, only on pass12 shared raw noisy starts,
+<=2500000 inclusive native integration steps (no online predictor), no search/
+preparation/gauge. After authoritative terminal result, REGARDLESS of its
+nominal outcome, `n14_observable_reflection_001` applies the SAME registered
+reflection-average to its frozen gains/feed and leaves its reference/cost/root
+arrays intact. Original roots/residuals remain unused design provenance.
+Full nominal and conditional12 shared starts, <=160000 actual+cold native
+steps. Comparing averaged relative versus averaged physical controllers changes
+the tracking metric while using the same averaging rule; it is a new law and
+needs its own actual tests. No physics/force/noise/time/hold changes. Only after
+terminal results register any new preparation gate. Reserved14 cohort untouched.
+
+## Fourteen observable prepared pilot and relative launch diagnosis
+
+Relative prepared gate001 is terminal4/45 (nominal and noisy20261119/20261124/
+20261435),464932 inclusive native steps; all success holds5.16s/full30s/replay.
+Retain every failure, no qualification. Physical metric plain finite001 fails
+nominal8.12s/1.80s hold; its reflection-averaged law passes nominalfull30s/
+24.16s hold but0/12 raw noisy starts. It remains unqualified.
+
+Before committing another complete cohort, `n14_observable_prepared_pilot_001`
+uses the SAME physical-metric averaged payload,19s preparation selected by the
+same nominal-only timing rule, observed launch+online axial reference alignment,
+no search/offset/origin centering/online parking. Nominal20261016 plus five
+REUSED relative-gate failures20261116/17/18/20/21, full30s/cold replay/no warning,
+<=75000 inclusive native steps including hanging design. If6/6 then freeze
+SAME pilot payload in a new full45-start gate before reserved14 data. Otherwise
+preserve the failed pilot and register a different arrival/feedback strategy.
+
+Independent `n14_launch_profiles_diagnostic_001` tests the previously registered
+nine reference-offset family on relative-gate failed20261116's OBSERVED launch
+at command950. Original conditioned_n14_001 payload, exact cold-native parking
+prefix proof, independent native full suffixes from that observed state only.
+Offsets [(0,0),(+.0001,0),(-.0001,0),(0,+.0001),(0,-.0001),(+.001,0),
+(-.001,0),(0,+.001),(0,-.001)]m. Actualworld3m/F32disk80N/30s/5s tilt gate,
+no physical translation or state edit. Baseline forecast must reproduce retained
+failed actual suffix states/actions byte-for-byte before interpreting candidates.
+Save all forecast tapes/raw forces/tilts/outcomes/counters, <=25000 native steps
+including prefix proof. Forecast success is not a new hanging-start pass. Any
+deployed selector/fixed profile needs separately frozen actual/cohort gates.
+No reserved14 data or seed-specific runtime action rule.
+
+## Fourteen observed-state launch-time diagnosis, before execution
+
+Physical-metric prepared pilot001 is terminal1/6 (nominal only); do not open
+its full cohort. Relative launch-offset diagnostic001 is terminal0/9 forecasts,
+12900 native steps with exact baseline suffix parity. Neither smaller physical
+cost nor the previous nine cart offsets resolves the first failed relative
+launch. Preserve all null results and unchanged14 task limits.
+
+Test the document's launch-window idea as DIAGNOSIS: from relative-gate failed
+seed20261116's actually observed state at command900 (18s), prove its entire
+parking prefix bitwise with independent native integration. Freeze
+`n14_launch_timing_diagnostic_001`, ORIGINAL conditioned_n14_001 reference/
+averaged gains/feed/original hanging law/online axial alignment, no offsets,
+no physical recentering. Candidate preparation endpoints in fixed order
+900,905,910,915,920,925,930,935,940,945,950,955 commands (18.0..19.1s),
+followed by the corresponding prefix of SAME1500-command finite design through
+globalcommand1500/30s. Each owned predictor starts at the same observed18s
+state and executes any extra hanging commands before its proposed launch.
+Native world bounds/F32force disk/5s hold/no warning unchanged. Candidate950
+MUST reproduce retained actual failed suffix states/actions byte-for-byte.
+
+Save every candidate complete suffix/actions/raw/tilts/outcome/query count;
+zero new actual episodes and no seed-specific runtime rule. Maximum3600 prefix
+proof+12*2400 forecast native steps=32400, cap33000, BLAS/OMP1. Full continuation
+success is conditional model evidence only. If none pass, retain the result and
+consider hanging-gain or arrival redesign; if any pass, a separately registered
+causal timing selector/pilot/full gate/fresh qualification remains necessary.
+Do not add physical episode time; latest19.1s leaves5.06s nominal hold.
+
+## Fourteen hanging-feedback R ladder, before implementation/execution
+
+Timing diagnostic001 is terminal0/12, original950 candidate suffix byte-exact;
+neither timing nor nine cart offsets gives a complete conditional forecast for
+reused20261116. Launch actual tilt~9.85e-7rad and cart~1e-5m are small, but
+its first2s raw Y demandmax.0572N versus.0036-.0051N in three passing starts.
+This is evidence about feedback demand, not proof that scalar launch tilt ranks
+capture or that a particular mode causes failure. All earlier failures retained.
+
+Change ONLY the hanging LQR action cost R (existing balance_design r parameter),
+keeping Q/cart/angle/rate weights,19s preparation, full relative-metric reflection-
+averaged swing law, online axial reference alignment and all physical limits.
+Add --parking-r default.01 to condition_route; defaults preserve old payload
+coefficients. Candidate values in fixed descending order .003,.001,.0003,.0001.
+Each independently freezes source/driver/runtime/route and native hanging design.
+
+`n14_parking_r003_pilot_001`, `n14_parking_r001_pilot_001`,
+`n14_parking_r0003_pilot_001`, `n14_parking_r0001_pilot_001`: nominal20261016
+plus five REUSED relative-gate failures20261116/17/18/20/21. Full actual30s/
+cold replay/no warning, unchanged F32 force disk80N/world3m/5s hold. No offsets,
+origin shift/online parking/native search/admission or extra physical time.
+Each <=75000 inclusive native steps incl parking design; all four <=300000.
+May run independent pilots concurrently. Prefer FIRST (largest R)6/6 full
+passer for a separately frozen45-start gate; no qualification from pilot.
+If none pass, preserve all and redesign hanging response or arrival. No14
+reserved data. Driver-only option wiring uses the already-tested native LQR;
+actual full-policy pilots provide its required behavioral check.
+
+## Fourteen reflection-consistent factored synthesis, before implementation
+
+All four hanging-R pilots are terminal1/6 (nominal only); none opens a full
+cohort. Retain all coefficients/tapes. Best complete14 cohort remains4/45.
+Timing and offset native diagnoses also fail, so do not deploy a selector from
+those banks. No14 qualification data consumed;13 remains public/frozen.
+
+Test reflection symmetry DURING planning, rather than only projecting the final
+fitted force law. On the tolerance-cleaned reflection-fixed reference, native
+analytic tangent parity is T, actuator J=diag(1,-1). Project freshly identified
+chart-transported models A'=(A+TAT)/2, B'=(B+TBJ)/2 and d'=(d+Td)/2. This is
+explicit numerical denoising of a local planning approximation, NOT a projection
+of the actual native flow/state/force or a physical joint lock. Save ORIGINAL
+native A/B/d and all projection deltas. Guard max removed normalized entries
+<=1e-8 using existing shooting scales (cart3/angle.15/cartvel4/rates15 and80N
+input scale); reject larger corrections before interpreting a controller.
+
+With original relative diagonal Q/R and terminal0+local stage factor, the
+projected LQ problem separates EXACTLY into even30D/X and odd58D/Y branches.
+Compute each full affine residual-QR recursion independently in F64, retaining
+all88 tangent coordinates, including odd physical tilt/spin modes. Re-embed
+both gains/feeds/value roots/residuals; full roots must represent their summed
+quadratic value. No mode deletion, mechanical change or reduced physical plant.
+This changes feedback design, so no optimality claim for the unprojected native
+approximation. Check guards, independent small dense finite-horizon optimum,
+full-vs-block projected QR agreement, value differences, zero forbidden gains/
+odd feed, input preservation and rejection of substantial model changes.
+Existing native reflection tests cover1/3/13/14 with unconstrained spatial flow.
+
+After tests pass, `n14_reflection_model_finite_001` uses same FINAL direct repair
+proposal/clean reference/relative Q/R/1500 continuation/terminal0/native order4/
+.001/four workers/finite_qr/spectrum80/BLAS OMP1. New --reflection-model flag
+requires --planar-reference and relative metric; false default leaves all old
+designs unchanged. Affine-only full exact nominal20261016/30s+cold proof, only
+on full pass12 shared raw noisy starts20261116..27. <=2500000 inclusive native
+steps, no native search/parking/gauge addition. Save raw native models and
+guarded projected model provenance. After terminal, separately register any
+19s prepared pilot/full gate. No14 reserved seeds or new solved-count claim.
+
+## Fourteen reflection-model prepared pilot, before execution
+
+148 tests pass, including independent condensed optimum, full/block QR value
+and gain agreement, true Y control response, guarded projection and unchanged
+inputs. Reflection-model finite001 is terminal nominalfull30s/24.16s hold/
+exact cold replay but0/12 raw noisy starts. Fresh native projection normalized
+maxA5.20695e-11/B2.93631e-12/d1.33303e-14, all below1e-8; all88 state coordinates
+retained and raw native models saved. No physical state/dynamics projection.
+
+`n14_reflection_model_prepared_pilot_001`: SAME new frozen controller,19s
+preparation by the same nominal-only rule, observed launch+online axial reference
+alignment, no cost/search/offset/origin/online-parking change. Original hanging
+R=.01; nominal20261016 plus five REUSED relative-gate failures20261116/17/18/
+20/21. Full30s/no warning/cold proof, <=75000 inclusive native steps. Only6/6
+opens a separately frozen full45-start gate before any reserved14 data. If
+failed, preserve the result and change the arrival or feedback family rather
+than infer that smaller planning residual/consistent QR guarantees capture.
+
+## Fourteen alternative moving-target material proposal, before generation
+
+Reflection-model prepared pilot is terminal1/6 (nominal only). Full88D
+reflection-consistent QR changes allowed gains bymax26205.7 and feed3.95e-6
+relative to postfit averaging, but does not pass the five reused difficult
+starts. Preserve all earlier results; best completed14 prepared gate4/45.
+Do not continue ranking this arrival by tiny defects or gain norms alone.
+
+Read-only inspection found the hybrid document's pinned Marc17 candidate02
+public source locally at D:/ChatGPT/cartpole/research/external/neuralyogi_20261016/
+arena_update_45326b0/benchmark/canonical17/candidate02. Its701x36 physical
+q18/v18 reference and700 normalized F32 actions exactly equal the full value
+arrays in its combined payload (all5 common fields). This is a14s design toward
+a6.25Hz bent target, with450 bridge commands and250 additional moving-target
+commands. It is foreign 1D geometric evidence, not a spatial controller or our
+independent17-link reproduction. No foreign policy module will be executed.
+
+Generate `n14_material_from_marc17_001` with a new explicit adapter. Freeze the
+MIT license/credit, candidate README, frozen-manifest, original identity, source
+model.xml/configuration/controller NPZ, reference NPZ and design metadata.
+Verify selected original hashes/sizes against its manifest, payload SHA against
+configuration/identity and XML hash against identity. Decode states ONLY as
+physical relative hinge q/v, validate source nq/nv18 and17 Y hinges plus X slide
+in native XML. Original source uses9-digit lengths.176470588 and masses
+.0588235294; retain these actual material centers (source sums differ by~4e-9/
+2e-10), do not pretend source/target mechanics match.
+
+Independently compare original source native body directions with unwrapped
+cumulative angles (<=1e-10) and its700 saved F_native-ref-next defects with
+fresh four-substep native maps (<=2e-6). These are reference-coordinate/one-step
+checks only, not actual source-policy/task qualification. <=4000 SOURCE native
+steps, no target integration. Use normalized source controls*80N for this check;
+target guesses use canonical physical-F32 delivery, with quantization change
+recorded. Interpolate unwrapped cumulative angle AND rate fields at material
+centers into canonical14. Source initial cart is-.050000001924m: translate the
+ENTIRE PROPOSAL cart path by exactly+ .050000001924m to begin at0, preserving
+velocities. This is a frozen reference translation, never a live state/boundary
+shift. Require target initial hanging error<=1e-6 and native world direction
+error<=1e-10. Keep full700 controls/701 poses and450 bridge-step provenance;
+no source gains, cost, search, locks, rail/force or runtime are inherited.
+
+After valid terminal generation, `n14_direct_from_marc17_001` repairs that FINAL
+700-command proposal on full88D canonical native spatial dynamics:20 accepted
+updates maximum,24000000 design native-step ceiling, order4/eps.001/four
+workers/BLAS OMP1, augmented ridge with bounded fallback1000inner/20outer,
+regularization.001, same physical residual scales/control disk/worldbox/rotation
+bounds/line search, finite_qr/spectrum80. Separate actual gap-free baseline+
+cold proof <=160000 additional native steps, no intermediate state reset.
+After terminal, any finite moving-target execution needs a new memo preserving
+design/execution clocks; do not append a stationary target by assumption.
+Fourteen reserved20262516..47 remains untouched; original D checkout read-only.
+
+Material external17 generation001 is terminal: original full/payload5 arrays
+equal, all selected pins match, source native direction2.165e-15 and700
+one-step defects agree1.26843e-12 (2800 source native steps, zero target steps).
+Target hanging4.04810e-9/directions1.33227e-15, translated reference maxcart
+1.890318897m, target F32 action quantization change3.81470e-6N. This validates
+the proposal adapter only, not a source-policy or target task pass.
+Registered direct_from_marc17_001 is live, session93100; first model1010800
+native steps/.03922754 defect/.01247891 normalized max. Augmented update has
+69 bound violations and uses declared bounded LSMR fallback. Do not restart
+or relax limits. No controller/qualification/public14 artifact exists yet.
+
+## Fourteen alternate moving-target finite execution, before repair outcomes
+
+Previous goal turn made progress: new148-test controller/model symmetry checks,
+full actual14 nominal passes, retained noisy/pilot failures, a hash-bound external
+material adapter and the live alternate native repair. Current session93100 is
+confirmed live in its bounded solver; do not restart or relax the69 violated
+limits. No14 reserved data consumed. This registration governs ONLY work after
+its authoritative terminal result and FINAL shooting_proposal.npz exists.
+
+Preserve the moving destination and the separate design/execution clocks:
+700-command14s repaired reference/value design;17s hanging preparation plus
+650-command13s literal prefix inside1500commands/30s.450 commands identify the
+bridge, followed by200 executed commands of moving-target tracking. Remaining
+50 design commands influence feedback but are never added to episode time.
+No shortened650-step recursion or assumed stationary appendage.
+
+After final repair, measure reflection cleanup using existing guard<=1e-8 and
+save its diagnostics (no physics integration). If it passes, use cleaned reference
+and guarded reflection-model30D/58D full-state QR; if it fails, retain the failed
+guard and use full unprojected88D QR/reference. Selection uses input symmetry,
+not actual episode outcomes. `n14_from_marc17_finite_001` computes fresh native
+order4/eps.001/four-worker/BLAS OMP1 models on the actual700-step proposal,
+true affine defects/chart transport, original relative Q/R, terminal Riccati
+scale0+last local stage factor, finite_qr/spectrum80. NO --extend-to-episode,
+no guard tail/search/new destination. Store native/projection provenance when
+used. Full exact nominal20261016/30s+cold replay under this raw law, only on
+full pass12 shared raw noisy starts. <=2500000 inclusive native steps. Its
+post-design stationary handoff is an explicitly separate diagnostic; that
+branch will NOT execute in the proposed17s/650-prefix controller.
+
+After authoritative finite-design terminal result, regardless of its raw30s
+handoff outcome, `n14_from_marc17_prepared_pilot_001` freezes EXACT700-step
+affine payload,17s hanging R=.01/original Q, launch+per-command axial reference
+alignment, --swing-steps450 to preserve physical bridge/target split. Same
+actual target plant/F32 force disk80N/world3m/tilt<.15 for>=5s/full30s/no warning/
+cold proof. No native search/profile/offset/origin shift/online parking.
+Nominal20261016 plus five reused14 failures20261116/17/18/20/21, <=75000
+inclusive native steps incl hanging design. Only6/6 opens a separately frozen
+full45-start gate before fresh reserved qualification. A failed pilot remains
+failed even if briefly upright; no spatial17 claim or new qualified14 record.
+
+## Fourteen raw moving-reference incumbent, before independent execution
+
+Alternate repair remains confirmed live in its first bounded LSMR solve (no
+accepted update yet). Preserve the RAW geometric proposal as a separate candidate
+instead of requiring sparse feasibility repair to win first. Full affine native
+defects can compensate for a nonzero local reference gap; only actual episodes
+can establish whether that is sufficient. Do not relabel raw as repaired.
+
+Independent `n14_raw_marc17_finite_001` uses FINAL generation001/route.npz,
+not an intermediate repair checkpoint. Full700-step moving reference, original
+relative Q/R, terminal Riccati scale0+local stage factor, fresh full88D native
+order4/eps.001/four workers/BLAS OMP1, finite_qr/spectrum80, guarded planar
+cleanup/reflection-model denoising/separate30D+58D QR as registered. No stationary
+tail appended; raw full30s nominal+cold proof, conditional12 shared raw noisy
+starts, <=2500000 inclusive native steps. Preserve all reference defects and
+actual failures. This is another reference/controller family, not a source
+reproduction or result inferred from the ongoing solve.
+
+After its authoritative terminal result, regardless of raw post14s stationary
+handoff outcome, `n14_raw_marc17_prepared_pilot_001` freezes EXACT700-step payload,
+17s hanging R=.01, --swing-steps450, launch+online axial reference alignment,
+650-command literal prefix through global1500. Full nominal plus reused failures
+20261116/17/18/20/21, <=75000 inclusive actual/proof/parking native steps, all
+original gates unchanged. Only6/6 opens a separately frozen45-start gate. The
+parallel repair continues under its own registered bounds; never cancel/restart
+it because the raw candidate looks better/worse. Reserved14 cohort untouched.
+
+## Fourteen free-terminal proposal repair, before implementation/execution
+
+Raw moving finite001 fails nominal3.58s/no hold; its17s prefix pilot is terminal
+0/6, including nominal. Preserve both; no new gate opens. Fixed-terminal
+repair remains live, first2 accepted updates reduce .03922754 to1.99126e-5;
+both bounded solves hit20 outer iterations (status0), not convergence. Bounds
+and line-search merit still hold. Third model has24 augmented bound violations.
+
+Source700's exact final moving pose is not a physical task requirement. Test
+a separate FREE final proposal node while keeping initial hanging fixed and
+all actual force/world/hold/time gates intact. Existing sparse Jacobian and
+retraction already support fix_terminal=False and their native directional
+derivative tests cover BOTH modes. Add --free-terminal defaultFalse to the
+driver, consistently change state-variable count/control-bound offset and
+regularization merit to include the last node. Save this choice in summary/
+proposal. Do not change any limit or the running fixed-terminal process.
+
+After targeted existing native shooting/Jacobian tests pass, run independent
+`n14_free_terminal_from_marc17_001` from the SAME raw generation001/route.npz,
+20 maximum updates/24000000 design-step ceiling, original .001 regularization/
+order4/eps.001/four workers/augmented plus bounded1000inner/20outer fallback/
+finite_qr/spectrum80/BLAS OMP1. Every node correction keeps the same bounds;
+only last-node inclusion changes the proposal family. Same true native defect
+line search, physical geometry and delivered-control actual baseline/cold proof,
+<=160000 additional native steps. A free last planning node is not a reset of
+the plant or an easier acceptance definition. Keep its final world tilt/velocity
+and all changed references visible; actual full30s/noisy gates decide success.
+No14 reserved data. After terminal, assess with a separately recorded finite
+moving-target controller; fixed-terminal branch continues to its own endpoint.
+
+Endpoint-variant existing native Jacobian/retraction tests pass6/6. Both repair
+handles are confirmed live: fixed93100 has3 accepted updates/.03922754->9.48118e-6
+defect/3040800 native steps (third bounded solve converges13/status1); free25982
+is in first bounded fallback after47 augmented bound violations/1010800 steps.
+Do not restart either from a stale checkpoint. Raw moving finite001 and17s
+prefix pilot are terminal failures (nominal3.58s raw/20.58s prepared,0/6 pilot,
+all cold replay exact); no noisy/reserved qualification is opened. Future final
+moving designs must retain700 design and650 executed commands, no stationary
+appendage or extra physical time. Public13 artifacts remain unchanged.
+
+## Fourteen axial-phase arithmetic audit, before offline execution
+
+Both bounded repairs remain live; preserve them. While waiting, measure a
+specific numerical question on the old4/45 incumbent: its huge fitted gains may
+amplify rounding in observed axial-frame phase calculations. Do NOT label the
+native simulator or existing law buggy from this hypothesis.
+
+`n14_axial_phase_diagnostic_001` freezes conditioned_n14_001/route.npz and its
+retained failed20261116/passing20261119 tapes. Reconstruct the unchanged launch
+wrapper from each actually recorded command950 state. At steps950,1000,1050,
+1100,1150,1200, first require the matrix-phase raw force to equal the recorded
+raw force byte-for-byte. In independent scratch environments, compare the same
+law with ONLY equivalent phase arithmetic changed: relative world quaternion
+r=conj(q_ref_world)*q_obs_world, phase=atan2(2*r_w*r_z,r_w²-r_z²), versus existing
+polar phase of R_ref_world.T R_obs_world. Same reference/gain axial transport,
+native observed q/v and tangent error, offsets, caps and physical-F32 delivery.
+No MP, coefficient change, new projection or candidate selection. Save both
+raw/delivered forces, exact baseline parity, per-component F32 differences and
+all source/tape identities. Zero native integration steps/zero actual episodes.
+This is offline numerical evidence only; if it changes delivered bits enough
+to merit testing, register a NEW arithmetic-family controller and independent
+actual pilot/cohort gates. No14 reserved seeds or task-success inference.
+
+## Fourteen feedback dot-product oracle, before offline execution
+
+Phase audit001 is terminal: all12 sampled original matrix raw forces match
+retained tapes byte-for-byte, quaternion phase changes raw force at most7.15e-7N
+but delivered force only1.455e-11N (two F32 components). This small sampled
+effect does not establish a useful controller or rule out all arithmetic effects.
+Do not deploy a phase variant from this diagnostic alone.
+
+`n14_dot_product_diagnostic_001` extends the same offline driver with an optional
+--dot-oracle branch. Same two tapes/12 states/route; reconstruct ORIGINAL
+matrix-phase aligned gains and error vector, require exact original raw force
+again. Save all error/gain/action/feed operands. Compare ordinary dot product,
+math.fsum of rounded F64 products, MP sum of EXACT stored F64 operands, and the
+whole affine force evaluated before final rounding in MP. Compute at80/120
+decimal digits and require identical final F64 forces, report mpmath1.3.0.
+Same delivered-force cap/F32 conversion for every arithmetic result, record
+both changed bit patterns and actual changed component values. <=5000 MP scalar
+products/zero native integration/zero actual episodes. This audits cancellation
+in one control calculation; it does not establish task stability or change a
+production law. Only measured differences can motivate separately registered
+full-policy experiments. Both repair handles stay running;14 reserves untouched.
+
+## Fourteen material continuation from the qualified spatial13 reference
+
+Dot audit001 is terminal: all12 original forces byte-exact,80/120-digit full
+affine sums agree after F64 rounding; maximum raw difference7.15e-7N but ZERO
+changed delivered F32 values or bits. No precision-family controller is admitted
+from these samples. Keep both existing moving-target repair branches alive.
+
+Test the natural +1 material continuation from our OWN qualified spatial13
+controller as another reference family. `n14_material_from_spatial13_001` freezes
+qualify_n13_001/frozen_route.npz and the public13 manifest, verifies its SHA256
+against that manifest's controller inventory and canonical Config13. Use ONLY
+its first450-command9s geometric reference; do not copy preparation, profile
+selector, gains, value roots or qualification outcomes into14. Reference data
+comes from a qualified policy but is not an actual episode tape.
+
+Apply existing planar proposal cleanup guard<=1e-8 (record changes), then decode
+native relative Y quaternions via2*atan2(q_y,q_w), unwrap continuously in time
+and anchor the first hanging branch at [pi,0,...]. Preserve cart X and native
+relative Y angular velocities; independently re-encode every source pose/rate
+and require tangent parity<=1e-10. Reject genuine spatial input or angular-rate
+sampling above pi/2 per command (observed source max.10955rad/command), rather
+than guess a winding. New decoder tests at1/3/13 include4pi temporal winding,
+arbitrary quaternion sign flips, input/live-state preservation and rejection
+of real spatial/aliased-rate input. All tests required before generation.
+
+Interpolate UNWRAPPED cumulative angles and rates at actual canonical13 material
+centers into canonical14, preserve force guesses/cadence with target F32 delivery,
+require exact hanging error<=1e-6 and native14 world directions<=1e-10. Zero
+source/target physics integration; geometric kinematic checks only. Source13
+remains immutable and its results are not14 evidence.
+
+After valid generation, `n14_direct_from_spatial13_001` uses SAME standard full88D
+shooting:20 updates/15000000 native design-step ceiling, fixed initial and final
+proposal nodes, order4/eps.001/four workers/BLAS OMP1, augmented ridge plus
+bounded1000inner/20outer fallback, regularization.001, finite_qr/spectrum80.
+No model/control/physical-limit change. Separate gap-free actual baseline+cold
+proof <=160000 further steps. After terminal register a finite controller on
+the FINAL reference under full actual/cohort gates. No14 reserved data. This
+independent shorter reference branch does not cancel either live700-step repair.
+
+## Fourteen free moving-target final execution protocol
+
+New spatial-reference decoder tests pass153/153, including winding/sign/native
+roundtrip and rejection guards. Generation from qualified spatial13 is terminal:
+public controller SHA796dfefd9adb83efe4390ee4b31fc85fea4666bc1b0d58b0e409c906e78f638a,
+manifest37785c8233720b5bab7733bfc2770514cb6c86254ec756de6948ead90c107c95,
+roundtrip8.882e-16, target hanging1.225e-16/directions1.332e-15, zero integration.
+Independent direct_from_spatial13_001 is live, session98793,20/15M bounds.
+Original fixed93100 and free25982 moving-reference repairs continue; free has
+9 accepted updates to1.592e-13 defect at9122400 native steps, whereas fixed
+has5 accepted updates to6.642e-6. No physical task success follows from this.
+
+After free25982 is authoritatively terminal, use ONLY its FINAL proposal in
+`n14_free_marc17_finite_001`. Measure planar cleanup input guard<=1e-8; if it
+passes use guarded reflection-model QR, otherwise retain rejection and use
+full unprojected native88D reference/QR. Same700-step moving design, relative
+Q/R, terminal Riccati scale0+local factor, no stationary appendage/shortening,
+native order4/eps.001/four workers/finite_qr/spectrum80/BLAS OMP1. Raw full30s
+nominal+cold proof and conditional12 shared starts, <=2500000 inclusive native
+steps. No inference about the17s prefix from a later raw stationary handoff.
+
+After its authoritative terminal design, `n14_free_marc17_prepared_pilot_001`
+freezes EXACT700-step payload,17s hanging R=.01, --swing-steps450, observed
+launch+online axial reference alignment,650-step literal prefix inside30s.
+No search/offset/origin/online-parking/dynamic timing selection. Nominal20261016
+plus five reused failures20261116/17/18/20/21, <=75000 inclusive native steps.
+All physical force/boundary/tilt/full-episode/no-warning/cold-replay gates apply.
+Only6/6 opens a separately frozen45-start development gate.14 reserved cohort
+stays untouched until a full gate passes and a new memo freezes qualification.
+If multiple branches become eligible, the first complete45/45 physical/cold
+gate opens reserved qualification; preserve every other branch independently.
+
+## Fourteen free moving-target longer preparation, before execution
+
+Free repair is terminal after13 accepted updates/15201924 design steps, final
+defect3.74894e-22/max1.78922e-12; actual gap-free baseline holds8.40s but exits
+14.98s, exact replay. Final cleanup normalizedstate6.6612e-10/force3.1139e-9
+passes1e-8. Finite700 design is terminal, symmetry projection within guard,
+raw nominal holds8.40s but fails15.08s at its later stationary handoff. This
+does not establish full30s success or invalidate an earlier literal prefix.
+
+The17s/650-prefix pilot is terminal4/6 full30s/cold replay: nominal and noisy
+20261117/18/21 pass7.36s hold;20261116/20 fail before holding. This improves
+three previously failing development cases, not qualification. Independent
+saved-tape rescore of NOMINAL's first540 tracking commands gives258 upright
+post-states/5.16s. Thus19.2s hanging +540-command literal prefix fits the SAME
+30s deadline with5.16s nominal hold. Source17's parking duration is not treated
+as a universal spatial prescription; no shorter recursion is regenerated.
+
+`n14_free_marc17_longpark_pilot_001` changes ONLY preparation17->19.2s (960
+commands) on the SAME finite700 controller/relative metric/online axial law,
+--swing-steps450, original hanging R=.01. Nominal plus five REUSED failures
+20261116/17/18/20/21, full30s/no warning/force80/world3m/5s hold/exact cold replay,
+<=75000 inclusive native steps. Require nominal states/actions/raw/tilts from
+newcommand960 onward to match original17s nominal tracking prefix850..1390
+byte-for-byte (540 commands/541 states), since exact hanging is stationary.
+No profile/offset/search/physical recentering or state reset. Only6/6 opens a
+new frozen full45-start gate; otherwise retain and register next controller
+change.14 reserves20262516..47 untouched. Other repairs continue independently.
+
+## Fourteen moving-target fine offset diagnosis, before execution
+
+19.2s moving pilot is terminal4/6, same successes as17s: nominal+20261117/18/21
+pass full30s/5.16s hold;20261116/20 fail with no hold. Do not open full cohort.
+The NOMINAL 19.2s tracking states/actions/raw/tilts must match17s prefix exactly
+per prior registration. These are reused development data; no14 reserve used.
+
+Independently diagnose BOTH remaining failures with the NEW moving-target law,
+not the old static arrival's failed offset bank. Freeze
+`n14_free_marc17_offsets_116_001` and `n14_free_marc17_offsets_120_001` from
+longpark_pilot001/route.npz and each actual tape's observed command960 state.
+Existing cold-native prefix and zero-profile suffix parity requirements apply.
+Fixed order: zero, then +/-X/+/-Y for magnitudes1e-6,1e-5,1e-4,1e-3m (17 total).
+Only reference cart coordinates shift; actual states/bounds/clock stay fixed.
+All full remaining540-command native forecasts use the same observed state,
+original spin/full88D law, real F32/80N disk,3m world square/5s/full30s gates.
+Save all forecasts/outcomes/raw actions and query counts. Per diagnosis bound
+3840 prefix proof+17*2160=40560 native steps, cap41000; zero new actual episodes.
+
+Add optional --scales/default[.0001,.001] and --physics-budget/default25000 to
+the diagnostic driver only, preserving old9-profile order when omitted. Reject
+nonpositive/nonfinite/duplicate scales. If forecasts pass, this only motivates
+a separately frozen state-only selector/fixed-profile actual pilot and full
+cohort; no per-seed runtime lookup or qualification from forecast scores.
+
+## Fourteen spatial13-derived final finite test, before execution
+
+Both fine moving-reference offset diagnoses are terminal0/17, with exact cold
+prefix/zero-profile suffix parity; no selector is admitted from them. Longer
+moving pilot remains4/6, with the same two failed seeds at17s and19.2s. Do not
+consume14 qualification. Source13-derived native repair is now terminal20
+accepted updates/13684324 design steps, defect1.43973e-15/max2.09629e-8; actual
+baseline fails7.34s/.26s hold/Y3.071622m, exact cold replay. Final proposal
+cleanup normalizedstate1.81664e-11/force8.85364e-11 passes1e-8, zero integration.
+
+`n14_from_spatial13_finite_001` uses ONLY its FINAL shooting_proposal.npz, same
+canonical14/full88D native identification/order4/eps.001/four workers/BLAS OMP1,
+guarded clean planar reference and reflection-model30D+58D residual QR, original
+relative Q/R, true native defects/chart transport, exact upright continuation
+to1500 design commands, terminal Riccati scale0+last local factor, finite_qr/
+spectrum80. No search/preparation/origin/offset. Full30s nominal/cold proof,
+only on full pass12 shared raw noisy starts. <=2500000 inclusive native steps.
+
+After terminal, choose preparation using ONLY its retained NOMINAL trace:
+fixed descending candidates19.2,19.0,18.0,17.0s. For each, count longest upright
+post-state streak in first(1500-park_steps) tracking actions. Require>=258 ticks/
+5.16s AND prefix ends strictly before a failed episode's terminal action (or
+is within an actual full pass). Choose first satisfying candidate. Keep the
+same1500-step design/gains; no short-horizon regeneration. If none qualify,
+retain the result and do not open preparation under this memo.
+
+Eligible `n14_from_spatial13_prepared_pilot_001` freezes that exact payload,
+selected hanging duration/R=.01, observed launch+online axial reference alignment,
+450 bridge commands, same full30s/80N/world3m/5s/no-warning/cold-proof gates.
+Nominal20261016 plus reused failures20261116/17/18/20/21, <=75000 native steps.
+Only6/6 opens separately frozen full45-start development before14 reserves.
+This is a new per-count reference, not evidence inherited from source13.
+
+## Fourteen aligned native action-value family, before implementation
+
+The moving-reference19.2s pilot is4/6, with remaining failures20261116/20;
+both17-profile offset diagnoses are0/17. Sampling arithmetic alone produces
+negligible delivered changes, so do not promote an arithmetic-only law. The
+fixed700 repair remains live; source13-derived final finite design passes
+nominal24.16s but0/12 raw starts; its chosen19s prepared pilot is running.
+
+Test the document's inner native action improvement WITH observed axial-frame
+feedback, a combination the old wrapper deliberately rejected. Implement a
+separate aligned_value module and explicit payload marker, leaving old affine
+classes/functions unchanged (the live repair can import them later). Existing
+experiment module is already loaded by that repair; the new factory branch is
+only for explicitly marked future policies. Do not change the running job.
+
+At each active command: compute the unchanged aligned affine baseline, deliver
+F32 under the80N Euclidean cap, then predict its ONE interval in an owned native
+environment. Align the NEXT reference/value-root columns to that baseline's
+predicted axial frame. Hold that frame fixed while comparing all candidate
+successors. Full affine residual r remains in the value. Evaluate differences
+relative to baseline as (2*w_base+S*delta_e)'(S*delta_e) plus the exact quadratic
+input-cost difference, avoiding subtraction of two large absolute costs. This
+is a new nonlinear local-value law, not an optimality or disturbance guarantee.
+
+Maximum16 distinct delivered candidates, deterministic order: baseline/reference/
+half; coordinate +/- trials around current best at radii max(|baseline-ref|,
+8 F32 ULPs,1e-4N), then half those radii; four adjacent F32 coordinate neighbors;
+final half of best/baseline. Deduplicate/cap every query. All queries use the
+FULL unchanged3D native model and real-world bounds; invalid forecasts cannot
+win. If none valid, delivered baseline fallback is recorded. Predictor never
+advances/sets the real environment. Save every proposal/delivered action/native
+successor/relative cost/validity/margin/anchor frame/selected action/query count.
+
+Unit/native tests require stable cost-difference agreement with independent
+absolute value/input differences, nonzero affine-residual response, candidate
+dedup/cap/budget, exact candidate native reproduction, real-state/clock/counter
+isolation and native trace accounting. Original13 heldout/forecast byte parity
+must remain exact after adding the opt-in experiment factory. No native search
+is allowed for postfit-reflection-averaged payloads with unused value roots.
+
+After all tests pass, `n14_aligned_value_pilot_001` freezes EXACT
+n14_free_marc17_longpark_pilot_001/route.npz with only the explicit aligned-native
+search flags added.19.2s/960 preparation,540 executed commands of original700
+design,450 bridge commands, original Q/R/reference/gains/feed/roots/residuals,
+no offsets/online parking/origin/admission/physics changes. Nominal plus five
+REUSED failures20261116/17/18/20/21, full30s/no warning/5s/3m/80N/cold replay.
+Per episode<=34560 predictor+12000 actual/proof steps;6-case pilot incl hanging
+design<=285000 native steps. Only6/6 opens a new frozen45-start gate. No14
+reserved data or hardware20ms claim; all online model cost must be reported.
+
+## Fourteen aligned native-value terminal pilot and integrity audit
+
+New opt-in aligned_value module is separate from the old running repair's
+affine_value implementation.158 tests pass; original13 first-heldout states,
+actions, raw forces, tilts and BOTH full forecast tapes remain byte-identical.
+Own13-derived prepared pilot is terminal1/6, not admitted. Aligned-value pilot
+is terminal4/6, the SAME pass/fail labels as the paired plain moving controller:
+nominal,117,118,121 pass full30s/5.16s hold;116 and120 fail without hold. Every
+actual tape cold-replays exactly.225008 inclusive native steps includes158008
+predictor,33500 actual and33500 proof. No new full cohort or reserves opened.
+
+Before final result audit: compare ALL selected inner successors to actual next
+states, including last command, and validate delivered candidate uniqueness,
+disk cap, <=16 count, selected index/cost/fallback and counter accounting.
+Native independently reproduce ALL candidates at each command960,1060,1160,
+1260,1360,1460 that exists in each tape (<=2304 native steps). Reexecute complete
+nominal with new policy/search in a separately saved nominal_reexecution.npz,
+retaining actual/cold steps and all inner traces; require byte equality of all
+numeric tape arrays with original nominal.<=44560 additional native steps,
+combined pilot+audit remains <=285000. Save identities, terminal receipts,
+candidate/cold reexecution parity and inclusive audit accounting. These are
+integrity checks on REUSED starts, not extra independent successes.
+
+## Fourteen physical moving reference, before construction/redesign
+
+The aligned native search pilot adds cost without improving paired4/6 outcome;
+its integrity audit is running. Test document12.1's physical-reference idea as
+a separate branch, preserving every old policy and failed outcome. Use ONLY
+first700 actual delivered commands and701 states from the raw nominal tape
+n14_free_marc17_finite_001/affine/nominal.npz. Its later stationary handoff fails;
+do not label the source episode a full pass. The prefix reaches the moving tail
+with0.04825rad terminal tilt, cartX1.865605m/Y5.93e-13m. Input-only symmetry
+guard measured6.224e-12 normalizedstate/3.287e-12 force (<1e-8), zero native
+steps. This informs the declared model branch, not a new outcome selection.
+
+`n14_physical_moving_reference_001` freezes source tape plus source controller,
+exact first700 delivered F32 actions/701 fullnative states/config. Independently
+native reproduce all700 maps byte-for-byte, including finaltransition;2800
+native steps. Raw physical tape has EXACT zero native reference defects; no
+virtual nodes/recenter or actual-state edits. Save physical reference unchanged.
+
+`n14_physical_moving_finite_001` separately freezes that reference, uses existing
+guarded planar cleanup (record that this CAN introduce small defects), original
+relative Q/R, native full88D order4/eps.001/four workers/BLAS OMP1,
+reflection-consistent30D+58D QR, terminal Riccati0+lastlocalfactor,
+finite_qr/spectrum80.700 design commands, no stationary append/search. Full raw
+30s nominal and cold proof; conditional12 noisy raw starts only on fullpass,
+<=2500000 inclusive native steps. Preserve all repaired-vs-physical provenance.
+
+After finaldesign, regardless of its separate post14s handoff result,
+`n14_physical_moving_prepared_pilot_001` freezes exact700 design,19.2s/960 causal
+hanging preparation,R=.01,450 bridge,540 literal executedprefix,launch+online
+axial feedback. No search, offsets, admission, origin, online parking or
+shortened value redesign. Nominal plus reused116/117/118/120/121,<=75000 native
+steps incl hanging design. Original full30s/5s/.15rad/3m/80N/no-warning/exactcold
+gates unchanged.6/6 alone opens separately frozen45-start gate; no14reserves.
+
+## Fourteen terminal physical-reference and aligned-value outcomes
+
+Physicalization700/701 native maps are byte-exact;2800 steps. After explicitly
+recorded guard6.224e-12/3.287e-12 cleanup, fresh planning A/B/d parity changes
+4.676e-10/4.077e-10/1.333e-14 pass1e-8. Physical finite design uses1011524
+native steps; raw actual8.40s hold/fails15.08s exactly as prior controller,
+inclusive1017556. Prepared actual pilot is4/6, with the SAME failed116/120 as
+plain/aligned-value moving pilots; all cold exact.67780 inclusive steps incl
+724 hanging design. No gain in complete paired outcomes from physicalization.
+
+Aligned-value audit passes ALL selected successor comparisons including final
+commands, distinct F32 cap/count/validity/mincost accounting,1812 independent
+native candidate spot steps, and complete nominal reexecution44548 native
+steps. Every actual/inner trace numeric array is byte-identical on reexecution.
+Total pilot+audit271368<285000. Source/candidate tapes/audit driver/plan retained.
+The local cost law remains a failed reliability intervention despite exact
+prediction integrity.14 remains unqualified; reserved20262516..47 untouched.
+
+## Fourteen moving-reference preparation authority pilot, before execution
+
+The repeated remaining failures occur before hold on both original and physical
+moving references. Test ONE stronger hanging control penalty choice on ORIGINAL
+incumbent moving reference, document8/12's preparation/correction-authority idea.
+Earlier R-family probes were on the DIFFERENT stationary14 reference; do not
+claim they tested this new moving family. No full Cartesian sweep is authorized
+by this memo. `n14_moving_strongpark_pilot_001` freezes EXACT source
+n14_free_marc17_finite_001/affine_controller.npz, only hanging design R=.001
+(incumbent .01),19.2s/960,450 bridge,540 literal prefix of700 original design,
+launch+online axial alignment. Native canonical mechanics/80N/world3m/30s/5s/
+.15/no-warning/cold proof unchanged. No search/offset/origin/online parking/
+admission/new tracking design. Nominal plus same reused116/117/118/120/121,
+<=75000 inclusive native steps incl hanging design.6/6 opens separately frozen
+45-start gate; otherwise retain failed arm with no reserves or wider grid.
+
+## Fourteen stronger moving preparation terminal outcome
+
+Stronger R=.001 moving pilot is terminal4/6, SAME failed116/120; no new full
+cohort, wider R grid or reserved tests opened. Nominal/117/118/121 pass full30s/
+5.16s hold;116 fails24.00s,120 fails24.50s without hold. All cold replay exact.
+Retain plain R=.01 incumbent; this intervention did not improve paired endpoint.
+The fixed-end repair remains live in its original bounded budget; no restart.
+
+## Fourteen axial-quotient planning consistency, before implementation
+
+Prior goal turn made concrete progress: opt-in native-value implementation,
+158 passing tests, exact13 heldout parity, completed paired pilots/integrity
+checks and committed lab9d0c648. No14 qualification earned. Fixed-end repair
+handle93100/PID34108 confirmed LIVE, now iteration15 bounded solver; never
+restart merely for an observation timeout or small planning-gap reduction.
+
+Current online law changes reference axial frames on each observation, yet its
+full local value design penalizes those arbitrary cyclic ORIENTATION phases.
+Test consistency of the planning model with that causal frame alignment. This
+is a controller/model reduction, NOT removal/locking of native physical DOFs.
+All14 measured angular SPIN VELOCITIES remain, as do all cart/tilt/rate modes.
+
+New isolated quotient module: analytic closest-axial alignment derivative C
+maps full tangent errors to14 body axial-frame angles. D is the14-column exact
+infinitesimal generator of axial_gauge_state (relative-quaternion local tangent
+and rotating local reference angular-velocity components). G=I-D*C is the
+observed alignment error derivative, C*D=I, G^2=G. Use orthonormal basis E for
+ker(C), F=E'*G; F*E=I, E*F=G. Full88D becomes74 planning coordinates, preserving
+all44 velocity coordinates, including twist. At reflection-fixed references,
+preserve even30 dimensions as identity and odd44 via a deterministic complete
+QR of C_odd'; no even/odd contamination by a dense arbitrary basis.
+
+Tests before design: independent centered native quaternion/alignment finite
+differences for C,D,G at1/3/14 links with generic orientations and spin; generator
+physical directions/rates invariance; G/dual identities, spin-coordinate
+retention; planar even/odd basis parity; native finite gauge-flow equivalence;
+small reduced finite affine QR vs independent dense condensed optimum retaining
+nonzero defects/residuals, and embedded full-error force/value parity. No
+modification of affine_value.py needed while live repair may import it late.
+
+`n14_quotient_moving_finite_001` freezes EXACT controller plus saved native-model
+cache n14_free_marc17_finite_001, its source repaired proposal, inputs/cleanup/
+projection provenance. Verify source input hashes and independently regenerate
+clean reference to exact stored states/actions before cache reuse. Reapply SAME
+guarded reflection denoising; no foreign/stale-center cache. A_y=F_next*A*E,
+B_y=F_next*B,d_y=F_next*d; L_y=L*E; original relative L/R, terminal Riccati0
+plus LAST local L*E. Retain affine residuals and all700 design times. Save all
+C/D/G/E/F, reduced A/B/d, original and lifted gains/roots, model identities and
+max normalized A*D-D_next gauge discrepancy. Abort if normalized discrepancy
+>1e-5; this is a planning consistency guard, not a stability certificate.
+Separate even30/odd44 affine QR. Lift K=K_y*F, S=S_y*F; residual/feed unchanged.
+No value/gain postfit averaging, actual-state projection, force change, new
+reference, moving frequency, physics, seed-dependent branch or state reset.
+
+Raw nominal full30s/cold proof under lifted affine law; conditional12 reused
+raw noisy starts only on fullpass. Cache/design native0, <=180000 actual/proof
+steps total. Raw stationary handoff after700 remains a separate diagnostic.
+After design terminal regardless of handoff result,
+`n14_quotient_moving_prepared_pilot_001` freezes exact700 payload,19.2s/960
+parking R=.01,450 bridge,540 literal prefix, launch+online axial alignment.
+Nominal plus SAME reused116/117/118/120/121,<=75000 native steps incl parking
+design. Original30s/5s/.15rad/world3m/F32disk80N/no-warning/exactcold gates.
+Only6/6 opens separately frozen45-start development; no14 reserved data.
+
+## Fourteen axial-quotient pilot success and full development activation
+
+165 tests pass, including independent native finite differences of C/D/G,
+full velocity retention, native gauge-flow equivalence at1/3/14, full/reduced
+force/value parity and independent condensed finite optimum with affine defects.
+Cache source/input/driver/derivative-provider hashes and exact cleaned arrays
+verify. Quotient A*D-D_next normalized residual1.74752e-8<1e-5; all native
+mechanics/88 physical state coordinates remain unchanged. Raw nominal holds
+8.40s, then fails15.08s after its explicitly separate post700 handoff, exactcold.
+
+Prepared quotient pilot is6/6, ALL full30s/5.16s/no-warning/worldbounds/exactcold,
+including both formerly failing116/120. This earns ONLY full development,
+not a qualified14 claim. Freeze EXACT
+n14_quotient_moving_prepared_pilot_001/route.npz, no parameter/array changes.
+`conditioned_n14_quotient_001` executes nominal20261016 noise0 plus old canonical
+44 development starts20261116..27 and20261416..47, independent complete30s
+actual+cold tapes,19.2s/960 parking,540 literaltrackingprefix/700 design/450
+bridge, unchanged80N disk/world3m/.15rad/5s/no-warning. <=540000 inclusive
+actual+proof native steps, design0. Freeze source/driver/route/config/runtime,
+no seed lookup, no admission/profiles/native search. No early successful-only
+filtering; save all45 outcomes even after a failure. Only45/45 opens32 NEW
+reserved14 seeds20262516..47 under separately frozen unchanged source/payload.
+
+## Fourteen quotient full gate terminal and observed-offset diagnosis
+
+Full45 quotient development is terminal43/45 (replayexact all), not admitted.
+Failures20261431 (25.46s/no hold/X3.115332) and20261437 (24.82s/no hold/
+Y3.010038) are retained. Both old moving failures116/120 now pass, and every
+success has full30s/5.16s hold. No reserved14 data opened. Fixing planning-frame
+consistency helps the paired pilot but does not by itself qualify fourteen.
+
+Before any new actual selector: run existing diagnose_launch_profiles on BOTH
+failed quotient tapes, exact frozen fullgate controller, fixed ordered profiles
+zero then +/-X,+/-Y at.0001m then.001m (9 per launch), full540-command remaining
+policy. Every profile evaluated; preserve all raw/action/state/tilt forecasts,
+world bounds/counters and zero-profile suffix byte parity. Independent actual
+hanging-prefix cold proof3840 native steps each, <=25000 inclusive native steps
+per diagnosis. No parameter sweep/refit/native search/plant edits. Select the
+FIRST nonzero profile in fixed order passing BOTH full remaining task forecasts;
+if none, retain result and preregister another action rather than deploy selector.
+Any eligible two-profile admission variant needs separately frozen actual pilot
+and full45 gate before reserved14. Profile changes reference error only; cart
+never moves/reset at selection. No seed is an input to the deployed policy.
+
+## Fourteen quotient offsets null and original-law complement check
+
+Both9-profile diagnoses are terminal0/9; zero suffixes byte-exact, no selector
+admitted. Rather than expand offsets, test whether the preserved ORIGINAL full
+88D-value moving controller covers the two failures of the74D-value quotient
+law. Before execution: `n14_moving_complement_431_001` and437_001 each freeze
+EXACT n14_free_marc17_longpark_pilot_001/route.npz, run ONE fullactual episode
+with reused seed20261431 or20261437/.02 plus independent cold proof. No arrays,
+parking, branch, offset, reference, arithmetic or gains changed. <=12000 native
+steps each. Compare first960 actual states/actions/raw/tilts with corresponding
+failed quotient tape; require exact shared preparation before comparing suffixes.
+This tests complementary controllers only. No bank/admission implemented or
+qualified from these two outcomes; any later controller bank needs separate
+source/ownership tests, full actual pilot and full45 gate before reserves.
+
+## Fourteen quotient preparation pilot, before execution
+
+Both original-law complement trials fail431/437 without hold; actual first960
+commands/961states/rawforces/tilts are byte-identical to corresponding quotient
+preparation, and full cold replay exact. No controller bank is admitted.
+
+Test ONE stronger hanging design R=.001 with the newly consistent QUOTIENT
+tracking law; the prior stronger-moving arm used unreduced88D value feedback,
+not this43/45 law. `n14_quotient_strongpark_pilot_001` freezes EXACT
+n14_quotient_moving_finite_001/affine_controller.npz,19.2s/960 preparation,
+R=.001 (old .01),450 bridge/540 literalprefix of700 design. Launch+online
+axial reference alignment; no offset/admission/search/origin/onlineparking/
+tracking redesign/reference/physics changes. Nominal + reused116/117/118/120/
+121 AND fullgate failures431/437;8 actual/cold episodes,<=100000 inclusive native
+steps incl724 hanging design. All unchanged30s/5s/.15/3m/80N/no-warning gates.
+Only8/8 opens separately frozen full45 gate; otherwise retainfailedarm and
+return to separately registered fixed-end final repair or new synthesis, with
+no wider preparation grid or reserved14 data under this memo.
+
+## Fourteen quotient strong preparation terminal / online preparation pilot
+
+Stronger hanging R=.001 quotient pilot is terminal6/8, same431/437 fail;437
+fails13.46s DURING preparation, before the quotient route exists. Do not tune
+tracking against a prelaunch failure. Original R=.01 quotient remains43/45
+incumbent. All actual tapes replay exactly, no new qualification.
+
+`n14_quotient_onlinepark_pilot_001` tests ONE other explicit preparation law:
+return to original R=.01/19.2s and use existing online_parking=True closest
+observed axial reference/gain alignment EACH hanging command, consistent with
+online tracking. This is a new nonlinear hanging controller, not a numerical
+rewrite; previous online-parking probes used different count/reference laws.
+Freeze exact quotient finite payload, same450/540/700 clocks, originalparkR,
+launch+online tracking, no offsets/admission/search/origin/physics changes.
+Nominal plus reused116/117/118/120/121/431/437 actual/cold8 cases,<=100000 native
+steps incl724 hanging design. Full unchanged gates. Only8/8 opens separately
+frozen45-start development; no further R/parking combination grid or reserves.
+
+## Fourteen online preparation terminal / thirteen source regression
+
+Online preparation quotient pilot is terminal6/8, same431/437 failures without
+hold, all cold replay exact. Original R=.01/non-online preparation43/45 controller
+is retained. No wider parking family, selector or reserved14 activation follows.
+Return to separately registered final fixed-end reference after its live handle
+terminates, or preregister another synthesis hypothesis.
+
+Before further source edits/publication: `n14_quotient_n13_regression_001` runs
+the already consumed first13 heldout20262416 full30s/.02 using its unchanged
+qualified payload/current source, exact cold proof and BOTH forecast tapes.
+Require states/actions/rawforces/tilts/fullforecasts byte-identical to immutable
+qualification;<=16400 inclusive native steps. Reused integrity only, not new
+qualification or a replacement for14's unconsumed reserved gate.
+
+## Fourteen physical-reference quotient interaction, before execution
+
+The frame-consistent quotient model improved moving fullgate to43/45. The
+physical-reference redesign was previously tested only with UNREDUCED values
+(4/6); its effect with consistent quotient feedback is unknown. Test exactly
+that single interaction, preserving both prior policies. No reference/penalty/
+frequency/parking grid. `n14_physical_quotient_finite_001` uses exact completed
+n14_physical_moving_finite_001 cache/controller through the SAME quotient
+driver/guards/tests; bound cache provider/hash/clean centers exactly, original
+relative Q/R,700design/450bridge, full74 planning coordinates with44 velocities,
+lifted full88-error gains/roots, Riccati0+lastlocalfactor. Zero new design native
+steps; raw fullnominal/cold, conditional12 raw starts only on fullpass,
+<=180000 actual/proof native steps. A*D consistency guard1e-5 unchanged.
+
+After final design `n14_physical_quotient_prepared_pilot_001` freezes exact700
+payload, original R=.01/non-online19.2s hanging, launch+online axial tracking,
+540literalprefix, no search/offset/admission/origin/actual-state edits. Nominal
++ reused116/117/118/120/121/431/437 (8 actual+cold),<=100000 native incl parking
+design. All unchanged gates. Only8/8 opens separate full45; no14reserves.
+
+## Fourteen physical quotient terminal / source checkpoint
+
+Physical-reference quotient design passes its unchanged cache/gauge guards,
+raw nominal8.40s then fails15.06s/coldexact. Prepared pilot terminal6/8, same
+failed431/437 without hold; no new full gate or reserved data. The standalone
+original quotient43/45 remains the best fully evaluated14 development policy.
+No upper-bound/impossibility inference from these finite tests. Original13
+first-heldout regression passesfull30s/5.16s, actual states/actions/raw/tilts and
+BOTH complete forecast tapes byte-identical,16400 inclusive native steps.
+Save quotient implementation/tests/diagnostic history while original fixed-end
+handle93100/PID34108 remains LIVE in final iteration19 bounded solve. Its final
+700-step design/pilot sequence is already preregistered; do not restart on wait.
+
+## Fourteen fixed-end repair authoritative completion
+
+Handle93100 exits0; completed.json exists, PID34108 gone.20 optimizer iterations,
+21406724 design native steps, finaldefect5.04338237e-6/max.00176512685; last
+bounded solve73 augmented bound violations, status1/10 iterations, acceptedalpha
+.05. Direct actual nominal fails4.10s/205 commands/nohold, no actual warning,
+worldexit/coldexact. A native QPOS warning was emitted in design/query work and
+is retained in tool log; do not conflate it with an accepted warning-free episode.
+This fixed-end proposal is worse in feasibility than the separate free-end
+proposal; do not overwrite either incumbent. FINAL shooting_proposal states/
+actions finite701x102/700x2. Input-only reflection cleanup guard FAILS (exceeds
+1e-8); receipt final_reference_symmetry_guard.json. Therefore follow the ALREADY
+registered branch: n14_from_marc17_finite_001 uses FULL unprojected88D native
+models/reference, no --planar-reference/--reflection-model. No flattening or
+threshold relaxation. Subsequent17s/650-prefix pilot remains as registered.
+
+## Fourteen fixed-end final design/pilot terminal
+
+Final proposal Ycartmax.001447381746m/Yforcemax8.51031439N confirms symmetry
+cleanup cannot be treated as roundoff. Unprojected88D finite model design
+uses1011524 native steps; raw nominal fails4.94s/nohold/no actual warning/exact
+cold,1013500 inclusive. Registered17s/650-prefix actual pilot is0/6, including
+nominal failure21.84s/nohold; all coldexact. No qualification or wider search
+opened from this worse branch. All long repair handles now terminal. Best14
+complete development remains original free-reference axial quotient43/45;
+14 reserves untouched, thirteen remains qualified/public. Goal remains active.
+
+## Fourteen quotient native-action improvement, before execution
+
+Previous goal turn made concrete progress: new axial-quotient planner/tests,
+165 tests, full43/45 gate, exact13 heldout parity, terminal fixed-end20-step
+repair and its failed finite/pilot, saved commits30e0462/e846bff. No live repair
+remains to wait for. Best14 is43/45; reserved20262516..47 untouched.
+
+Native one-step action correction was previously evaluated ONLY with the
+unreduced88D value design (4/6). Test it with the now frame-consistent74D
+quotient value model on the SAME reference; this is a single interaction, not
+a new force/reference/physics/parking grid. `n14_quotient_native_value_pilot_001`
+freezes EXACT conditioned_n14_quotient_001/frozen_route.npz, adding ONLY existing
+aligned_native_value=True/native_search=True/online_gauge=True flags. All
+states/actions/feed/gains/74-row roots/residuals/tracking_R/design arrays remain
+byte-identical. Existing isolated full-native common-next-frame action search,
+maximum16 distinct F32 queries, full affine residual, relative quadratic costs,
+deterministic ties/dedup/80N disk/worldsubstep guards. All inner ledgers saved.
+
+19.2s/960 original R=.01/non-online parking,450 bridge,540 executed prefix of
+original700-step design. No actual-state edits/admission/offset/origin/new QR.
+Nominal20261016 plus reused116/117/118/120/121/431/437 (8 full actual+cold),
+<=380000 inclusive native steps, each <=34560 predictor+12000 actual/proof.
+Full30s/5s/.15rad/3m/80N/no-warning/exactcold unchanged. Existing165 component
+tests already cover non-square value roots, nonzero affine residual, candidate
+native reproduction, live isolation and cap/dedup. Only8/8 opens separately
+frozen full45 development; do not consume14 reserves or widen a search grid.
+
+## Fourteen quotient one-step terminal and native integrity audit
+
+One-step quotient native-value pilot is terminal6/8, same431/437 nohold failures,
+all actual coldexact.316928 inclusive native steps; no fullgate or reserves.
+Before audit: all selected successors (including final) must equal actual next
+states; cap/dedup/min-valid-cost/counters checked for EVERY command. Independently
+native replay every candidate at command960/1060/1160/1260/1360/1460 where
+present (<=3072 steps). Fullnominal policy reexecution plus cold proof <=46560,
+require all numeric actual/innertrace arrays byte-identical. Totalpilot+audit
+<=425000 native steps. Materialize each compressed ledger once for efficient
+read-only audit; criteria/order unchanged. Freeze audit driver and this memo.
+
+## Fourteen native four-command lookahead, before implementation
+
+The43/45 controller and one-step6/8 correction are preserved as incumbents/
+comparators. Test document14.3's distinct multi-command extension, not another
+parking/offset/R grid. New isolated rollout_value module and explicit payload
+marker; old one-step/affine modules/functions remain unchanged. No plant edits.
+
+At each active observed command compare <=16 DISTINCT deliveredF32 FIRST
+forces in the SAME fixed deterministic baseline/reference/midpoint/coordinate/
+neighbor order and radii as aligned one-step search. Each query predicts FOUR
+commands in an owned full-native environment. First force is the candidate;
+the next THREE forces are unchanged causal online-aligned quotient affine
+feedback evaluated on its OWN predicted states/ticks (no nested search). Always
+quantize/cap every future force. Reinitialize only the owned predictor to the
+actual observed current q/v for every candidate. No future actual state/seed.
+
+Baseline four-command rollout anchors a COMMON axial chart at EACH predicted
+poststate. Compare candidate intermediate state costs at t+1,t+2,t+3 using
+tracking factors L*E*F (L*G) from the SAME frozen quotient design, transported
+with reference/root columns to each baseline-anchored frame. Terminal cost at
+t+4 uses its full original S/r; keep nonzero affine residual. Include ALL four
+(u_j-u_ref_j)'R(u_j-u_ref_j), not just firstinput. Current state cost is common
+and omitted. Use expanded relativequadratic differences and fsum instead of
+subtracting large absolute totals. Baseline relativecost0. Common frames never
+follow individual candidates. Any native warning/nonfinite/200Hz worldexit at
+ANY forecast step invalidates that candidate. Record all four proposed/delivered
+actions, states, margins/warnings, frames, state/input/terminal cost differences,
+chosenfirstforce/index and query counts. Fallbackbaseline ifnonevalid, recorded.
+
+Unit/native gates: independent absolute multi-stage affine value/input cost
+agreement; nonzero residual response; all future feedback computations causal
+and nonrecursive; exact independent fullnative reproduction of every candidate
+path; first selected prediction vs actual native; deliveredcap/dedup/querybudget;
+real state/clock/counter isolation; partial warning/worldexit rejected; full
+original13 first-heldout actual+bothforecast byte parity after opt-in factory.
+No hardware20ms claim. Predicted future actions after first command need not
+match later actual lookahead decisions; never claim wholeforecastsuffix parity.
+
+After all tests, `n14_quotient_rollout4_pilot_001` freezes exact43/45 fullgate
+payload and exact originating quotient_design.npz/controller/source hashes;
+verify ALL existing design/reference arrays match. Add ONLY rollout flags,
+horizon4 and derived L*E*F factors. Original19.2s/960 R=.01 non-online parking,
+450bridge/540prefix/700design, full30s/5s/.15/3m/80N/no-warning/coldexact gates.
+Nominal plus reused116/117/118/120/121/431/437, eight full actual+cold cases.
+<=138240 predictor +12000 actual/proof per case;<=1250000 inclusive pilot
+native steps, no new derivative design. All ledgers saved, no reserves.
+Only8/8 opens separately frozen full45 development before fresh qualification.
+
+## Fourteen four-command pilot integrity audit, before implementation/execution
+
+172 tests pass and13 first-heldout states/actions/raw/tilts+BOTH forecasts are
+byte-identical after new explicit rollout factory. Pilot is confirmed LIVE
+session36583/PID41316; first nominal/116 full30s/5.16s/coldexact. No result is
+inferred for unfinished cases. Original design/input arrays and(E,F,L) provenance
+verify; only rolloutflags and(L*E)*F stagefactors added.
+
+After terminal: `audit_rollout_value.py` checks EVERY command/candidate ledger
+for firstforce dedup/80N cap, <=16 queries, used-map/native counters, finite
+path/200Hz margin/warning guards, score-component sums, firstpassing minimum
+cost/tie/fallback and selected FIRST successor vs actual, INCLUDING finalactual
+command. First candidate rawbaseline must match original aligned affine law.
+Validate baseline-anchored frame angles and relative stage/input/terminal scores
+on retained candidates using frozen launched route/factors, with independent
+absolute-score/native unit tests as the separate mathematical oracle. Do not
+claim predicted future actions equal later actual search actions.
+
+Native independently reproduce ALL candidate path steps and plain future
+feedback at commands960/1060/1160/1260/1360/1460 where present in each case:
+<=12288 native steps for8 cases/6samples/16candidates/4maps/4substeps. Preserve
+anypartial-invalid paths, count only actual maps. Fullnominal lookahead-policy
+reexecution + independentcoldproof <=150240 native steps; require exact dtype,
+shape and ARRAY BYTES for all numeric actual/inner ledgers (NaN padding included).
+Totalpilot+audit <=1450000 native steps. Freeze audit driver+memo; source modules
+must match pilot snapshot. This is reused-data integrity, not new qualification.
+
+## Fourteen quotient native/model remainder diagnostic, before execution
+
+While four-step pilot remains live, run ZERO-INTEGRATION diagnosis on EXISTING
+43/45 affine-controller tapes431/437 (failed) and435 (passing). This measures
+the implemented QUOTIENT affine backbone, not the new native-selected law.
+Freeze fullgate route, exact source quotient_design/controller/provider hashes
+and three actual tapes. Reconstruct ALL original raw forces byte-for-byte via
+the original affine policy. For every recorded postlaunch state, compute closest
+online axial alignment after its fixed launch relabeling, relabel ONLY copied
+state back to the reference frame, y=F*full_native_tangent_error. Native state
+queries/kinematics/quaternion differences only: no transition, actual-state edit,
+new perturbed episode, reserved input or gain/controller change.
+
+Compute predicted y_next=A_y*y+B_y*(ACTUAL deliveredF32-u_ref)+d_y and retain
+rho=y_actual_next-y_predicted, E*y in full declared scaled tangent coordinates,
+K_y_next*rho inN, actual/raw/deliveredforce, reconstructed dot discrepancy,
+nextbackbone demand and saturation. Flag local samples max(abs(E*y)/scales)<=.1;
+predeclare .1N future-force-projection threshold for first-onset summaries.
+Use fulltrace maxima and separate local-domain maxima; do not select only good
+samples. A remainder bundles derivative approximation, nonlinear flow/chart
+curvature and native arithmetic; it does NOT uniquely identify their cause.
+No claim of a disturbance certificate, new optimality, impossible count or
+direct sensitivity of the native-selected lookahead policy. Save all arrays/
+phase samples/thresholds and0-native-step receipt for choosing next synthesis.
+
+## Fourteen terminal lookahead/remainder evidence and physical error chart
+
+Four-command pilot is terminal6/8, same431/437 failures/nohold, allactualcold
+exact,1028824 inclusive native steps. No fullgate/reserves. Integrity audit
+handle33087/PID45360 confirmed live; do not edit its already loaded source
+modules until audit terminal. One-step audit passes363948 total native steps.
+
+Offline remainder reconstructs ALL original raw forces byte-for-byte, zero
+integration. On local samples max(abs(E*y)/scales)<=.1, failed431/437 have
+nextgain-projected remainders up to578.9713/181.5079N, vs5.9453e-5N for passing
+435. First>.1N at globalcommand1172/1162. Actual nextbackbone force identity
+agrees within3.672e-8/2.034e-8N (passing3.062e-8N). Thus the small coordinate
+reconstruction error does not explain the measured difference. This still
+bundles nonlinear native flow, coordinate curvature, derivative and arithmetic
+effects; do not assign an exclusive cause or infer infeasibility.
+
+Test ONE physical error-chart extension (document13.4's coordinate contract,
+not a new mechanical model): position error=[cartXY,2 tangent sphere-log errors
+per WORLD rod direction]; velocity error=[cartXY velocity,3 WORLD BODY angular
+velocity differences perlink expressed in that reference body's frame]. Full
+dimension4+5N=74 at14. Unlike earlier direction-cost probes, ALL3N angular
+velocity coordinates remain, including physical spin. Features are invariant
+to body axial-frame relabeling but do not discard angular motion. Use native
+owned mj_forward/mj_objectVelocity for observed geometry/omega; NO integration
+or realenv set_state. Reference geometry is frozen once from native source.
+
+For each reference analytically compute full-state Jacobian J (74x88). Verify
+J*D=0, rank74 and full44-velocity rank. T=J*E invertible; transport BOTH ends
+of A/B/d, stage/terminal factors, gains and affine values using T/Tinverse.
+K_world=K_reduced*Tinverse, S_world=S_reduced*Tinverse; feed/residual unchanged.
+Planning linear recursion/value/control agree exactly in real arithmetic with
+the43/45 model. Runtime evaluates NONLINEAR physical features, so it intentionally
+changes higher-order feedback terms; do NOT call it an equivalent full nonlinear
+policy or promise reduced remainders. Sphere log uses atan2(crossnorm,dot),
+small-angle limit1 and deterministic +reference-X antipodal branch. Fullgate
+worldtilt scoring remains independent; no aliasing can fake upright success.
+
+New isolated world_coordinates module, explicit payload/factory branch after
+rollout audit terminal. Tests before pilot: independent native centered feature
+Jacobians at1/3/14 with generic orientations/spin; referencefeature0; exact
+constant-gauge physical invariance; Cartesian/worldangular velocity response,
+ALL velocity rank; J/D/T identities; time-varying transformed dynamics and
+affine force/value/stage-cost parity against independently evaluated models;
+live state/clock/counter isolation; unchanged13 heldout+bothforecast byteparity.
+No old affine/one-step/rollout law edits needed.
+
+`n14_world_chart_design_001` freezes exact43/45 route, originating quotient
+design/controller/provider hashes; verifies all original arrays. Native geometry
+reference701 forward queries,0 integration, no new FD models/QR/target/Q/R.
+Save J,T,Tinverse, model/value/gain/factor transforms and conditioning diagnostics.
+`n14_world_chart_pilot_001` freezes that output, original19.2s/960 R=.01 hanging
+law,450bridge/540literalprefix/700design. Runtime physical features replace
+online quaternion-frame feedback only during tracking; no offsets/admission/
+search/origin/state reset. Nominal+reused116/117/118/120/121/431/437 eight actual+
+cold cases,<=100000 integration steps, forward-query cost separately recorded.
+Original30s/5s/.15/world3m/F32disk80N/no-warning/exactcold unchanged. Only8/8
+opens separate full45 gate before reserved14. No hardware walltime claim/grid.
+
+## Fourteen physical chart terminal and immutable runtime cache
+
+Four-command audit is terminal PASS:10560 independent native spot steps,
+142336 nominal policy/cold reexecution,1181720 totalpilot+audit. All selected
+FIRST successors including final actual command, sampled fullnative candidate
+paths/futurefeedback and all nominal actual/inner array BYTES match. No whole
+future lookahead/actual suffix claim.13 rollout-source regression unchanged.
+
+World-chart tests178 pass. Native reference0/JFD/gauge/allvelocity tests pass;
+maxTcondition290.5988, inverseidentity6.4473e-15, JD8.6518e-15,
+TinvJ-F7.5047e-15. Maximum liftedlinear coefficient difference5.24521e-6
+(relative1.19059e-15) is retained: this is not a claim of bit-exact first-order
+coefficients. New changed nonlinear physical law pilot is terminal6/8, same
+431/437 failures/nohold;91568 actual+proof native steps,3774 observed geometry
+forward calls; allcoldexact. No fullgate/reserves. Original43/45 stays incumbent.
+
+Routine runtime correction, before execution: materialize and OWN immutable
+required world-policy arrays once in constructor instead of repeatedly
+decompressing whole NPZ arrays each command. No arithmetic/coefficients/state/
+branch changes. Test external payload mutation cannot alter the frozen policy.
+Then n14_world_chart_cache_regression_001 reexecutes SAME alreadyused nominal
+20261016 full30s/noise0/currentcachedworldlaw+coldproof,<=12000 integration
+steps; require states/actions/raw/tilts dtype/shape/BYTES identical to original
+worldpilot nominal. This is an efficiency/ownership integrity fix, not another
+candidate success or new development/qualification evidence.
+
+## Fourteen runtime cache terminal and next reference discovery
+
+Immutable world-policy cache ownership test passes. Fullnominal current-cache
+reexecution/coldproof passes, ALL states/actions/rawforces/tilts dtype/shape/
+ARRAY BYTES equal original physical-chart nominal;12000 reused integration
+steps. Full current suite178 PASS. Goal remains active; no14 reserves consumed.
+
+Read-only discovery for the next reference hypothesis: pinned external checkout
+D:/ChatGPT/cartpole/research/external/neuralyogi_20261016/arena_update_45326b0
+also contains synthesis/data/16/probe07-controller.npz, selected5Hz bent-orbit
+700-command table (701x34 states,700 normalized actions), sourceSHA
+d71eec45605803395859c780a965497dcd2fbf78fb8857f908012a4bb5522507,
+422379bytes, bound identically by synthesis/original-manifest.json AND
+export-manifest.json. data/16/base-reference.npz is only the STATIC-TAIL WARM
+reference, NOT this selected moving table; do not substitute it. Selected
+orbit5.npz SHA ff9f2df225e3339d0c66365372d4faaf72431cce235b023f9717f5ff68fb23a1.
+The existing read-only downloads/canonical16-evidence.tar.gz may provide the
+hash-bound payload/model.xml/identity/configuration needed for independent
+source-coordinate/native-defect verification. No foreign policy/source executed,
+no source16 native reproduction claimed, no adapter or target14 proposal yet.
+Before activation preregister exact selected files/contracts, copy/hash license/
+provenance, independently verify physical-relative coordinates/source XML native
+defects, then material-regrid to canonical14 and repair on full spatial physics.
+This would test a distinct reachable target, not a wider preparation/search grid.
+
+## Fourteen selected five-hertz sixteen donor, before import/repair
+
+Previous goal turn made concrete progress: native one/four-command correction
+and full-spin worldchart implementations,178 tests, full candidate/reexecution
+audits,0-integration remainder diagnosis and committed labb7cf11f. All probes
+terminal; no live job to wait for.43/45 incumbent preserved; no14 reserves used.
+
+Activate ONE distinct material reference pipeline using pinned sourcecommit
+45326b078c54fff1265f5dfa4d48408a74ca4a6c, selected original16 probe07 table
+(5Hz bent orbit), not static-tail base-reference.npz. This changes donor/count/
+target together; do not interpret results as frequency-only causality.
+`n14_material_from_marc16_001` freezes synthesis original/export manifests,
+README/RECIPES/ANSWERS, selected probe07-controller (SHA d71eec45605803395859c
+780a965497dcd2fbf78fb8857f908012a4bb5522507), orbit5, benchmark16 frozenmanifest
+and MIT license. Read ONLY selected regular members of alreadylocal read-only
+downloads/canonical16-evidence.tar.gz into new workspace paths (no extractall,
+foreign imports or policy execution): files.json, identity, configuration, model,
+releasedcontroller. Archive bytehash recorded; no other files needed for geometry.
+
+Bind identity to frozenmanifest original_identity_sha25636076035..., modelXML
+SHA6351ddc4468533786231ac988cb9707f3bec8e327c46e2c5036cb2f041289639, config to
+identity and selected probe07 to BOTH synthesis manifests AND configuration's
+design_origin_controller hash/bytes. Released payloadcontroller hash bound by
+identity/config; require exact selected700 prefix matches its651/650 state/
+action/gain/offset/native-defect arrays. This is coordinate/provenance checking,
+NOT native reproduction of the original16 policy or inherited success evidence.
+
+Verify sourceXML16 passive Yhinges/Xslide,nq=nv17,nu1,RK4/.005, sourcegeom
+lengths/masses totals3m/1kg. Native reconstruct all701 direction frames from
+unwrapped cumulative physical-relative source q; independently reproduce ALL
+700 four-substep native held-action defects vs stored source native_defects,
+tolerance2e-6 (retain actual max),2800 source integration steps<=4000. Native
+geometry discrepancy<=1e-10. No guessed scaled/cumulative coordinates. Source
+velocities physical relative hinge rates. Targetproposal only: translate ENTIRE
+reference cart by-initialx (+.0499999941m) and material-interpolate cumulative
+angles/rates at ACTUAL source16/canonical14 rod centers. Lift into full native
+ball quaternions/childY velocities, targetforceF32 delivered80*normalizedsource
+command. Independently native target directions<=1e-10, hangingerror<=1e-6,
+0 target integration. Preserve source physics separately; canonical14 unchanged.
+700design/450bridge, all targetreference/cart/force fields and quantization
+changes saved. Import failure stops this branch with retained diagnostic.
+
+After valid import, `n14_free_terminal_from_marc16_001`: existing full88D native
+simultaneous sparse shooting, initial exact canonical hanging fixed and ONLY
+final planning node free.20 outer iterations/24000000 native design budget,
+augmented ridge with existing bounded LSMR1000inner/20outer fallback, initial
+regularization.001, normalizednodebound.1/forceincrement.25 and actual80N disk/
+world3m guards, FDorder4/eps.001/fourworkers/BLASOMP1. No intermediate node
+physical resets, no source gains/model imports, fixed/freeendpoint grid or
+relaxedplant. finite_qr/spectrum80 final balance. Save every checkpoint/stage/
+trial/solver/native count and actual/cold failure. Do not restart a live handle.
+
+After AUTHORITATIVE final repair completion, use FINAL shooting_proposal:
+guarded planar cleanup1e-8 decides reflection-model30/58D vs fullunprojected88D
+finite QR, original relative L/R, terminal Riccati0+lastlocalfactor,700design/
+NO stationaryappend, native derivativesorder4/eps.001. `n14_from_marc16_finite_001`
+rawnominal full30s/cold; conditional12 raw noisy only on fullpass,<=2500000
+native steps. Do not promote a separate post14s handoff failure as success.
+If and ONLY IF reflection-model preflight passes, apply SAME tested quotient
+driver/cache hash/center/gaugeguard1e-5 in n14_from_marc16_quotient_001 (30even+
+44odd,all44velocity retained),0design steps/rawnominalconditional12,
+<=180000actualproof steps. If quotient guard fails, retain it without override.
+
+After designs terminal, freeze the quotient controller if valid, otherwise the
+full finite controller into `n14_from_marc16_prepared_pilot_001`: original R=.01
+causal19.2s/960 hanging, launch+onlineaxial feedback,450bridge/540literalprefix
+of700design. Choice is based on validity, not actual pilot outcome. Nominal plus
+reused116/117/118/120/121/431/437 eight actual+cold,<=100000 native incl724park
+design. Full30s/5s/.15rad/world3m/F32disk80N/no-warning/exactcold unchanged.
+Only8/8 opens separately frozen45 development before reserved20262516..47.
+
+## Fourteen sixteen-donor import terminal and independent raw incumbent
+
+Import001 is terminal valid: BOTH manifests/config-origin/releasedprefix bind
+the exact selected16 table. Source16 native directions1.72085e-15, all700
+stored-defect agreement5.58442e-13 (2800 source steps), targetdirections1.33227e-15,
+hangingerror2.19286e-8,0targetsteps. Targetcartmax1.8927943m, reference-only
+translation+.0499999941m, physicaltargetF32change3.81470e-6N. Source pipeline
+is geometry/force only, no controller/native source-policy reproduction claim.
+
+New free repair confirmed LIVE session12751/PID46008, firstmodel1010800 steps,
+defect.0044765771/max.0042980995,40 augmented bound violations, now original
+boundedLSMR fallback. No accepted update yet. Do not restart or use intermediate
+checkpoints as final. Planning gaps are not task evidence.
+
+Preserve the RAW new geometric proposal as a SEPARATE incumbent before requiring
+feasibility repair to win. `n14_raw_marc16_finite_001` freezes EXACT import001
+route, guardedcleanplanar/reference/reflection-model30/58D full88 QR, true native
+affine defects/chart transport, originalrelativeL/R, Riccati0+lastlocalfactor,
+700design/NOstationaryappend, nativeFDorder4/eps.001/fourworkers/BLASOMP1,
+finite_qr/spectrum80. No quotientgauge-guard override or source gains. Fullraw
+30s nominal/cold; conditional12 raw noisy only on fullpass,<=2500000 native
+steps. Native actual outcomes label this candidate, never optimizer feasibility.
+
+After RAW design terminal regardless of separate post14s handoff outcome,
+`n14_raw_marc16_prepared_pilot_001` freezes exactRAW fullaffine700 payload,
+R=.01/nononline19.2s hanging,450bridge/540literalprefix, launch+online axial
+feedback. Nominal+same reused116/117/118/120/121/431/437, eightactual/cold,
+<=100000 native incl724 hanging design. No search/offset/origin/admission/new
+reference/Q/R. Full30s/5s/.15rad/world3m/80N/no-warning/exactcold unchanged.
+Only8/8 opens separate45 gate before14reserves. This independent RAW branch
+does not cancel, restart or relax the live free-terminal repair.
+
+## Fourteen bounded multipart evidence publication, before implementation
+
+Actual retained14 inventory now70 runs/2309 files/3505396852 bytes,3466889936
+alreadycompressed NPZ bytes (and repair still live). Existing publisher rejects
+individual assets>=2**31 bytes. New count must preserve ALL failed14 history,
+not omit it or overwrite13's immutable1.42GB archive. Implement multipart
+current archives with explicit hash-bound supplements while retaining recursive
+schema1/2 prior coverage and legacy single-archive behavior.
+
+Partition selected current direct files by <=1800000000 rawpayload bytes per
+ZIP, with ALL runtime/source/non-evidence and current qualification files in
+primary. Fail if mandatoryprimary or onefile exceeds budget. Names fixed:
+2d-cartpole-N-link-evidence.zip and -evidence-part2.zip,part3...; no traversal/
+duplicate/overlapping coverage. Write supplementary archives FIRST, hash/size
+bind each +its exact fileinventory in root schema3 manifest, then write primary
+with that manifest. Prior evidence bundle pointers/bytes/digests stay unchanged.
+Preflight all selected source hashes and create-only output names; all assets
+must remain<2**31. Supplements contain only evidence; no runtime can be inherited
+or hidden outside primary. Full current files inventory remains complete inGit.
+
+Extend verifier to resolve every current/inherited file across primary,
+hash-bound supplements and strict decreasing-count historical primary chains;
+verify supplement size/SHA/unique ZIPentries/exact coverage/filehashes and reject
+missing/corrupt/overlapping/traversal parts. Return separate direct/supplement/
+inherited counters. Publisher uploads ALL manifest-listed assets, public verifier
+checks all expected assetdigests/sizes/URLs and tagcommit. Existing releases/
+ZIPs/tags/videos not rebuilt, mutated or republished. No actual14 packaging or
+external write before45/45 +fresh32 +video/source gates and terminal checkpoints.
+Synthetic multipart/legacy/prior-chain/negative tests only during development.
+
+## Fourteen sixteen-donor repair/design/pilot terminal
+
+Handle12751 exits0;13 accepted updates,15201924 native design steps, final
+defect2.23355e-22/max1.30828e-12. Directactual holds8.36s then fails14.98s,
+allcoldexact. Finalplanarcleanup state1.73173e-11/force6.44036e-11 passes1e-8.
+Finite reflection design and then validity-selected quotient design both raw
+hold8.36s then fail14.92s after thedesignhandoff; not admitted. Prepared actual
+pilot is4/8: nominal117/118/121 pass30s/5.14s,116/120/431/437 fail (116 .32s
+hold, others0);allcoldexact. RAW independent pilot was0/8. No newfullgate/
+reserves; original source17 quotient43/45 stays incumbent. All jobs terminal.
+
+## Fourteen single delayed continuation, before execution
+
+New source16 target fails both unresolved431/437. Instead test ONE bounded
+timing alternative on the EXISTING43/45 source17 quotient law. Earlier timing
+diagnoses used the DIFFERENT stationary14 reference, not this moving quotient
+controller. This is not a R/offset/reference grid. Eight extra original hanging
+commands:960->968 (19.2->19.36s), execute532 rather than540 literal commands of
+the SAME700 design/450bridge, same R=.01/launch+online axial feedback. Existing
+nominal prefix must have>=250 strict uprightticks in first532 commands before
+activation; no shortening/backward redesign, force/physics/episode extension.
+
+`n14_quotient_delay8_pilot_001` nominal20261016 plus reused116/117/118/120/121/
+431/437 actual+cold8,<=100000 native incl724 hanging design. Require ALL other
+payload arrays/scalars equal primary43/45 route, except park_steps; save parity.
+All30s/5s/.15/3m/80N/no-warning/exactcold gates unchanged, including finalcommand.
+If8/8 opens separately frozenfull45 for this fixedtiming. If it covers BOTH
+431/437 but loses other starts, only a separately preregistered two-timing
+state-only admission bank may be considered: fixed alternatives960/968, choose
+at960 using complete owned native540-command forecasts of EACH remaining
+policy, including alternative's8 hanging commands. No seed lookup, actualplant
+reset or speculative extra timinggrid. Such a bank needs ownership/forecast/
+fullpilot/full45 tests before reserves. If eitherhardstart remains failed,
+retain result; no wider timing bank under this memo.14reserves untouched.
+
+## Fourteen delayed continuation terminal / force-derivative resolution
+
+Delay8 pilot terminal6/8, same431/437 failures/nohold; every passing actual30s
+has5.00s strict hold, allcoldexact. No timingbank or fullgate admitted. Old43/45
+remains incumbent. Multipart tests13 pass, fullsuite187; old published13 ZIP
+verifies1102 direct/3487 inherited files and exact12 bundle with new verifier,
+no archive/tag/video mutation. All new native repair/design/pilot handles terminal.
+
+Before another controller, test a NEW numerical sensitivity hypothesis on SAME
+43/45 reference: old native fourth-order identification uses eps=.001 BOTH for
+state and FORCE perturbations (N). Largefeedback(~4.4e9) may amplify small B
+identification error. This is NOT an asserted simulator/controller bug or a
+promise that more precision solves capture. control.difference_jacobian is
+ALREADY analytic SO(3); do not replace it with a duplicate or blame FD there.
+
+New isolated native input-only fourth-order batch helper; existing control.py
+and state A stencils remain unchanged. Identify the same smooth UNQUANTIZED
+held-force map (actual delivered episodes stillF32). Compare fixed DYADIC input
+spacings1/128,1/32,1/8 N, preserving exact baselineF32-toF64 representability.
+All source17 reference actions plus/minus2h fit inside80N disk; explicitlycheck
+this. Source states/config/actions exactly hash-bound to old finite model cache.
+Currentstate q/v/time untouched; owned batchdata only. Count9 maps/state ×4
+substeps ×700 ×3 =75600 native steps, <=80000. Source predictive base states/
+defects must match old cache, no stale-center or unlogged reference cleanup.
+
+Tests before activation: n1 independently derive continuous tangent A/B from
+native upright mass/gravity/damping, compare held-input RK4 polynomial overfour
+substeps (independent first-variation oracle); native literal stencil equality,
+component-cap inwardprobes, all joint input axes, owned-data isolation and
+map/substep accounting. ExistingFDstate/provider arithmetic remains unchanged.
+
+`n14_input_resolution_diagnostic_001` freezes old source17 quotient fullgate
+payload, finite raw_native_models/cache/controller/provider hashes and quotient
+design. Recompute ALL700 B at three fixed h, analytic reference-chart transport,
+store raw/projected Bs and all predictedbases. Compare scaledB differences and
+K_next*(B_h-B_old), with old/new h-convergence summaries across ALL times and
+the actuallyexecuted540 prefix; no best-time selection. Native evidence0.001
+vsnew differences do not uniquely identify derivative truth; compare resolution
+and truncation acrossfixedh before inferring a cause. No new actual episode or
+qualification in this diagnostic. Further newB controller needs separately
+frozen preregistration/actualpilot/full45 before14reserves.
+
+## Fourteen force-resolution preflight correction before rerun
+
+Diagnostic001 stopped BEFORE environment construction or any native query: its
+cacheguard incorrectly compared ALL raw/full-value fields to the transformed
+quotient incumbent, including gains which intentionally differ. Preserve this
+failed preflight, input snapshot and0 native-step failure/correction receipt.
+Fix identity guard to exact shared states/actions/config/tracking_R/defects and
+balance reference/K/P/Q/R; quotient gains are intentionally separate and only
+used to measure impact. No reference/provider identity guard is relaxed. Rerun
+SAME three fixed spacings/inputs/budgets as n14_input_resolution_diagnostic_002,
+not as an additional selected parameterfamily; total native cap remains80000.
+
+## Fourteen input-resolution diagnostic terminal and one fixed model update
+
+Corrected diagnostic002 is terminal75600 native steps. All three700-state
+predictedbase/defect arrays exactly match old cache; everydyadic increment exact
+and all probe forces inside80N disk. Native independent mass/RK4/stencil/cap/
+ownership tests6 pass (allphysical spin/input axes retained). Old/new scaledB
+differences about5.6e-9. Differences shrink from6.84e-10 between1/128 and1/32N
+to1.80e-10 between1/32 and1/8N; nextgain-input operator differences shrink
+.004175 to.001138, compared~.034 old/new. This supports a resolution experiment,
+NOT derivative truth or a capture benefit. No actualcontroller tested yet.
+
+Freeze ONE primary newB: largest ALREADY TESTED spacing1/8N, chosen on numerical
+agreement before any new actual outcome. `n14_input_refined_design_001` freezes
+exact old source17 fullgate43/45 payload, old finite rawmodels and quotient
+design/controller hashes, diagnostic002 models/hashes. Sourcecenters/config/
+costs/balance arrays exact; all A/rawdefects stay old. Replace ONLY B by saved
+1/8N analytically transported estimate; reapply SAME1e-8 reflection guard,
+same74D quotient frames/cost/terminalRiccati0+lastlocalfactor and finiteQR,
+same affine residual/feed treatment. Require reduced A/defects exactly equal
+old quotient arrays. No new derivatives/physics/reference or parametergrid.
+Save every old/newB/frame/model/gain/root/coefficient diagnostic;0newintegration.
+
+`n14_input_refined_pilot_001` freezes that controller with EXACT old960park/
+R=.01/450bridge/540prefix/700design and alloldparkerarrays; no reconditioning,
+onlineparking/search/offset/admission. Nominal plus reused116/117/118/120/121/
+431/437 eight completeactual/cold,<=100000 native. All30s/5s/.15/3m/80N/no-warning/
+exactcold unchanged. Only8/8 opens separately frozenfull45 before14reserves.
+No other input spacing controller is admitted from these outcomes under this memo.
+
+## Hybrid document rereview: terminal outcomes and one physical-cost test
+
+The single 1/8N input-model pilot is terminal6/8, failing431/437 without hold,
+91648 actual+proof native steps, all coldexact. Numerical B agreement did not
+improve task outcomes; keep the original43/45 controller. Current193 tests pass.
+The selected source16 free-end repair and both prepared branches are terminal:
+raw16 pilot0/8; repaired16 quotient4/8. Source16 changes donor/count/frequency
+together, not an isolated frequency test. Delay8 remains6/8 and is not admitted.
+
+Reread frozen corben-marc-hybrid.md revision3, especially6.3,9.3,10.6,12.2,
+13.5,14 and19. Its explicit scope is1D; the following is a new spatial adaptation.
+Highest-priority cheap discriminating test: PHYSICAL STAGE COST on the ORIGINAL
+43/45 moving quotient controller. Earlier physical-cost experiments used other
+references; the world-coordinate feedback test transported the OLD cost and
+changed nonlinear observation instead. Neither tests this intervention.
+
+Freeze ONE cost before any actual outcome: cart position4 each, each world rod
+direction tangent40 each, cart velocity.05 each, body angular velocities in
+reference body frames(.05,.05,.005), retaining every physical spin rate. At each
+of701 reference states form L_t=diag(sqrt(weights))*J_t, where existing tested
+analytic J maps full88 native tangent errors to74 physical features. Planning
+factor is L_t*E_t. This penalizes physical deviations from the moving reference,
+not the absolute tilt gate; actual strict world-tilt scoring stays unchanged.
+
+scripts/design_world_cost.py will freeze the original prepared route, original
+quotient design and its controller, require exact source/reference/action/gain/
+value/cost identities and bound input file hashes. Reuse EXACT old reduced
+A/B/defects and old quotient frames, including ORIGINAL .001N force derivatives;
+do not combine with the unsuccessful input-resolution intervention. Rebuild
+finite reflection-separated affine QR using the time-varying physical factors
+and last physical factor terminal (same old one-stage terminal convention).
+Require cross-reflection cost Gram blocks below1e-8 at all states. Lift through
+the unchanged F frames; runtime is the SAME online axial-aligned quaternion
+feedback, not the previously tested nonlinear physical-feature runtime.
+Only gains/feed/roots/residuals and explicit cost metadata may change. Same960
+parking, R=.01 parker arrays,450 bridge,540 execution prefix,700 design, tracking
+R, native mechanics, caps, clocks and initialization. No new integration for
+design. Tests compare L' L against independent native physical-feature secants
+and reflection parity, with all velocity coordinates retained.
+
+Pilot n14_world_cost_pilot_001: nominal and reused116/117/118/120/121/431/437,
+complete actual+cold episodes <=100000 native. Only8/8 opens frozen full45
+before any reserved14 starts. No weight grid or another cost arm under this
+memo. A null result redirects effort toward earlier feedback-aware entry/target
+repair (10.6/12.3/19), not repeated precision changes. Existing incumbent and
+published13 source/video/archive remain immutable. This test cannot establish
+14 qualification without full development and fresh32 reserved gates.
+
+## Physical-cost terminal decision
+
+Design n14_world_cost_design_001 passes exact input/controller/model guards;
+all701 cross-reflection cost Gram blocks exactlyzero,0 integration. Pilot001
+terminal5/8,89264 actual+proof native steps, allcoldexact. Successful episodes
+full30s/5.16s;120/431/437 fail with0hold at commands1262/1205/1191. This regresses
+against original6/8 paired pilot. No fullgate/reserves/weightgrid activated.
+Original43/45 stays incumbent. Current196 tests pass. Record review conclusion:
+10.6/12.3 feedback-aware earlier bridge/short-tail co-refinement is a remaining
+research direction, not an implemented improvement or a guarantee of capture.
+
+## Actual-entry full-spatial suffix repair, first bounded pilot
+
+Previous goal turn was progress: the physical-cost experiment completed and
+changed the next decision; incumbent retained. Current checkout022bfb6 is clean,
+no local14 native job live. Start a new bridge/tail experiment, not another local
+cost/precision grid. Existing source17 moving quotient is43/45; remainder on431
+first exceeds.1N future-demand projection at route212, so choose route150 seam
+BEFORE this observed loss (global1110 =22.2s). No timing/cap/episode changes.
+
+First development center is existing failed431 tape, not a reserved label.
+Freeze exact incumbent hash3a3f643c... and failedtape70c8b69b...; reexecute its
+entire1110-command real prefix with the originalpolicy and require state/action/
+raw ARRAY BYTE equality before repair. First150 trackingcommands and all960
+parking commands stay byte-identical in the candidate. This is a causal offline
+training center, not permission to supply a seed to runtime.
+
+Use the observed full seam state, including physical spin/cross-plane motion.
+Relabel only its PROPOSAL axial frames into the old reference frame using the
+closest polar alignment; actual prefix/physical state is never edited. Fix that
+proposal initial state. Repair all remaining550 reference intervals to original
+design700 with FREE terminal, allowing bridge and upright tail to move together.
+No planar cleanup or reflection projection of nonplanar data. Full88D native
+fourth-order/.001 models, existing scaled simultaneous shooting Jacobian,
+augmented ridge(.001) minnorm correction and exact original bounds: state
+increments<=.1 scaled, forces<=.25 normalized incremental plus80N disk. If the
+augmented step exceeds bounds use boundedLSMR1000/20; line-search fixed
+1,.5,.25,.1,.05,.01,.001 with actual F32-delivered proposal actions. Accept only
+lower defect+ridge movement merit; zero/nonaccepted update preserves center.
+Maximum6 updates,8M native design/reexecution steps, no unlogged restart.
+Record every solver status/trial/checkpoint and physical reference margins.
+
+Recompute fresh final native models at exact repaired centers/actions and
+transport BOTH A/B into next reference logarithmic charts. General nonplanar
+74D axial quotient retains ALL44 velocities/spin; use full affine QR instead
+of reflection separation, old relative tracking factors/R and lastlocalfactor
+terminal. Extend existing quotient helper only for explicitly all-None signs;
+verify independently condensed nonplanar affine optimum before activation.
+Gauge-flow normalized guard<=1e-5, no hiding a guard failure. Save all raw and
+reduced models/frames/values and source identities. Preserve old feed/gains/
+references/actions strictly before route150; patched candidate is a separately
+identified piecewise law. Original43/45 policy remains unchanged.
+
+First actual check is full431 episode of this frozen patch, including exact
+cold proof and prefix byte parity against the source. Then nominal plus116/117/
+118/120/121/437 gives total8 episodes,<=100000 actual+proof steps. Report every
+outcome even if431 fails. Only8/8 admits full45; a patch useful only for431 may
+motivate a SEPARATELY preregistered observed-state continuation selector, but
+none is installed here. Reserved14 remains untouched, no release/video earned
+by a repaired proposal or development result alone.
+
+## Observed-entry repair001 terminal and symmetric second center
+
+Repair001 terminal:6 accepted bounded augmented updates,5577040 design+prefix
+native steps. Maxscaleddefect2.35967e-7, gaugeguard2.26957e-7<1e-5; no cleanup.
+Maximum scaled proposalstatechange.000511786 and forcechange.0128043N. New
+center431 now completes30s/5.16s; actual1110-prefix raw/action/stateBYTES exact.
+Eight-start pilot5/8, allcoldexact; nominal/117/120/121 also pass,116/118/437
+fail. This is the first useful alternate for431, not a replacement for original
+43/45 and not a qualified result. Current197 tests pass including independent
+general nonplanar condensed optimum. Existing45 rows also associate the two
+failures with the largest launch local axial rates(.000407/.000490rad/s vs
+next.000258); this is a retrospective association, not causal identification.
+
+Apply the SAME frozen recipe to the other already-known failure437, same150
+seam,550 intervals,6 updates/.001ridge/8M native budget and full88D mechanics,
+same8 actual+proof <=100000. Use its independently stored tapeSHA256
+6b14a76a25c0c766ef3f906adbf5b2214a28006b8ae5940ce5b4fd5eb0514081;
+first verify its1110-prefix literalpolicy BYTES. No hyperparameter/clock grid.
+Call this n14_observed_entry_repair_002. It is a second registered training
+center in a prospective three-controller family, not fresh confirmation.
+
+Only if437's repaired controller passes its own fullcenter can we build a
+separate observed-launch bank [original,repair431,repair437]. Everycandidate
+has identical1110-command prefix and canonical mechanics. At960, owned complete
+native forecasts of each candidate in that fixed order, stopping at first
+complete pass, may select a controller from the observed state. No seed/nearest
+prototype lookup; no plant reset; no shortened horizon; no reuse of a failed
+forecast as a passing certificate. If all fail preserve original fallback and
+explicit failed-admission metadata. This bank needs its own preregistration,
+tests, exact all-selected-suffix proof including finalcommand, eight-start pilot,
+full45, fresh32 reserves and publication gates. Do not install before the trigger.
+
+While repair002 computes, prepare an isolated controller-bank module and small
+synthetic/native unit tests ONLY, without factory activation or an actual14 bank.
+Three immutable array profiles, independent predictor/policy per forecast,
+fixed first-complete-pass order, observed q/v plus causal scorer snapshot,
+all actual/forecast raw/action/state/tilt bytes checked INCLUDING finalcommand
+via an opt-in runner transition observer. Test firstfailed/secondpassing,
+exhaustion, alias isolation/liveplant counters, last-successor mismatch and
+incompatible payload rejection. This preparation does not satisfy the437 trigger
+and cannot consume14 reserves. A later explicit bank memo will freeze controller
+hashes/cohorts/budgets before any actual14 bank episode or factory activation.
+
+## Three-controller bank activation after both repair centers pass
+
+Repair002 terminal:6 accepted updates,5577040 native design/prefix steps,
+finalmaxscaleddefect2.82446e-7/gauge2.71284e-7<1e-5. Its8-start pilot3/8,
+85616 actual+proof steps, allcoldexact;437,120,431 pass30s/5.16s. Both repair
+pilots have all eight physical1110-command prefixes independently BYTE-equal
+to the old tapes, including raw/actions/states/tilts; audits add0 integration.
+The trigger for a fixed three-controller family is now satisfied.
+
+Freeze order [original SHA3a3f643c4b8af5371c52b6f224393ad2c9c98656b20313ef568ca86274801c17,
+ repair431 SHA65dcc0ef085ddf92e3d502cb797b0b814de642037b6978cff997df3eaed829f8,
+ repair437 SHA33f5005aec74045b298190cc79506867b94785b0cf11771619d05df5c62c68d4].
+No new profile, mirror/offset grid or parameter change under this bank version.
+All profiles retain960 parking/450 bridge/540 execution/700 design, canonical
+native plant and original1110-command behavior. Profiles differ only in saved
+spatial suffix references/forces/feedback/values from route150 onward.
+
+At960, independent owned complete remaining540-command forecasts in fixed order
+stop at FIRST actual full30s/5s pass. Initialize only from observed full q/v and
+causal actual prefix scorer state. Runtime receives no seed or center label.
+On total exhaustion run original with explicit launch_admitted=false, preserving
+failure evidence, never claiming a forecast certificate. Every selected raw/
+delivered command and observed state must BYTE-equal forecast, with an opt-in
+posttransition observer for EVERY successor INCLUDING command1499. Predictor
+can never edit live q/v/time/counters. Save each attempted full/failed forecast,
+score and inclusive native steps. No unsupported midroute policy copying.
+
+New module passes8 independent small native tests covering firstfailed/second
+pass, firstpass stopping, ownership/alias/isolation, exhaustion, finalmismatch
+and invalid family combinations. Add factory dispatch only for explicit marker;
+runner observer is opt-in, no arithmetic change for old policies. Before actual
+bank run require whole suite and published13 firstheldout actual/BOTH forecasts
+BYTE-parity regression. Builder freezes all three controllers, both repair
+summaries/design summaries/prefix audits, bank driver/source/hashes;0 design
+integration. n14_controller_bank_pilot_001 uses same8 reused starts,<=160000
+actual+proof+forecast steps. Require8/8 and every selected-suffix BYTE proof.
+Independent nominal+431+437 full-policy reruns/ledger BYTE audit<=60000 extra
+native. Only then separately freeze full45 <=840000, audit and (only45/45)
+fresh32 reserved20262516..47 <=600000 inclusive; no tuning on reserved outcomes.
+Fullheldout video/source/runtime/package/publication gates remain unchanged.
+
+## Bank pilot/audit passed; full development activation
+
+n14_controller_bank_pilot_001 is terminal8/8, every30s/5.16s/coldexact. All540
+selected transitions per episode, including finalcommand, verified at runtime
+and in independent stored-suffix byte audit. Originalprofile0 chosen for six;
+repair431 profile1 for431; repair437 profile2 for437. Inclusive116696 native,
+including predictorqueries. Independent full-policy reruns nominal/431/437
+add45896 native; ALL numeric actual/forecast ARRAY BYTES match, audit total
+162592 <declared pilot+audit ceilings. Current205 tests pass. Published13
+regression actual and BOTH fullforecasts byte-exact,16400 reused integrity steps.
+
+Freeze bankSHA256 b2cd01d9770f194e82d329f471ae11d3a32f7063589a6c79625b5071de47112a
+for conditioned_n14_controller_bank_001. Same canonical45 development labels:
+nominal20261016(noise0),20261116..27 and20261416..47(noise.02), no pilot-only
+subset substituted. Budget840000 actual+proof+forecast, no coefficient/profile/
+order/timing changes. Require45/45/cold/allselectedsuffixbytes and finalobserver
+proof. If45/45, freeze identical payload/source for qualify_n14_001 with fresh
+32 reserved20262516..47 exactlyonce, <=600000 inclusive. Full thirtyseconds,
+strict.15 worldtilts/5s,200Hzsquareboundary3m, deliveredXYdisk80N/no-warnings
+stay fixed. If anyreservedfailure, retain failed cohort and do not publish14.
+No reserved data used to select the bank. Video is FIRST complete qualification
+episode, full1501frames50fps30s; no cuts or cherry-picked development video.
+
+## Full development terminal; once-only reserved activation
+
+conditioned_n14_controller_bank_001 completes45/45 full30s/5.16s, allcoldexact.
+Independent all45 selected-state/raw/action/tilt suffix audit and finaltransition
+checks pass;640616 inclusive native including predictors. Controller remains
+b2cd01d9770f194e82d329f471ae11d3a32f7063589a6c79625b5071de47112a.
+Activate qualify_n14_001 reserved20262516..47 exactly as registered above, frozen
+current205-test runtime; no profiles/timing/costs change. A failure cannot be
+relabelled development and then counted as a fresh qualification success.
+
+## Reserved001 failure retained; prospective reflected-family version2
+
+qualify_n14_001 is terminal31/32,453520 inclusive native, every cold/selected
+forecast exact. Failure20262528 exits25.18s with0hold; all three forecasts fail,
+explicit admission exhausted. No14 release/video is earned. Entire20262516..47
+cohort is now consumed, never fresh again. Its failed label may be used ONLY as
+declared development for a NEW candidate, with a fresh disjoint final cohort.
+
+The failed launch has root/localaxial velocity-.000331957rad/s, beyond old
+negative development coverage. Both repaired centers have positive rates
+.000407/.000490. This suggests (does not prove) an omitted reflected family.
+Create bank version2 with FIVE fixed profiles: retain old three BYTE-identical,
+then append Y-reflections of patch431 and patch437 suffixes. Mirror PROPOSALS
+and force/value laws only, using existing validated native Y reflection:
+state reflect_state, force/feed U=diag(1,-1), gain U*K*D, root S*D, residual r
+unchanged. Before route150 preserve ORIGINAL prefix arrays literally, avoiding
+signedzero differences. No new trajectory repair/derivative/weight/timing grid.
+Native plant remains unrestricted, not reflected/projected during execution.
+
+Generalize bank module to explicit3 or5 profiles, same fixed firstcomplete-pass
+algorithm and opt-in transitionobserver. Test mirrored force/value laws and
+native mechanics independently at1/3/14; retain all existing ownership/final
+transition/exhaustion tests. Version2 source freezes unchanged three-bank
+SHA b2cd01d9770f194e82d329f471ae11d3a32f7063589a6c79625b5071de47112a,
+old31/32 summary and failure tape, complete retained source/provenance.
+
+Pilot n14_controller_bank_mirror_pilot_001: nominal + original reused seven
+116/117/118/120/121/431/437 + FORMER reserved failure20262528 explicitly now
+development, total9. <=210000 actual+proof+forecast native, no remaining old
+reserved labels used as fresh evidence. Require9/9 and allselectedsuffixbytes.
+Only then full original45 plus the separately retained formerfailure =>46
+development episodes,<=1100000 inclusive across gate+separateformerfailure.
+Only46/46 admits NEW qualify_n14_002 reserved20262616..20262647 exactlyonce,
+<=740000 inclusive (5*540*4 predictions +6000 actual+6000 proof per episode).
+Verify those labels absent from prior14 records before activation. No tuning on
+newreserved outcomes; all old failures remain. Publication still requires fresh
+32/32, cold/fullforecast proof, fullfirstheldout video and exact source/assets.
+
+## Reflected version2 pilot/audit terminal; fixed development gate
+
+Mirror pilot9/9 full30s/5.16s/coldexact,134336 inclusive native. Previous failed
+20262528 chooses reflected profile3 and now passes AS DEVELOPMENT ONLY.
+All selected suffix/finalsuccessors byte-exact. Independent nominal/formerfailed
+policy reruns add31800, allnumericbytesexact; audit total166136. Existing three
+profiles unchanged literally; reflection adds0 design integration. Current208
+native tests plus3 separate streaming/LFS integrity tests pass. New qualification
+labels20262616..47 independently checked absent from all prior14 result rows.
+
+Freeze version2 controllerSHA
+ac96f6d3c982d580b97eb7078c5103158f4a74493f3109605dc86aa57c310ade.
+Activate conditioned_n14_controller_bank_mirror_001 original45, <=1100000
+native actual+proof+forecasts (worst-case1026000). Audit all45 and combine with
+samefrozenpayload formerfailed pilot to prove46 distinct development starts;
+do not call pilot-reused failure fresh. Only46/46 opens qualify_n14_002 fresh32
+20262616..47, <=740000 inclusive as preregistered. No controller changes remain
+allowed in this candidate after activation.
+
+Publication preparation, if later earned: actual native final-model caches
+are116321277 bytes each and the reflected bank exceeds ordinary Git blob size.
+Use installed Git LFS ONLY for files actually exceeding a conservative95MB
+threshold, preserving exact full bytes in all release ZIPs. Stream staged
+verification instead of buffering >4.6GB of evidence, verifying both logical
+SHA/size and materialized/local LFS objects;3 positive/corrupt-pointer tests pass.
+No GitHub/LFS mutation or14 packaging has happened yet. Use bounded Git push
+batches on a preparation branch if measured new objects exceed a single batch;
+final master/tag remains contingent on complete verified qualification/evidence.
+
+## Version2 full development passed; fresh reserved002 activation
+
+conditioned_n14_controller_bank_mirror_001 is terminal45/45,640616 inclusive
+native, every30s/5.16s/coldexact, allselectedsuffix/finalsuccessor bytes exact.
+Combined with the separately retained formerfailure20262528 on EXACT same
+frozen payload, forty_six_development_gate.json binds46 distinct development
+starts,46/46,658256 native; formerfailure is explicitly development, neverfresh.
+New staged streaming verifier also passes ALL4589 prior13 staged hashes and
+immutable archive chain1102 direct/3487 inherited; no changes to old publication.
+Current fullsuite211 passes. Activate qualify_n14_002 EXACTLYONCE on untouched
+20262616..47, same ac96f6d3... five-profile controller and unchanged canonical
+plant/protocol. No scientific/controller edit permitted during this cohort.
+First heldout video/publication only if all32 pass; old31/32 remains failed.
+
+
+## Fourteen version2 qualified; concrete publication preparation
+
+qualify_n14_002 completes32/32 NEW20262616..47, all1500commands/30s/5.16s hold,
+no warnings, exact cold replay. All selected suffix/final transitions BYTE-exact
+in independent bank_audit.json. Inclusive462916 native:192000 actual,192000
+coldproof,78916 predictor. Profiles28 original/1 repair431/3 mirrored431.
+Minimum200Hzmargin1.1340461536567312m, maxrecordedcart1.8656051379979748m.
+Controller ac96f6d3... and all19 runtime source hashes match qualification.
+Old31/32 remains failed. Firstheldout20262616 renders1501frames50fps/30.02encoded
+with normal300frame30s preview; full/swing contact sheets visually checked.
+MP4SHA cf2f04d2bb1e05f811be5fafe0655b50a70be31d79ffcde9909fa0a6ef8240c7.
+
+Added fifth-slot native selector test passes (9 banktests), no runtime change.
+Prepare isolated2d tree WITHOUT final immutable archives, run all212 tests and
+firstheldout fullpolicy BYTE reproduction, retain QA receipts, then finalize
+create-only multipart archives. RootREADME1D section is BYTE-identical; only2D
+status/media/method and shared date change. Proof n14_publication_qa_001.
+No14 push/tag/assets yet. All related native jobs terminal before packaging.
+
+
+## Publication source QA terminal; immutable archive creation
+
+Prepared7838 publication files. Isolated published-source212 tests pass. Its
+independent firstheldout reexecution reproduces all numeric actual/forecast
+ARRAY BYTES; all19 source hashes and frozen controller exact;14160 additional
+verification native steps, not another fresh sample. RootREADME1D byte proof and
+video/contact metadata retained with completed QA in n14_publication_qa_001.
+All related compute/media/QA writers are terminal. Finalize14 archives now;
+no controller/source edit after qualification. Release includes failed31/32
+and separately qualified NEW32/32, with exact file hashes and LFS mapping.

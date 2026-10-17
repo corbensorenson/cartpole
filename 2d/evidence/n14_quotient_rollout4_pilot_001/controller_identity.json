@@ -1,0 +1,22 @@
+{
+  "input_sha256": {
+    "input_route.npz": "3a3f643c4b8af5371c52b6f224393ad2c9c98656b20313ef568ca86274801c17",
+    "input_design_controller.npz": "3d81c5c7da04e1c89e9b314e65bf1fef0782ef6f173664a6f2a7f80e8dc15166",
+    "input_quotient_design.npz": "2f76a6eb3aa19d9ae164a2aeab071eece9a44075fbe11a59ccb1bb4e63983036"
+  },
+  "controller_sha256": "c8daa461cec95412bc96710df6068e1ec706f8458a8c8ab884ffd07112e1f3f8",
+  "added_or_changed_keys": [
+    "rollout_native_value",
+    "aligned_native_value",
+    "native_search",
+    "online_gauge",
+    "native_rollout_horizon",
+    "tracking_stage_factors"
+  ],
+  "original_arrays_exact": true,
+  "stage_factor": "(tracking_L @ quotient_E) @ quotient_F",
+  "horizon": 4,
+  "max_candidates": 16,
+  "future_feedback": "plain online-aligned affine; no recursive search",
+  "scope": "reused pilot only"
+}

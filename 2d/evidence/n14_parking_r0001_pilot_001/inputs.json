@@ -1,0 +1,79 @@
+{
+  "args": {
+    "route": "output/n14_reflection_feedback_001/route.npz",
+    "out": "output/n14_parking_r0001_pilot_001",
+    "park_seconds": 19.0,
+    "parking_r": 0.0001,
+    "no_align": false,
+    "extra_development_summary": null,
+    "swing_steps": null,
+    "online_gauge": true,
+    "online_parking": false,
+    "align_cart_origin": false,
+    "cart_offset": null,
+    "launch_admission": false,
+    "development_seeds": [
+      20261116,
+      20261117,
+      20261118,
+      20261120,
+      20261121
+    ]
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "affine_value.py": "259e9f52ddeebca3b70ff212ab0ffb00dd37b47bee9e7674ef672dc0404abc47",
+    "conditioning.py": "77e86d78c441936eb6d3e4fb6b19a01c745f1769efeffa586173c15db7be10da",
+    "control.py": "b1fc06cafdf3bfd794b245eac1c259651a25029a8ed22abff5bc631f2f566fd3",
+    "direct_shooting.py": "9b54d5a39cf8fb01d76436ab51d43cb9611e4aa48fb044364f19b29557fe77e8",
+    "env.py": "b1ec1618244f143936fa73c60a3ca3dfaf6c0180a995994855cd3de8f3674a23",
+    "experiment.py": "5a7ac6a72bc7bdfb277b15ecdeb954a47a1bcf5efac99b192e06cfa6923ea48c",
+    "fddp.py": "e81c6f686a7e4583053c79c0891d09eb2b9b75ded04ae3760a2bd8662e077036",
+    "physical.py": "4f60f476c5c55ef889b56f754747b478f33a06f09116294986604a4df588a135",
+    "spectrum.py": "33db9f4292eb3bf33693b4d4d4cd96cd1eb34f555263fcf568791fdb20c2e0b2",
+    "symmetry.py": "54b0fd368054949e8c0b7660b14830731c1d70bb0e2a0c41c33f5f52f722f867",
+    "tracking_repair.py": "8a42fd0736e1a55c9a83ea5e7fabfe8569b688357f2a496a0b0f4c49efd54bc6",
+    "transfer.py": "45532f63a717ade2d635c7a6a0df8397298f2a28b60d5b3f56081e1669db519d"
+  },
+  "input_artifacts_sha256": {
+    "driver.py": "f2c05455de68382fe7f05bfa9666251212efc725080b13ca25f8ba904a364af0",
+    "pyproject.toml": "be8fe4f2206d7a9863521d464dedca5e09fe814fc87f1f6bc24f5c5898f2c657",
+    "requirements-lock.txt": "1a9a92293d6169a221ff9f083883093529ae8a64cb0aec9f5bfb44f8d4d074d1",
+    "input_route.npz": "8801b1213e0231a169e3545d7bf7af071235f1c85d8134ca0cf15b25568f1608"
+  },
+  "utc": "2026-10-17T02:57:27.138846+00:00",
+  "command": [
+    "scripts/condition_route.py",
+    "--route",
+    "output/n14_reflection_feedback_001/route.npz",
+    "--out",
+    "output/n14_parking_r0001_pilot_001",
+    "--park-seconds",
+    "19",
+    "--parking-r",
+    ".0001",
+    "--online-gauge",
+    "--development-seeds",
+    "20261116",
+    "20261117",
+    "20261118",
+    "20261120",
+    "20261121"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5",
+    "packages": {
+      "scipy": "1.17.1",
+      "gymnasium": "1.4.0",
+      "imageio": "2.38.1",
+      "pillow": "12.3.0"
+    },
+    "thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1"
+    }
+  }
+}

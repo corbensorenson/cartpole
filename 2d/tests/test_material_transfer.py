@@ -1,6 +1,49 @@
 import numpy as np
 import pytest
-from spatialpole.transfer import regrid_planar_material_states
+from spatialpole.transfer import regrid_planar_material_states,decode_planar_native_states,lift_planar_state
+from spatialpole import Config,SpatialCartpole
+
+
+@pytest.mark.parametrize('n',[1,3,13])
+def test_native_planar_decoder_recovers_winding_rates_and_quaternion_sign_flips(n):
+    env = SpatialCartpole(Config(n_links=n))
+    time = np.linspace(0,1,57)
+    q,v = np.zeros((len(time),n+1)),np.zeros((len(time),n+1))
+    q[:,0],v[:,0] = .2*time,.2
+    q[:,1],v[:,1] = np.pi+4*np.pi*time,4*np.pi
+    for j in range(2,n+1):
+        q[:,j],v[:,j] = .1*j*np.sin(2*np.pi*time),.2*np.pi*j*np.cos(2*np.pi*time)
+    states = np.array([lift_planar_state(env,a,b) for a,b in zip(q,v)])
+    for j in range(n):
+        states[::3,2+4*j:6+4*j] *= -1
+    original,live = states.copy(),env.state().copy()
+    decoded = decode_planar_native_states(env,states)
+    np.testing.assert_allclose(decoded,np.c_[q,v],atol=8e-15)
+    for row,state in zip(decoded,states):
+        encoded = lift_planar_state(env,row[:n+1],row[n+1:])
+        np.testing.assert_allclose(env.difference(encoded,state),0.,atol=2e-14)
+    np.testing.assert_array_equal(states,original)
+    np.testing.assert_array_equal(env.state(),live)
+    assert env.native_steps==0
+    env.close()
+
+
+def test_native_planar_decoder_rejects_spatial_reference():
+    env = SpatialCartpole()
+    state = env.upright_state()
+    state[1] = .001
+    with pytest.raises(ValueError,match='reflection-fixed'):
+        decode_planar_native_states(env,np.array([state,state]))
+    env.close()
+
+
+def test_native_planar_decoder_rejects_aliased_rates():
+    env = SpatialCartpole()
+    state = env.upright_state()
+    state[env.model.nq+3] = 200.
+    with pytest.raises(ValueError,match='sampling'):
+        decode_planar_native_states(env,np.array([state,state]))
+    env.close()
 
 
 @pytest.mark.parametrize('source_count,target_count',[(14,13),(3,2),(1,3)])

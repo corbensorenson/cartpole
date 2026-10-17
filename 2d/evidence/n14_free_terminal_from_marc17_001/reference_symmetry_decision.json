@@ -1,0 +1,8 @@
+{
+  "max_normalized_state_change": 6.661192394216936e-10,
+  "max_normalized_force_change": 3.1139146960478194e-09,
+  "tolerance": 1e-08,
+  "scope": "proposal/reference only; actual full spatial states and physics are untouched",
+  "selected": "planar reference and reflection-model full-state QR",
+  "native_steps": 0
+}

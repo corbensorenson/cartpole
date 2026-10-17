@@ -1,0 +1,16 @@
+{
+  "n_links": 14,
+  "source_links": 17,
+  "reference_steps": 700,
+  "bridge_steps": 450,
+  "source_native_steps": 2800,
+  "target_native_steps": 0,
+  "source_coordinate_direction_error": 2.1649348980190553e-15,
+  "source_native_defect_error": 1.2684298056342413e-12,
+  "initial_hanging_error": 4.048100121191626e-09,
+  "coordinate_direction_error": 1.3322676295501878e-15,
+  "reference_cart_translation": 0.050000001924209336,
+  "maximum_cart_reference": 1.8903188972868477,
+  "target_action_quantization_change": 3.814697265625e-06,
+  "claim": "foreign material moving-target proposal only; no target physical episode, source-policy reproduction or qualified count"
+}

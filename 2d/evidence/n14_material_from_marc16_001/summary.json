@@ -1,0 +1,17 @@
+{
+  "n_links": 14,
+  "source_links": 16,
+  "reference_steps": 700,
+  "bridge_steps": 450,
+  "source_native_steps": 2800,
+  "target_native_steps": 0,
+  "source_direction_error": 1.7208456881689926e-15,
+  "source_stored_defect_agreement": 5.584421813864537e-13,
+  "released_prefix_bytes_exact": true,
+  "target_direction_error": 1.3322676295501878e-15,
+  "initial_hanging_error": 2.1928592877378782e-08,
+  "reference_cart_translation": 0.0499999941092939,
+  "maximum_cart_reference": 1.8927943314479787,
+  "target_action_quantization_change": 3.814697265625e-06,
+  "claim": "new full-spatial material proposal; not source-policy reproduction or qualified target count"
+}

@@ -1,0 +1,574 @@
+{
+  "schema": "pendulum_arena.canonical17_candidate_source_inventory.v1",
+  "preparation_only": true,
+  "qualification_authority": false,
+  "original_identity": {
+    "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-value-candidate02/identity.json",
+    "sha256": "61993d118c341001ef7973fce77a200f85dd86588b78919bc03d629e09c95268",
+    "bytes": 18682
+  },
+  "original_candidate": "native-value-candidate02",
+  "original_execution_paths_relocated": false,
+  "files": {
+    "metadata/identity.json": {
+      "sha256": "61993d118c341001ef7973fce77a200f85dd86588b78919bc03d629e09c95268",
+      "bytes": 18682
+    },
+    "payload/controller.npz": {
+      "sha256": "715ef60348c931f3ffa34b2854c1c8d3f7b2d9bb7e7d5cd4df234dc14af95253",
+      "bytes": 4793542
+    },
+    "payload/configuration.json": {
+      "sha256": "a224bf61eb74ce77d202c7ab0493854557122c87416c1f264af36cb97ca21011",
+      "bytes": 9512
+    },
+    "frozen/src/rage_mill/canonical_benchmark.py": {
+      "sha256": "4b597725057d041277cd96b893a07c15f810bb96d0675e1c61706416d1859d8b",
+      "bytes": 10079
+    },
+    "frozen/src/rage_mill/canonical_evaluation.py": {
+      "sha256": "89e74089f10f3f804b9e68004f1df3d57cabe216e532a6494b87b93a6726aa70",
+      "bytes": 18491
+    },
+    "frozen/src/rage_mill/canonical_replay.py": {
+      "sha256": "16f37469fc167f3a884887a7e412045ea0c1623b5857bd041be394dfa7a055e5",
+      "bytes": 8196
+    },
+    "frozen/src/rage_mill/canonical_release.py": {
+      "sha256": "40fc3f9972f3a7aabd973dc8ef261cb159816b4a25d39b19c2d18a4eddfad4ad",
+      "bytes": 13627
+    },
+    "frozen/src/rage_mill/canonical_reserved.py": {
+      "sha256": "9bee00c2f72c00d034e1b43830d2dbabdda048cc54755ffb3fab64f38fff2ed5",
+      "bytes": 21519
+    },
+    "frozen/src/rage_mill/canonical_video.py": {
+      "sha256": "c2ba28234e9b3c632031c7d456b10c7e20e63d5e175097545e719adb01185556",
+      "bytes": 5779
+    },
+    "frozen/src/rage_mill/canonical_runtime_evidence.py": {
+      "sha256": "c381b8776d6fc2ecf25b128830518926e45f5a826fe209cbe7369157de3e479a",
+      "bytes": 9303
+    },
+    "frozen/src/rage_mill/canonical_runtime_manifest.py": {
+      "sha256": "48f0557359476f13fc232e5019bebf9a38a4d5073ddbacb7cf045aca649cd917",
+      "bytes": 3653
+    },
+    "frozen/src/rage_mill/canonical_runtime_closure.py": {
+      "sha256": "a2080fe1323bd296634b52592dd14874f49026fea3a20a37d8d8f811ed66479a",
+      "bytes": 2972
+    },
+    "frozen/src/rage_mill/canonical17_controller.py": {
+      "sha256": "fa274e5ec84b95fb87de28f589e80fd9bbed2c5eee35aa89a37dc242f0ddf4df",
+      "bytes": 3007
+    },
+    "frozen/src/rage_mill/canonical17_evidence.py": {
+      "sha256": "f6c2499ceb2a6e479e7ff17d259d66dec541470348207993768d960eacdee8cf",
+      "bytes": 12339
+    },
+    "frozen/src/rage_mill/canonical_profile_policy.py": {
+      "sha256": "f75c17dcd460cf819547f7b566cf96948a72c3e69193d9b98cf562b439830eb6",
+      "bytes": 4568
+    },
+    "frozen/src/rage_mill/canonical16_affine_feedback.py": {
+      "sha256": "693caed8e4113d5d72bb40e3a8fa38ebf314eb4d1ca5142832dfb5f0dcebcecc",
+      "bytes": 3609
+    },
+    "frozen/src/rage_mill/canonical16_predictive_tracking.py": {
+      "sha256": "7cceb3106dfec45d011437d6f8045966a4f6cb7275e6d88796628cf0a5abcab0",
+      "bytes": 7401
+    },
+    "frozen/src/rage_mill/canonical17_native_value.py": {
+      "sha256": "2faeda2e2630711a6de610c8b630ab671fd3b3c792dc178036e3ebc1c25d383e",
+      "bytes": 2747
+    },
+    "frozen/src/rage_mill/canonical17_native_value_episode.py": {
+      "sha256": "0f93126b5283924cbbc519ad7c9ebfd6956ca5603b191c465fc7fdbbff54ee21",
+      "bytes": 11313
+    },
+    "frozen/src/rage_mill/canonical17_native_value_policy.py": {
+      "sha256": "9489473cf8aa03606a8d9fd0b5b34e49ae242595abb6aa2cb47572ca3359f241",
+      "bytes": 7511
+    },
+    "frozen/scripts/evaluate_canonical17_profile_candidate.py": {
+      "sha256": "e186f6521dad025788d434a0ffb8afcd0aaa2c458b35f7a7370d89be7eb96c45",
+      "bytes": 14462
+    },
+    "frozen/scripts/run_canonical_reserved_gate.py": {
+      "sha256": "17f55d059e647146ae00f4c7b003ec69b3f7c16fee3672f34daaef9e4adf8b9c",
+      "bytes": 803
+    },
+    "frozen/scripts/verify_canonical_release.py": {
+      "sha256": "ac06d7f2c545049dfd09ee077809cfd86235e6dea3c833fc516e96c59e61f0c6",
+      "bytes": 739
+    },
+    "frozen/scripts/verify_canonical_reserved_release.py": {
+      "sha256": "6116fea2a19bfd946219e8e2b0260d66e52f79050f18b8f057a0b9b33d1aeb58",
+      "bytes": 973
+    },
+    "frozen/scripts/prove_canonical_episode_native.py": {
+      "sha256": "617b5bd86385aa129603f3243d98255bd238cf3da0a69d33a693b5b625bec7c7",
+      "bytes": 827
+    },
+    "frozen/scripts/render_canonical_episode_video.py": {
+      "sha256": "186ea41ce7fd15eef7bff1213bf19a453300b34ad263adf3086e9d8a1cad03b2",
+      "bytes": 785
+    },
+    "frozen/scripts/audit_canonical17_saved_policy.py": {
+      "sha256": "127fe81a3a14fc1eb5a4d2e45a3f50e1a913eb44549e689fc3379e31f320f872",
+      "bytes": 20055
+    },
+    "frozen/scripts/prepare_canonical17_native_value_candidate.py": {
+      "sha256": "519630975318fe88f78a6481817ef087e269b26e79bde3cf23056d1eadf85b6e",
+      "bytes": 13951
+    },
+    "frozen/scripts/prepare_canonical17_native_value_stage.py": {
+      "sha256": "e7c70e3bf4b7fa1edb17ff08905284ce754aa037b562fa2eaeff5f8b19c2f99c",
+      "bytes": 7269
+    },
+    "frozen/scripts/prepare_canonical17_native_value_candidate_v2.py": {
+      "sha256": "2c28f49f29a59cfb19d080f18b08d532e0053a148dada0e7e1d57bd300717f4c",
+      "bytes": 850
+    },
+    "frozen/configs/canonical17_development02.json": {
+      "sha256": "f0dcffd2c493caf6e2f945a960c18f6156f9c650a085dca31c1ec85ee5c9a1ea",
+      "bytes": 478
+    },
+    "provenance/original/031-b37f09e5f8a0-native-value-design02.json": {
+      "sha256": "b37f09e5f8a096406ce312711e03be48a59e73c66d3e301b281703fad1e2cdfc",
+      "bytes": 4467
+    },
+    "provenance/original/032-206fcd421ce3-controller.npz": {
+      "sha256": "206fcd421ce3c5de3e8669b08a15ac3c6fe0e497269bb96ce2f00572e2e8d045",
+      "bytes": 426504
+    },
+    "provenance/original/033-b7471fb925f4-reference.npz": {
+      "sha256": "b7471fb925f474c68b7a6dafc6002a90a7902362cebbcda6f342c60d2c68966e",
+      "bytes": 439676
+    },
+    "provenance/original/034-ff430e9ea49e-full-affine-feedback.npz": {
+      "sha256": "ff430e9ea49e2e15f5abc3ac671ce6b69174d55dde1e42d2954f7889634af9b5",
+      "bytes": 4127965
+    },
+    "provenance/original/035-dea134b541de-verified-native-defects.npz": {
+      "sha256": "dea134b541de3e9e83db2bf57b583418ca0abd2f6ea94f99aa07f8e20b6198b3",
+      "bytes": 92670
+    },
+    "provenance/original/036-7a6b305cf7ec-episode-3171040.npz": {
+      "sha256": "7a6b305cf7ec205ad90b3637ec046c6c2e672bcbe1f94f5e49f404ff613b6afd",
+      "bytes": 631753
+    },
+    "provenance/original/037-28c76e644b1a-episode-3171040-candidate-ledger.npz": {
+      "sha256": "28c76e644b1ae2396ca2aa71d93bbf82414144d29a434781dcabc81562a0847b",
+      "bytes": 4045091
+    },
+    "provenance/original/038-52e430ebf294-receipt.json": {
+      "sha256": "52e430ebf294d6d8f254dd5d8759edbc4927a0169a9c4580dedb5387f25068a4",
+      "bytes": 291816
+    },
+    "provenance/original/039-bf8e696ed27a-launch.json": {
+      "sha256": "bf8e696ed27ad234f0e991a69c9e463e69588a3e2139714c790aba19bc775021",
+      "bytes": 691797
+    },
+    "provenance/original/040-8e8631074507-completion.json": {
+      "sha256": "8e8631074507192f2eee424e8db8956ef2df6aac79034f6cd0e5236d969f2df7",
+      "bytes": 475072
+    },
+    "provenance/original/041-87f627663700-worker.log": {
+      "sha256": "87f6276637009e443db47ed5b294263f08310c198233be46eb5b4970ce1469ec",
+      "bytes": 198581
+    },
+    "payload/model.xml": {
+      "sha256": "6850e9194902d5a03f9e209f2449f5d3a92310524723eb1bc8b8f5c02b7f483a",
+      "bytes": 4851
+    },
+    "payload/runtime-closure.json": {
+      "sha256": "719ecaeb3614fc0942a2a2420b120bae90e67b88c87b1788f5de6eebd3d8c8c3",
+      "bytes": 231475
+    },
+    "frozen/src/rage_mill/__init__.py": {
+      "sha256": "bb4e7534c26cb339b6b42a4a7acd684866d33b699d7ff705569e2cce91cd237c",
+      "bytes": 104
+    },
+    "frozen/LICENSE": {
+      "sha256": "175868a772d0f8b95bfd02571e6c54368e2c7d7096380c1c7a80992ba2e74dc6",
+      "bytes": 1079
+    }
+  },
+  "source_mapping": [
+    {
+      "original": {
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-value-candidate02/identity.json",
+        "sha256": "61993d118c341001ef7973fce77a200f85dd86588b78919bc03d629e09c95268",
+        "bytes": 18682
+      },
+      "relative_path": "metadata/identity.json"
+    },
+    {
+      "original": {
+        "bytes": 4793542,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-value-candidate02/controller.npz",
+        "sha256": "715ef60348c931f3ffa34b2854c1c8d3f7b2d9bb7e7d5cd4df234dc14af95253"
+      },
+      "relative_path": "payload/controller.npz"
+    },
+    {
+      "original": {
+        "bytes": 9512,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-value-candidate02/configuration.json",
+        "sha256": "a224bf61eb74ce77d202c7ab0493854557122c87416c1f264af36cb97ca21011"
+      },
+      "relative_path": "payload/configuration.json"
+    },
+    {
+      "original": {
+        "bytes": 10079,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical_benchmark.py",
+        "sha256": "4b597725057d041277cd96b893a07c15f810bb96d0675e1c61706416d1859d8b"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical_benchmark.py"
+    },
+    {
+      "original": {
+        "bytes": 18491,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical_evaluation.py",
+        "sha256": "89e74089f10f3f804b9e68004f1df3d57cabe216e532a6494b87b93a6726aa70"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical_evaluation.py"
+    },
+    {
+      "original": {
+        "bytes": 8196,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical_replay.py",
+        "sha256": "16f37469fc167f3a884887a7e412045ea0c1623b5857bd041be394dfa7a055e5"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical_replay.py"
+    },
+    {
+      "original": {
+        "bytes": 13627,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical_release.py",
+        "sha256": "40fc3f9972f3a7aabd973dc8ef261cb159816b4a25d39b19c2d18a4eddfad4ad"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical_release.py"
+    },
+    {
+      "original": {
+        "bytes": 21519,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical_reserved.py",
+        "sha256": "9bee00c2f72c00d034e1b43830d2dbabdda048cc54755ffb3fab64f38fff2ed5"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical_reserved.py"
+    },
+    {
+      "original": {
+        "bytes": 5779,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical_video.py",
+        "sha256": "c2ba28234e9b3c632031c7d456b10c7e20e63d5e175097545e719adb01185556"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical_video.py"
+    },
+    {
+      "original": {
+        "bytes": 9303,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical_runtime_evidence.py",
+        "sha256": "c381b8776d6fc2ecf25b128830518926e45f5a826fe209cbe7369157de3e479a"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical_runtime_evidence.py"
+    },
+    {
+      "original": {
+        "bytes": 3653,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical_runtime_manifest.py",
+        "sha256": "48f0557359476f13fc232e5019bebf9a38a4d5073ddbacb7cf045aca649cd917"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical_runtime_manifest.py"
+    },
+    {
+      "original": {
+        "bytes": 2972,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical_runtime_closure.py",
+        "sha256": "a2080fe1323bd296634b52592dd14874f49026fea3a20a37d8d8f811ed66479a"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical_runtime_closure.py"
+    },
+    {
+      "original": {
+        "bytes": 3007,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical17_controller.py",
+        "sha256": "fa274e5ec84b95fb87de28f589e80fd9bbed2c5eee35aa89a37dc242f0ddf4df"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical17_controller.py"
+    },
+    {
+      "original": {
+        "bytes": 12339,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical17_evidence.py",
+        "sha256": "f6c2499ceb2a6e479e7ff17d259d66dec541470348207993768d960eacdee8cf"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical17_evidence.py"
+    },
+    {
+      "original": {
+        "bytes": 4568,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical_profile_policy.py",
+        "sha256": "f75c17dcd460cf819547f7b566cf96948a72c3e69193d9b98cf562b439830eb6"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical_profile_policy.py"
+    },
+    {
+      "original": {
+        "bytes": 3609,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical16_affine_feedback.py",
+        "sha256": "693caed8e4113d5d72bb40e3a8fa38ebf314eb4d1ca5142832dfb5f0dcebcecc"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical16_affine_feedback.py"
+    },
+    {
+      "original": {
+        "bytes": 7401,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical16_predictive_tracking.py",
+        "sha256": "7cceb3106dfec45d011437d6f8045966a4f6cb7275e6d88796628cf0a5abcab0"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical16_predictive_tracking.py"
+    },
+    {
+      "original": {
+        "bytes": 2747,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical17_native_value.py",
+        "sha256": "2faeda2e2630711a6de610c8b630ab671fd3b3c792dc178036e3ebc1c25d383e"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical17_native_value.py"
+    },
+    {
+      "original": {
+        "bytes": 11313,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical17_native_value_episode.py",
+        "sha256": "0f93126b5283924cbbc519ad7c9ebfd6956ca5603b191c465fc7fdbbff54ee21"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical17_native_value_episode.py"
+    },
+    {
+      "original": {
+        "bytes": 7511,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/canonical17_native_value_policy.py",
+        "sha256": "9489473cf8aa03606a8d9fd0b5b34e49ae242595abb6aa2cb47572ca3359f241"
+      },
+      "relative_path": "frozen/src/rage_mill/canonical17_native_value_policy.py"
+    },
+    {
+      "original": {
+        "bytes": 14462,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/scripts/evaluate_canonical17_profile_candidate.py",
+        "sha256": "e186f6521dad025788d434a0ffb8afcd0aaa2c458b35f7a7370d89be7eb96c45"
+      },
+      "relative_path": "frozen/scripts/evaluate_canonical17_profile_candidate.py"
+    },
+    {
+      "original": {
+        "bytes": 803,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/scripts/run_canonical_reserved_gate.py",
+        "sha256": "17f55d059e647146ae00f4c7b003ec69b3f7c16fee3672f34daaef9e4adf8b9c"
+      },
+      "relative_path": "frozen/scripts/run_canonical_reserved_gate.py"
+    },
+    {
+      "original": {
+        "bytes": 739,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/scripts/verify_canonical_release.py",
+        "sha256": "ac06d7f2c545049dfd09ee077809cfd86235e6dea3c833fc516e96c59e61f0c6"
+      },
+      "relative_path": "frozen/scripts/verify_canonical_release.py"
+    },
+    {
+      "original": {
+        "bytes": 973,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/scripts/verify_canonical_reserved_release.py",
+        "sha256": "6116fea2a19bfd946219e8e2b0260d66e52f79050f18b8f057a0b9b33d1aeb58"
+      },
+      "relative_path": "frozen/scripts/verify_canonical_reserved_release.py"
+    },
+    {
+      "original": {
+        "bytes": 827,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/scripts/prove_canonical_episode_native.py",
+        "sha256": "617b5bd86385aa129603f3243d98255bd238cf3da0a69d33a693b5b625bec7c7"
+      },
+      "relative_path": "frozen/scripts/prove_canonical_episode_native.py"
+    },
+    {
+      "original": {
+        "bytes": 785,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/scripts/render_canonical_episode_video.py",
+        "sha256": "186ea41ce7fd15eef7bff1213bf19a453300b34ad263adf3086e9d8a1cad03b2"
+      },
+      "relative_path": "frozen/scripts/render_canonical_episode_video.py"
+    },
+    {
+      "original": {
+        "bytes": 20055,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/scripts/audit_canonical17_saved_policy.py",
+        "sha256": "127fe81a3a14fc1eb5a4d2e45a3f50e1a913eb44549e689fc3379e31f320f872"
+      },
+      "relative_path": "frozen/scripts/audit_canonical17_saved_policy.py"
+    },
+    {
+      "original": {
+        "bytes": 13951,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/scripts/prepare_canonical17_native_value_candidate.py",
+        "sha256": "519630975318fe88f78a6481817ef087e269b26e79bde3cf23056d1eadf85b6e"
+      },
+      "relative_path": "frozen/scripts/prepare_canonical17_native_value_candidate.py"
+    },
+    {
+      "original": {
+        "bytes": 7269,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/scripts/prepare_canonical17_native_value_stage.py",
+        "sha256": "e7c70e3bf4b7fa1edb17ff08905284ce754aa037b562fa2eaeff5f8b19c2f99c"
+      },
+      "relative_path": "frozen/scripts/prepare_canonical17_native_value_stage.py"
+    },
+    {
+      "original": {
+        "bytes": 850,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/scripts/prepare_canonical17_native_value_candidate_v2.py",
+        "sha256": "2c28f49f29a59cfb19d080f18b08d532e0053a148dada0e7e1d57bd300717f4c"
+      },
+      "relative_path": "frozen/scripts/prepare_canonical17_native_value_candidate_v2.py"
+    },
+    {
+      "original": {
+        "bytes": 478,
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/configs/canonical17_development02.json",
+        "sha256": "f0dcffd2c493caf6e2f945a960c18f6156f9c650a085dca31c1ec85ee5c9a1ea"
+      },
+      "relative_path": "frozen/configs/canonical17_development02.json"
+    },
+    {
+      "original": {
+        "bytes": 4467,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-value-design02.json",
+        "sha256": "b37f09e5f8a096406ce312711e03be48a59e73c66d3e301b281703fad1e2cdfc"
+      },
+      "relative_path": "provenance/original/031-b37f09e5f8a0-native-value-design02.json"
+    },
+    {
+      "original": {
+        "bytes": 426504,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/stronger-orbit-bridge-prepared01/output/controller.npz",
+        "sha256": "206fcd421ce3c5de3e8669b08a15ac3c6fe0e497269bb96ce2f00572e2e8d045"
+      },
+      "relative_path": "provenance/original/032-206fcd421ce3-controller.npz"
+    },
+    {
+      "original": {
+        "bytes": 439676,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/stronger-orbit-bridge-prepared01/output/reference.npz",
+        "sha256": "b7471fb925f474c68b7a6dafc6002a90a7902362cebbcda6f342c60d2c68966e"
+      },
+      "relative_path": "provenance/original/033-b7471fb925f4-reference.npz"
+    },
+    {
+      "original": {
+        "bytes": 4127965,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-affine-value-prepared01/output/full-affine-feedback.npz",
+        "sha256": "ff430e9ea49e2e15f5abc3ac671ce6b69174d55dde1e42d2954f7889634af9b5"
+      },
+      "relative_path": "provenance/original/034-ff430e9ea49e-full-affine-feedback.npz"
+    },
+    {
+      "original": {
+        "bytes": 92670,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-affine-value-prepared01/output/verified-native-defects.npz",
+        "sha256": "dea134b541de3e9e83db2bf57b583418ca0abd2f6ea94f99aa07f8e20b6198b3"
+      },
+      "relative_path": "provenance/original/035-dea134b541de-verified-native-defects.npz"
+    },
+    {
+      "original": {
+        "bytes": 631753,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-value-exact-hanging-prepared01/output/episode-3171040.npz",
+        "sha256": "7a6b305cf7ec205ad90b3637ec046c6c2e672bcbe1f94f5e49f404ff613b6afd"
+      },
+      "relative_path": "provenance/original/036-7a6b305cf7ec-episode-3171040.npz"
+    },
+    {
+      "original": {
+        "bytes": 4045091,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-value-exact-hanging-prepared01/output/episode-3171040-candidate-ledger.npz",
+        "sha256": "28c76e644b1ae2396ca2aa71d93bbf82414144d29a434781dcabc81562a0847b"
+      },
+      "relative_path": "provenance/original/037-28c76e644b1a-episode-3171040-candidate-ledger.npz"
+    },
+    {
+      "original": {
+        "bytes": 291816,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-value-exact-hanging-prepared01/output/receipt.json",
+        "sha256": "52e430ebf294d6d8f254dd5d8759edbc4927a0169a9c4580dedb5387f25068a4"
+      },
+      "relative_path": "provenance/original/038-52e430ebf294-receipt.json"
+    },
+    {
+      "original": {
+        "bytes": 691797,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-value-exact-hanging-prepared01/launch.json",
+        "sha256": "bf8e696ed27ad234f0e991a69c9e463e69588a3e2139714c790aba19bc775021"
+      },
+      "relative_path": "provenance/original/039-bf8e696ed27a-launch.json"
+    },
+    {
+      "original": {
+        "bytes": 475072,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-value-exact-hanging-prepared01/completion.json",
+        "sha256": "8e8631074507192f2eee424e8db8956ef2df6aac79034f6cd0e5236d969f2df7"
+      },
+      "relative_path": "provenance/original/040-8e8631074507-completion.json"
+    },
+    {
+      "original": {
+        "bytes": 198581,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-value-exact-hanging-prepared01/worker.log",
+        "sha256": "87f6276637009e443db47ed5b294263f08310c198233be46eb5b4970ce1469ec"
+      },
+      "relative_path": "provenance/original/041-87f627663700-worker.log"
+    },
+    {
+      "original": {
+        "bytes": 4851,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-value-candidate02/model.xml",
+        "sha256": "6850e9194902d5a03f9e209f2449f5d3a92310524723eb1bc8b8f5c02b7f483a"
+      },
+      "relative_path": "payload/model.xml"
+    },
+    {
+      "original": {
+        "bytes": 231475,
+        "path": "/home/marctheshark/.t3/artifacts/rage-mill-canonical17-20261016/native-value-candidate02/runtime-closure.json",
+        "sha256": "719ecaeb3614fc0942a2a2420b120bae90e67b88c87b1788f5de6eebd3d8c8c3"
+      },
+      "relative_path": "payload/runtime-closure.json"
+    },
+    {
+      "original": {
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/src/rage_mill/__init__.py",
+        "sha256": "bb4e7534c26cb339b6b42a4a7acd684866d33b699d7ff705569e2cce91cd237c",
+        "bytes": 104
+      },
+      "relative_path": "frozen/src/rage_mill/__init__.py"
+    },
+    {
+      "original": {
+        "path": "/home/marctheshark/.t3/worktrees/rage-mill/t3-canonical17-swingup/LICENSE",
+        "sha256": "175868a772d0f8b95bfd02571e6c54368e2c7d7096380c1c7a80992ba2e74dc6",
+        "bytes": 1079
+      },
+      "relative_path": "frozen/LICENSE"
+    }
+  ],
+  "original_identity_source_rows": 41,
+  "candidate_source_bytes_preserved": true,
+  "source_scope": "Benchmark-specific identity/combined650+700arrays/config/XML/runtime manifest and every pinned source/provenance byte; no privateGit history/unrelated code/native runtime binaries.",
+  "native_runtime_binaries_included": false,
+  "private_Git_history_included": false,
+  "inspection_adapters_are_new": true
+}

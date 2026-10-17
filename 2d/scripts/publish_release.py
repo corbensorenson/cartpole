@@ -68,11 +68,16 @@ indefinite stability or hardware real-time validation.
 frozen = np.load(qualification/'frozen_route.npz')
 manifest = json.loads((root/'publication/2d/manifest.json').read_text())
 assert manifest['accepted_swingup_links']==a.links
-if manifest.get('archive_schema')==2:
+if manifest.get('archive_schema',1)>=2:
     body = body.replace('controller/gains, all final state/action tapes, failed two-link baseline and\nits optimizer history, tests, runtime, research plans and SHA256 manifest.',
         'controller/gains, all current-count state/action tapes and failed variants,\ntests, runtime, research plans and SHA256 manifest. Unchanged historical raw\nevidence stays in earlier immutable release bundles and in the Git checkout.')
     prior = manifest['prior_evidence_bundle']
-    body += f"\nHistorical evidence dependency: [{prior['links']}-link evidence bundle]({prior['url']}), SHA256 `{prior['sha256']}`. The manifest binds its exact bytes and prior inventory. Current-count reproduction uses the current ZIP alone.\n"
+    current_scope='current release archives (primary and supplements)' if manifest.get('supplementary_evidence_bundles') else 'current ZIP'
+    body += f"\nHistorical evidence dependency: [{prior['links']}-link evidence bundle]({prior['url']}), SHA256 `{prior['sha256']}`. The manifest binds its exact bytes and prior inventory. Current-count reproduction uses the {current_scope}. Historical manifests bind any additional parts required for complete prior evidence.\n"
+if manifest.get('supplementary_evidence_bundles'):
+    body += '\nThe retained current-count evidence spans multiple bounded ZIP assets. Download the primary and every listed supplement for the complete record; their exact file inventories, SHA256 digests and byte counts are bound in the primary manifest. Runtime/source and the current qualification stay in the primary archive.\n'
+    for part in manifest['supplementary_evidence_bundles']:
+        body += f"\n- [{part['name']}]({part['url']}), SHA256 `{part['sha256']}`, {part['bytes']} bytes.\n"
 assert Config(**json.loads(str(frozen['config']))) == Config(n_links=a.links),'cannot publish an altered-plant result as this benchmark'
 if 'park_steps' in frozen:
     config = json.loads(str(frozen['config']))
@@ -107,6 +112,12 @@ if a.links == 13:
     assert 'launch_reference_profiles' in frozen
     assert (qualification/'forecast_actual_parity.json').exists()
     body += '\nThirteen transfers an unwrapped material angle/rate field from a historical fourteen-link geometric proposal and repairs it on native thirteen-link mechanics. The first thirteen donor reaches only30/45 development passes; the new earlier-arrival donor reaches44/45. A fixed -1mm Y reference offset also reaches44/45, with a different failure. Both complete failed gates are retained. The selected causal controller prepares for19s, then forecasts BOTH frozen references from the observed launch state in owned native environments and selects the first complete passing continuation. There is no seed lookup, future actual state or plant reset. Every forecast tape and physics-query count is saved. Its9s swing plus2s tracking executes550 commands of the original1500-command finite affine QR design. Nominal plus44 noisy development starts pass, followed by32 NEW reserved starts20262416..20262447. Every chosen forecast matches actual suffix states, delivered/raw forces and tilts byte-for-byte. All actual episodes complete30s with5.16s hold and exact independent cold replay. The131-test suite includes native spatial freedoms, predictor isolation/admission/fallback and archive integrity. The nominal motion remains nearly planar in fully unrestricted spatial physics. Prediction cost is reported separately; no hardware real-time claim is made.\n'
+if a.links == 14:
+    assert bool(frozen['controller_bank']) and len(frozen['bank_states'])==5
+    assert (qualification/'bank_audit.json').is_file()
+    body += '\nFourteen uses a moving reference transferred as geometry from a planar donor and repaired under the exact spatial mechanics. A quotient value design retains every physical velocity, including spin. The original controller passes43/45 development starts. Two full-spatial suffix repairs from measured development entries rescue the difficult starts individually while preserving the first22.2s physical prefix exactly. A three-controller forecast bank passes45/45 development but fails its first reserved cohort31/32; all failures are retained. The revised fixed family adds reflected suffix laws, passes46 distinct development starts including that explicitly reused former failure, then passes a NEW32-start cohort20262616..20262647. At the observed19.2s launch, complete owned native forecasts in fixed order select the first full passing continuation; runtime receives no episode seed and never resets the plant. The9s bridge and finite upright tracking execute540 commands of the original700-command design. Every selected raw/delivered force, state and tilt matches its full forecast byte-for-byte, including the final transition. The nominal motion remains nearly planar in unrestricted spatial physics; spatial repairs do not lock or actuate joints. No hardware real-time claim is made.\n'
+if manifest.get('git_lfs_files'):
+    body += '\nLarge Git checkpoints use Git LFS (run git lfs pull after cloning). Every release ZIP contains materialized original bytes rather than LFS pointers; the manifest binds logical file hashes and the staged verifier checks the corresponding LFS objects.\n'
 try:
     release = request(base+'/releases/tags/'+tag)
 except HTTPError as exc:
@@ -118,7 +129,16 @@ except HTTPError as exc:
 assert release['tag_name'] == tag and not release['draft']
 assets = {x['name']:x for x in request(release['assets_url'])}
 receipts = []
-for name,kind in [(f'2d-cartpole-{a.links}-link-swingup.mp4','video/mp4'),(f'2d-cartpole-{a.links}-link-evidence.zip','application/zip')]:
+asset_specs=[(f'2d-cartpole-{a.links}-link-swingup.mp4','video/mp4'),(f'2d-cartpole-{a.links}-link-evidence.zip','application/zip')]
+for part in manifest.get('supplementary_evidence_bundles',[]):
+    name=part['name']
+    assert Path(name).name==name and name.startswith(f'2d-cartpole-{a.links}-link-evidence-part') and name.endswith('.zip')
+    file=root/'output'/name
+    assert file.stat().st_size==part['bytes']
+    with file.open('rb') as stream:
+        assert hashlib.file_digest(stream,'sha256').hexdigest()==part['sha256']
+    asset_specs.append((name,'application/zip'))
+for name,kind in asset_specs:
     file = root/'output'/name
     assert file.stat().st_size<2**31,'release asset exceeds GitHub per-file limit'
     digest = hashlib.sha256(file.read_bytes()).hexdigest()

@@ -26,6 +26,7 @@ p.add_argument('--spec',required=True)
 p.add_argument('--source-config',required=True)
 p.add_argument('--reference-only',action='store_true')
 p.add_argument('--balance-backend',choices=['dare','finite_qr'],default='dare')
+p.add_argument('--eigenvalue-digits',type=int,default=0)
 a = p.parse_args()
 out = Path(a.out)
 freeze_inputs(out,a)
@@ -84,7 +85,8 @@ if a.reference_only:
 elif max_error > 2e-6:
     raise ValueError(f'foreign coordinate reconstruction disagrees with stored physical tape: {max_error}')
 actions = np.c_[np.array(route['controller']['controls'])*80.,np.zeros(len(reference)-1)]
-design = balance_design(env,axis_separated=a.balance_backend=='finite_qr',value_backend=a.balance_backend)
+design = balance_design(env,axis_separated=a.balance_backend=='finite_qr',value_backend=a.balance_backend,
+                        eigenvalue_digits=a.eigenvalue_digits)
 gains = spatial_tracking_gains(env,reference,actions,design)
 # Old runtime uses + feedback_gains @ dimensionless error. New runtime uses
 # - gains @ tangent error, and force is N rather than normalized action.

@@ -5,15 +5,15 @@ import hashlib
 import json
 from pathlib import Path
 import shutil
-import zipfile
 import numpy as np
-from release_archive import select_archive_files
+from release_archive import select_archive_files,create_evidence_archives
 from spatialpole import Config, SpatialCartpole
 
 root = Path(__file__).resolve().parents[1]
 p = argparse.ArgumentParser()
 p.add_argument('--links',type=int,default=1)
 p.add_argument('--qualification')
+p.add_argument('--prepare-only',action='store_true',help='copy the publication tree for source QA before creating immutable archives')
 a = p.parse_args()
 archive = root/f'output/2d-cartpole-{a.links}-link-evidence.zip'
 assert not archive.exists(),'count-specific archives are create-only; do not overwrite a frozen release'
@@ -82,6 +82,17 @@ def release_files():
         if any(part in ('__pycache__','.pytest_cache','.venv') or part.endswith('.egg-info') for part in relative.parts):
             continue
         yield path
+if a.prepare_only:
+    print(json.dumps(dict(prepared_files=sum(1 for _ in release_files()),archives_created=False)))
+    raise SystemExit(0)
+lfs_files = [path for path in release_files() if path.stat().st_size>95000000]
+if lfs_files:
+    attributes=target/'.gitattributes'
+    with attributes.open('a',encoding='utf-8') as stream:
+        stream.write('\n# Large evidence stays materialized in release ZIPs; Git stores LFS pointers.\n')
+        for path in lfs_files:
+            name=path.relative_to(target).as_posix()
+            stream.write(json.dumps('/'+name)+' filter=lfs diff=lfs merge=lfs -text\n')
 hashes = {str(p.relative_to(target)).replace('\\','/'):hashlib.sha256(p.read_bytes()).hexdigest()
           for p in release_files() if p != target/'manifest.json'}
 seed = q['results'][0]['seed']
@@ -93,6 +104,10 @@ manifest = {'benchmark':'2D cart / spatial unrestricted ball-joint chain', 'acce
     'final_qualification_passes':32,'development_gate':'at least 12 disjoint noisy development passes plus nominal',
     'scope':'finite simulation reset-noise evidence, no general disturbance or hardware guarantee',
     'files_sha256':hashes}
+if lfs_files:
+    manifest['git_lfs_files']={path.relative_to(target).as_posix():
+        dict(sha256=hashes[path.relative_to(target).as_posix()],bytes=path.stat().st_size)
+        for path in lfs_files}
 if a.links>=13:
     assert old is not None
     prior_count = old['accepted_swingup_links']
@@ -106,13 +121,11 @@ if a.links>=13:
         archive_scope='complete current source/runtime and all new or changed evidence; unchanged older evidence is covered by immutable prior bundles',
         prior_evidence_bundle=dict(links=prior_count,url=asset['url'],sha256=asset['sha256'],bytes=asset['size'],
             manifest=prior_manifest,manifest_sha256=hashlib.sha256((target/prior_manifest).read_bytes()).hexdigest()))
-(target/'manifest.json').write_text(json.dumps(manifest,indent=2),encoding='utf-8')
 direct = manifest.get('archive_files_sha256',hashes)
-with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
-    for path in release_files():
-        relative = path.relative_to(target).as_posix()
-        if relative=='manifest.json' or relative in direct:
-            z.write(path,'2d/'+relative)
+coverage = create_evidence_archives(target,archive,manifest,
+    priority_prefixes=(f'evidence/{qualification.name}/',),
+    release_base_url=f'https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-{a.links}-link-v1')
 print(json.dumps({'files':len(hashes),'evidence_zip':str(archive),'zip_bytes':archive.stat().st_size,
                   'archive_files':len(direct),'inherited_files':len(hashes)-len(direct),
+                  'archive_parts':coverage['archive_parts'],'supplementary_files':coverage['supplementary_files'],
                   'video_sha256':hashlib.sha256(video.read_bytes()).hexdigest()}))

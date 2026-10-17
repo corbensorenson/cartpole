@@ -1,0 +1,6 @@
+{
+  "max_transverse_gain_from_in_plane_state": 0.0,
+  "max_in_plane_gain_from_transverse_state": 0.0,
+  "max_transverse_feed": 0.0,
+  "scope": "reflection-projected planning models; actual spatial plant unchanged"
+}

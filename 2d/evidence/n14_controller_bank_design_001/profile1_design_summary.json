@@ -1,0 +1,17 @@
+{
+  "input_sha256": {
+    "input_route.npz": "3a3f643c4b8af5371c52b6f224393ad2c9c98656b20313ef568ca86274801c17",
+    "input_actual_tape.npz": "70c8b69b9d47f6687837436583c949fc2bdab1360ceb39c1f9077d51b70dd426"
+  },
+  "seam_route_command": 150,
+  "seam_global_command": 1110,
+  "actual_prefix_byte_exact": true,
+  "design_native_steps": 5577040,
+  "iterations": 6,
+  "final_max_scaled_defect": 2.359669079565244e-07,
+  "maximum_gain": 4405276674.330832,
+  "gauge_error": 2.2695655756108552e-07,
+  "maximum_proposal_state_change_scaled": 0.0005117856621066849,
+  "maximum_proposal_force_change_N": 0.01280427910387516,
+  "controller_sha256": "65dcc0ef085ddf92e3d502cb797b0b814de642037b6978cff997df3eaed829f8"
+}

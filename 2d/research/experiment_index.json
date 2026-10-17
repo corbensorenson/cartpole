@@ -113,6 +113,14 @@
       "source_manifest": "output/conditioned_n13_yoffset_001/inputs.json"
     },
     {
+      "directory": "output/conditioned_n14_001",
+      "status": "completed",
+      "summary_sha256": "4e55b3e99944ce0fbf36217873a052052026ddecc1dd30212f60f1f97c95d001",
+      "passes": 4,
+      "n_links": 14,
+      "source_manifest": "output/conditioned_n14_001/inputs.json"
+    },
+    {
       "directory": "output/conditioned_n3_001",
       "status": "completed",
       "summary_sha256": "3e6450f192e0503a052329ecb237657d23e60fdb43ff226b5dd410a8f62521d7",
@@ -517,6 +525,206 @@
       "source_manifest": "output/n13_planar_reference_pilot_001/inputs.json"
     },
     {
+      "directory": "output/n14_direct_from_marc17_001",
+      "status": "incomplete",
+      "summary_sha256": "5ae722022690ede379b8ef8dfad8a946407a8b11af77f08f9c145833fde9144b",
+      "passes": null,
+      "n_links": null,
+      "source_manifest": "output/n14_direct_from_marc17_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_direct_repair_001",
+      "status": "completed",
+      "summary_sha256": "6fe3a405bb004bf02d8a66091fb32b82fcc6160f3b9a604969612411bba4f4c0",
+      "passes": 0,
+      "n_links": 14,
+      "source_manifest": "output/n14_direct_repair_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_free_terminal_from_marc17_001",
+      "status": "incomplete",
+      "summary_sha256": "0760e8e0877b04f8d5a464e8805b23fd7ac5e93a90121d33b11e5c5a46d3a572",
+      "passes": null,
+      "n_links": null,
+      "source_manifest": "output/n14_free_terminal_from_marc17_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_hybrid_finite_001",
+      "status": "completed",
+      "summary_sha256": "60456ebd2b8d2f87b62eac398d272eb810a520a7c654bc51ea2a4db2b0b2b9cc",
+      "passes": null,
+      "n_links": 14,
+      "source_manifest": "output/n14_hybrid_finite_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_launch_profiles_diagnostic_001",
+      "status": "completed",
+      "summary_sha256": "96aabab5f4d5f8c776f28bbaf4bbfa559f7944daf7d8f08b2a42c719f1f9d22b",
+      "passes": 0,
+      "n_links": 14,
+      "source_manifest": "output/n14_launch_profiles_diagnostic_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_launch_timing_diagnostic_001",
+      "status": "completed",
+      "summary_sha256": "92157d01c13d6fc7436de11f2815a4dc8901906539ef0d0fabd65f395eca10f4",
+      "passes": 0,
+      "n_links": 14,
+      "source_manifest": "output/n14_launch_timing_diagnostic_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_material_from_marc17_001",
+      "status": "completed",
+      "summary_sha256": "cc448acb3b315003972d5696eae4aa3fa369f078900921b1f093b512a9eee6aa",
+      "passes": null,
+      "n_links": 14,
+      "source_manifest": "output/n14_material_from_marc17_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_native_search_finite_001",
+      "status": "completed",
+      "summary_sha256": "af292b269ef374fc03f45ab311d60ab26f34f159fbcaf1fb279ad65cd0e6498d",
+      "passes": null,
+      "n_links": 14,
+      "source_manifest": "output/n14_native_search_finite_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_observable_finite_001",
+      "status": "completed",
+      "summary_sha256": "e70a04fb14a52cb39d8b6b3ab3a92c7495fb979b3b0ab745c17cb3645d0c121b",
+      "passes": null,
+      "n_links": 14,
+      "source_manifest": "output/n14_observable_finite_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_observable_prepared_pilot_001",
+      "status": "completed",
+      "summary_sha256": "ea4802600b62cc9ea0bf820ce84cf345380f82b31b296d4338e1f2e0d76cc5e9",
+      "passes": 1,
+      "n_links": 14,
+      "source_manifest": "output/n14_observable_prepared_pilot_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_observable_reflection_001",
+      "status": "completed",
+      "summary_sha256": "19c6f9ae4327671d53047f4bb1e7024e76c770c9894cf43b998cfc3558491969",
+      "passes": 1,
+      "n_links": 14,
+      "source_manifest": "output/n14_observable_reflection_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_optional_spectrum_n13_regression_001",
+      "status": "completed",
+      "summary_sha256": "c6d453f545bdf5c585e585d05c9eff10aad19023b78e45ec8fc79accda6252be",
+      "passes": 1,
+      "n_links": 13,
+      "source_manifest": "output/n14_optional_spectrum_n13_regression_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_parking_r0001_pilot_001",
+      "status": "completed",
+      "summary_sha256": "beaca25e14c5a5c2b9868cb2c67ce5b737fd03d406c807f37ca95508bca45433",
+      "passes": 1,
+      "n_links": 14,
+      "source_manifest": "output/n14_parking_r0001_pilot_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_parking_r0003_pilot_001",
+      "status": "completed",
+      "summary_sha256": "52742378e200c4e0174a745ecb108188ef0b471ed12ca9aea20f0130e8ab1c67",
+      "passes": 1,
+      "n_links": 14,
+      "source_manifest": "output/n14_parking_r0003_pilot_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_parking_r001_pilot_001",
+      "status": "completed",
+      "summary_sha256": "2199bf1151b922295927b5325e37d4ce497efc1c8b009c081a0f60f6f3d2991c",
+      "passes": 1,
+      "n_links": 14,
+      "source_manifest": "output/n14_parking_r001_pilot_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_parking_r003_pilot_001",
+      "status": "completed",
+      "summary_sha256": "5f89432d8d5b562ba7aa9733ceae52bdec91d20c59b18f789a218649b79c9ede",
+      "passes": 1,
+      "n_links": 14,
+      "source_manifest": "output/n14_parking_r003_pilot_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_planar_reference_finite_001",
+      "status": "completed",
+      "summary_sha256": "82a35a24bebf89b91435df891890790b0668a13ac4ff77cf75f144f268b6e12d",
+      "passes": null,
+      "n_links": 14,
+      "source_manifest": "output/n14_planar_reference_finite_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_raw_marc17_finite_001",
+      "status": "completed",
+      "summary_sha256": "f8eae34f6a181979557c2b897a1e0d26b2eda452ed9210f478a98e102fd2f006",
+      "passes": null,
+      "n_links": 14,
+      "source_manifest": "output/n14_raw_marc17_finite_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_raw_marc17_prepared_pilot_001",
+      "status": "completed",
+      "summary_sha256": "41e91a883903d0420104d6dbaa0cbe3a1e675eb5a7ee7917d514b0f36f0380d7",
+      "passes": 0,
+      "n_links": 14,
+      "source_manifest": "output/n14_raw_marc17_prepared_pilot_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_reflection_feedback_001",
+      "status": "completed",
+      "summary_sha256": "c4f579a8a494307a526943ec111e9d765b744b104652d84346a3022efd4ef235",
+      "passes": 1,
+      "n_links": 14,
+      "source_manifest": "output/n14_reflection_feedback_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_reflection_model_finite_001",
+      "status": "completed",
+      "summary_sha256": "99556555b95e847eba6e898cbc9e1f3e4dffd8f809eb1343f4302db6c0a1fece",
+      "passes": null,
+      "n_links": 14,
+      "source_manifest": "output/n14_reflection_model_finite_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_reflection_model_prepared_pilot_001",
+      "status": "completed",
+      "summary_sha256": "59f87793ae51fa4ccd4d2629b09a74e9f43887ff26a8a62c894f7ef7fbe3fc9b",
+      "passes": 1,
+      "n_links": 14,
+      "source_manifest": "output/n14_reflection_model_prepared_pilot_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_reflection_n13_regression_001",
+      "status": "completed",
+      "summary_sha256": "d9e33fe153673e7b6674b3c935c289929473efb9fa283bf480920d9482e1b511",
+      "passes": 1,
+      "n_links": 13,
+      "source_manifest": "output/n14_reflection_n13_regression_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_upright_mp_spectrum_001",
+      "status": "completed",
+      "summary_sha256": "ba125f679a64e4684e059c27953cbfe4c946805c1a80022b448d4c80d242ab47",
+      "passes": null,
+      "n_links": 14,
+      "source_manifest": "output/n14_upright_mp_spectrum_001/inputs.json"
+    },
+    {
+      "directory": "output/n14_upright_value_diagnostic_001",
+      "status": "completed",
+      "summary_sha256": "84fd283e8556962b6a8f14c5f8e15eaf54d3de2c055469e7b024402925fd6b01",
+      "passes": null,
+      "n_links": 14,
+      "source_manifest": "output/n14_upright_value_diagnostic_001/inputs.json"
+    },
+    {
       "directory": "output/n2_world_handoff_001",
       "status": "completed",
       "summary_sha256": "37a5ac93398866952ae89633a228f4682f814ae3857baaf2e6508ae816bc6505",
@@ -621,6 +829,14 @@
       "passes": 0,
       "n_links": 13,
       "source_manifest": "output/planar_lift_n13_001/inputs.json"
+    },
+    {
+      "directory": "output/planar_lift_n14_001",
+      "status": "completed",
+      "summary_sha256": "0409df7bef92bfec710a9732e891d0e3ca16d1c771d92f7606619406d16c2d76",
+      "passes": 0,
+      "n_links": 14,
+      "source_manifest": "output/planar_lift_n14_001/inputs.json"
     },
     {
       "directory": "output/planar_lift_n3_001",
@@ -853,6 +1069,14 @@
       "passes": 1,
       "n_links": 12,
       "source_manifest": "output/release12_reproduction_001/inputs.json"
+    },
+    {
+      "directory": "output/release13_reproduction_001",
+      "status": "completed",
+      "summary_sha256": "84481f1adb57216c69c0be0926a24943dd701a25378783e0e982b17d77024cb4",
+      "passes": 1,
+      "n_links": 13,
+      "source_manifest": "output/release13_reproduction_001/inputs.json"
     },
     {
       "directory": "output/release4_reproduction_001",
@@ -1166,6 +1390,25 @@
           "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-12-link-v1/2d-cartpole-12-link-evidence.zip",
           "sha256": "b0774bac8ff0f3fc93ceb8747c3ee274f9ed4243a950f5edbec9b417afd49848",
           "size": 1753666834
+        }
+      ]
+    },
+    {
+      "url": "https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-13-link-v1",
+      "tag": "2d-cartpole-13-link-v1",
+      "commit": "79861ded77cd7c0ca8203bab6621398430c0b2de",
+      "assets": [
+        {
+          "name": "2d-cartpole-13-link-swingup.mp4",
+          "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-13-link-v1/2d-cartpole-13-link-swingup.mp4",
+          "sha256": "c87797b5a375c9bac212287e5e2817a5a7a4c727f6088cad2e0521539199976a",
+          "size": 1144425
+        },
+        {
+          "name": "2d-cartpole-13-link-evidence.zip",
+          "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-13-link-v1/2d-cartpole-13-link-evidence.zip",
+          "sha256": "1f669b1d8dae3c6854467e6d9b453f695d1acb64a80e232fc3e9e1d8e4419c7b",
+          "size": 1420610217
         }
       ]
     },

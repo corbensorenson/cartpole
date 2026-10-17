@@ -1,12 +1,12 @@
 import numpy as np
 import pytest
 from spatialpole import Config,SpatialCartpole
-from spatialpole.symmetry import reflect_state,clean_planar_reference
+from spatialpole.symmetry import reflect_state,clean_planar_reference,reflection_average_feedback
 from spatialpole.transfer import lift_planar_state
 from spatialpole.affine_value import ParkedAffineValuePolicy
 
 
-@pytest.mark.parametrize('n',[1,3,13])
+@pytest.mark.parametrize('n',[1,3,13,14])
 def test_native_full_spatial_dynamics_obey_plane_reflection(n):
     env = SpatialCartpole(Config(n_links=n))
     rng = np.random.default_rng(825)
@@ -17,6 +17,50 @@ def test_native_full_spatial_dynamics_obey_plane_reflection(n):
         state = env.transition(state,force)
         mirrored = env.transition(mirrored,force*[1,-1])
         np.testing.assert_allclose(env.difference(mirrored,reflect_state(env,state)),0.,atol=3e-11)
+    env.close()
+
+
+@pytest.mark.parametrize('n',[1,3,14])
+def test_reflection_feedback_matches_full_quaternion_group_average_and_keeps_y_response(n):
+    env = SpatialCartpole(Config(n_links=n))
+    rng = np.random.default_rng(842)
+    reference = lift_planar_state(env,np.r_[.2,-.8,np.full(n-1,.03)],np.full(n+1,.04))
+    state = env.integrate(reference,rng.normal(size=2*env.model.nv)*.02)
+    env.set_state(state)
+    states,actions = np.repeat(reference[None,:],2,axis=0),np.array([[3.,0.]])
+    gains,feed = rng.normal(size=(1,2,2*env.model.nv)),rng.normal(size=(1,2))
+    saved = [x.copy() for x in (states,actions,gains,feed)]
+    new_gain,new_feed,_ = reflection_average_feedback(env,states,actions,gains,feed)
+    force = actions[0]+new_feed[0]-new_gain[0]@env.difference(state,reference)
+    reflected = reflect_state(env,state)
+    original = actions[0]+feed[0]-gains[0]@env.difference(state,reference)
+    mirror = actions[0]+feed[0]-gains[0]@env.difference(reflected,reference)
+    np.testing.assert_allclose(force,(original+mirror*[1,-1])/2,atol=2e-14)
+    turned = actions[0]+new_feed[0]-new_gain[0]@env.difference(reflected,reference)
+    np.testing.assert_allclose(turned,force*[1,-1],atol=2e-14)
+    assert abs(force[1])>1e-6
+    np.testing.assert_array_equal(env.state(),state)
+    for actual,previous in zip((states,actions,gains,feed),saved):
+        np.testing.assert_array_equal(actual,previous)
+    assert env.native_steps==0
+    env.close()
+
+
+def test_reflection_feedback_rejects_genuinely_spatial_reference():
+    env = SpatialCartpole()
+    state = env.upright_state()
+    state[1] = .01
+    with pytest.raises(ValueError,match='reflection-fixed'):
+        reflection_average_feedback(env,np.array([state,state]),np.zeros((1,2)),
+            np.zeros((1,2,2*env.model.nv)),np.zeros((1,2)))
+    env.close()
+
+
+def test_reflection_feedback_rejects_original_value_search():
+    from spatialpole.affine_value import affine_policy_from_payload
+    env = SpatialCartpole()
+    with pytest.raises(ValueError,match='original value'):
+        affine_policy_from_payload(env,dict(reflection_averaged_feedback=True,native_search=True))
     env.close()
 
 

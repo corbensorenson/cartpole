@@ -1,0 +1,15 @@
+{
+  "n_links": 14,
+  "source_links": 13,
+  "reference_steps": 450,
+  "source_controller_sha256": "796dfefd9adb83efe4390ee4b31fc85fea4666bc1b0d58b0e409c906e78f638a",
+  "source_manifest_sha256": "37785c8233720b5bab7733bfc2770514cb6c86254ec756de6948ead90c107c95",
+  "source_roundtrip_error": 8.881784197001252e-16,
+  "initial_hanging_error": 1.2246467991473532e-16,
+  "coordinate_direction_error": 1.3322676295501878e-15,
+  "source_native_steps": 0,
+  "target_native_steps": 0,
+  "reference_cart_max": 1.8838008510850415,
+  "maximum_force_norm": 65.9839859008789,
+  "claim": "qualified spatial policy reference used as material geometry only; no target physical episode or new qualification"
+}

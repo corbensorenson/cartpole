@@ -1,0 +1,23 @@
+{
+  "n_links": 14,
+  "native_integration_steps": 0,
+  "reference_geometry_forward_queries": 701,
+  "body_angular_velocity_queries": 9814,
+  "full_native_coordinates": 88,
+  "physical_coordinates": 74,
+  "all_velocity_coordinates_retained": 44,
+  "maximum_coordinate_condition": 290.5987868593943,
+  "maximum_inverse_identity_error": 6.447306010616253e-15,
+  "maximum_gauge_jacobian_error": 8.651836024377721e-15,
+  "maximum_feature_dual_error": 7.504680381991509e-15,
+  "maximum_linear_gain_error": 5.245208740234375e-06,
+  "relative_linear_gain_error": 1.1905905650312556e-15,
+  "wall_seconds": 5.649499799998011,
+  "controller_sha256": "ec0ccf7ec0ec3055fbfff6a0263ed973165706706b52a6872bf8cb1f28ac9db9",
+  "input_sha256": {
+    "input_route.npz": "3a3f643c4b8af5371c52b6f224393ad2c9c98656b20313ef568ca86274801c17",
+    "input_design_controller.npz": "3d81c5c7da04e1c89e9b314e65bf1fef0782ef6f173664a6f2a7f80e8dc15166",
+    "input_quotient_design.npz": "2f76a6eb3aa19d9ae164a2aeab071eece9a44075fbe11a59ccb1bb4e63983036"
+  },
+  "scope": "same local linear design; changed higher-order physical feature feedback, not nonlinear equivalence"
+}

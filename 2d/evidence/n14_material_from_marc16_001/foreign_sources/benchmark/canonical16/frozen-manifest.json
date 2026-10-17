@@ -1,0 +1,123 @@
+{
+  "files": {
+    "LICENSE": {
+      "bytes": 1079,
+      "sha256": "175868a772d0f8b95bfd02571e6c54368e2c7d7096380c1c7a80992ba2e74dc6"
+    },
+    "configs/canonical16.json": {
+      "bytes": 3768,
+      "sha256": "ca7c6f0d60a344333e57cd9ebc694033a6c187ae396d6416cec22444c485e677"
+    },
+    "configs/canonical16_execution.json": {
+      "bytes": 4347,
+      "sha256": "1afeb8220835763eebe1354da9da42befba6ad068b6d84aba92320259358d8a2"
+    },
+    "pyproject.toml": {
+      "bytes": 1006,
+      "sha256": "10f3eecc9789ae2bc7db2701aa71d5fa311313bffb1b794fde56c1a791e8a5d5"
+    },
+    "runtime-closure.json": {
+      "bytes": 230399,
+      "sha256": "7675cf5753dc6077737ac4672d955f64591ec92b97172bfd309104c8bc74f278"
+    },
+    "scripts/evaluate_canonical_profile_candidate.py": {
+      "bytes": 10951,
+      "sha256": "ff36869db2062bcf3a17f7beb5bedab35e94dbe268cab62dad6edfa86ba4f096"
+    },
+    "scripts/prove_canonical_episode_native.py": {
+      "bytes": 827,
+      "sha256": "617b5bd86385aa129603f3243d98255bd238cf3da0a69d33a693b5b625bec7c7"
+    },
+    "scripts/render_canonical_episode_video.py": {
+      "bytes": 785,
+      "sha256": "186ea41ce7fd15eef7bff1213bf19a453300b34ad263adf3086e9d8a1cad03b2"
+    },
+    "scripts/run_canonical_reserved_gate.py": {
+      "bytes": 803,
+      "sha256": "17f55d059e647146ae00f4c7b003ec69b3f7c16fee3672f34daaef9e4adf8b9c"
+    },
+    "scripts/verify_canonical_release.py": {
+      "bytes": 739,
+      "sha256": "ac06d7f2c545049dfd09ee077809cfd86235e6dea3c833fc516e96c59e61f0c6"
+    },
+    "scripts/verify_canonical_reserved_release.py": {
+      "bytes": 973,
+      "sha256": "6116fea2a19bfd946219e8e2b0260d66e52f79050f18b8f057a0b9b33d1aeb58"
+    },
+    "src/rage_mill/canonical16_controller.py": {
+      "bytes": 3396,
+      "sha256": "4920ade40cdc34a8da3e36e39dd0dec5aa341aad3964672cacdc2bd3481b6312"
+    },
+    "src/rage_mill/canonical16_finite_controller.py": {
+      "bytes": 917,
+      "sha256": "2dbeed94e48a539165462bc364628b947b0ab22adceb32cffba89d7a28cb8081"
+    },
+    "src/rage_mill/canonical16_fixed_policy.py": {
+      "bytes": 3614,
+      "sha256": "9078d177f5e8bc9e6b13119aa4c229f65973be407266cf8249880a564f62197b"
+    },
+    "src/rage_mill/canonical16_fixed_timing_policy.py": {
+      "bytes": 3636,
+      "sha256": "23a3115abcb0d8ca929a6c966650a4c77913227444a2dfaf555f966247f65377"
+    },
+    "src/rage_mill/canonical16_profile_policy.py": {
+      "bytes": 2459,
+      "sha256": "8b38904b86da002c35baa646fa33290e112fe5b0b824acafe5047900050f97ca"
+    },
+    "src/rage_mill/canonical_benchmark.py": {
+      "bytes": 10079,
+      "sha256": "4b597725057d041277cd96b893a07c15f810bb96d0675e1c61706416d1859d8b"
+    },
+    "src/rage_mill/canonical_evaluation.py": {
+      "bytes": 18491,
+      "sha256": "89e74089f10f3f804b9e68004f1df3d57cabe216e532a6494b87b93a6726aa70"
+    },
+    "src/rage_mill/canonical_profile_policy.py": {
+      "bytes": 4568,
+      "sha256": "f75c17dcd460cf819547f7b566cf96948a72c3e69193d9b98cf562b439830eb6"
+    },
+    "src/rage_mill/canonical_release.py": {
+      "bytes": 13627,
+      "sha256": "40fc3f9972f3a7aabd973dc8ef261cb159816b4a25d39b19c2d18a4eddfad4ad"
+    },
+    "src/rage_mill/canonical_replay.py": {
+      "bytes": 8196,
+      "sha256": "16f37469fc167f3a884887a7e412045ea0c1623b5857bd041be394dfa7a055e5"
+    },
+    "src/rage_mill/canonical_reserved.py": {
+      "bytes": 21519,
+      "sha256": "9bee00c2f72c00d034e1b43830d2dbabdda048cc54755ffb3fab64f38fff2ed5"
+    },
+    "src/rage_mill/canonical_runtime_closure.py": {
+      "bytes": 2972,
+      "sha256": "a2080fe1323bd296634b52592dd14874f49026fea3a20a37d8d8f811ed66479a"
+    },
+    "src/rage_mill/canonical_runtime_evidence.py": {
+      "bytes": 9303,
+      "sha256": "c381b8776d6fc2ecf25b128830518926e45f5a826fe209cbe7369157de3e479a"
+    },
+    "src/rage_mill/canonical_runtime_manifest.py": {
+      "bytes": 3653,
+      "sha256": "48f0557359476f13fc232e5019bebf9a38a4d5073ddbacb7cf045aca649cd917"
+    },
+    "src/rage_mill/canonical_video.py": {
+      "bytes": 5779,
+      "sha256": "c2ba28234e9b3c632031c7d456b10c7e20e63d5e175097545e719adb01185556"
+    },
+    "uv.lock": {
+      "bytes": 264704,
+      "sha256": "2024e7fbef3f4f7989b251d5ca64960ac337c98d9ce9ebabc25e1ac28d41588c"
+    }
+  },
+  "new_adapter_files": {
+    "frozen/src/rage_mill/__init__.py": {
+      "purpose": "New empty public package adapter; outside originalfreeze",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "original_freeze_sha256": "28d97cd6dd8545bdaa5b6c4b9100903fd295e14342f32419cde73a791d1e9571",
+  "original_identity_sha256": "36076035602ee2cab11af5e777a977409823ad4a11b52eba0c998c853f93e607",
+  "original_snapshot_commit": "d06e1478834519f797d28fc57a1b8bad09c61d67",
+  "schema": "pendulum_arena.canonical16_curated_source.v1",
+  "scope": "Curated byte-exact21Python identity files +runtime manifest +original package/config/license documents. No private Git history, full515file bundle or third-party native binaries."
+}

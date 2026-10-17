@@ -1,0 +1,8 @@
+{
+  "controller_sha256": "ac96f6d3c982d580b97eb7078c5103158f4a74493f3109605dc86aa57c310ade",
+  "design_native_steps": 0,
+  "original_three_profiles_byte_exact": true,
+  "reflection_seam": 150,
+  "previous_qualification_sha256": "db6f172eefd4b372d10a123dd4acce0695eaad6dfa20d94f605ba2295f04672d",
+  "scope": "version2 reflection-augmented family; previous reserved failure is now explicit development"
+}

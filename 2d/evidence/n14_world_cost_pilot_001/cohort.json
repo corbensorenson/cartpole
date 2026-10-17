@@ -1,0 +1,24 @@
+{
+  "seeds": [
+    20261016,
+    20261116,
+    20261117,
+    20261118,
+    20261120,
+    20261121,
+    20261431,
+    20261437
+  ],
+  "noise": [
+    0.0,
+    0.02,
+    0.02,
+    0.02,
+    0.02,
+    0.02,
+    0.02,
+    0.02
+  ],
+  "controller_sha256": "45e576be70b16217e2f0abcecb5c56c52cd70feb5e84386caed1fc30159b4b9c",
+  "scope": "canonical development; no new qualification"
+}

@@ -1,0 +1,15 @@
+{
+  "all_numeric_arrays_byte_exact": {
+    "states": true,
+    "actions": true,
+    "raw_actions": true,
+    "tilts": true,
+    "bank_forecast_0_states": true,
+    "bank_forecast_0_actions": true,
+    "bank_forecast_0_raw_actions": true,
+    "bank_forecast_0_tilts": true
+  },
+  "all19_runtime_source_hashes_exact": true,
+  "additional_native_steps": 14160,
+  "scope": "independent packaged-source reexecution of spent first heldout; not another qualification draw"
+}

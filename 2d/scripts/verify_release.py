@@ -6,6 +6,7 @@ from pathlib import Path
 import subprocess
 import zipfile
 from release_archive import verify_archive
+from staged_files import verify_staged_files
 
 p = argparse.ArgumentParser()
 p.add_argument('--links',type=int,required=True)
@@ -14,18 +15,9 @@ root = Path(__file__).resolve().parents[1]
 checkout = root/'publication'
 manifest = json.loads((checkout/'2d/manifest.json').read_text())
 assert manifest['accepted_swingup_links'] == a.links
-files = list(manifest['files_sha256'])
-queries = ('\n'.join(':2d/'+name for name in files)+'\n').encode()
-data = subprocess.check_output(['git','-C',str(checkout),'cat-file','--batch'],input=queries)
-position = 0
-for name in files:
-    end = data.index(b'\n',position)
-    header = data[position:end].decode().split()
-    assert len(header)==3 and header[1]=='blob',(name,header)
-    size = int(header[2])
-    blob = data[end+1:end+1+size]
-    position = end+size+2
-    assert hashlib.sha256(blob).hexdigest()==manifest['files_sha256'][name],name
+files = manifest['files_sha256']
+staged = verify_staged_files(checkout,{'2d/'+name:digest for name,digest in files.items()})
+assert staged['lfs_files']==len(manifest.get('git_lfs_files',{})),'large evidence must use the declared LFS representation'
 archive = root/f'output/2d-cartpole-{a.links}-link-evidence.zip'
 coverage = verify_archive(archive,manifest)
-print(f'Verified {len(files)} staged blobs and complete archive coverage: {coverage}; no mismatches.')
+print(f'Verified {staged} and complete archive coverage: {coverage}; no mismatches.')

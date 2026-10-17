@@ -26,6 +26,8 @@ p.add_argument('--derivative-order',type=int,choices=[2,4],default=4)
 p.add_argument('--derivative-eps',type=float,default=.001)
 p.add_argument('--linear-solver',choices=['lsmr','augmented'],default='lsmr')
 p.add_argument('--balance-backend',choices=['dare','finite_qr'],default='dare')
+p.add_argument('--eigenvalue-digits',type=int,default=0)
+p.add_argument('--free-terminal',action='store_true')
 a = p.parse_args()
 out = Path(a.out)
 freeze_inputs(out,a)
@@ -38,6 +40,10 @@ xs,us = source['states'].copy(),source['actions'].copy()
 initial,_ = e.reset(seed=20261016,options={'mode':'hanging','angle_noise':0.})
 xs[0] = initial
 H,nv,nx = len(us),e.model.nv,2*e.model.nv
+fixed_terminal = not a.free_terminal
+variable_nodes = H-1 if fixed_terminal else H
+state_variables = variable_nodes*nx
+variable_slice = slice(1,-1) if fixed_terminal else slice(1,None)
 scales = np.r_[[3.,3.],np.full(nv-2,.15),[4.,4.],np.full(nv-2,15.)]
 history = []
 regularization = a.regularization
@@ -63,12 +69,12 @@ for iteration in range(a.iterations):
     stage('native_model_complete',iteration=iteration,defect_value=baseline,max_scaled_defect=maximum)
     if maximum<1e-11:
         break
-    J = shooting_jacobian(e,xs,predicted,models,scales,fix_terminal=True)
+    J = shooting_jacobian(e,xs,predicted,models,scales,fix_terminal=fixed_terminal)
     M = sparse.vstack((J,regularization*sparse.eye(J.shape[1],format='csr')),format='csr')
     rhs = np.r_[-residual.ravel(),np.zeros(J.shape[1])]
     lower,upper = np.full(J.shape[1],-.1),np.full(J.shape[1],.1)
-    lower[(H-1)*nx:] = np.maximum(-.25,(-config.force_limit-us).ravel()/config.force_limit)
-    upper[(H-1)*nx:] = np.minimum(.25,(config.force_limit-us).ravel()/config.force_limit)
+    lower[state_variables:] = np.maximum(-.25,(-config.force_limit-us).ravel()/config.force_limit)
+    upper[state_variables:] = np.minimum(.25,(config.force_limit-us).ravel()/config.force_limit)
     solve_started = time.perf_counter()
     solution,backend,bound_violations = None,'lsmr',None
     if a.linear_solver=='augmented':
@@ -91,9 +97,9 @@ for iteration in range(a.iterations):
     for alpha in (1.,.5,.25,.1,.05,.01,.001):
         if e.native_steps+2*H*config.frame_skip>a.physics_budget:
             break
-        states,actions = apply_shooting_step(e,xs,us,solution.x,scales,alpha,fix_terminal=True)
+        states,actions = apply_shooting_step(e,xs,us,solution.x,scales,alpha,fix_terminal=fixed_terminal)
         errors,_ = shooting_defects(e,states,actions,scales)
-        change = np.array([e.difference(x,y) for x,y in zip(states[1:-1],xs[1:-1])])/scales
+        change = np.array([e.difference(x,y) for x,y in zip(states[variable_slice],xs[variable_slice])])/scales
         du = (actions-us)/config.force_limit
         value = .5*float(np.sum(errors**2))
         merit = value+.5*regularization**2*(float(np.sum(change**2))+float(np.sum(du**2)))
@@ -121,9 +127,11 @@ for iteration in range(a.iterations):
     (out/'checkpoints').mkdir(exist_ok=True)
     np.savez_compressed(out/'checkpoints'/('iteration_'+str(iteration).zfill(3)+'.npz'),
                         states=xs,actions=us,config=json.dumps(asdict(config)))
-np.savez_compressed(out/'shooting_proposal.npz',states=xs,actions=us,config=json.dumps(asdict(config)))
+np.savez_compressed(out/'shooting_proposal.npz',states=xs,actions=us,config=json.dumps(asdict(config)),
+                    fixed_terminal=fixed_terminal)
 stage('final_feedback_design_start',optimizer_iterations=len(history))
-design = balance_design(e,axis_separated=True,value_backend=a.balance_backend)
+design = balance_design(e,axis_separated=True,value_backend=a.balance_backend,
+                        eigenvalue_digits=a.eigenvalue_digits)
 models = linearize_many(e,xs[:-1],us,eps=a.derivative_eps,order=a.derivative_order)
 Q = np.diag(np.r_[[4.,4.],np.full(nv-2,40.),np.full(nv,.05)])
 for j in range(config.n_links):
@@ -149,6 +157,7 @@ if rows[0]['success'] and rows[0]['replay_exact']:
 write_json(out/'summary.json',dict(n_links=config.n_links,
     passes=sum(r['success'] and r['replay_exact'] for r in rows),results=rows,
     design_native_steps=native_design,optimizer_iterations=len(history),
+    fixed_terminal=fixed_terminal,
     last_optimizer_record=history[-1] if history else None,wall_seconds=time.perf_counter()-started,
     scope='simultaneous full-spatial proposals; acceptance only from actual unchanged float32 native episodes'))
 write_json(out/'completed.json',{'status':'completed'})

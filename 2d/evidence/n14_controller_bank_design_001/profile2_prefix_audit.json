@@ -1,0 +1,66 @@
+{
+  "prefix_commands": 1110,
+  "all_pilot_prefixes_byte_exact": true,
+  "results": [
+    {
+      "seed": 20261437,
+      "prefix_states_actions_raw_tilts_byte_exact": true,
+      "cold_exact": true,
+      "tape_sha256": "3f4f404ec589c2800516e35918e79e9899b326426cd23b2be6793174af9b9c6a",
+      "baseline_tape_sha256": "6b14a76a25c0c766ef3f906adbf5b2214a28006b8ae5940ce5b4fd5eb0514081"
+    },
+    {
+      "seed": 20261016,
+      "prefix_states_actions_raw_tilts_byte_exact": true,
+      "cold_exact": true,
+      "tape_sha256": "d5ae67b41214692db1c2a1d563300b3388c689103e51c0dd74aa47277b633f86",
+      "baseline_tape_sha256": "384d8075507bf69c2b99c562993c20ada8d18837c496b0496d5290c877487c9f"
+    },
+    {
+      "seed": 20261116,
+      "prefix_states_actions_raw_tilts_byte_exact": true,
+      "cold_exact": true,
+      "tape_sha256": "628684c80c57e07be77ff239cf18f1bcac2c77b02b4192ac0808af32b828c631",
+      "baseline_tape_sha256": "1a8d138cf83207826d6e295f76e9d936a5b5d63448fdc0963df26ca154cf8e12"
+    },
+    {
+      "seed": 20261117,
+      "prefix_states_actions_raw_tilts_byte_exact": true,
+      "cold_exact": true,
+      "tape_sha256": "b1621d1010ceab2fc1959b6b5203c7330d546d8ac8b44137b1689acee12a9b42",
+      "baseline_tape_sha256": "86939cc18f9837980cc01b3b39da149324519d14178fddd0e263327244f99560"
+    },
+    {
+      "seed": 20261118,
+      "prefix_states_actions_raw_tilts_byte_exact": true,
+      "cold_exact": true,
+      "tape_sha256": "7af0550a4bd05da1294fb146d2fd7c1643bdebc0d69758467aeac318009e7195",
+      "baseline_tape_sha256": "835ace510bec1bf326927227b6692c8b4eb15c202705c0b1c76f78d346a23e0b"
+    },
+    {
+      "seed": 20261120,
+      "prefix_states_actions_raw_tilts_byte_exact": true,
+      "cold_exact": true,
+      "tape_sha256": "0bfca78bbaafa4522e2a563b2f5ee8f825414d825e2d62d0bcc776a1d0c97158",
+      "baseline_tape_sha256": "5da4ad0edc1b3d08895929d288b2ad9e1b0d47ccbe5adfe7cf3911e6afd79918"
+    },
+    {
+      "seed": 20261121,
+      "prefix_states_actions_raw_tilts_byte_exact": true,
+      "cold_exact": true,
+      "tape_sha256": "4c7e3fbf9a33a9b9e574bbe49ea4060abf1f204f7da9df11898c2b34725139f4",
+      "baseline_tape_sha256": "3a8741da4f1bb4f3f00bd4dd64a1e33a9c9419e41babaaa50d2e6c69994395ae"
+    },
+    {
+      "seed": 20261431,
+      "prefix_states_actions_raw_tilts_byte_exact": true,
+      "cold_exact": true,
+      "tape_sha256": "bb4c436bafdb1f78d28a89a6293a3d10fa6dfec3a1ef2a712e4e31d4b958ff8d",
+      "baseline_tape_sha256": "70c8b69b9d47f6687837436583c949fc2bdab1360ceb39c1f9077d51b70dd426"
+    }
+  ],
+  "additional_native_steps": 0,
+  "design_native_steps": 5577040,
+  "pilot_native_steps": 85616,
+  "scope": "all candidate physical prefixes and stored cold proofs; no new episodes"
+}

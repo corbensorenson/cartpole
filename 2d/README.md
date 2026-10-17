@@ -4,15 +4,15 @@ A cart moves over an XY plane, driven by two forces. Every link has a passive,
 unlimited ball joint: it can tilt in both directions and twist about its axis.
 This is a separate benchmark from the one-dimensional cart and hinge chain.
 
-**One- through thirteen-link hanging-start swing-ups are qualified:** 32/32 fresh
+**One- through fourteen-link hanging-start swing-ups are qualified:** 32/32 fresh
 noisy 3D starts at each count, in addition to nominal and development checks.
-Episodes run 30 seconds; the latest thirteen-link controller holds upright for
+Episodes run 30 seconds; the latest fourteen-link controller holds upright for
 5.16 seconds. All delivered-action
 tapes replay exactly. Both cart axes are used. Full-state simulation feedback,
 not a learned policy or a hardware demonstration.
 
 The benchmark permits arbitrary XY cart motion and unrestricted ball joints,
-but does not require a nonplanar nominal swing. The four- through thirteen-link
+but does not require a nonplanar nominal swing. The four- through fourteen-link
 reference swings are essentially planar; Y feedback handles spatial start
 perturbations. This is a controller/reference bias, not a locked simulator axis.
 The independent [spatial freedom audit](https://github.com/corbensorenson/cartpole/tree/master/2d/audits/spatial_freedom_001)
@@ -57,6 +57,9 @@ checks native two-axis motion and includes a controlled six-link XY loop.
 [Full thirteen-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-13-link-v1/2d-cartpole-13-link-swingup.mp4)
 · [Thirteen-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-13-link-v1)
 
+[Full fourteen-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-14-link-v1/2d-cartpole-14-link-swingup.mp4)
+· [Fourteen-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-14-link-v1)
+
 | Milestone | Current evidence | Upright hold |
 |---|---|---|
 | One-link hanging-start swing-up | 32/32 final qualification; full video | 21.74s |
@@ -72,7 +75,8 @@ checks native two-axis motion and includes a controlled six-link XY loop.
 | Eleven-link hanging-start swing-up | 32/32 fresh final qualification; full video | 5.50s |
 | Twelve-link hanging-start swing-up | 32/32 fresh final qualification; full video | 5.50s |
 | Thirteen-link hanging-start swing-up | 32/32 fresh final qualification; full video | 5.16s |
-| Fourteen-link hanging-start swing-up | Next development count | — |
+| Fourteen-link hanging-start swing-up | 32/32 NEW fresh qualification; full video | 5.16s |
+| Fifteen-link hanging-start swing-up | Next development count | — |
 | Near-upright balance, 1–3 links | 12/12 local perturbed starts at each count | — |
 | Near-upright balance, 4 links | 9/12; incomplete, not accepted | — |
 
@@ -89,14 +93,14 @@ $env:OMP_NUM_THREADS='1'
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-Reproduce the frozen thirteen-link controller on its recorded qualification starts:
+Reproduce the frozen fourteen-link controller on its recorded qualification starts:
 
 ```powershell
-.\.venv\Scripts\python.exe -m spatialpole.experiment evaluate --links 13 --route evidence/qualify_n13_001/frozen_route.npz --episodes 32 --seed 20262416 --out output/reproduce_thirteen
-.\.venv\Scripts\python.exe -m spatialpole.experiment video --tape output/reproduce_thirteen/seed20262416.npz --out output/2d-cartpole-thirteen-link.mp4
+.\.venv\Scripts\python.exe -m spatialpole.experiment evaluate --links 14 --route evidence/qualify_n14_002/frozen_route.npz --episodes 32 --seed 20262616 --out output/reproduce_fourteen
+.\.venv\Scripts\python.exe -m spatialpole.experiment video --tape output/reproduce_fourteen/seed20262616.npz --out output/2d-cartpole-fourteen-link.mp4
 ```
 
-Local development uses `output/qualify_n13_001/frozen_route.npz` before packaging.
+Local development uses `output/qualify_n14_002/frozen_route.npz` before packaging.
 Output directories must be new; failed runs are preserved. These are previously
 tested starts, so reproduction does not add independent qualification evidence.
 
@@ -104,7 +108,10 @@ From count13 onward, each ZIP contains complete current source/runtime and all
 new or changed evidence. Unchanged historical raw evidence is retained in
 earlier immutable bundles, linked by URL, size, SHA256 and exact prior manifest
 in `manifest.json`; all historical files remain in the Git checkout. The current
-count reproduces from its ZIP alone. Older examples below require the matching
+count reproduces from its current archives. Fourteen retains all current evidence
+across the primary ZIP and hash-bound supplements; runtime and qualification are
+in the primary. Large Git checkpoints use Git LFS: run `git lfs pull` after
+cloning. Release ZIPs contain the full original bytes, without LFS pointers. Older examples below require the matching
 count's release bundle or the complete checkout. `verify_release.py` also checks
 historical coverage recursively when prior ZIPs are beside the current one.
 
@@ -304,7 +311,7 @@ upright tracking are a600-command prefix of the full1500-command design.
 Measured physical spin and all ball axes remain free. The frozen eleven-link
 first-heldout tape still reproduces byte-for-byte after the synthesis changes.
 
-The current lab has131 passing tests, including thirteen-link native freedoms,
+The thirteen-link release has131 passing tests, including thirteen-link native freedoms,
 world rotation, gauge/observable tracking, material transfer and causal native
 launch admission. The first thirteen donor reaches30/45 development passes;
 an earlier-arrival material donor reaches44/45 at19s preparation. A fixed-1mm
@@ -324,7 +331,78 @@ hardware real-time guarantee. The full video has1501 frames/50fps and includes
 19s preparation,9s swing and2s upright tracking, a550-command prefix of the
 original1500-command design. Fourteen is next. The frozen twelve first-heldout
 tape still reproduces exactly. See the hybrid-document review for the useful
-finite-affine, material-transfer and native-admission ideas.
+finite-affine, material-transfer and native-admission ideas. Thirteen is public
+at source79861ded77cd7c0ca8203bab6621398430c0b2de; all4589 staged hashes,
+direct/prior ZIP coverage and public asset digests/tag verify.
+
+Current lab212 tests include fourteen-link native freedoms and an optional
+high-precision spectrum diagnostic. Ordinary float64 eigenvalues misleadingly
+report an unstable radius for the saved fourteen upright linear design;
+80/120-digit checks of exact input A/B/K agree on stable nativeX/Y radii
+.988501/.988516. Both diagnostic results are retained, and gains/physics stay
+unchanged. This does not establish nonlinear fourteen-link swing-up. Strict
+fourteen transfer passes stored-tape/geometry checks but fails direct control
+at3.66s. Full spatial repair completes20 updates, but its actual baseline fails
+at6.58s with.26s hold. Full affine feedback reaches1.84s, while reflection-
+averaged feedback passes nominalfull30s/24.16s hold. Its prepared full noisy
+gate passes only4/45, so fourteen is unqualified. Physical-cost, timing, offset,
+stronger-hanging and reflection-consistent-model probes retain their failures.
+The tests include independent dense optima, full/block QR agreement and
+unrestricted native reflection motion; no plant axis or joint is projected.
+A moving-target material proposal from the document's pinned external17 source
+has separate fixed/free final-node native repairs. The free-end proposal has
+tiny native gaps; its prepared moving controller passes4/6 reused starts.
+Bounded native action search and redesign around an actual physical reference
+both remain4/6. All selected one-step predictions/reexecutions match native actual
+successors exactly, including final commands. Only geometry/force guesses
+transfer; source gains/physics/results do not. Finite design and execution
+clocks remain separate.
+
+A new axial-quotient planning design matches the per-command reference-frame
+alignment. It removes14 arbitrary axial ORIENTATION phases from the value
+model, retaining all44 native velocities including spin; the actual plant
+still has all88 tangent coordinates and unrestricted ball joints. Analytic
+frame derivatives, native gauge-flow equivalence and an independent condensed
+affine optimum are tested. On the SAME moving reference its pilot improves to
+6/6, followed by43/45 full development passes, every success30s/5.16s hold and
+all cold replays exact. Two noisy starts still fail, so fourteen is unqualified.
+Nine reference offsets per failed launch rescue neither; the original full-state
+law also fails those two starts. Stronger preparation is6/8, including one
+prelaunch failure. Online preparation and physical-reference quotient redesign
+also pass6/8, with the same two remaining failures; neither advances the gate.
+One-step native correction using quotient values, four-command native lookahead
+and full-spin world-coordinate feedback each remain6/8 on the expanded pilot.
+Lookahead retains every candidate path/cost/guard: selected FIRST successors,
+sampled complete native paths and a full nominal reexecution match exactly.
+Its later predicted plain-feedback actions are not claims about later actual
+search actions. A zero-integration diagnostic finds large local prediction
+remainders before the failed captures; it cannot uniquely separate derivative,
+nonlinear/chart and arithmetic effects. All null results and compute are retained.
+Reserved20262516..47 is untouched; no14 release or record is claimed.
+Published thirteen retains its original131-test source and immutable archive/runtime.
+
+A rereview of `corben-marc-hybrid.md` prioritizes feedback-aware repair of the
+entry and short upright tail. A new matched world-tilt/body-rate tracking cost
+on the original moving quotient reference regresses to5/8; the original pilot
+is6/8. A different source16-derived moving reference gives4/8 after native repair;
+an eight-command launch delay and refined input derivatives each remain6/8.
+All actual cold replays are exact. These candidates are retained as failed
+development interventions; the43/45 incumbent stays unchanged. The detailed
+recommendations and boundaries are in `research/hybrid_2d_review.md`.
+
+The next hybrid intervention produces useful new candidates: full spatial
+suffix repairs from two recorded actual entries each rescue their own failed
+start, with every preceding22.2s physical prefix byte-identical. A causal bank
+of the original controller and those two repairs forecasts complete continuations
+from the observed launch and selects the first full pass. It passes8/8 pilot
+starts; selected states/raw forces/delivered forces/tilts match execution through
+the final command, and independent full-policy reruns match all numeric bytes.
+That three-controller bank passes45/45 development but fails its first reserved
+cohort31/32, so fourteen remains unqualified. The failed negative-twist start is
+retained. A new five-profile family adds physical Y-reflections of the two
+spatial suffix laws; it passes9/9 development pilots including that explicitly
+reused failure. Its new full45 gate is in progress. A different untouched32-start
+cohort is required before acceptance; the old cohort cannot become fresh again.
 
 Each experiment freezes source, arguments, runtime and the pre-experiment memo,
 then records optimizer history, states, raw/delivered forces, tilts, counts,
@@ -334,3 +412,31 @@ under that reset distribution; arbitrary disturbances and indefinite balance
 remain untested. MuJoCo 3.3.5 / Python 3.11 / Windows was used for this release.
 
 Physics reference: [MuJoCo computation documentation](https://mujoco.readthedocs.io/en/3.3.5/computation/).
+
+
+## Fourteen-link qualified result
+
+The fixed five-profile controller completes46/46 distinct development starts,
+then32/32 NEW untouched reserved starts20262616..47. Every actual episode lasts
+30s with5.16s strict upright hold, no physics warning and exact cold replay.
+Minimum200Hz plane margin1.134046m; maximum recorded cart coordinate1.865605m.
+The full video is the first heldout episode20262616, not a selected development
+success. The prior three-profile qualification31/32 remains a failed result.
+
+The original moving quotient controller supplies most launches. Two full-spatial
+suffix repairs and their reflected force/value laws supply alternatives from
+route150 onward; all profiles preserve the original first22.2s physical behavior.
+At the observed19.2s launch, owned complete forecasts in fixed order choose the
+first full passing policy. There is no seed lookup, state reset or joint lock.
+All selected states, raw/delivered forces and tilts match actual execution
+byte-for-byte, including command1499. All44 velocity coordinates, including
+physical spin, remain in74D value planning and the full88D native plant.
+
+The9s bridge and finite upright tail execute540 commands of the original700
+command design. Qualification uses462916 inclusive native steps, including all
+forecasts and cold proofs;28 starts select original, one patch431 and three its
+reflection. Separate development exercises the patch437 profile. Current212
+tests cover native spatial freedoms, independent affine/quotient optima,
+reflection, owned forecasts/final transitions and multipart/LFS evidence hashes.
+This is empirical reset-noise performance; no arbitrary-disturbance, indefinite
+balance or hardware20ms-deadline claim is made. The next count to solve is15.

@@ -18,6 +18,27 @@ def lift_planar_state(env,qpos,qvel):
     return out
 
 
+def decode_planar_native_states(env,states):
+    """Decode a reflection-fixed native quaternion reference with explicit winding."""
+    from .symmetry import reflect_state
+    states = np.asarray(states,float)
+    n,nq = env.config.n_links,env.model.nq
+    if states.ndim!=2 or states.shape[1]!=nq+env.model.nv or not len(states) or not np.isfinite(states).all():
+        raise ValueError('finite native reference states required')
+    if any(not np.array_equal(reflect_state(env,x),x) for x in states):
+        raise ValueError('native reference must be reflection-fixed before planar decoding')
+    rate = states[:,nq+3::3]
+    if np.max(np.abs(rate))*env.config.dt>=np.pi/2:
+        raise ValueError('reference angular rates exceed the declared winding-sampling guard')
+    angle = np.unwrap(2*np.arctan2(states[:,4:nq:4],states[:,2:nq:4]),axis=0)
+    anchor = np.r_[np.pi,np.zeros(n-1)]
+    angle += 2*np.pi*np.rint((anchor-angle[0])/(2*np.pi))[None,:]
+    physical = np.zeros((len(states),2*(n+1)))
+    physical[:,0],physical[:,n+1] = states[:,0],states[:,nq]
+    physical[:,1:n+1],physical[:,n+2:] = angle,rate
+    return physical
+
+
 def decode_planar_coordinates(coordinates,source_transform,n_links):
     """Invert the donor's declared physical-relative -> planner map.
 

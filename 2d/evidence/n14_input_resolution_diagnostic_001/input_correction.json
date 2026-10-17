@@ -1,0 +1,9 @@
+{
+  "status": "failed_before_native_queries",
+  "native_steps": 0,
+  "stage": "cache-preflight",
+  "field": "gains",
+  "reason": "raw full-value and transformed quotient gains intentionally differ; shared model reference/cost/balance fields must match instead",
+  "corrected_driver": "scripts/diagnose_input_resolution.py",
+  "rerun": "n14_input_resolution_diagnostic_002"
+}

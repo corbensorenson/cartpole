@@ -1,0 +1,300 @@
+{
+  "controller_sha256": "ac96f6d3c982d580b97eb7078c5103158f4a74493f3109605dc86aa57c310ade",
+  "episodes": 32,
+  "all_selected_suffix_bytes_exact": true,
+  "all_final_successors_checked": true,
+  "results": [
+    {
+      "seed": 20262616,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "bd49692ac571178b42785e907e45c3cbbcc77eba64480e6070bef7c1ac42b6a4"
+    },
+    {
+      "seed": 20262617,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "8bb2364e8ee1bd7f48b71149e8f3145d0fb40ac768ba849c4f84a088365a5d49"
+    },
+    {
+      "seed": 20262618,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "8111833dd9b51142041d1841dbf919e4a002a9c4ff08095e7e7300035c98021b"
+    },
+    {
+      "seed": 20262619,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "5ff71671bb4af5fe1c0b003d62e10927d32aa7aaeb1a35bce3bad9da7b982506"
+    },
+    {
+      "seed": 20262620,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "f9c423d15415ad5decfb253bd4ef3b1cc4c26b389a099aca48988bb5f2b174db"
+    },
+    {
+      "seed": 20262621,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "cd356f5db0a81d549ace455a4059299dd46971f838dd81a72842d63f19e01540"
+    },
+    {
+      "seed": 20262622,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "5c30726f4701ad0f85b5d26f31238d4dc5626c871d53de87ef9713a143ad80c6"
+    },
+    {
+      "seed": 20262623,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "90bfcd07cf71041cb8fe7530a374556d3053b6f4674147383a21ad4a97f453a4"
+    },
+    {
+      "seed": 20262624,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "5cec38fb534eee9b451d47b80ecf4ecdee98e56f72f762a8aab88f4687bdb0eb"
+    },
+    {
+      "seed": 20262625,
+      "selected": 1,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 3144,
+      "tape_sha256": "d15e146bd3e649a6130072513701da63361133087bfd71527b787201318664c4"
+    },
+    {
+      "seed": 20262626,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "367cc8b54d70fe356c5cd21182d154a9f751fb3d575d0bf823270a51cde47920"
+    },
+    {
+      "seed": 20262627,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "255a00a8264229a714157885941936f1212773044e43413c25f3710241738605"
+    },
+    {
+      "seed": 20262628,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "f886cc514307def55566f321429a313d55808b88f6c2d7a32b53e79873a8de3d"
+    },
+    {
+      "seed": 20262629,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "9109281f1e9316e4b311c8c8753a18938ea39be805f5b8e527a5620b58db3039"
+    },
+    {
+      "seed": 20262630,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "faae513319dc8ee9f4a6c26c051d64d1e07a2c4da599c67540f06cc2bda0d25f"
+    },
+    {
+      "seed": 20262631,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "246f40ed6162d821dfea605ae56dd395e4cddfd742b8aac80721c8d758136179"
+    },
+    {
+      "seed": 20262632,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "6e10a2f8b4a1609ff286031a457d072995f8bc16adcb2123f61ece9adf8ada66"
+    },
+    {
+      "seed": 20262633,
+      "selected": 3,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 5288,
+      "tape_sha256": "9b4d799e3f4be422d399d30e5e2512295d75c25b4d6ed47b618876a71ea7d7b1"
+    },
+    {
+      "seed": 20262634,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "9b301447190906e15107bae29fb3fef07bf7f6d1904bf0d6290dc7c831a64aa9"
+    },
+    {
+      "seed": 20262635,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "05604f821f0fcfdd394b2175094bbb81f6c1c38ffa69a27994b51d220192398e"
+    },
+    {
+      "seed": 20262636,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "34d1bd9fce303e46458e832e8fcd3c67301314d138f100a80b2492f7aac983c1"
+    },
+    {
+      "seed": 20262637,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "e50df13e862d42a33bd4cca09d93d3eccc17c90b52efe777526f7e63757ed9ef"
+    },
+    {
+      "seed": 20262638,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "6c3c4ddf26d7e489299b5176e4934b27fe0a4e6a7dd2eb5a1dd8556ad3e87de2"
+    },
+    {
+      "seed": 20262639,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "e4f814296cefbbc12283910cefa259b3e9ee455e6fe196b94e489d0956b79b8a"
+    },
+    {
+      "seed": 20262640,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "86688383e3ac79b0e1a0034d42039439ae9125e8ca2289dc7abf00ca580e35d2"
+    },
+    {
+      "seed": 20262641,
+      "selected": 3,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 4960,
+      "tape_sha256": "675f9f4ce6595545fad6988b0c501d6039e272dcc94d821bafb90c2b11aa012f"
+    },
+    {
+      "seed": 20262642,
+      "selected": 3,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 5044,
+      "tape_sha256": "f5d02e19117ec42c3f05ed2a3b68d15b1ad991e1aaf806e19de2f2d3744d788a"
+    },
+    {
+      "seed": 20262643,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "4640bd61cd2e0eebd724365b2998b4ca0624ca854b04367f22ca6583f48bb322"
+    },
+    {
+      "seed": 20262644,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "d038de032725095c907ef2b3e81667f8e1d89f70559e39fa7a1aeae5c975ccb7"
+    },
+    {
+      "seed": 20262645,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "050d7713184cf8505e2b7caad794dd902e1b50c322130751dfbdedfed1523737"
+    },
+    {
+      "seed": 20262646,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "33a7e5cf3979302527beb4fda2bf822a6c470dddcb129a929b1675d677ab1c07"
+    },
+    {
+      "seed": 20262647,
+      "selected": 0,
+      "admitted": true,
+      "all_selected_suffix_arrays_byte_exact": true,
+      "final_transition_verified": true,
+      "predictor_native_steps": 2160,
+      "tape_sha256": "1e04129cbdbda818f98374cd142dae8d2eea05cae38a5ca4b84bde9c3204effe"
+    }
+  ],
+  "original_inclusive_native_steps": 462916,
+  "audit_rerun_native_steps": 0,
+  "inclusive_native_steps": 462916,
+  "scope": "full conditional forecast/native execution proof, not arbitrary disturbance guarantee"
+}

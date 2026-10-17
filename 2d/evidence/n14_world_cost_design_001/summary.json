@@ -1,0 +1,20 @@
+{
+  "n_links": 14,
+  "design_native_steps": 0,
+  "input_sha256": {
+    "input_route.npz": "3a3f643c4b8af5371c52b6f224393ad2c9c98656b20313ef568ca86274801c17",
+    "input_quotient_design.npz": "2f76a6eb3aa19d9ae164a2aeab071eece9a44075fbe11a59ccb1bb4e63983036",
+    "input_design_controller.npz": "3d81c5c7da04e1c89e9b314e65bf1fef0782ef6f173664a6f2a7f80e8dc15166"
+  },
+  "only_tracking_cost_changed": true,
+  "other_controller_arrays_byte_exact": true,
+  "all_reduced_models_and_defects_exact": true,
+  "full_native_coordinates": 88,
+  "physical_cost_coordinates": 74,
+  "retained_velocity_coordinates": 44,
+  "maximum_cost_cross_reflection_block": 0.0,
+  "maximum_gain": 4504594023.438656,
+  "maximum_gain_change": 836431796.5187469,
+  "controller_sha256": "45e576be70b16217e2f0abcecb5c56c52cd70feb5e84386caed1fc30159b4b9c",
+  "scope": "one fixed physical metric; no actual task or qualification evidence"
+}

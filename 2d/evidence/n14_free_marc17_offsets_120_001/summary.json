@@ -1,0 +1,264 @@
+{
+  "n_links": 14,
+  "passes": 0,
+  "results": [
+    {
+      "profile": 0,
+      "reference_cart_offset": [
+        0.0,
+        0.0
+      ],
+      "max_tilt": 2.8958591541167595,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.0850517235099919,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1192,
+      "native_steps": 928,
+      "baseline_suffix_byte_exact": true
+    },
+    {
+      "profile": 1,
+      "reference_cart_offset": [
+        1e-06,
+        0.0
+      ],
+      "max_tilt": 2.732215114466258,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.0006011352180443907,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1214,
+      "native_steps": 1016,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 2,
+      "reference_cart_offset": [
+        -1e-06,
+        0.0
+      ],
+      "max_tilt": 1.757606436105601,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.06985235008329971,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1223,
+      "native_steps": 1052,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 3,
+      "reference_cart_offset": [
+        0.0,
+        1e-06
+      ],
+      "max_tilt": 2.668391551439892,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.09264476027506685,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1234,
+      "native_steps": 1096,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 4,
+      "reference_cart_offset": [
+        0.0,
+        -1e-06
+      ],
+      "max_tilt": 2.8883187747469745,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.12769691137859418,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1202,
+      "native_steps": 968,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 5,
+      "reference_cart_offset": [
+        1e-05,
+        0.0
+      ],
+      "max_tilt": 3.103238561130036,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.06883939019915175,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1274,
+      "native_steps": 1256,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 6,
+      "reference_cart_offset": [
+        -1e-05,
+        0.0
+      ],
+      "max_tilt": 2.5282168637907203,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.04084967327408684,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1220,
+      "native_steps": 1040,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 7,
+      "reference_cart_offset": [
+        0.0,
+        1e-05
+      ],
+      "max_tilt": 2.214267294526252,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.08962318919453116,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1185,
+      "native_steps": 900,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 8,
+      "reference_cart_offset": [
+        0.0,
+        -1e-05
+      ],
+      "max_tilt": 2.6420068374791565,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.04265122530199594,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1188,
+      "native_steps": 912,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 9,
+      "reference_cart_offset": [
+        0.0001,
+        0.0
+      ],
+      "max_tilt": 2.9696168473538727,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.04617069576605326,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1205,
+      "native_steps": 980,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 10,
+      "reference_cart_offset": [
+        -0.0001,
+        0.0
+      ],
+      "max_tilt": 2.7861533318305387,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.07260682277920472,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1202,
+      "native_steps": 968,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 11,
+      "reference_cart_offset": [
+        0.0,
+        0.0001
+      ],
+      "max_tilt": 3.134693122122094,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.03267574679583207,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1220,
+      "native_steps": 1040,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 12,
+      "reference_cart_offset": [
+        0.0,
+        -0.0001
+      ],
+      "max_tilt": 2.67412399712783,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.10103388502647448,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1264,
+      "native_steps": 1216,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 13,
+      "reference_cart_offset": [
+        0.001,
+        0.0
+      ],
+      "max_tilt": 1.7954703122924285,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.08008339522884667,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1216,
+      "native_steps": 1024,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 14,
+      "reference_cart_offset": [
+        -0.001,
+        0.0
+      ],
+      "max_tilt": 3.000751685509833,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.04191428256027141,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1176,
+      "native_steps": 864,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 15,
+      "reference_cart_offset": [
+        0.0,
+        0.001
+      ],
+      "max_tilt": 2.261665016467462,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.009171357176144479,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1324,
+      "native_steps": 1456,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 16,
+      "reference_cart_offset": [
+        0.0,
+        -0.001
+      ],
+      "max_tilt": 2.5514531364222264,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.14485149898487748,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1203,
+      "native_steps": 972,
+      "baseline_suffix_byte_exact": false
+    }
+  ],
+  "prefix_proof_native_steps": 3840,
+  "inclusive_native_steps": 21528,
+  "claim": "observed-launch native forecast diagnosis on reused development state; no new full episode or qualified count"
+}

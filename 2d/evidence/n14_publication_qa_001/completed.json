@@ -1,0 +1,9 @@
+{
+  "status": "completed",
+  "packaged_tests_passed": 212,
+  "all19_runtime_hashes_match_qualification": true,
+  "packaged_first_heldout_all_numeric_bytes_exact": true,
+  "root_readme_1d_section_byte_unchanged": true,
+  "video_visually_reviewed": true,
+  "additional_packaged_proof_native_steps": 14160
+}

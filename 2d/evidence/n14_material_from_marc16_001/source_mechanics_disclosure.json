@@ -1,0 +1,22 @@
+{
+  "source_only": {
+    "nq": 17,
+    "nv": 17,
+    "actuators": 1,
+    "cart_armature": 0.0005,
+    "total_hinge_damping": 0.015000000000000006,
+    "cart_force_joint_id": 0,
+    "contacts_disabled": true
+  },
+  "target": {
+    "nq": 58,
+    "nv": 44,
+    "actuators": 2,
+    "cart_armature": 0.0,
+    "joint_damping_parameter": 0.0075,
+    "all_joints_unlimited": true,
+    "contacts_disabled": true
+  },
+  "native_steps": 0,
+  "scope": "source parameters disclosed separately; no source mechanics transferred into target"
+}

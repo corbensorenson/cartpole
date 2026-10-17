@@ -1,0 +1,39 @@
+{
+  "n_links": 14,
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 1.8835978978270473,
+      "best_hold_seconds": 8.4,
+      "plane_margin": -0.1415183574025951,
+      "physics_warning": false,
+      "success": false,
+      "steps": 753,
+      "native_steps": 3012,
+      "wall_seconds": 0.49320069999521365,
+      "max_xy": [
+        3.141518357402595,
+        0.8305990790913181
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 1.8835978978270473,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 3012,
+      "policy_metadata": {
+        "policy": "spatial affine feedback",
+        "design_steps": 700,
+        "execution_route_steps": 700,
+        "predictor_native_steps": 0,
+        "max_candidates": 0
+      }
+    }
+  ],
+  "passes": 0,
+  "design_native_steps": 0,
+  "inclusive_native_steps": 6024,
+  "max_feedback_gain": 4405535780.419649,
+  "scope": "reused development only; no reserved14 data"
+}

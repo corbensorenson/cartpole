@@ -1,0 +1,17 @@
+[
+  {
+    "seed": 20261431,
+    "max_local_force_identity_error_N": 3.671577664121628e-08,
+    "max_local_projection_N": 578.9713217771489
+  },
+  {
+    "seed": 20261437,
+    "max_local_force_identity_error_N": 2.033948831581256e-08,
+    "max_local_projection_N": 181.50794933222835
+  },
+  {
+    "seed": 20261435,
+    "max_local_force_identity_error_N": 3.0616421914419004e-08,
+    "max_local_projection_N": 5.945322173109206e-05
+  }
+]

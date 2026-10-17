@@ -1,0 +1,41 @@
+{
+  "video_frames": 1501,
+  "fps": 50.0,
+  "encoded_duration": 30.02,
+  "video_sha256": "cf2f04d2bb1e05f811be5fafe0655b50a70be31d79ffcde9909fa0a6ef8240c7",
+  "preview_frames": 300,
+  "preview_duration_ms": 30000,
+  "preview_sha256": "63833286a4d3805c7bef51f8d560fa6146b610248d8a1a41dfdc72c3f8aededa",
+  "contact_frame_indices": [
+    0,
+    250,
+    500,
+    750,
+    950,
+    960,
+    1000,
+    1100,
+    1200,
+    1242,
+    1350,
+    1500
+  ],
+  "swing_contact_frame_indices": [
+    960,
+    1000,
+    1050,
+    1100,
+    1150,
+    1200,
+    1242,
+    1300,
+    1500
+  ],
+  "visual_review": {
+    "full_episode_and_swing_contact_sheets_reviewed": true,
+    "labels_and_clock_correct": true,
+    "complete_30_second_episode": true,
+    "normal_speed_preview": true,
+    "source": "qualify_n14_002/seed20262616.npz"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "max_normalized_state_change": 5.793291734637829e-12,
+  "max_normalized_force_change": 2.4405227838641963e-11,
+  "tolerance": 1e-08,
+  "scope": "proposal/reference only; actual full spatial states and physics are untouched"
+}

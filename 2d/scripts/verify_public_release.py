@@ -22,8 +22,16 @@ def get(path):
 release = get('/releases/tags/'+tag)
 assert release['html_url']==expected['url'] and not release['draft'] and not release['prerelease']
 assets = {x['name']:x for x in release['assets']}
-assert {x['name'] for x in expected['assets']}=={
-    f'2d-cartpole-{a.links}-link-swingup.mp4',f'2d-cartpole-{a.links}-link-evidence.zip'}
+manifest=json.loads((root/'publication/2d/manifest.json').read_text())
+if manifest['accepted_swingup_links']!=a.links:
+    manifest=json.loads((root/f'publication/2d/manifests/2d-cartpole-{a.links}-link-v1.json').read_text())
+assert manifest['accepted_swingup_links']==a.links
+parts=manifest.get('supplementary_evidence_bundles',[])
+expected_names={f'2d-cartpole-{a.links}-link-swingup.mp4',f'2d-cartpole-{a.links}-link-evidence.zip'}|{p['name'] for p in parts}
+assert {x['name'] for x in expected['assets']}==expected_names
+for part in parts:
+    receipt=next(x for x in expected['assets'] if x['name']==part['name'])
+    assert receipt['sha256']==part['sha256'] and receipt['size']==part['bytes'] and receipt['url']==part['url']
 for item in expected['assets']:
     public = assets[item['name']]
     assert public['state']=='uploaded' and public['size']==item['size']

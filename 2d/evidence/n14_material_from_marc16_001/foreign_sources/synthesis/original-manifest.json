@@ -1,0 +1,787 @@
+{
+  "files": [
+    {
+      "bytes": 10076,
+      "kind": "original_source",
+      "original_commit": "886267f09ce67d7215c166c92e14a0adaca8e34f",
+      "original_path": "src/rage_mill/canonical_benchmark.py",
+      "original_sha256": "4e482f4297e46363cc7c16c8d18624e490b557aa15c1b4a2df79d651dcd64fcf",
+      "path": "original/15/src/rage_mill/canonical_benchmark.py",
+      "sha256": "4e482f4297e46363cc7c16c8d18624e490b557aa15c1b4a2df79d651dcd64fcf"
+    },
+    {
+      "bytes": 5191,
+      "kind": "original_source",
+      "original_commit": "886267f09ce67d7215c166c92e14a0adaca8e34f",
+      "original_path": "src/rage_mill/canonical_dynamics.py",
+      "original_sha256": "989c91b59e1642ef07b268d121ba7a3a9d2a0f3948a7bbbdba8156bdb49a5765",
+      "path": "original/15/src/rage_mill/canonical_dynamics.py",
+      "sha256": "989c91b59e1642ef07b268d121ba7a3a9d2a0f3948a7bbbdba8156bdb49a5765"
+    },
+    {
+      "bytes": 21463,
+      "kind": "original_source",
+      "original_commit": "886267f09ce67d7215c166c92e14a0adaca8e34f",
+      "original_path": "src/rage_mill/canonical_control.py",
+      "original_sha256": "dd4204c6162e665c68d15e8799e0721b1558d62647525114010b43f80886c388",
+      "path": "original/15/src/rage_mill/canonical_control.py",
+      "sha256": "dd4204c6162e665c68d15e8799e0721b1558d62647525114010b43f80886c388"
+    },
+    {
+      "bytes": 4150,
+      "kind": "original_source",
+      "original_commit": "886267f09ce67d7215c166c92e14a0adaca8e34f",
+      "original_path": "src/rage_mill/canonical_campaign.py",
+      "original_sha256": "ac70beea494e3fffd35cf1fa20e47936aa3229d1f6824dbfda665008c3432495",
+      "path": "original/15/src/rage_mill/canonical_campaign.py",
+      "sha256": "ac70beea494e3fffd35cf1fa20e47936aa3229d1f6824dbfda665008c3432495"
+    },
+    {
+      "bytes": 3517,
+      "kind": "original_source",
+      "original_commit": "886267f09ce67d7215c166c92e14a0adaca8e34f",
+      "original_path": "scripts/prepare_canonical_dynamics.py",
+      "original_sha256": "fd218548399595660b7e5ca6cb21a881224edbb606b6568cb2b55efb00f5d98e",
+      "path": "original/15/scripts/prepare_canonical_dynamics.py",
+      "sha256": "fd218548399595660b7e5ca6cb21a881224edbb606b6568cb2b55efb00f5d98e"
+    },
+    {
+      "bytes": 8606,
+      "kind": "original_source",
+      "original_commit": "886267f09ce67d7215c166c92e14a0adaca8e34f",
+      "original_path": "scripts/repair_canonical_reference.py",
+      "original_sha256": "41da403767acddeb4389bfe5583d30478a3515444da7121d608ea4f37d4142a2",
+      "path": "original/15/scripts/repair_canonical_reference.py",
+      "sha256": "41da403767acddeb4389bfe5583d30478a3515444da7121d608ea4f37d4142a2"
+    },
+    {
+      "bytes": 12883,
+      "kind": "original_source",
+      "original_commit": "886267f09ce67d7215c166c92e14a0adaca8e34f",
+      "original_path": "scripts/validate_canonical_candidate.py",
+      "original_sha256": "c759daa702c6c8c64ef36df4012b67e36487d82c83742c5ac0cdba62e2a46be4",
+      "path": "original/15/scripts/validate_canonical_candidate.py",
+      "sha256": "c759daa702c6c8c64ef36df4012b67e36487d82c83742c5ac0cdba62e2a46be4"
+    },
+    {
+      "bytes": 3654,
+      "kind": "original_source",
+      "original_commit": "886267f09ce67d7215c166c92e14a0adaca8e34f",
+      "original_path": "scripts/prepare_canonical_controller.py",
+      "original_sha256": "53114cd584fc07d5edb3543019bb9914a86ffeac6ecd57fabc989ca633da664a",
+      "path": "original/15/scripts/prepare_canonical_controller.py",
+      "sha256": "53114cd584fc07d5edb3543019bb9914a86ffeac6ecd57fabc989ca633da664a"
+    },
+    {
+      "bytes": 1079,
+      "kind": "original_source",
+      "original_commit": "886267f09ce67d7215c166c92e14a0adaca8e34f",
+      "original_path": "LICENSE",
+      "original_sha256": "175868a772d0f8b95bfd02571e6c54368e2c7d7096380c1c7a80992ba2e74dc6",
+      "path": "original/15/LICENSE",
+      "sha256": "175868a772d0f8b95bfd02571e6c54368e2c7d7096380c1c7a80992ba2e74dc6"
+    },
+    {
+      "bytes": 10079,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "src/rage_mill/canonical_benchmark.py",
+      "original_sha256": "4b597725057d041277cd96b893a07c15f810bb96d0675e1c61706416d1859d8b",
+      "path": "original/16/src/rage_mill/canonical_benchmark.py",
+      "sha256": "4b597725057d041277cd96b893a07c15f810bb96d0675e1c61706416d1859d8b"
+    },
+    {
+      "bytes": 5191,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "src/rage_mill/canonical_dynamics.py",
+      "original_sha256": "989c91b59e1642ef07b268d121ba7a3a9d2a0f3948a7bbbdba8156bdb49a5765",
+      "path": "original/16/src/rage_mill/canonical_dynamics.py",
+      "sha256": "989c91b59e1642ef07b268d121ba7a3a9d2a0f3948a7bbbdba8156bdb49a5765"
+    },
+    {
+      "bytes": 9400,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "src/rage_mill/canonical_capture_v2.py",
+      "original_sha256": "d010e070bc0b27b8694f3a59c6403fa9bfb701c8b30b4c710662bb560673162c",
+      "path": "original/16/src/rage_mill/canonical_capture_v2.py",
+      "sha256": "d010e070bc0b27b8694f3a59c6403fa9bfb701c8b30b4c710662bb560673162c"
+    },
+    {
+      "bytes": 4675,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "src/rage_mill/canonical16_trajectory.py",
+      "original_sha256": "97ab15dad55fe77930e4e95ec732f3441269e2dea7ad3d9e29b5c8b250a6628a",
+      "path": "original/16/src/rage_mill/canonical16_trajectory.py",
+      "sha256": "97ab15dad55fe77930e4e95ec732f3441269e2dea7ad3d9e29b5c8b250a6628a"
+    },
+    {
+      "bytes": 5870,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "src/rage_mill/canonical16_orbit.py",
+      "original_sha256": "f2b45224dffef9419a67736163397a2db6aba489267881bb0d5ef22b5b2292f9",
+      "path": "original/16/src/rage_mill/canonical16_orbit.py",
+      "sha256": "f2b45224dffef9419a67736163397a2db6aba489267881bb0d5ef22b5b2292f9"
+    },
+    {
+      "bytes": 1770,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "src/rage_mill/canonical16_dynamic_orbit.py",
+      "original_sha256": "8f7d95e1015dbfe1a4aea606fb93a3bd10a7ac60ce871ce32666e28588b155cc",
+      "path": "original/16/src/rage_mill/canonical16_dynamic_orbit.py",
+      "sha256": "8f7d95e1015dbfe1a4aea606fb93a3bd10a7ac60ce871ce32666e28588b155cc"
+    },
+    {
+      "bytes": 2877,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "src/rage_mill/canonical16_orbit_bridge.py",
+      "original_sha256": "54f95ba9d358755734f80824ce155a341ddfd36e454d572963e89b312b23df87",
+      "path": "original/16/src/rage_mill/canonical16_orbit_bridge.py",
+      "sha256": "54f95ba9d358755734f80824ce155a341ddfd36e454d572963e89b312b23df87"
+    },
+    {
+      "bytes": 3396,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "src/rage_mill/canonical16_controller.py",
+      "original_sha256": "4920ade40cdc34a8da3e36e39dd0dec5aa341aad3964672cacdc2bd3481b6312",
+      "path": "original/16/src/rage_mill/canonical16_controller.py",
+      "sha256": "4920ade40cdc34a8da3e36e39dd0dec5aa341aad3964672cacdc2bd3481b6312"
+    },
+    {
+      "bytes": 917,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "src/rage_mill/canonical16_finite_controller.py",
+      "original_sha256": "2dbeed94e48a539165462bc364628b947b0ab22adceb32cffba89d7a28cb8081",
+      "path": "original/16/src/rage_mill/canonical16_finite_controller.py",
+      "sha256": "2dbeed94e48a539165462bc364628b947b0ab22adceb32cffba89d7a28cb8081"
+    },
+    {
+      "bytes": 4568,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "src/rage_mill/canonical_profile_policy.py",
+      "original_sha256": "f75c17dcd460cf819547f7b566cf96948a72c3e69193d9b98cf562b439830eb6",
+      "path": "original/16/src/rage_mill/canonical_profile_policy.py",
+      "sha256": "f75c17dcd460cf819547f7b566cf96948a72c3e69193d9b98cf562b439830eb6"
+    },
+    {
+      "bytes": 4332,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "scripts/prepare_canonical16_trajectory.py",
+      "original_sha256": "1973a5429d3d0e16ec79e901fc3f39831303010e102207119137c7c373f259a4",
+      "path": "original/16/scripts/prepare_canonical16_trajectory.py",
+      "sha256": "1973a5429d3d0e16ec79e901fc3f39831303010e102207119137c7c373f259a4"
+    },
+    {
+      "bytes": 6267,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "scripts/repair_canonical16_reference_v2.py",
+      "original_sha256": "312d3b35d70cc6d026270164cf9cf6aca9797dfda8d749dd8f0df18a2b1e97d8",
+      "path": "original/16/scripts/repair_canonical16_reference_v2.py",
+      "sha256": "312d3b35d70cc6d026270164cf9cf6aca9797dfda8d749dd8f0df18a2b1e97d8"
+    },
+    {
+      "bytes": 8178,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "scripts/probe_canonical16_dynamic_orbit.py",
+      "original_sha256": "821eed1cc70178c144c4b437a117d4b08fed4dfd2c4f5d0e67972d30f87d29c9",
+      "path": "original/16/scripts/probe_canonical16_dynamic_orbit.py",
+      "sha256": "821eed1cc70178c144c4b437a117d4b08fed4dfd2c4f5d0e67972d30f87d29c9"
+    },
+    {
+      "bytes": 11186,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "scripts/repair_canonical16_orbit_bridge.py",
+      "original_sha256": "99b9368adf439fcd238a9d22d66b12b2730a7fcc8630eca5a4182d7edfdec9df",
+      "path": "original/16/scripts/repair_canonical16_orbit_bridge.py",
+      "sha256": "99b9368adf439fcd238a9d22d66b12b2730a7fcc8630eca5a4182d7edfdec9df"
+    },
+    {
+      "bytes": 11232,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "scripts/repair_canonical16_early_orbit_bridge.py",
+      "original_sha256": "a4244952992c40fd7432b854cb7fe46b65fa66ce385c6b392c41c51995c6c637",
+      "path": "original/16/scripts/repair_canonical16_early_orbit_bridge.py",
+      "sha256": "a4244952992c40fd7432b854cb7fe46b65fa66ce385c6b392c41c51995c6c637"
+    },
+    {
+      "bytes": 6796,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "scripts/probe_canonical16_finite_controller.py",
+      "original_sha256": "8d0455b22b45e2b474d6f4d52a28bd1a1dead26afe66f1732db110383f596fc9",
+      "path": "original/16/scripts/probe_canonical16_finite_controller.py",
+      "sha256": "8d0455b22b45e2b474d6f4d52a28bd1a1dead26afe66f1732db110383f596fc9"
+    },
+    {
+      "bytes": 6259,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "scripts/probe_canonical16_controller.py",
+      "original_sha256": "6f757bbf0dbd3216f33db25c1ff4e6e5041d8ac5afab964789287c87f9f7913f",
+      "path": "original/16/scripts/probe_canonical16_controller.py",
+      "sha256": "6f757bbf0dbd3216f33db25c1ff4e6e5041d8ac5afab964789287c87f9f7913f"
+    },
+    {
+      "bytes": 5276,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "scripts/probe_canonical16_parking.py",
+      "original_sha256": "a1564bf3d91ee8885a4ab2c4c631b2ae911829b718d387f46be1952f14acbe17",
+      "path": "original/16/scripts/probe_canonical16_parking.py",
+      "sha256": "a1564bf3d91ee8885a4ab2c4c631b2ae911829b718d387f46be1952f14acbe17"
+    },
+    {
+      "bytes": 5762,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "scripts/probe_canonical16_settling_costs.py",
+      "original_sha256": "b382fb9f9e640ac51ec1ffe07c18daefd15d855b564dca2079ad848fcf737ccc",
+      "path": "original/16/scripts/probe_canonical16_settling_costs.py",
+      "sha256": "b382fb9f9e640ac51ec1ffe07c18daefd15d855b564dca2079ad848fcf737ccc"
+    },
+    {
+      "bytes": 4070,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "scripts/probe_canonical16_settling_validation.py",
+      "original_sha256": "3d0a9ab5b9b92163a26a42248193731c9753a1b615b119ad1e264a3ee14d4731",
+      "path": "original/16/scripts/probe_canonical16_settling_validation.py",
+      "sha256": "3d0a9ab5b9b92163a26a42248193731c9753a1b615b119ad1e264a3ee14d4731"
+    },
+    {
+      "bytes": 4582,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "scripts/probe_canonical16_finite_capture.py",
+      "original_sha256": "d3ea2a8d2a5b059f657357c1bed0e731ded3e7e6d87a04d693ed2cb7f7469a4d",
+      "path": "original/16/scripts/probe_canonical16_finite_capture.py",
+      "sha256": "d3ea2a8d2a5b059f657357c1bed0e731ded3e7e6d87a04d693ed2cb7f7469a4d"
+    },
+    {
+      "bytes": 1079,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "LICENSE",
+      "original_sha256": "175868a772d0f8b95bfd02571e6c54368e2c7d7096380c1c7a80992ba2e74dc6",
+      "path": "original/16/LICENSE",
+      "sha256": "175868a772d0f8b95bfd02571e6c54368e2c7d7096380c1c7a80992ba2e74dc6"
+    },
+    {
+      "bytes": 3768,
+      "kind": "original_source",
+      "original_commit": "4231c30",
+      "original_path": "configs/canonical16.json",
+      "original_sha256": "ca7c6f0d60a344333e57cd9ebc694033a6c187ae396d6416cec22444c485e677",
+      "path": "original/16/configs/canonical16.json",
+      "sha256": "ca7c6f0d60a344333e57cd9ebc694033a6c187ae396d6416cec22444c485e677"
+    },
+    {
+      "bytes": 13997,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "e334b47835a978c04d035ca1b9d5921558a1b8261855c9650e7a39304e7f3ca9",
+      "original_stage": "independent-capture-gain01",
+      "path": "data/15/design.npz",
+      "role": "selected upright design",
+      "sha256": "e334b47835a978c04d035ca1b9d5921558a1b8261855c9650e7a39304e7f3ca9"
+    },
+    {
+      "bytes": 165833,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "b1d82e5be013756370f15ca845ea01d6efe8fbe6680a25448b296945fa947824",
+      "original_stage": "reference-repair02",
+      "path": "data/15/repaired-reference.npz",
+      "role": "repaired analytic reference",
+      "sha256": "b1d82e5be013756370f15ca845ea01d6efe8fbe6680a25448b296945fa947824"
+    },
+    {
+      "bytes": 176048,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "a2195c2b328d85a8f3d0e840c58266cf8115a4830826ec475d1770e906024cc4",
+      "original_stage": "native-physical-reference01",
+      "path": "data/15/physical-reference.npz",
+      "role": "selected 700-command actual native prefix",
+      "sha256": "a2195c2b328d85a8f3d0e840c58266cf8115a4830826ec475d1770e906024cc4"
+    },
+    {
+      "bytes": 386441,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "2a12428e67fb1b43a3a533fcbc6f12223ddc74d61c9d7d07863ac8b3ab601f13",
+      "original_stage": "reference02-native-value01",
+      "path": "data/15/first-native-pass.npz",
+      "role": "first successful native exact diagnostic",
+      "sha256": "2a12428e67fb1b43a3a533fcbc6f12223ddc74d61c9d7d07863ac8b3ab601f13"
+    },
+    {
+      "bytes": 3275360,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "6e8c6ee17a8c7474ddc0e1cb7789e4bee6d3793d473b390a763236f0eb679b51",
+      "original_stage": "reference02-native-value01",
+      "path": "data/15/first-native-controller.npz",
+      "role": "first native-pass feedback payload",
+      "sha256": "6e8c6ee17a8c7474ddc0e1cb7789e4bee6d3793d473b390a763236f0eb679b51"
+    },
+    {
+      "bytes": 3240873,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "ef7f3e1271f0bb7578c141c4fd122fae68d5cdd37cbdfc15489223664e6380bb",
+      "original_stage": "physical-native-joint2-exact01",
+      "path": "data/15/prototype-controller.npz",
+      "role": "selected candidate02 prototype",
+      "sha256": "ef7f3e1271f0bb7578c141c4fd122fae68d5cdd37cbdfc15489223664e6380bb"
+    },
+    {
+      "bytes": 3245331,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "8514b50ac050ae7e9cd1c8516862042a934635b5a8bc0a3aa0adcf3819f50291",
+      "original_stage": "candidate02",
+      "path": "data/15/released-controller.npz",
+      "role": "published candidate02 feedback/value payload",
+      "sha256": "8514b50ac050ae7e9cd1c8516862042a934635b5a8bc0a3aa0adcf3819f50291"
+    },
+    {
+      "bytes": 2445,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "8443caf8434be4c87c7c079d29fada280fedc0745b6b1d8a25e5320694a237bc",
+      "original_stage": "candidate02",
+      "path": "data/15/policy.json",
+      "role": "published bounded forecast profile parameters",
+      "sha256": "8443caf8434be4c87c7c079d29fada280fedc0745b6b1d8a25e5320694a237bc"
+    },
+    {
+      "bytes": 2886,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "96fe9f9c6b41dd0c15eeae38ab39bc6ff11725b2415831af2ff5acf262ccb223",
+      "original_stage": "parking-costs15-01",
+      "path": "data/15/parking-inputs.npz",
+      "role": "original hanging derivative/input checkpoint",
+      "sha256": "96fe9f9c6b41dd0c15eeae38ab39bc6ff11725b2415831af2ff5acf262ccb223"
+    },
+    {
+      "bytes": 1985180,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "83243065168a146b1ee0c8339c011141f3538f47d581ffd0661fea806bb7148e",
+      "original_stage": "parking-decay15-01",
+      "path": "data/15/parking-alpha12.npz",
+      "role": "selected settling design comparison",
+      "sha256": "83243065168a146b1ee0c8339c011141f3538f47d581ffd0661fea806bb7148e"
+    },
+    {
+      "bytes": 47166,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "68e73af89525c307fb05788f02c1e140be93dbdc47251a419b846e5a1ff30bdf",
+      "original_stage": "probe",
+      "path": "data/16/design.npz",
+      "role": "100-digit upright component rounded to binary64",
+      "sha256": "68e73af89525c307fb05788f02c1e140be93dbdc47251a419b846e5a1ff30bdf"
+    },
+    {
+      "bytes": 16777,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "b3f4e54a62faf831af8925d58db1de9d5bfcbae612b9ed091d029f9c95dfd7ab",
+      "original_stage": "saved-settling-costs01",
+      "path": "data/16/parking-design.npz",
+      "role": "selected angles10 hanging design",
+      "sha256": "b3f4e54a62faf831af8925d58db1de9d5bfcbae612b9ed091d029f9c95dfd7ab"
+    },
+    {
+      "bytes": 118821,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "64d2173bbe693690a1bc5b65a233164504ce15332c20d1eac68ccfbac21cac57",
+      "original_stage": "model",
+      "path": "data/16/lifted14.npz",
+      "role": "own material-coordinate lift of attributed fourteen donor",
+      "sha256": "64d2173bbe693690a1bc5b65a233164504ce15332c20d1eac68ccfbac21cac57"
+    },
+    {
+      "bytes": 189286,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "8982929999d34011958c1b98fda68c1b3fcb447d0d9040cb00b3ca85f32ef38f",
+      "original_stage": "repair",
+      "path": "data/16/base-reference.npz",
+      "role": "static-tail optimizer warm reference",
+      "sha256": "8982929999d34011958c1b98fda68c1b3fcb447d0d9040cb00b3ca85f32ef38f"
+    },
+    {
+      "bytes": 127092,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "ff9f2df225e3339d0c66365372d4faaf72431cce235b023f9717f5ff68fb23a1",
+      "original_stage": "frequency-5",
+      "path": "data/16/orbit5.npz",
+      "role": "selected separately refined five-hertz orbit",
+      "sha256": "ff9f2df225e3339d0c66365372d4faaf72431cce235b023f9717f5ff68fb23a1"
+    },
+    {
+      "bytes": 513683,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "b74bf2ec82fc8739de7e0443877f07d3d8d89d0a15f7fdf87d771c68308daff5",
+      "original_stage": "repair",
+      "path": "data/16/early-reference.npz",
+      "role": "selected 450-command bridge plus 250-command orbit",
+      "sha256": "b74bf2ec82fc8739de7e0443877f07d3d8d89d0a15f7fdf87d771c68308daff5"
+    },
+    {
+      "bytes": 123027,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "11aadf330ddcd7659bb9ade47d2f188968f9baea85b64d91a2c3dbca899d392c",
+      "original_stage": "repair",
+      "path": "data/16/bridge-initializer.npz",
+      "role": "selected bridge initial guess",
+      "sha256": "11aadf330ddcd7659bb9ade47d2f188968f9baea85b64d91a2c3dbca899d392c"
+    },
+    {
+      "bytes": 121998,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "4ffc73e7fcd3ced8e9d3626262171f53e78765c38ee01527867fbaaec0eae083",
+      "original_stage": "repair",
+      "path": "data/16/bridge-raw-solver.npz",
+      "role": "raw selected optimizer output before disclosed boundary replacement",
+      "sha256": "4ffc73e7fcd3ced8e9d3626262171f53e78765c38ee01527867fbaaec0eae083"
+    },
+    {
+      "bytes": 422379,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "d71eec45605803395859c780a965497dcd2fbf78fb8857f908012a4bb5522507",
+      "original_stage": "probe",
+      "path": "data/16/probe07-controller.npz",
+      "role": "original successful 700-command zero-terminal table",
+      "sha256": "d71eec45605803395859c780a965497dcd2fbf78fb8857f908012a4bb5522507"
+    },
+    {
+      "bytes": 408657,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "de5afbb5db053a5094e01bd913bf0f7d2f4b17abd1a2679d3821f341e60ffcdb",
+      "original_stage": "frozen-fixed-controller17s01",
+      "path": "data/16/released-controller.npz",
+      "role": "selected unchanged 650-entry prefix",
+      "sha256": "de5afbb5db053a5094e01bd913bf0f7d2f4b17abd1a2679d3821f341e60ffcdb"
+    },
+    {
+      "bytes": 410290,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "e5bdba54806815b45169540d12766239ae1a58443760c0e045ecbc9b1574d1ea",
+      "original_stage": "probe",
+      "path": "data/16/probe07-exact.npz",
+      "role": "first complete actual sixteen exact diagnostic",
+      "sha256": "e5bdba54806815b45169540d12766239ae1a58443760c0e045ecbc9b1574d1ea"
+    },
+    {
+      "bytes": 334543,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "0ba9ef6e91b244a7da32c23a17a372bbbbe0a55d10f367f121a0eb77cad3071d",
+      "original_stage": "probe",
+      "path": "data/16/original-launch.npz",
+      "role": "actual postparking state used to initialize the bridge",
+      "sha256": "0ba9ef6e91b244a7da32c23a17a372bbbbe0a55d10f367f121a0eb77cad3071d"
+    },
+    {
+      "bytes": 504475,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "9ff8dca235713f7999796daf0dd53e421b4cf2d9ea9b10c1b01b6857fe5a8d94",
+      "original_stage": "repair",
+      "path": "data/16/before-early-reference.npz",
+      "role": "earlier bridge negative predecessor",
+      "sha256": "9ff8dca235713f7999796daf0dd53e421b4cf2d9ea9b10c1b01b6857fe5a8d94"
+    },
+    {
+      "bytes": 307618,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "629ce4d7857e9a38f8b78ef0e1600f6a42de66cf286fe9129eca125a63308b8a",
+      "original_stage": "probe",
+      "path": "data/16/before-early-exact.npz",
+      "role": "earlier bridge failed full episode",
+      "sha256": "629ce4d7857e9a38f8b78ef0e1600f6a42de66cf286fe9129eca125a63308b8a"
+    },
+    {
+      "bytes": 318323,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "4d63eed07cf90140d780d2b6caff8e1cee36f53a26efb24062e0aecabea5daee",
+      "original_stage": "probe",
+      "path": "data/16/noisy-original-failure.npz",
+      "role": "retained failing launch for cart-offset discriminator",
+      "sha256": "4d63eed07cf90140d780d2b6caff8e1cee36f53a26efb24062e0aecabea5daee"
+    },
+    {
+      "bytes": 340979,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "4f031230b61a455efede10544ce6723a179dcf03a8060a1b6748958b6e060848",
+      "original_stage": "probe",
+      "path": "data/16/orbit-local/local-3167310.npz",
+      "role": "retained five-hertz local-support/failure tape",
+      "sha256": "4f031230b61a455efede10544ce6723a179dcf03a8060a1b6748958b6e060848"
+    },
+    {
+      "bytes": 381203,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "586451e275205cb484d93840fde79e540ae2a4d3eeb692647723a37b968bc756",
+      "original_stage": "probe",
+      "path": "data/16/orbit-local/local-3167311.npz",
+      "role": "retained five-hertz local-support/failure tape",
+      "sha256": "586451e275205cb484d93840fde79e540ae2a4d3eeb692647723a37b968bc756"
+    },
+    {
+      "bytes": 26233,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "58e51cb08753ad5d2ecd0684f078b9d10b0d40bc5adeb3221e21d60b6245cede",
+      "original_stage": "probe",
+      "path": "data/16/orbit-local/local-3167312.npz",
+      "role": "retained five-hertz local-support/failure tape",
+      "sha256": "58e51cb08753ad5d2ecd0684f078b9d10b0d40bc5adeb3221e21d60b6245cede"
+    },
+    {
+      "bytes": 37493,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "300a9df5ae8a374592c44754cdff87b6e8c67ccf5ac47e6de8125195063ded57",
+      "original_stage": "probe",
+      "path": "data/16/orbit-local/local-3167313.npz",
+      "role": "retained five-hertz local-support/failure tape",
+      "sha256": "300a9df5ae8a374592c44754cdff87b6e8c67ccf5ac47e6de8125195063ded57"
+    },
+    {
+      "bytes": 120396,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "f1c9094052cee933c56596b6d87ba8a5c4fe66d3a423083191e5d23f55326599",
+      "original_stage": "frequency-2.5",
+      "path": "data/16/orbit-2.5.npz",
+      "role": "unselected frequency comparison",
+      "sha256": "f1c9094052cee933c56596b6d87ba8a5c4fe66d3a423083191e5d23f55326599"
+    },
+    {
+      "bytes": 123111,
+      "kind": "original_numeric_artifact",
+      "original_sha256": "701e2dc21b2eaa1eec6ba4a10586b3c42a95506d2f760ad4966bae43ce930019",
+      "original_stage": "frequency-6.25",
+      "path": "data/16/orbit-6.25.npz",
+      "role": "unselected frequency comparison",
+      "sha256": "701e2dc21b2eaa1eec6ba4a10586b3c42a95506d2f760ad4966bae43ce930019"
+    },
+    {
+      "bytes": 1011,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "e05e21bf7d193ae5d55cbd03de1822dd7891617d5d736d0af3b7082fe5901192",
+      "original_stage": "reference-repair02/receipt.json",
+      "path": "evidence/15/reference-repair02--receipt.json",
+      "sha256": "99717b6011a6f197b8e61f606a6d0aa2e8ec806ead6ed09cbb2efeac19f22dd1"
+    },
+    {
+      "bytes": 1606,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "640c308c963aedb31c1b03d783767fda731e35f18f0f6bc7e0e3619e5103225a",
+      "original_stage": "reference02-native-value01/receipt.json",
+      "path": "evidence/15/reference02-native-value01--receipt.json",
+      "sha256": "9cefca70e69fcd01a151924b6fc033435875f64dedefc5b7517d797052ea6404"
+    },
+    {
+      "bytes": 635,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "51e91bda592c5516aa5f6b0d880999e182ccf4550e1af3248306a8d19b8a67eb",
+      "original_stage": "native-physical-reference01/receipt.json",
+      "path": "evidence/15/native-physical-reference01--receipt.json",
+      "sha256": "5f7b7a38b5465c918491607e2e00593d5bd358c2d437e85880388dd63a89ab42"
+    },
+    {
+      "bytes": 1724,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "999f18082348f01264c700cd836b34205ce997cccdc3fb5f1d6f563d25e7ba6f",
+      "original_stage": "physical-native-joint2-exact01/receipt.json",
+      "path": "evidence/15/physical-native-joint2-exact01--receipt.json",
+      "sha256": "2b86422a4ff8491f0c59f38b73ec7e464f18c199f8afa33d10ecd222788ef834"
+    },
+    {
+      "bytes": 1134,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "f200388e34b5deb918c2b44bd5b2e2bafd6ed17ab100f07fa2471fd4aacd9ab0",
+      "original_stage": "candidate02/provenance.json",
+      "path": "evidence/15/candidate02--provenance.json",
+      "sha256": "d8f102a3bca78492de6edb6154b6329a1d1aaa3a7fd6e16433f94358460c2d7b"
+    },
+    {
+      "bytes": 8727,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "7a2a257d08237d7408459769d27a3e47f05fc054ded27383aed0c88b0a7cadbd",
+      "original_stage": "parking-costs15-01/receipt.json",
+      "path": "evidence/15/parking-costs15-01--receipt.json",
+      "sha256": "a87538b0b1ccf9c20e9ec6cef810052298bc1a521f7c3797bef6a2d249483beb"
+    },
+    {
+      "bytes": 14285,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "66c9935e0401ee346c9a81b6a36b2f2bc1c61bb492770d4175942c03da4a9235",
+      "original_stage": "parking-decay15-01/receipt.json",
+      "path": "evidence/15/parking-decay15-01--receipt.json",
+      "sha256": "405a55618e3bb486c13dae3805f87f90621269f7a5057dc084845850827c1da7"
+    },
+    {
+      "bytes": 2566,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "8167034e4b6153c355965dca45f2f13ddecb037951f9439dcb87a490d409ebf9",
+      "original_stage": "planning-model04/receipt.json",
+      "path": "evidence/15/planning-model04--receipt.json",
+      "sha256": "88fc9216d6c0db1bc280edb75bdbcf606a7d69299fc17d943e4adfb8b5e1d17c"
+    },
+    {
+      "bytes": 10820,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "f1d18d37b60ad1b8782fd67c95e3a444ef7106745d3a9e8070a67015b3bc99ad",
+      "original_stage": "fast-bent-orbit-discriminator-prepared01/probe/receipt.json",
+      "path": "evidence/16/fast-bent-orbit-discriminator-prepared01--probe--receipt.json",
+      "sha256": "c04d11390247ca9efe917c71ffa66fb27db3db6d434bf1226065d1d710d989be"
+    },
+    {
+      "bytes": 3103,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "f582de2dc53d07ecf12fc88749bae976b8c6bd7ba5a382bc83f26010c536542d",
+      "original_stage": "early-orbit-bridge-repair-prepared01/repair/receipt.json",
+      "path": "evidence/16/early-orbit-bridge-repair-prepared01--repair--receipt.json",
+      "sha256": "740cc2b8cdbf0c4b38e5cd1ac4515b0c7a0b9aaee6583f69ccb7bcda05fe1c12"
+    },
+    {
+      "bytes": 3041,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "08d535b773fe69a7a479f038ace60300167c5c1435f2bad01c74f46fe3d2173f",
+      "original_stage": "orbit-bridge-repair-prepared01/repair/receipt.json",
+      "path": "evidence/16/orbit-bridge-repair-prepared01--repair--receipt.json",
+      "sha256": "b76ae6651dced583d4b48881b5312556aed3707e0e51f7712ce42f46f6d063fc"
+    },
+    {
+      "bytes": 1100,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "68592c605613fad6e206b660eb13a9be0a47f641962877d20eb9dc2aae3000db",
+      "original_stage": "reference-repair-prepared02/repair/receipt.json",
+      "path": "evidence/16/reference-repair-prepared02--repair--receipt.json",
+      "sha256": "feee2451853cece19e25811cd705beea947242210045900191571627d381c86b"
+    },
+    {
+      "bytes": 1929,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "58f03ea3459d66231215273eb39ed3082b5d1b8c2f9ec6023933c2558e2aea37",
+      "original_stage": "controller-diagnostic-prepared03/probe/receipt.json",
+      "path": "evidence/16/controller-diagnostic-prepared03--probe--receipt.json",
+      "sha256": "51134c2f7e9b3812dc3720a14197f7ae001c7d7ff1288a4e80a668a30bb640f7"
+    },
+    {
+      "bytes": 1930,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "4efadce55cd5311b6112216d93e32db6cb02f5b754281a36fc4c439a211b7bc6",
+      "original_stage": "controller-diagnostic-prepared06/probe/receipt.json",
+      "path": "evidence/16/controller-diagnostic-prepared06--probe--receipt.json",
+      "sha256": "862ec174ae6ce7325d6953d991ce0bc430d7f7f9da08f1d0cad7c5e5879153d6"
+    },
+    {
+      "bytes": 1927,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "8ac8ba81337d1d08b32fceebff88a3763a9b6652010262f9937fc347936a390f",
+      "original_stage": "controller-diagnostic-prepared07/probe/receipt.json",
+      "path": "evidence/16/controller-diagnostic-prepared07--probe--receipt.json",
+      "sha256": "eac5c5e18c7975bb77c1a4970ef9bd2a97ca5f5fdc64a7ee86e9fea102f7c8cd"
+    },
+    {
+      "bytes": 32030,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "4326578b2deddb4b4a2507ef419f3ece1b7dc23627b2e19eb413008e59b33c86",
+      "original_stage": "saved-settling-costs01/receipt.json",
+      "path": "evidence/16/saved-settling-costs01--receipt.json",
+      "sha256": "af1ac194bad2abe4d1eb77eeb8b0793794f7b2fc300beb6d48c61e4b1c382583"
+    },
+    {
+      "bytes": 13904,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "a4c03c59993c971eb75d325e1f53f991259058c3de9415b5ed34dfd89df8b039",
+      "original_stage": "hanging-parking01/receipt.json",
+      "path": "evidence/16/hanging-parking01--receipt.json",
+      "sha256": "53833e64395df0ceb3f97a2e1bad1e4b3a22e87cf604683ab35b3ad08aceae00"
+    },
+    {
+      "bytes": 6936,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "7ab56197bb0d34c9e333e25a5c0e55db6b39cb9a1562411ea0aa9db2a7923436",
+      "original_stage": "controller-noisy10-original-prepared01/probe/receipt.json",
+      "path": "evidence/16/controller-noisy10-original-prepared01--probe--receipt.json",
+      "sha256": "173dff2e56d68bd7aa0f0df581862c9805682fafd811f8e79ad04a8689d03abd"
+    },
+    {
+      "bytes": 39385,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "c2aa6283faf29756dfc77f4c9f95269038b1b97e78121e1e2f2b2246265066f6",
+      "original_stage": "parking-timing-discriminator-prepared01/result/receipt.json",
+      "path": "evidence/16/parking-timing-discriminator-prepared01--result--receipt.json",
+      "sha256": "8865b14e76761e8b6b46fb9e7584a99fc4611c0a486d8258a5df4a383bcf6000"
+    },
+    {
+      "bytes": 14020,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "b7a8cf74fd7a55b7a7357bd0eebf4fb338fb94ca08530b9d68ffec6d37fa8cdd",
+      "original_stage": "finite-capture01/receipt.json",
+      "path": "evidence/16/finite-capture01--receipt.json",
+      "sha256": "72ba18ac53c4a5d0b3b514908cf8693c970673a05851222530907b4f221abade"
+    },
+    {
+      "bytes": 65724,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "876acbf989ba0f0ae66fb58892c0655bb8b61e6cb7bb8003157d9765b1e89f52",
+      "path": "evidence/16/fast-bent-orbit-discriminator-prepared01--completion.json",
+      "sha256": "f88cc0580935e5b9b4d47d4bb96939b308e0815eecb38c758e880934a94f0d45"
+    },
+    {
+      "bytes": 65064,
+      "kind": "portable_historical_metadata",
+      "original_sha256": "8e7854fbf21b58d3bbfd4afa207bf59122f7c6dfd0dbcf1097786aa382a23f8b",
+      "path": "evidence/16/controller-diagnostic-prepared03--completion.json",
+      "sha256": "0c1c0cd9764ba76ea04f9b4b010dca629e5c7c03cab0d97cc20e8e662d3972d0"
+    },
+    {
+      "bytes": 7106,
+      "kind": "portable_historical_commands",
+      "path": "evidence/16/original-commands.json",
+      "sha256": "2ca44ae2e807f6b43ae320b31a5a027b38e4b10d2990adba8a1adfc524a773fb"
+    },
+    {
+      "bytes": 862,
+      "kind": "attributed_download_manifest",
+      "path": "upstream-inputs.json",
+      "sha256": "42934ba32a312f363a1c8476dc97ba46378b96a2e734f2cf8a15fb629060ea1f"
+    },
+    {
+      "bytes": 4792789,
+      "kind": "new_public_derivative_checkpoint",
+      "path": "data/15/derivatives.npz",
+      "role": "Evaluated from the original selected derivative provider after qualification",
+      "sha256": "22176a81448758d4202baac02f5ad2f9dc4b5ae5d113053a0e8bb50908e5acbd"
+    },
+    {
+      "bytes": 868,
+      "kind": "new_public_derivative_checkpoint",
+      "path": "data/15/derivatives.json",
+      "role": "Evaluated from the original selected derivative provider after qualification",
+      "sha256": "bdb4bbddb38cc347da0cb7e08384d8d2de5af1a5c8e0482effa13ed79d4d27cf"
+    },
+    {
+      "bytes": 4531976,
+      "kind": "new_public_derivative_checkpoint",
+      "path": "data/16/derivatives.npz",
+      "role": "Evaluated from the original selected derivative provider after qualification",
+      "sha256": "bdff6256e0b5258537b55889da5c11eb8654b554d99b28f231416b7c7d732159"
+    },
+    {
+      "bytes": 865,
+      "kind": "new_public_derivative_checkpoint",
+      "path": "data/16/derivatives.json",
+      "role": "Evaluated from the original selected derivative provider after qualification",
+      "sha256": "fd2358f75d0d256d01ffe45170d4982670cc2c0df8e14392b649506da2018523"
+    }
+  ],
+  "note": "Original source/numeric rows are byte-preserved. Public adapters and portable metadata are new.",
+  "schema": "pendulum-arena.synthesis-export.v1"
+}

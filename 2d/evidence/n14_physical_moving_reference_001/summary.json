@@ -1,0 +1,13 @@
+{
+  "n_links": 14,
+  "commands": 700,
+  "swing_steps": 450,
+  "source_tape_sha256": "13376fbb5add98f891c4a65ed69452c88d2e596416aacde070218475fb627523",
+  "source_controller_sha256": "c9ac51484dbc11dc15eb28cd3e3d4699029bd3ae405940ea71e85486f001615d",
+  "physical_reference_sha256": "14a875460584b58f6d0aee319e7e21226d6c3c42a9e19b5dec96353c855c75a1",
+  "native_replay_exact": true,
+  "maximum_reference_defect": 0.0,
+  "native_steps": 2800,
+  "minimum_substep_margin": 1.1340464506497272,
+  "scope": "actual prefix only; no implication that source episode or redesigned controller passes"
+}

@@ -25,6 +25,70 @@ def reflect_state(env,state):
     return out
 
 
+def reflect_tracking_suffix(env,payload,start=0):
+    """Reflect a reference/law, preserving the earlier literal coefficient prefix."""
+    force=np.array([1.,-1.]);signs=reflection_signs(env)
+    fields=('states','actions','feed','gains','roots','residuals')
+    result={k:np.array(payload[k],copy=True) for k in fields}
+    if not 0<=start<len(result['actions']):
+        raise ValueError('reflection seam must lie in the design')
+    result['states'][start:]=[reflect_state(env,x) for x in result['states'][start:]]
+    for key in ('actions','feed'):
+        result[key][start:]*=force
+    result['gains'][start:]*=force[None,:,None]*signs[None,None,:]
+    result['roots'][start:]*=signs[None,None,:]
+    return result
+
+
+def reflection_average_feedback(env,states,actions,gains,feed):
+    """Average the fitted force law under Y reflection; never edit the plant."""
+    states,actions,gains,feed = [np.asarray(x,float) for x in (states,actions,gains,feed)]
+    H,nx = len(actions),2*env.model.nv
+    if (states.shape!=(H+1,env.model.nq+env.model.nv) or actions.shape!=(H,2)
+            or gains.shape!=(H,2,nx) or feed.shape!=(H,2)
+            or not all(np.isfinite(x).all() for x in (states,actions,gains,feed))):
+        raise ValueError('finite compatible affine reference/feedback arrays required')
+    if np.any(actions[:,1]!=0) or any(not np.array_equal(reflect_state(env,x),x) for x in states):
+        raise ValueError('reflection averaging requires a reflection-fixed reference')
+    parity = np.array([1.,-1.])[:,None]*reflection_signs(env)[None,:]
+    new_gains = np.where(parity[None,:,:]>0,gains,0.)
+    new_feed = feed.copy()
+    new_feed[:,1] = 0.
+    return new_gains,new_feed,dict(
+        max_gain_change=float(np.max(np.abs(new_gains-gains))),
+        max_feed_change=float(np.max(np.abs(new_feed-feed))),
+        scope='reflection-averaged affine force law only; all spatial physics and observed states retained')
+
+
+def project_reflection_models(models,defects,signs,scales,force_limit=80.,tolerance=1e-8):
+    """Guarded symmetry denoising of planning models; no native flow is edited."""
+    signs,scales,defects = [np.asarray(x,float) for x in (signs,scales,defects)]
+    nx = len(signs)
+    if (scales.shape!=(nx,) or np.any(scales<=0) or not np.isfinite(scales).all()
+            or not np.isin(signs,[-1.,1.]).all() or defects.shape!=(len(models),nx)
+            or not np.isfinite(defects).all() or not np.isfinite(tolerance) or tolerance<=0
+            or not np.isfinite(force_limit) or force_limit<=0):
+        raise ValueError('invalid reflection model dimensions/scales')
+    keep_A = signs[:,None]*signs[None,:]>0
+    keep_B = signs[:,None]*np.array([1.,-1.])[None,:]>0
+    projected,max_A,max_B = [],0.,0.
+    for A,B in models:
+        A,B = np.asarray(A,float),np.asarray(B,float)
+        if A.shape!=(nx,nx) or B.shape!=(nx,2) or not np.isfinite(A).all() or not np.isfinite(B).all():
+            raise ValueError('invalid native planning model')
+        pa,pb = np.where(keep_A,A,0.),np.where(keep_B,B,0.)
+        max_A = max(max_A,float(np.max(np.abs(A-pa)*scales[None,:]/scales[:,None])))
+        max_B = max(max_B,float(np.max(np.abs(B-pb)*force_limit/scales[:,None])))
+        projected.append((pa,pb))
+    pd = np.where(signs[None,:]>0,defects,0.)
+    max_d = float(np.max(np.abs(defects-pd)/scales[None,:]))
+    if max(max_A,max_B,max_d)>tolerance:
+        raise ValueError('reflection model projection exceeds declared tolerance')
+    return projected,pd,dict(max_normalized_A_change=max_A,max_normalized_B_change=max_B,
+        max_normalized_defect_change=max_d,tolerance=tolerance,state_coordinates=nx,
+        scope='local planning approximation only; actual native spatial dynamics unchanged')
+
+
 def clean_planar_reference(env,states,actions,tolerance=1e-8):
     """Remove tiny off-plane proposal components; reject substantive changes.
 

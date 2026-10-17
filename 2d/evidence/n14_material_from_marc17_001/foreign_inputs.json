@@ -1,0 +1,49 @@
+{
+  "original": "D:\\ChatGPT\\cartpole\\research\\external\\neuralyogi_20261016\\arena_update_45326b0\\benchmark\\canonical17\\candidate02",
+  "files": {
+    "metadata/identity.json": {
+      "sha256": "61993d118c341001ef7973fce77a200f85dd86588b78919bc03d629e09c95268",
+      "bytes": 18682,
+      "manifest_bound": true
+    },
+    "payload/controller.npz": {
+      "sha256": "715ef60348c931f3ffa34b2854c1c8d3f7b2d9bb7e7d5cd4df234dc14af95253",
+      "bytes": 4793542,
+      "manifest_bound": true
+    },
+    "payload/configuration.json": {
+      "sha256": "a224bf61eb74ce77d202c7ab0493854557122c87416c1f264af36cb97ca21011",
+      "bytes": 9512,
+      "manifest_bound": true
+    },
+    "payload/model.xml": {
+      "sha256": "6850e9194902d5a03f9e209f2449f5d3a92310524723eb1bc8b8f5c02b7f483a",
+      "bytes": 4851,
+      "manifest_bound": true
+    },
+    "provenance/original/033-b7471fb925f4-reference.npz": {
+      "sha256": "b7471fb925f474c68b7a6dafc6002a90a7902362cebbcda6f342c60d2c68966e",
+      "bytes": 439676,
+      "manifest_bound": true
+    },
+    "provenance/original/031-b37f09e5f8a0-native-value-design02.json": {
+      "sha256": "b37f09e5f8a096406ce312711e03be48a59e73c66d3e301b281703fad1e2cdfc",
+      "bytes": 4467,
+      "manifest_bound": true
+    },
+    "LICENSE": {
+      "sha256": "175868a772d0f8b95bfd02571e6c54368e2c7d7096380c1c7a80992ba2e74dc6",
+      "bytes": 1079,
+      "manifest_bound": false
+    },
+    "README.md": {
+      "sha256": "afb28e75d99b21c7f8ff1bc38028a4639984cd742c1032229c2c7d4c056a4931",
+      "bytes": 6918,
+      "manifest_bound": false
+    }
+  },
+  "manifest_sha256": "e75eb97379ebbb7be95482e3cc71a74496a556bcf035a343dc7512fe12903a7e",
+  "credit": "Marc / Rage Industries, MIT; external 1D geometric proposal only",
+  "source_commit": "45326b078c54fff1265f5dfa4d48408a74ca4a6c",
+  "source_url": "https://github.com/marctheshark3/pendulum-arena/tree/45326b078c54fff1265f5dfa4d48408a74ca4a6c/benchmark/canonical17/candidate02"
+}

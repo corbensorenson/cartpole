@@ -1,0 +1,11 @@
+{
+  "episodes": 1,
+  "selected_profiles": {
+    "0": 1
+  },
+  "all_selected_forecasts_byte_exact": true,
+  "predictor_native_steps": 4400,
+  "inclusive_native_steps": 16400,
+  "budget": 16400,
+  "scope": "causal model forecasts; actual full hanging episodes and independent replay separately retained"
+}

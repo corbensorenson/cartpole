@@ -1,0 +1,144 @@
+{
+  "n_links": 14,
+  "passes": 0,
+  "results": [
+    {
+      "profile": 0,
+      "reference_cart_offset": [
+        0.0,
+        0.0
+      ],
+      "max_tilt": 0.9411998946922063,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.01003848869595858,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1241,
+      "native_steps": 1124,
+      "baseline_suffix_byte_exact": true
+    },
+    {
+      "profile": 1,
+      "reference_cart_offset": [
+        0.0001,
+        0.0
+      ],
+      "max_tilt": 2.6433349712137346,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.03282132461410603,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1252,
+      "native_steps": 1168,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 2,
+      "reference_cart_offset": [
+        -0.0001,
+        0.0
+      ],
+      "max_tilt": 2.783961702124258,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.066676723925708,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1202,
+      "native_steps": 968,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 3,
+      "reference_cart_offset": [
+        0.0,
+        0.0001
+      ],
+      "max_tilt": 2.8182214934669982,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.012943500622462079,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1215,
+      "native_steps": 1020,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 4,
+      "reference_cart_offset": [
+        0.0,
+        -0.0001
+      ],
+      "max_tilt": 2.458455658169056,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.06555522257203927,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1229,
+      "native_steps": 1076,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 5,
+      "reference_cart_offset": [
+        0.001,
+        0.0
+      ],
+      "max_tilt": 2.8429728693550573,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.05180006353231725,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1198,
+      "native_steps": 952,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 6,
+      "reference_cart_offset": [
+        -0.001,
+        0.0
+      ],
+      "max_tilt": 2.9738686855615617,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.02406226486289942,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1183,
+      "native_steps": 892,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 7,
+      "reference_cart_offset": [
+        0.0,
+        0.001
+      ],
+      "max_tilt": 2.098946041736527,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.05706253988914378,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1202,
+      "native_steps": 968,
+      "baseline_suffix_byte_exact": false
+    },
+    {
+      "profile": 8,
+      "reference_cart_offset": [
+        0.0,
+        -0.001
+      ],
+      "max_tilt": 2.6993862724428177,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.07934218804491344,
+      "physics_warning": false,
+      "success": false,
+      "steps": 1262,
+      "native_steps": 1208,
+      "baseline_suffix_byte_exact": false
+    }
+  ],
+  "prefix_proof_native_steps": 3840,
+  "inclusive_native_steps": 13216,
+  "claim": "observed-launch native forecast diagnosis on reused development state; no new full episode or qualified count"
+}

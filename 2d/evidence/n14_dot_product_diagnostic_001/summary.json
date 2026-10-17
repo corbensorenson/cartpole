@@ -1,0 +1,492 @@
+{
+  "n_links": 14,
+  "results": [
+    {
+      "tape": "input_seed20261116.npz",
+      "step": 950,
+      "original_raw": [
+        21.389132220648687,
+        0.05723064800909898
+      ],
+      "quaternion_raw": [
+        21.389132220648687,
+        0.05723064800909969
+      ],
+      "maximum_raw_change": 7.077671781985373e-16,
+      "original_delivered": [
+        21.389131546020508,
+        0.05723064765334129
+      ],
+      "quaternion_delivered": [
+        21.389131546020508,
+        0.05723064765334129
+      ],
+      "maximum_delivered_change": 0.0,
+      "changed_delivered_components": 0,
+      "baseline_raw_byte_exact": true,
+      "fsum_raw": [
+        21.389132220648687,
+        0.05723064800909898
+      ],
+      "mp_raw": [
+        21.389132220648683,
+        0.05723064800909898
+      ],
+      "mp_maximum_raw_change": 3.552713678800501e-15,
+      "mp_delivered": [
+        21.389131546020508,
+        0.05723064765334129
+      ],
+      "mp_maximum_delivered_change": 0.0,
+      "mp_changed_bits": 0,
+      "mp_changed_values": 0
+    },
+    {
+      "tape": "input_seed20261116.npz",
+      "step": 1000,
+      "original_raw": [
+        0.6568259758832764,
+        -0.0008555194198044298
+      ],
+      "quaternion_raw": [
+        0.6568259758832766,
+        -0.0008555194198039406
+      ],
+      "maximum_raw_change": 4.891920202254596e-16,
+      "original_delivered": [
+        0.6568259596824646,
+        -0.0008555194362998009
+      ],
+      "quaternion_delivered": [
+        0.6568259596824646,
+        -0.0008555194362998009
+      ],
+      "maximum_delivered_change": 0.0,
+      "changed_delivered_components": 0,
+      "baseline_raw_byte_exact": true,
+      "fsum_raw": [
+        0.6568259758832764,
+        -0.0008555194198044397
+      ],
+      "mp_raw": [
+        0.6568259758832764,
+        -0.0008555194198044385
+      ],
+      "mp_maximum_raw_change": 8.673617379884035e-18,
+      "mp_delivered": [
+        0.6568259596824646,
+        -0.0008555194362998009
+      ],
+      "mp_maximum_delivered_change": 0.0,
+      "mp_changed_bits": 0,
+      "mp_changed_values": 0
+    },
+    {
+      "tape": "input_seed20261116.npz",
+      "step": 1050,
+      "original_raw": [
+        -8.946287960243083,
+        0.00010363946015302938
+      ],
+      "quaternion_raw": [
+        -8.946287960243083,
+        0.00010363946015211345
+      ],
+      "maximum_raw_change": 9.159339953157541e-16,
+      "original_delivered": [
+        -8.946288108825684,
+        0.00010363946057623252
+      ],
+      "quaternion_delivered": [
+        -8.946288108825684,
+        0.00010363946057623252
+      ],
+      "maximum_delivered_change": 0.0,
+      "changed_delivered_components": 0,
+      "baseline_raw_byte_exact": true,
+      "fsum_raw": [
+        -8.946287960243083,
+        0.00010363946015302207
+      ],
+      "mp_raw": [
+        -8.946287960243083,
+        0.00010363946015302198
+      ],
+      "mp_maximum_raw_change": 7.399679827213568e-18,
+      "mp_delivered": [
+        -8.946288108825684,
+        0.00010363946057623252
+      ],
+      "mp_maximum_delivered_change": 0.0,
+      "mp_changed_bits": 0,
+      "mp_changed_values": 0
+    },
+    {
+      "tape": "input_seed20261116.npz",
+      "step": 1100,
+      "original_raw": [
+        14.374387797272826,
+        0.0007264689883328401
+      ],
+      "quaternion_raw": [
+        14.374387797272192,
+        0.000726468963009097
+      ],
+      "maximum_raw_change": 2.532374310248997e-11,
+      "original_delivered": [
+        14.374387741088867,
+        0.0007264689775183797
+      ],
+      "quaternion_delivered": [
+        14.374387741088867,
+        0.0007264689775183797
+      ],
+      "maximum_delivered_change": 0.0,
+      "changed_delivered_components": 0,
+      "baseline_raw_byte_exact": true,
+      "fsum_raw": [
+        14.374387797272826,
+        0.00072646898828076
+      ],
+      "mp_raw": [
+        14.374387797272826,
+        0.0007264689882684716
+      ],
+      "mp_maximum_raw_change": 6.436854087937816e-14,
+      "mp_delivered": [
+        14.374387741088867,
+        0.0007264689775183797
+      ],
+      "mp_maximum_delivered_change": 0.0,
+      "mp_changed_bits": 0,
+      "mp_changed_values": 0
+    },
+    {
+      "tape": "input_seed20261116.npz",
+      "step": 1150,
+      "original_raw": [
+        -22.230047384743315,
+        -116.95994687318307
+      ],
+      "quaternion_raw": [
+        -22.23004738478015,
+        -116.95994687318307
+      ],
+      "maximum_raw_change": 3.6834535421803594e-11,
+      "original_delivered": [
+        -14.937817573547363,
+        -78.59300994873047
+      ],
+      "quaternion_delivered": [
+        -14.937817573547363,
+        -78.59300994873047
+      ],
+      "maximum_delivered_change": 0.0,
+      "changed_delivered_components": 0,
+      "baseline_raw_byte_exact": true,
+      "fsum_raw": [
+        -22.230047384743255,
+        -116.95994687315547
+      ],
+      "mp_raw": [
+        -22.2300473847427,
+        -116.95994687314447
+      ],
+      "mp_maximum_raw_change": 3.859668140648864e-11,
+      "mp_delivered": [
+        -14.937817573547363,
+        -78.59300994873047
+      ],
+      "mp_maximum_delivered_change": 0.0,
+      "mp_changed_bits": 0,
+      "mp_changed_values": 0
+    },
+    {
+      "tape": "input_seed20261116.npz",
+      "step": 1200,
+      "original_raw": [
+        -1908331138.2641816,
+        -2249362308.847979
+      ],
+      "quaternion_raw": [
+        -1908331138.2641823,
+        -2249362308.8479786
+      ],
+      "maximum_raw_change": 7.152557373046875e-07,
+      "original_delivered": [
+        -51.75474166870117,
+        -61.00365447998047
+      ],
+      "quaternion_delivered": [
+        -51.75474166870117,
+        -61.00365447998047
+      ],
+      "maximum_delivered_change": 0.0,
+      "changed_delivered_components": 0,
+      "baseline_raw_byte_exact": true,
+      "fsum_raw": [
+        -1908331138.264181,
+        -2249362308.8479795
+      ],
+      "mp_raw": [
+        -1908331138.264181,
+        -2249362308.8479795
+      ],
+      "mp_maximum_raw_change": 7.152557373046875e-07,
+      "mp_delivered": [
+        -51.75474166870117,
+        -61.00365447998047
+      ],
+      "mp_maximum_delivered_change": 0.0,
+      "mp_changed_bits": 0,
+      "mp_changed_values": 0
+    },
+    {
+      "tape": "input_seed20261119.npz",
+      "step": 950,
+      "original_raw": [
+        21.389525505650816,
+        -0.003720328240457909
+      ],
+      "quaternion_raw": [
+        21.389525505650816,
+        -0.0037203282404578864
+      ],
+      "maximum_raw_change": 2.2551405187698492e-17,
+      "original_delivered": [
+        21.3895263671875,
+        -0.003720328211784363
+      ],
+      "quaternion_delivered": [
+        21.3895263671875,
+        -0.003720328211784363
+      ],
+      "maximum_delivered_change": 0.0,
+      "changed_delivered_components": 0,
+      "baseline_raw_byte_exact": true,
+      "fsum_raw": [
+        21.389525505650816,
+        -0.0037203282404579094
+      ],
+      "mp_raw": [
+        21.389525505650816,
+        -0.0037203282404579094
+      ],
+      "mp_maximum_raw_change": 4.336808689942018e-19,
+      "mp_delivered": [
+        21.3895263671875,
+        -0.003720328211784363
+      ],
+      "mp_maximum_delivered_change": 0.0,
+      "mp_changed_bits": 0,
+      "mp_changed_values": 0
+    },
+    {
+      "tape": "input_seed20261119.npz",
+      "step": 1000,
+      "original_raw": [
+        0.6568255430553666,
+        5.353363167266874e-05
+      ],
+      "quaternion_raw": [
+        0.6568255430553666,
+        5.35336316731794e-05
+      ],
+      "maximum_raw_change": 5.106592232406726e-16,
+      "original_delivered": [
+        0.6568255424499512,
+        5.353363303584047e-05
+      ],
+      "quaternion_delivered": [
+        0.6568255424499512,
+        5.353363303584047e-05
+      ],
+      "maximum_delivered_change": 0.0,
+      "changed_delivered_components": 0,
+      "baseline_raw_byte_exact": true,
+      "fsum_raw": [
+        0.6568255430553666,
+        5.353363167266882e-05
+      ],
+      "mp_raw": [
+        0.6568255430553666,
+        5.353363167266888e-05
+      ],
+      "mp_maximum_raw_change": 1.4230153513872246e-19,
+      "mp_delivered": [
+        0.6568255424499512,
+        5.353363303584047e-05
+      ],
+      "mp_maximum_delivered_change": 0.0,
+      "mp_changed_bits": 0,
+      "mp_changed_values": 0
+    },
+    {
+      "tape": "input_seed20261119.npz",
+      "step": 1050,
+      "original_raw": [
+        -8.94627718493315,
+        -6.546523441708883e-06
+      ],
+      "quaternion_raw": [
+        -8.94627718493315,
+        -6.54652344191705e-06
+      ],
+      "maximum_raw_change": 2.0816681711721685e-16,
+      "original_delivered": [
+        -8.946277618408203,
+        -6.546523309225449e-06
+      ],
+      "quaternion_delivered": [
+        -8.946277618408203,
+        -6.546523309225449e-06
+      ],
+      "maximum_delivered_change": 0.0,
+      "changed_delivered_components": 0,
+      "baseline_raw_byte_exact": true,
+      "fsum_raw": [
+        -8.94627718493315,
+        -6.546523441711259e-06
+      ],
+      "mp_raw": [
+        -8.946277184933152,
+        -6.546523441711494e-06
+      ],
+      "mp_maximum_raw_change": 1.7763568394002505e-15,
+      "mp_delivered": [
+        -8.946277618408203,
+        -6.546523309225449e-06
+      ],
+      "mp_maximum_delivered_change": 0.0,
+      "mp_changed_bits": 0,
+      "mp_changed_values": 0
+    },
+    {
+      "tape": "input_seed20261119.npz",
+      "step": 1100,
+      "original_raw": [
+        14.374339733959276,
+        -8.469116929354925e-05
+      ],
+      "quaternion_raw": [
+        14.374339733959275,
+        -8.469115601528188e-05
+      ],
+      "maximum_raw_change": 1.3278267374516872e-11,
+      "original_delivered": [
+        14.374340057373047,
+        -8.469117165077478e-05
+      ],
+      "quaternion_delivered": [
+        14.374340057373047,
+        -8.469115709885955e-05
+      ],
+      "maximum_delivered_change": 1.4551915228366852e-11,
+      "changed_delivered_components": 1,
+      "baseline_raw_byte_exact": true,
+      "fsum_raw": [
+        14.374339733959276,
+        -8.469116929056351e-05
+      ],
+      "mp_raw": [
+        14.374339733959276,
+        -8.46911692910798e-05
+      ],
+      "mp_maximum_raw_change": 2.4694466306887652e-15,
+      "mp_delivered": [
+        14.374340057373047,
+        -8.469117165077478e-05
+      ],
+      "mp_maximum_delivered_change": 0.0,
+      "mp_changed_bits": 0,
+      "mp_changed_values": 0
+    },
+    {
+      "tape": "input_seed20261119.npz",
+      "step": 1150,
+      "original_raw": [
+        -1.038244129893093,
+        -9.307903588862132e-05
+      ],
+      "quaternion_raw": [
+        -1.038244129891814,
+        -9.307904709388026e-05
+      ],
+      "maximum_raw_change": 1.120525894293678e-11,
+      "original_delivered": [
+        -1.0382441282272339,
+        -9.30790338316001e-05
+      ],
+      "quaternion_delivered": [
+        -1.0382441282272339,
+        -9.307904838351533e-05
+      ],
+      "maximum_delivered_change": 1.4551915228366852e-11,
+      "changed_delivered_components": 1,
+      "baseline_raw_byte_exact": true,
+      "fsum_raw": [
+        -1.0382441298930924,
+        -9.307903588674226e-05
+      ],
+      "mp_raw": [
+        -1.0382441298930918,
+        -9.307903588632929e-05
+      ],
+      "mp_maximum_raw_change": 2.2920304976886685e-15,
+      "mp_delivered": [
+        -1.0382441282272339,
+        -9.30790338316001e-05
+      ],
+      "mp_maximum_delivered_change": 0.0,
+      "mp_changed_bits": 0,
+      "mp_changed_values": 0
+    },
+    {
+      "tape": "input_seed20261119.npz",
+      "step": 1200,
+      "original_raw": [
+        8.255840310303979,
+        1.8992124346084438e-05
+      ],
+      "quaternion_raw": [
+        8.255840310287864,
+        1.8992125392358616e-05
+      ],
+      "maximum_raw_change": 1.6115109247039072e-11,
+      "original_delivered": [
+        8.255840301513672,
+        1.8992124751093797e-05
+      ],
+      "quaternion_delivered": [
+        8.255840301513672,
+        1.8992124751093797e-05
+      ],
+      "maximum_delivered_change": 0.0,
+      "changed_delivered_components": 0,
+      "baseline_raw_byte_exact": true,
+      "fsum_raw": [
+        8.255840310304032,
+        1.899212434431789e-05
+      ],
+      "mp_raw": [
+        8.255840310304036,
+        1.899212434607415e-05
+      ],
+      "mp_maximum_raw_change": 5.684341886080802e-14,
+      "mp_delivered": [
+        8.255840301513672,
+        1.8992124751093797e-05
+      ],
+      "mp_maximum_delivered_change": 0.0,
+      "mp_changed_bits": 0,
+      "mp_changed_values": 0
+    }
+  ],
+  "native_steps": 0,
+  "samples": 12,
+  "maximum_raw_change": 7.152557373046875e-07,
+  "maximum_delivered_change": 1.4551915228366852e-11,
+  "changed_delivered_components": 2,
+  "baseline_all_byte_exact": true,
+  "claim": "offline equivalent-phase arithmetic comparison only; no new actual episode or qualification"
+}

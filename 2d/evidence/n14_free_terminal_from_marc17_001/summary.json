@@ -1,0 +1,58 @@
+{
+  "n_links": 14,
+  "passes": 0,
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 2.8433791738204315,
+      "best_hold_seconds": 8.4,
+      "plane_margin": -0.1723423394085044,
+      "physics_warning": false,
+      "success": false,
+      "steps": 749,
+      "native_steps": 2996,
+      "wall_seconds": 0.5440414000040619,
+      "max_xy": [
+        3.1723423394085044,
+        0.3036166999666607
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.8433791738204315,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 2996
+    }
+  ],
+  "design_native_steps": 15201924,
+  "optimizer_iterations": 13,
+  "fixed_terminal": false,
+  "last_optimizer_record": {
+    "iteration": 12,
+    "defect_value": 3.748939432548241e-22,
+    "max_scaled_defect": 1.7892206235122406e-12,
+    "accepted": true,
+    "alpha": 1.0,
+    "regularization": 0.0001111111111111111,
+    "solver_status": 3,
+    "solver_optimality": 1.2573497205632103e-22,
+    "solver_iterations": 0,
+    "solver_wall_seconds": 3.549367899999197,
+    "solver_backend": "augmented",
+    "augmented_bound_violations": 0,
+    "native_steps": 13176800,
+    "max_cart": 1.865604582517819,
+    "trials": [
+      {
+        "alpha": 1.0,
+        "defect_value": 3.748939432548241e-22,
+        "max_scaled_defect": 1.7892206235122406e-12,
+        "merit": 7.102084910260996e-21,
+        "max_cart": 1.865604582517819
+      }
+    ]
+  },
+  "wall_seconds": 868.8441983000012,
+  "scope": "simultaneous full-spatial proposals; acceptance only from actual unchanged float32 native episodes"
+}

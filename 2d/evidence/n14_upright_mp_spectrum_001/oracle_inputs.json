@@ -1,0 +1,11 @@
+{
+  "mpmath": "1.3.0",
+  "gains_sha256": {
+    "qr_500.npz": "0b2acaa491f7bcf8e2f0a9b508cb1e007dd1ea3597c3b6e6e0ef203023343f02",
+    "qr_1500.npz": "e9fa7353735fa4d95b38dfe7786e056e5402be0b374f972fc03f69dfa747370f",
+    "qr_3000.npz": "e017b61b09a6be45462093b360ccb3f2868274a89e11b9f3f66f7783ef571254"
+  },
+  "exact_native_cross_axis_max": 0.0,
+  "native_steps": 0,
+  "arithmetic": "exact stored binary64 values converted before high-precision matrix products"
+}

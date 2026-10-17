@@ -1,0 +1,5 @@
+{
+  "max_gain_change": 10993303.745422998,
+  "max_feed_change": 0.00014527667429634875,
+  "scope": "reflection-averaged affine force law only; all spatial physics and observed states retained"
+}

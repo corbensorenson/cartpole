@@ -1,0 +1,85 @@
+{
+  "n_links": 14,
+  "passes": 0,
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 2.3359186873813518,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.059991162863800795,
+      "physics_warning": false,
+      "success": false,
+      "steps": 205,
+      "native_steps": 820,
+      "wall_seconds": 0.12406950000149664,
+      "max_xy": [
+        3.059991162863801,
+        0.538417875690246
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.3359186873813518,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 820
+    }
+  ],
+  "design_native_steps": 21406724,
+  "optimizer_iterations": 20,
+  "last_optimizer_record": {
+    "iteration": 19,
+    "defect_value": 5.043382373941678e-06,
+    "max_scaled_defect": 0.001765126853066823,
+    "accepted": true,
+    "alpha": 0.05,
+    "regularization": 0.0001234567901234568,
+    "solver_status": 1,
+    "solver_optimality": 6.2198453006322e-09,
+    "solver_iterations": 10,
+    "solver_wall_seconds": 145.2919469999979,
+    "solver_backend": "lsmr",
+    "augmented_bound_violations": 73,
+    "native_steps": 20392400,
+    "max_cart": 1.8706564623552084,
+    "trials": [
+      {
+        "alpha": 1.0,
+        "defect_value": 6.351805871607365e-06,
+        "max_scaled_defect": 0.0017539267471458064,
+        "merit": 6.3563015736087746e-06,
+        "max_cart": 1.8697277295657537
+      },
+      {
+        "alpha": 0.5,
+        "defect_value": 5.20709426040552e-06,
+        "max_scaled_defect": 0.0017598714706552462,
+        "merit": 5.208218264383293e-06,
+        "max_cart": 1.8702165362970458
+      },
+      {
+        "alpha": 0.25,
+        "defect_value": 5.07336222816477e-06,
+        "max_scaled_defect": 0.0017628022153459118,
+        "merit": 5.073643242593798e-06,
+        "max_cart": 1.8704609396626917
+      },
+      {
+        "alpha": 0.1,
+        "defect_value": 5.0462683408807036e-06,
+        "max_scaled_defect": 0.001764547356182152,
+        "merit": 5.046313303303963e-06,
+        "max_cart": 1.8706075816820793
+      },
+      {
+        "alpha": 0.05,
+        "defect_value": 5.043382373941678e-06,
+        "max_scaled_defect": 0.001765126853066823,
+        "merit": 5.043393614556854e-06,
+        "max_cart": 1.8706564623552084
+      }
+    ]
+  },
+  "wall_seconds": 4196.703189600004,
+  "scope": "simultaneous full-spatial proposals; acceptance only from actual unchanged float32 native episodes"
+}
