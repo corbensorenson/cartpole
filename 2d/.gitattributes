@@ -1,1 +1,13 @@
 * -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+# Large evidence stays materialized in release ZIPs; Git stores LFS pointers.
+"/evidence/conditioned_n14_controller_bank_mirror_001/frozen_route.npz" filter=lfs diff=lfs merge=lfs -text
+"/evidence/conditioned_n14_controller_bank_mirror_001/input_route.npz" filter=lfs diff=lfs merge=lfs -text
+"/evidence/n14_controller_bank_mirror_pilot_001/frozen_route.npz" filter=lfs diff=lfs merge=lfs -text
+"/evidence/n14_controller_bank_mirror_pilot_001/route.npz" filter=lfs diff=lfs merge=lfs -text
+"/evidence/n14_observed_entry_repair_001/final_models.npz" filter=lfs diff=lfs merge=lfs -text
+"/evidence/n14_observed_entry_repair_002/final_models.npz" filter=lfs diff=lfs merge=lfs -text
+"/evidence/n14_publication_qa_001/packaged_first_heldout/frozen_route.npz" filter=lfs diff=lfs merge=lfs -text
+"/evidence/n14_publication_qa_001/packaged_first_heldout/input_route.npz" filter=lfs diff=lfs merge=lfs -text
+"/evidence/qualify_n14_002/frozen_route.npz" filter=lfs diff=lfs merge=lfs -text
+"/evidence/qualify_n14_002/input_route.npz" filter=lfs diff=lfs merge=lfs -text
