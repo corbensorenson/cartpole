@@ -1,0 +1,22 @@
+{
+  "route": {
+    "path": "D:\\ChatGPT\\cartpole\\runs\\swingup11_uniform\\eleven_link_controller.json",
+    "copy": "foreign_sources\\eleven_link_controller.json",
+    "sha256": "20f5599ab502692441e29de5c81834152430046388ed7bd3e81db714f58f89ff"
+  },
+  "full_source": {
+    "path": "D:\\ChatGPT\\cartpole\\runs\\swingup11_uniform\\eleven_link_controller.json",
+    "copy": "foreign_sources\\eleven_link_controller.json",
+    "sha256": "20f5599ab502692441e29de5c81834152430046388ed7bd3e81db714f58f89ff"
+  },
+  "spec": {
+    "path": "D:\\ChatGPT\\cartpole\\benchmarks\\p1_capture_envelope.yaml",
+    "copy": "foreign_sources\\p1_capture_envelope.yaml",
+    "sha256": "4143070757cef38976d064febed34964ee27dcc6678ab8ce5dc0103cdaafdd00"
+  },
+  "source_config": {
+    "path": "D:\\ChatGPT\\cartpole\\configs\\swingup11_uniform.yaml",
+    "copy": "foreign_sources\\swingup11_uniform.yaml",
+    "sha256": "b1fea8731591af08819198a07c356e3773e15020053d2cd256aa993173cdcab9"
+  }
+}

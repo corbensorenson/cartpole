@@ -4,15 +4,15 @@ A cart moves over an XY plane, driven by two forces. Every link has a passive,
 unlimited ball joint: it can tilt in both directions and twist about its axis.
 This is a separate benchmark from the one-dimensional cart and hinge chain.
 
-**One- through ten-link hanging-start swing-ups are qualified:** 32/32 fresh
+**One- through eleven-link hanging-start swing-ups are qualified:** 32/32 fresh
 noisy 3D starts at each count, in addition to nominal and development checks.
-Episodes run 30 seconds; the latest ten-link controller holds upright for
-6.12 seconds. All delivered-action
+Episodes run 30 seconds; the latest eleven-link controller holds upright for
+5.50 seconds. All delivered-action
 tapes replay exactly. Both cart axes are used. Full-state simulation feedback,
 not a learned policy or a hardware demonstration.
 
 The benchmark permits arbitrary XY cart motion and unrestricted ball joints,
-but does not require a nonplanar nominal swing. The four- through ten-link
+but does not require a nonplanar nominal swing. The four- through eleven-link
 reference swings are essentially planar; Y feedback handles spatial start
 perturbations. This is a controller/reference bias, not a locked simulator axis.
 The independent [spatial freedom audit](https://github.com/corbensorenson/cartpole/tree/master/2d/audits/spatial_freedom_001)
@@ -48,6 +48,9 @@ checks native two-axis motion and includes a controlled six-link XY loop.
 [Full ten-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-10-link-v1/2d-cartpole-10-link-swingup.mp4)
 · [Ten-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-10-link-v1)
 
+[Full eleven-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-11-link-v1/2d-cartpole-11-link-swingup.mp4)
+· [Eleven-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-11-link-v1)
+
 | Milestone | Current evidence | Upright hold |
 |---|---|---|
 | One-link hanging-start swing-up | 32/32 final qualification; full video | 21.74s |
@@ -60,7 +63,8 @@ checks native two-axis motion and includes a controlled six-link XY loop.
 | Eight-link hanging-start swing-up | 32/32 fresh final qualification; full video | 14.20s |
 | Nine-link hanging-start swing-up | 32/32 fresh final qualification; full video | 8.18s |
 | Ten-link hanging-start swing-up | 32/32 fresh final qualification; full video | 6.12s |
-| Eleven-link hanging-start swing-up | Next development count | — |
+| Eleven-link hanging-start swing-up | 32/32 fresh final qualification; full video | 5.50s |
+| Twelve-link hanging-start swing-up | Next development count | — |
 | Near-upright balance, 1–3 links | 12/12 local perturbed starts at each count | — |
 | Near-upright balance, 4 links | 9/12; incomplete, not accepted | — |
 
@@ -238,6 +242,32 @@ cart coordinate is 2.022729m, minimum substep boundary margin 0.977271m, and
 all 32 initial states are distinct. Ten-link native freedoms are covered in
 the passing 56-test suite. Native instability warnings arose in rejected
 optimizer search trials; accepted actual episodes report no physics warning.
+
+Eleven-link development exposed a synthesis bug: the active XY force circle's
+value Hessian omitted its constraint-curvature term. The correction is covered
+by an independent closed-form control regression. Development also adds an
+optional residual-QR backward calculation and an upright axis-separated
+Riccati design to reduce high-count numerical errors. The current suite has
+85 passing tests. The frozen ten-link controller
+still reproduces its first held-out state/action/tilt tape byte-for-byte after
+these synthesis changes; the native simulation and acceptance gates are intact.
+
+Eleven links combines full spatial sparse shooting, full affine QR offsets and
+a finite upright continuation, adapting ideas reviewed in `corben-marc-hybrid.md`.
+The raw finite controller passes nominal with23.50s hold but fails all12 noisy
+starts. Static launch alignment with16s/18s/18.4s preparation passes only
+27/45,40/45,43/45 development episodes. The selected18s policy additionally
+aligns reference axial frames at every observed feedback step. It passes nominal
+plus all44 noisy development starts, then32/32 fresh reserved starts
+(20262216..20262247), each full30s with5.50s hold and exact cold replay.
+It executes600 commands of a1500-command value design; that design horizon adds
+no episode time. Maximum final-cohort cart coordinate2.072389m, minimum
+substep boundary margin0.927587m,32 distinct initial states. Physical ball-joint
+twist/rates remain free. See [the transfer review](research/hybrid_2d_review.md)
+for matched results and the moving-target/native-search ideas still unproven.
+
+Reproduce eleven using `evidence/qualify_n11_001/frozen_route.npz` with `evaluate`.
+Its saved affine/online-alignment flags select the complete frozen execution law.
 
 Each experiment freezes source, arguments, runtime and the pre-experiment memo,
 then records optimizer history, states, raw/delivered forces, tilts, counts,

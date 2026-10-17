@@ -314,8 +314,81 @@ The full first held-out video has 1501 frames / 50fps / 30.02s encoding,
 SHA256 `adafc1b7d48cd4e2dd033243b5d954ffd3e1f98e3a886ad792f653356f584054`.
 The 300-frame normal-speed full-duration preview and general/swing-phase
 contact sheets have been inspected.
+The ten-link release is public at `2d-cartpole-10-link-v1`, commit
+`c55ebd6eeb8850c65686d78e3880db71eb6b779f`. The full public video and
+650,526,266-byte ZIP digests match; the tag and master point to this commit.
+All 2413 staged/archive hashes verify; published source passes 56 tests and
+reproduces the first held-out state/action/tilt tape byte-for-byte.
 
 ## Publication policy
+
+Eleven-link direct transfer fails nominal at 4.64s. Native repairs
+`tracking_repair_n11_001`, `_002` (residual QR) and `_003` (QR plus circle
+curvature correction) each stall after 11 iterations without an accepted step;
+none passes nominal or uses reserved seeds. Their design costs are 2,677,380,
+2,677,380 and 2,677,364 native steps. All failed source/optimizer/actual tapes
+are retained. `n11_backward_diagnostic_001` uses 270980 native steps and shows
+zero-alpha virtual-gap recovery within 5.1e-7 state units, with divergence at
+alpha .005 under either backend.
+
+The independent closed-form active-circle value regression exposed a genuine
+synthesis defect: the value Hessian omitted lambda*K.T*K. Both normal and
+residual-QR backwards and bounded legacy iLQR now retain that curvature. The
+frozen ten-link first held-out episode remains byte-identical in
+`n11_optimizer_fix_regression_001`. The combined upright DARE also introduces
+large spurious cross-axis value terms at eleven. The optional axis-separated
+design solves an averaged native horizontal system, rotates its gain/value,
+and passes physical world-rotation checks. That stage's suite had 68 passing tests.
+`tracking_repair_n11_004` also stalls after 11 iterations and fails nominal.
+The cached fine-step diagnostic `n11_linesearch_diagnostic_001` uses 29380
+native steps and finds valid merit descent at alpha 1e-4, below the old .005
+minimum; .001 and .005 diverge. The optional finer geometric backtracking and
+small-step trust-growth setting retain the old defaults for prior recipes.
+`tracking_repair_n11_005` completes 80 iterations / 20097532 design steps:
+small accepted steps reduce defect1.59571e-4 to1.55655e-4, but nominal fails
+4.22s, no hold. Order4 derivatives, zero optimizer terminal-value and free
+forward-feedback diagnostics also fail to enable large causal repair steps.
+Full spatial simultaneous sparse shooting is more effective at proposal repair:
+`n11_direct_repair_001` completes20 iterations /9744580 design steps, reducing
+defect score to3.73042264e-11 and maximum normalized defect1.28568116e-6,
+but its rebuilt actual controller fails4.58s. Accurate augmented sparse ridge
+solves improve a one-update diagnostic without establishing an actual solve.
+
+User-requested hybrid-document review is recorded in research/hybrid_2d_review.md.
+`n11_hybrid_affine_001` retains native reference defects and the full affine QR
+value/offsets on the raw repaired proposal. Zero-offset fails5.08s/no hold;
+affine reaches1.92s hold and fails10.88s after stationary balance handoff.
+Capped2D native search also holds1.92s and fails10.66s, adding25600 queries'
+physics steps. `n11_hybrid_finite_001` adds an upright continuation to1500
+design steps and removes the stationary terminal Riccati value: affine passes
+nominal30s with23.50s hold, but all12 raw noisy starts fail; zero-offset fails.
+`n11_hybrid_guard_001` with1550 design/1500 execution has the same nominal
+hold and0/12 raw noisy passes. These are separate controllers and finite tests.
+The FIRST1500-step design was selected before guard results for preparation.
+`conditioned_n11_001` uses16s hanging/gauge alignment and700 commands from
+the1500-step design: nominal holds7.50s, but only27/45 development episodes
+pass, all exact replay. `conditioned_n11_002` tests18s preparation and600
+tracking commands, passing40/45 including nominal5.50s hold. It remains
+unqualified. `conditioned_n11_003` tests18.4s/580 tracking commands and passes
+43/45, still unqualified. The timing bracket is exhausted.
+`n11_online_gauge_pilot_001` uses18s and per-command observed axial reference
+alignment, passing nominal plus all FIVE failed18s starts (6/6). The complete
+`conditioned_n11_004` gate passes45/45 with5.50s hold and exact replay; its28
+payload arrays are identical to the pilot. Inclusive native cost540580 steps.
+`qualify_n11_001` passes all32 NEW reserved starts20262216..20262247,
+full30s,5.50s hold each, exact cold replay and no native warning. All32 initial
+states differ. Maximum cart coordinate2.072389423m, minimum substep boundary
+margin0.927586999m, maximum force69.039894N, maximum launch tilt1.65013e-6.
+This qualifies ELEVEN. All phases remain inside30s; physical twist stays free.
+The suite now has85 passing tests, including independent condensed affine
+optima, predictor isolation/candidate replay, and affine value/gauge transport.
+`n11_hybrid_ten_regression_001` reproduces ten's first published held-out tape
+with states/actions/tilts byte-identical after the new payload adapter changes.
+Full held-out eleven video/preview rendered and inspected:1501 frames/50fps,
+30.02s encoding; normal-speed300-frame30s GIF. Video SHA256
+6089f9b985ed9a4d39a6c6077a06d1283808b129f5525ff9b5457f61be1a410f.
+Source/package reproduction and public release verification are next.
+No upper frontier has been established.
 
 Each new count needs a frozen controller, full nominal/development episode
 tapes, fresh qualification, independent replay, source/runtime/config hashes,
@@ -329,15 +402,25 @@ established. Thirty-two reset-noise trials do not certify arbitrary disturbances
 
 ## Resume checkpoint
 
-Nine-link public video/evidence release is complete. Ten-link experiments and
-qualification are complete, qualified frontier TEN. Render/package/publish
-its separate full video/evidence release, then advance to eleven under the
-recorded plan. Historical proposal:
+One through ten are public; eleven qualification is complete, qualified frontier
+ELEVEN. Eleven direct transfer (`output/planar_lift_n11_001`)
+fails nominal at 4.64s, X=3.261849m, no hold and exact replay. Repairs 001–004
+and005 are terminal failures. Simultaneous direct repair001 closes proposal
+defects but fails actual execution. The hybrid-document affine/finite design
+`output/n11_hybrid_finite_001` passes full nominal23.50s hold, fails all12 raw
+noisy starts. Its16s conditioned wrapper passes27/45 development episodes.
+Static18s preparation improves to40/45;18.4s reaches43/45. Per-command axial
+reference alignment at18s passes45/45 in conditioned004, then all32 fresh
+qualification starts in qualify_n11_001. The full video is rendered/inspected.
+Next: package eleven, published-source85 tests and byte-identical first-heldout
+reproduction, normal GitHub source push/release/upload/public hash verification,
+then begin twelve. No live training process at this checkpoint.
+No native search is used in the qualified policy; goal remains active.
+Historical proposal:
 `runs/swingup11_uniform/eleven_link_controller.json`, 400 commands / 8s,
 uniform eleven links, nominal cart maximum 2.071342m; source config
 `configs/swingup11_uniform.yaml`. It is only a geometric proposal for unchanged
-spatial mechanics. No simulation is still running; ten's video is rendering.
-Ten-link physical-freedom checks pass: 56 tests total.
+spatial mechanics. Eleven-link freedom/solver/affine regression checks:85 tests pass.
 Keep physical freedom and near-planar-reference scope explicit. User authorizes
 continued higher counts. Check live processes/terminal markers before resuming.
 Historical planar route proposals are available in the original read-only
@@ -347,7 +430,8 @@ not force-only transfer. Preserve the strict 30s clock and all physical freedoms
 Record the chosen method, warm start, seeds and compute limit BEFORE execution.
 Do not restart an experiment while its process is alive or its completed marker
 exists. Checkpoints are proposals until full actual float32 gates pass. Eleven-link
-reserved qualification seeds will be 20262216..20262247, untouched at this entry.
+reserved qualification seeds20262216..20262247 are now consumed successfully;
+twelve's next fresh cohort will be20262316..20262347, untouched.
 All future successful count releases require an explicitly 2D label, full video,
 state/action evidence and hashes. No upper frontier has been established.
 

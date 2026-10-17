@@ -28,11 +28,61 @@ def affine_backward(models,offsets,actions,gradients,hessians,terminal_gradient,
         qxx,quu,qux = hessians[t]+state_regularization+A.T@Vxx@A,R+control_trust*np.eye(actions.shape[1])+B.T@Vxx@B,B.T@Vxx@A
         h = quu+regularization*np.eye(actions.shape[1])
         np.linalg.cholesky(h)
-        k,K,active = bounded_action_step(actions[t],qu,h,qux,limit)
+        k,K,active,multiplier = bounded_action_step(actions[t],qu,h,qux,limit,return_multiplier=True)
         active_count += active
         Vx = qx-K.T@qu+qux.T@k-K.T@quu@k
-        Vxx = qxx-K.T@qux-qux.T@K+K.T@quu@K
+        # The active circle bends the optimal control map. Differentiating
+        # ||u+k||²=L² gives the additional multiplier*K.T@K value curvature.
+        Vxx = qxx-K.T@qux-qux.T@K+K.T@quu@K+multiplier*(K.T@K)
         Vxx = (Vxx+Vxx.T)/2
+        feed[t],gains[t] = k,K
+    return feed,gains,active_count
+
+
+def least_squares_backward(models,offsets,actions,factors,residuals,
+                           terminal_factor,terminal_residual,R,limit,
+                           state_regularization_factor=None,control_trust=0.,
+                           action_reference=None):
+    """Affine bounded LQR via residual factors and QR, without Hessian downdates.
+
+    Each local state cost is .5*||factor @ dx + residual||**2. The value is
+    compressed with QR after substituting du=k-K@dx. Its constant remainder
+    is irrelevant to subsequent controls. Trust penalties are centered at the
+    current proposal, as in affine_backward. Dynamics and force bounds are
+    unchanged; this is an optional numerical implementation of the same QP.
+    """
+    H,nx,nu = len(actions),terminal_factor.shape[1],actions.shape[1]
+    feed,gains = np.zeros_like(actions),np.zeros((H,nu,nx))
+    S,s = np.asarray(terminal_factor).copy(),np.asarray(terminal_residual).copy()
+    C = np.linalg.cholesky(R).T
+    T = np.sqrt(control_trust)*np.eye(nu)
+    F = np.zeros((0,nx)) if state_regularization_factor is None else state_regularization_factor
+    # Include the terminal state trust penalty before the first backward step.
+    S = np.vstack((S,F))
+    s = np.r_[s,np.zeros(len(F))]
+    active_count = 0
+    for t in range(H-1,-1,-1):
+        A,B = models[t]
+        L = factors[t]
+        X = np.vstack((L,F,S@A,np.zeros((2*nu,nx))))
+        U = np.vstack((np.zeros((len(L)+len(F),nu)),S@B,C,T))
+        error = actions[t] if action_reference is None else actions[t]-action_reference[t]
+        r = np.r_[residuals[t],np.zeros(len(F)),S@offsets[t]+s,C@error,np.zeros(nu)]
+        # A common residual scale leaves the constrained minimizer unchanged.
+        scale = max(float(np.max(np.abs(U))),1e-100)
+        V = U/scale
+        h,g,cross = V.T@V,V.T@(r/scale),V.T@(X/scale)
+        np.linalg.cholesky(h)
+        k,K,active,multiplier = bounded_action_step(actions[t],g,h,cross,limit,return_multiplier=True)
+        active_count += active
+        closed,residual = X-U@K,r+U@k
+        if active:
+            # The QP was scaled by scale²; restore its multiplier in the
+            # residual factor. This represents the active circle's curvature.
+            closed = np.vstack((closed,np.sqrt(multiplier)*scale*K))
+            residual = np.r_[residual,np.zeros(nu)]
+        _,qr = np.linalg.qr(np.c_[closed,residual],mode='reduced')
+        S,s = qr[:nx,:nx],qr[:nx,nx]
         feed[t],gains[t] = k,K
     return feed,gains,active_count
 

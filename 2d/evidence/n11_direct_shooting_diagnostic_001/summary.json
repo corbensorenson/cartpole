@@ -1,0 +1,71 @@
+{
+  "n_links": 11,
+  "results": [
+    {
+      "alpha": 1.0,
+      "defect_value": 6.4885575998799555e-06,
+      "max_scaled_defect": 0.0005216870899707349,
+      "merit": 6.5870125210333746e-06,
+      "improves": true,
+      "max_cart": 2.071099910184282,
+      "max_force": 69.20616441723621
+    },
+    {
+      "alpha": 0.5,
+      "defect_value": 4.759453576512956e-05,
+      "max_scaled_defect": 0.0009173675661387529,
+      "merit": 4.7619149495417916e-05,
+      "improves": true,
+      "max_cart": 2.071215564343565,
+      "max_force": 69.10294118696469
+    },
+    {
+      "alpha": 0.25,
+      "defect_value": 9.470747269051358e-05,
+      "max_scaled_defect": 0.0013617909486162052,
+      "merit": 9.471362612308567e-05,
+      "improves": true,
+      "max_cart": 2.071278385157322,
+      "max_force": 69.05132957182893
+    },
+    {
+      "alpha": 0.1,
+      "defect_value": 0.00013149303694451488,
+      "max_scaled_defect": 0.0016327838106697586,
+      "merit": 0.0001314940214937264,
+      "improves": true,
+      "max_cart": 2.0713160776455766,
+      "max_force": 69.02036260274747
+    },
+    {
+      "alpha": 0.05,
+      "defect_value": 0.00014517639764823778,
+      "max_scaled_defect": 0.0017232715644271543,
+      "merit": 0.00014517664378554067,
+      "improves": true,
+      "max_cart": 2.071328641808328,
+      "max_force": 69.01004027972031
+    },
+    {
+      "alpha": 0.01,
+      "defect_value": 0.000156635219617968,
+      "max_scaled_defect": 0.0017957182069843396,
+      "merit": 0.00015663522946346014,
+      "improves": true,
+      "max_cart": 2.071338693138529,
+      "max_force": 69.00178242129859
+    }
+  ],
+  "solver": {
+    "status": 3,
+    "message": "The unconstrained solution is optimal.",
+    "iterations": 0,
+    "optimality": 3.968725009636511e-06,
+    "cost": 6.514174803235033e-06,
+    "max_scaled_step": 0.04959922460208115,
+    "wall_seconds": 1.3142092000016419
+  },
+  "baseline_defect_value": 0.00015957107833168322,
+  "design_native_steps": 11200,
+  "scope": "simultaneous full-spatial shooting proposals only; no accepted physical episode"
+}

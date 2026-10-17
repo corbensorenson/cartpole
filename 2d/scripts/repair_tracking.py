@@ -20,7 +20,15 @@ p.add_argument('--iterations',type=int,default=40)
 p.add_argument('--workers',type=int,default=4)
 p.add_argument('--physics-budget',type=int,default=15000000)
 p.add_argument('--penalty',type=float,default=1000.)
+p.add_argument('--sqrt-backward',action='store_true')
+p.add_argument('--axis-design',action='store_true')
+p.add_argument('--minimum-alpha',type=float,default=.005)
+p.add_argument('--small-step-trust-factor',type=float,default=3.)
+p.add_argument('--derivative-order',type=int,choices=[2,4],default=2)
+p.add_argument('--derivative-eps',type=float)
 a = p.parse_args()
+if a.derivative_eps is None:
+    a.derivative_eps = 1e-3 if a.derivative_order==4 else 1e-5
 out = Path(a.out)
 freeze_inputs(out,a)
 source = np.load(a.route)
@@ -55,7 +63,8 @@ def checkpoint(iteration,states,actions,gains):
 
 try:
     xs,us,K,design,history,proposal = repair_tracking(env,initial,target,
-        target_controls,a.iterations,log,checkpoint,a.physics_budget,a.penalty)
+        target_controls,a.iterations,log,checkpoint,a.physics_budget,a.penalty,a.sqrt_backward,
+        a.axis_design,a.minimum_alpha,a.small_step_trust_factor,a.derivative_order,a.derivative_eps)
 except Exception as exc:
     write_json(out/'failure.json',{'status':'failed','type':type(exc).__name__,'message':str(exc),
                                   'native_steps':env.native_steps})

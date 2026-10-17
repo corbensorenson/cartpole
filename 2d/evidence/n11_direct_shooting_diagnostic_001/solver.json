@@ -1,0 +1,9 @@
+{
+  "status": 3,
+  "message": "The unconstrained solution is optimal.",
+  "iterations": 0,
+  "optimality": 3.968725009636511e-06,
+  "cost": 6.514174803235033e-06,
+  "max_scaled_step": 0.04959922460208115,
+  "wall_seconds": 1.3142092000016419
+}

@@ -1,0 +1,110 @@
+{
+  "n_links": 11,
+  "arms": {
+    "zero_offset": {
+      "passes": 0,
+      "results": [
+        {
+          "seed": 20261016,
+          "initialization": "hanging",
+          "angle_noise": 0.0,
+          "max_tilt": 2.931028588140512,
+          "best_hold_seconds": 0.0,
+          "plane_margin": -0.1717949552614182,
+          "physics_warning": false,
+          "success": false,
+          "steps": 254,
+          "native_steps": 1016,
+          "wall_seconds": 0.1291979999987234,
+          "max_xy": [
+            3.171794955261418,
+            0.08892066835840082
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 2.931028588140512,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 1016,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 400,
+            "execution_route_steps": 400,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        }
+      ]
+    },
+    "affine": {
+      "passes": 0,
+      "results": [
+        {
+          "seed": 20261016,
+          "initialization": "hanging",
+          "angle_noise": 0.0,
+          "max_tilt": 2.940447004079572,
+          "best_hold_seconds": 1.92,
+          "plane_margin": -0.025060365151069686,
+          "physics_warning": false,
+          "success": false,
+          "steps": 544,
+          "native_steps": 2176,
+          "wall_seconds": 0.3552565999998478,
+          "max_xy": [
+            2.952858125548449,
+            3.0250603651510697
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 2.940447004079572,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 2176,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 400,
+            "execution_route_steps": 400,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        }
+      ]
+    },
+    "affine_search": {
+      "passes": 0,
+      "results": [
+        {
+          "seed": 20261016,
+          "initialization": "hanging",
+          "angle_noise": 0.0,
+          "max_tilt": 2.8416778528315834,
+          "best_hold_seconds": 1.92,
+          "plane_margin": -0.10367402994475361,
+          "physics_warning": false,
+          "success": false,
+          "steps": 533,
+          "native_steps": 2132,
+          "wall_seconds": 3.1191904000006616,
+          "max_xy": [
+            3.1036740299447536,
+            1.2534264554453418
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 2.8416778528315834,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 2132,
+          "policy_metadata": {
+            "policy": "spatial affine native value",
+            "design_steps": 400,
+            "execution_route_steps": 400,
+            "predictor_native_steps": 25600,
+            "max_candidates": 16
+          }
+        }
+      ]
+    }
+  },
+  "design_native_steps": 462980,
+  "inclusive_native_steps": 499228,
+  "claim": "matched development diagnostics only; no reserved seeds or new qualified count"
+}

@@ -37,8 +37,12 @@ def linearize(env: SpatialCartpole, state, force, eps=1e-5):
     return A, B
 
 
-def linearize_many(env, states, actions, eps=1e-5, return_next=False):
+def linearize_many(env, states, actions, eps=1e-5, return_next=False,order=2):
     """Same centered stencil in a native C rollout batch (RK4, four substeps)."""
+    if order==4:
+        return linearize_many_fourth(env,states,actions,eps,return_next)
+    if order!=2:
+        raise ValueError('derivative order must be two or four')
     nx, count = 2*env.model.nv, len(actions)
     width = 1+2*nx+4
     initial, control = [], []
@@ -82,7 +86,69 @@ def linearize_many(env, states, actions, eps=1e-5, return_next=False):
     return (models,results[:,0].copy()) if return_next else models
 
 
-def bounded_action_step(u,gradient,hessian,cross,limit):
+def linearize_many_fourth(env,states,actions,eps=1e-3,return_next=False):
+    """Fourth-order native stencils with inward control probes at component caps.
+
+    Like the original batch, these identify the smooth, unquantized native
+    force map. Force constraints are imposed separately on optimization
+    rollouts and every actual command. Identification probes near a circular
+    boundary may lie infinitesimally outside its feasible set.
+    """
+    if not np.isfinite(eps) or eps<=0:
+        raise ValueError('derivative epsilon must be finite and positive')
+    nx,count = 2*env.model.nv,len(actions)
+    width = 1+4*(nx+2)
+    initial,control,weights = [],[],[]
+    centered = np.array([8.,-8.,-1.,1.])/(12*eps)
+    for state,force in zip(states,actions):
+        initial.append(state)
+        control.append(force)
+        for j in range(nx):
+            for scale in (1.,-1.,2.,-2.):
+                d = np.zeros(nx)
+                d[j] = scale*eps
+                initial.append(env.integrate(state,d))
+                control.append(force)
+        row_weights = []
+        for j in range(2):
+            if force[j]+2*eps>env.config.force_limit:
+                offsets,coefficients = (-1.,-2.,-3.,-4.),-np.array([48.,-36.,16.,-3.])/(12*eps)
+            elif force[j]-2*eps < -env.config.force_limit:
+                offsets,coefficients = (1.,2.,3.,4.),np.array([48.,-36.,16.,-3.])/(12*eps)
+            else:
+                offsets,coefficients = (1.,-1.,2.,-2.),centered
+            for scale in offsets:
+                d = np.zeros(2)
+                d[j] = scale*eps
+                initial.append(state)
+                control.append(force+d)
+            row_weights.append(coefficients)
+        weights.append(row_weights)
+    initial = np.c_[np.zeros(len(initial)),np.array(initial)]
+    controls = np.repeat(np.asarray(control)[:,None,:],env.config.frame_skip,axis=1)
+    workers = getattr(env,'derivative_workers',1)
+    if not hasattr(env,'_fd_rollout'):
+        env._fd_rollout = mujoco.rollout.Rollout(nthread=workers if workers>1 else 0)
+        env._fd_data = [mj.MjData(env.model) for _ in range(workers)]
+    full,_ = env._fd_rollout.rollout(env.model,env._fd_data,initial,controls)
+    times = np.diff(np.c_[np.zeros(len(initial)),full[:,:,0]],axis=1)
+    env.native_steps += int(np.count_nonzero(times>0))
+    if not np.all(times>0) or not np.isfinite(full).all():
+        raise RuntimeError('invalid fourth-order native derivative batch')
+    results = full[:,-1,1:].reshape(count,width,-1)
+    models = []
+    for row,control_weights in zip(results,weights):
+        columns = []
+        for j in range(nx+2):
+            values = np.array([env.difference(row[1+4*j+k],row[0]) for k in range(4)])
+            coefficients = centered if j<nx else control_weights[j-nx]
+            columns.append(coefficients@values)
+        matrix = np.array(columns).T
+        models.append((matrix[:,:nx],matrix[:,nx:]))
+    return (models,results[:,0].copy()) if return_next else models
+
+
+def bounded_action_step(u,gradient,hessian,cross,limit,return_multiplier=False):
     """Exact two-dimensional SPD quadratic step inside a circular force bound.
 
     The scalar KKT multiplier is solved in the Hessian eigenbasis. The feedback
@@ -90,7 +156,8 @@ def bounded_action_step(u,gradient,hessian,cross,limit):
     """
     k = -np.linalg.solve(hessian,gradient)
     if np.linalg.norm(u+k) <= limit:
-        return k,np.linalg.solve(hessian,cross),False
+        result = k,np.linalg.solve(hessian,cross),False
+        return (*result,0.) if return_multiplier else result
     values,vectors = np.linalg.eigh(hessian)
     if values[0] <= 0:
         raise np.linalg.LinAlgError('action Hessian is not positive definite')
@@ -109,7 +176,8 @@ def bounded_action_step(u,gradient,hessian,cross,limit):
     normal = v/limit
     col = np.linalg.solve(H,normal)
     K -= np.outer(col,normal@K)/(normal@col)
-    return v-u,K,True
+    result = v-u,K,True
+    return (*result,high) if return_multiplier else result
 
 
 def state_cost(env, angle_weight=20., cart_weight=1., velocity_weight=0.15):
@@ -156,7 +224,7 @@ def difference_jacobian(env,state,reference):
     return jac
 
 
-def balance_design(env, r=0.01, angle_weight=20., cart_weight=1., reference=None):
+def balance_design(env, r=0.01, angle_weight=20., cart_weight=1., reference=None,axis_separated=False):
     ref = env.upright_state() if reference is None else np.asarray(reference).copy()
     A, B = linearize(env, ref, np.zeros(2))
     Q = state_cost(env, angle_weight, cart_weight)
@@ -167,12 +235,34 @@ def balance_design(env, r=0.01, angle_weight=20., cart_weight=1., reference=None
     ids = [j for j in range(env.model.nv) if j < 2 or (j - 2) % 3 != 2]
     ids += [j + env.model.nv for j in ids.copy()]
     ar, br, qr = A[np.ix_(ids, ids)], B[ids], Q[np.ix_(ids, ids)]
-    p = solve_discrete_are(ar, br, qr, R)
-    k = np.linalg.solve(R + br.T @ p @ br, br.T @ p @ ar)
     K, P = np.zeros((2, len(A))), np.zeros_like(A)
-    K[:, ids], P[np.ix_(ids, ids)] = k, p
+    if axis_separated:
+        if reference is not None:
+            raise ValueError('axis-separated design currently requires the upright reference')
+        # Upright rotational symmetry gives two identical independent planar
+        # linear systems. Solving their degenerate combined pencil at high
+        # counts can introduce large numerical cross-axis terms. Average the
+        # native X/Y identifications, solve one SISO DARE and rotate its result.
+        n,nv = env.config.n_links,env.model.nv
+        ix = np.array([0]+[3+3*j for j in range(n)])
+        iy = np.array([1]+[2+3*j for j in range(n)])
+        ix,iy = np.r_[ix,ix+nv],np.r_[iy,iy+nv]
+        signs = np.tile(np.r_[1.,-np.ones(n)],2)
+        ax = (A[np.ix_(ix,ix)]+signs[:,None]*A[np.ix_(iy,iy)]*signs[None,:])/2
+        bx = (B[ix,0:1]+signs[:,None]*B[iy,1:2])/2
+        px = solve_discrete_are(ax,bx,Q[np.ix_(ix,ix)],R[:1,:1])
+        kx = np.linalg.solve(R[:1,:1]+bx.T@px@bx,bx.T@px@ax)[0]
+        K[0,ix],K[1,iy] = kx,signs*kx
+        P[np.ix_(ix,ix)] = px
+        P[np.ix_(iy,iy)] = signs[:,None]*px*signs[None,:]
+        k = K[:,ids]
+    else:
+        p = solve_discrete_are(ar, br, qr, R)
+        k = np.linalg.solve(R + br.T @ p @ br, br.T @ p @ ar)
+        K[:, ids], P[np.ix_(ids, ids)] = k, p
     return {"reference": ref, "K": K, "P": P, "Q": Q, "R": R,
-            "closed_loop_radius": float(np.max(np.abs(np.linalg.eigvals(ar - br @ k))))}
+            "closed_loop_radius": float(np.max(np.abs(np.linalg.eigvals(ar - br @ k)))),
+            "axis_separated":bool(axis_separated)}
 
 
 class BalancePolicy:
@@ -330,13 +420,14 @@ def optimize_route(env, initial, actions, iterations=80, callback=None, terminal
                 h = quu + reg * np.eye(2)
                 np.linalg.cholesky(h)
                 if bounded_backward:
-                    k,K,active = bounded_action_step(actions[t],qu,h,qux,env.config.force_limit)
+                    k,K,active,multiplier = bounded_action_step(actions[t],qu,h,qux,env.config.force_limit,return_multiplier=True)
                     bounded_steps += active
                 else:
                     k, K = -np.linalg.solve(h, qu), np.linalg.solve(h, qux)
+                    multiplier = 0.
                 # The feedback sign convention is u_new = u + k - K dx.
                 Vx = qx - K.T @ qu + qux.T @ k - K.T @ quu @ k
-                Vxx = qxx - K.T @ qux - qux.T @ K + K.T @ quu @ K
+                Vxx = qxx - K.T @ qux - qux.T @ K + K.T @ quu @ K + multiplier*(K.T@K)
                 Vxx = (Vxx + Vxx.T) * 0.5
                 feed[t], gains[t] = k, K
         except np.linalg.LinAlgError:

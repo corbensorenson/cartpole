@@ -1,0 +1,40 @@
+{
+  "n_links": 11,
+  "passes": 0,
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 3.0007886533713215,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.2618486821687114,
+      "physics_warning": false,
+      "success": false,
+      "steps": 232,
+      "native_steps": 928,
+      "wall_seconds": 0.11848309999913909,
+      "max_xy": [
+        3.2618486821687114,
+        0.49273962480047434
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 3.0007886533713215,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 928
+    }
+  ],
+  "design_native_steps": 232580,
+  "foreign_reconstruction_error": 1.0421003457272704e-05,
+  "source_scales": {
+    "cart_position": 1.25,
+    "angle": 0.15,
+    "cart_velocity": 0.5,
+    "joint_velocity": 0.75
+  },
+  "reference_only": true,
+  "coordinate_direction_error": 9.992007221626409e-16,
+  "source_plant_difference": "old total damping 0.015 vs new 0.0075; old slide armature 0.0005 vs new 0; ball joints and XY cart free",
+  "wall_seconds": 10.53043180000168
+}

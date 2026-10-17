@@ -1,0 +1,72 @@
+{
+  "n_links": 11,
+  "results": [
+    {
+      "alpha": 1.0,
+      "defect_value": 1.472214289338702e-07,
+      "max_scaled_defect": 0.00012130438282116511,
+      "merit": 3.802369386352396e-07,
+      "improves": true,
+      "max_cart": 2.072082331699466,
+      "max_force": 69.0900487380606
+    },
+    {
+      "alpha": 0.5,
+      "defect_value": 4.0087026312443934e-05,
+      "max_scaled_defect": 0.000911248721729197,
+      "merit": 4.0145280189869274e-05,
+      "improves": true,
+      "max_cart": 2.0716919570013763,
+      "max_force": 69.04488334737688
+    },
+    {
+      "alpha": 0.25,
+      "defect_value": 8.987263999306176e-05,
+      "max_scaled_defect": 0.001361461224772252,
+      "merit": 8.98872034624181e-05,
+      "improves": true,
+      "max_cart": 2.0715076780788118,
+      "max_force": 69.02230065203501
+    },
+    {
+      "alpha": 0.1,
+      "defect_value": 0.0001292997045001415,
+      "max_scaled_defect": 0.0016326275643939647,
+      "merit": 0.0001293020346552385,
+      "improves": true,
+      "max_cart": 2.0714077948141725,
+      "max_force": 69.0087510348299
+    },
+    {
+      "alpha": 0.05,
+      "defect_value": 0.00014403648890404144,
+      "max_scaled_defect": 0.0017231893876968577,
+      "merit": 0.00014403707144281568,
+      "improves": true,
+      "max_cart": 2.071374500392626,
+      "max_force": 69.00423449576154
+    },
+    {
+      "alpha": 0.01,
+      "defect_value": 0.00015640031784940083,
+      "max_scaled_defect": 0.001795701123482742,
+      "merit": 0.00015640034115095181,
+      "improves": true,
+      "max_cart": 2.071347864855389,
+      "max_force": 69.00062126450683
+    }
+  ],
+  "solver": {
+    "backend": "augmented",
+    "status": 3,
+    "message": "accurate unconstrained ridge solution inside bounds",
+    "iterations": 0,
+    "optimality": 8.55814677140245e-17,
+    "cost": 2.348915257742024e-07,
+    "max_scaled_step": 0.07727491369427723,
+    "wall_seconds": 0.8203826000026311
+  },
+  "baseline_defect_value": 0.00015957107833168322,
+  "design_native_steps": 11200,
+  "scope": "simultaneous full-spatial shooting proposals only; no accepted physical episode"
+}

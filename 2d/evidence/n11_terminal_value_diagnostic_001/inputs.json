@@ -1,0 +1,65 @@
+{
+  "args": {
+    "route": "output/n11_backward_diagnostic_001/linear_models.npz",
+    "out": "output/n11_terminal_value_diagnostic_001",
+    "cached_models": true,
+    "axis_design": true,
+    "fine_steps": true,
+    "backends": [
+      "qr"
+    ],
+    "trust": [
+      1.0
+    ],
+    "derivative_order": 2,
+    "derivative_eps": 1e-05,
+    "terminal_value_scale": 0.0
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "conditioning.py": "77e86d78c441936eb6d3e4fb6b19a01c745f1769efeffa586173c15db7be10da",
+    "control.py": "07b1ace4cbe140b95c7f9c15b80b3f5f8cd8e49a9e4392ab67736ea65117405b",
+    "env.py": "b1ec1618244f143936fa73c60a3ca3dfaf6c0180a995994855cd3de8f3674a23",
+    "experiment.py": "293743bbd476b7ee3ecaf124bdd1b011f945ae71ab260fa98093045002123d5a",
+    "fddp.py": "e81c6f686a7e4583053c79c0891d09eb2b9b75ded04ae3760a2bd8662e077036",
+    "physical.py": "f05858d25a76279cb09271c3e13ef76e966b542aeca5612e1f7c2e7f288d860d",
+    "tracking_repair.py": "8a42fd0736e1a55c9a83ea5e7fabfe8569b688357f2a496a0b0f4c49efd54bc6",
+    "transfer.py": "416a514a51a0158175c2a1b7527f2b29da33ba053132c31adfcf06afa71d6914"
+  },
+  "input_artifacts_sha256": {
+    "driver.py": "63a643d99f04bf2dc05db2f094fc4200081c1bbed3457ab1158f3b9d4953c17e",
+    "pyproject.toml": "1219ab00e087e3d51a95cd257425983cbcad689c3abc13dcad32e91dd549b51f",
+    "requirements-lock.txt": "dc59359748d15aed6894cda3f60a9e1a2f2005385af44b76aa47d071ef35ffe7",
+    "input_route.npz": "f4137ac9d43960898dbfe9b3a6611302b2a9d4b981786614aa589ebc413008e3"
+  },
+  "utc": "2026-10-17T00:27:28.583992+00:00",
+  "command": [
+    "scripts/diagnose_tracking_backward.py",
+    "--route",
+    "output/n11_backward_diagnostic_001/linear_models.npz",
+    "--out",
+    "output/n11_terminal_value_diagnostic_001",
+    "--cached-models",
+    "--axis-design",
+    "--fine-steps",
+    "--backends",
+    "qr",
+    "--trust",
+    "1",
+    "--terminal-value-scale",
+    "0"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5",
+    "packages": {
+      "scipy": "1.17.1",
+      "gymnasium": "1.4.0",
+      "imageio": "2.38.1",
+      "pillow": "12.3.0"
+    },
+    "thread_environment": {}
+  }
+}

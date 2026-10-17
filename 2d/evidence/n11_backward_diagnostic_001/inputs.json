@@ -1,0 +1,44 @@
+{
+  "args": {
+    "route": "output/planar_lift_n11_001/route.npz",
+    "out": "output/n11_backward_diagnostic_001"
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "conditioning.py": "77e86d78c441936eb6d3e4fb6b19a01c745f1769efeffa586173c15db7be10da",
+    "control.py": "7724915b201ec920c8cc48e8feab007f1dc74868728ece65e400fd30a23f3481",
+    "env.py": "b1ec1618244f143936fa73c60a3ca3dfaf6c0180a995994855cd3de8f3674a23",
+    "experiment.py": "293743bbd476b7ee3ecaf124bdd1b011f945ae71ab260fa98093045002123d5a",
+    "fddp.py": "d623c8cce45651c1cc93bbd250d4e0ef791db1a95f3f2e2c5ddd08f467ef7a35",
+    "physical.py": "f05858d25a76279cb09271c3e13ef76e966b542aeca5612e1f7c2e7f288d860d",
+    "tracking_repair.py": "e267370fc4a622333f0aeca0730f2629525a99e62c57e421ac14a48368e67a89",
+    "transfer.py": "416a514a51a0158175c2a1b7527f2b29da33ba053132c31adfcf06afa71d6914"
+  },
+  "input_artifacts_sha256": {
+    "driver.py": "aad9af5663b109fdd27b1fe0c4eb1eec320fdb5da28abc889cdac9a50afd2c7a",
+    "pyproject.toml": "1219ab00e087e3d51a95cd257425983cbcad689c3abc13dcad32e91dd549b51f",
+    "requirements-lock.txt": "dc59359748d15aed6894cda3f60a9e1a2f2005385af44b76aa47d071ef35ffe7",
+    "input_route.npz": "4e332221333667e5b89584c3eeba69073052630c0ac649979199619e8a47ac38"
+  },
+  "utc": "2026-10-17T00:15:32.479275+00:00",
+  "command": [
+    "scripts/diagnose_tracking_backward.py",
+    "--route",
+    "output/planar_lift_n11_001/route.npz",
+    "--out",
+    "output/n11_backward_diagnostic_001"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5",
+    "packages": {
+      "scipy": "1.17.1",
+      "gymnasium": "1.4.0",
+      "imageio": "2.38.1",
+      "pillow": "12.3.0"
+    },
+    "thread_environment": {}
+  }
+}

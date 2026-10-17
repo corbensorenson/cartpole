@@ -3,9 +3,10 @@ import mujoco as mj
 import numpy as np
 import pytest
 from spatialpole import Config,SpatialCartpole
+from spatialpole.control import balance_design,WorldBalancePolicy
 
 
-@pytest.mark.parametrize('n',[1,3,7,8,9,10])
+@pytest.mark.parametrize('n',[1,3,7,8,9,10,11])
 def test_persistent_native_multiaxis_motion_matches_environment(n):
     env = SpatialCartpole(Config(n_links=n))
     initial,_ = env.reset(seed=0,options={'mode':'hanging','angle_noise':0.})
@@ -32,7 +33,7 @@ def test_persistent_native_multiaxis_motion_matches_environment(n):
     env.close()
 
 
-@pytest.mark.parametrize('n',[1,3,7,8,9,10])
+@pytest.mark.parametrize('n',[1,3,7,8,9,10,11])
 def test_force_response_has_no_preferred_horizontal_axis(n):
     env = SpatialCartpole(Config(n_links=n))
     initial,_ = env.reset(seed=0,options={'mode':'hanging','angle_noise':0.})
@@ -49,7 +50,7 @@ def test_force_response_has_no_preferred_horizontal_axis(n):
     env.close()
 
 
-@pytest.mark.parametrize('n',[1,3,7,8,9,10])
+@pytest.mark.parametrize('n',[1,3,7,8,9,10,11])
 def test_every_ball_joint_retains_both_transverse_directions_and_spin(n):
     env = SpatialCartpole(Config(n_links=n))
     initial,_ = env.reset(seed=0,options={'mode':'hanging','angle_noise':0.})
@@ -64,4 +65,27 @@ def test_every_ball_joint_retains_both_transverse_directions_and_spin(n):
     spinning[env.model.nq+4+3*(n-1)] = .5
     moved = env.transition(spinning,[0.,0.])
     assert abs(env.difference(moved,spinning)[4+3*(n-1)])>.001
+    env.close()
+
+
+@pytest.mark.parametrize('n',[3,11])
+def test_axis_separated_upright_design_rotates_with_physical_world(n):
+    env = SpatialCartpole(Config(n_links=n))
+    design = balance_design(env,axis_separated=True)
+    assert design['closed_loop_radius']<1.
+    rng = np.random.default_rng(418)
+    state = env.integrate(env.upright_state(),rng.normal(size=2*env.model.nv)*1e-6)
+    rotated = state.copy()
+    rotated[:2] = [-state[1],state[0]]
+    rotated[env.model.nq:env.model.nq+2] = [-state[env.model.nq+1],state[env.model.nq]]
+    q = np.array([np.sqrt(.5),0.,0.,np.sqrt(.5)])
+    mj.mju_mulQuat(rotated[2:6],q,state[2:6])
+    # The root's local angular velocity stays the same under world rotation;
+    # every relative joint state, including free axial spin, is also retained.
+    policy = WorldBalancePolicy(env,design)
+    force,turned = policy(state),policy(rotated)
+    np.testing.assert_allclose(turned,[-force[1],force[0]],atol=1e-6)
+    ix = np.array([0]+[3+3*j for j in range(n)])
+    ix = np.r_[ix,ix+env.model.nv]
+    assert np.linalg.eigvalsh(design['P'][np.ix_(ix,ix)])[0]>0.
     env.close()

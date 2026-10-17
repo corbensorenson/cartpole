@@ -1,0 +1,98 @@
+{
+  "n_links": 11,
+  "passes": 0,
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 2.8090401650695833,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.05783223897894452,
+      "physics_warning": false,
+      "success": false,
+      "steps": 427,
+      "native_steps": 1708,
+      "wall_seconds": 0.23999449999973876,
+      "max_xy": [
+        3.0578322389789445,
+        0.7380663581454149
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.8090401650695833,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 1708
+    }
+  ],
+  "design_native_steps": 2677364,
+  "optimizer_iterations": 11,
+  "last_optimizer_record": {
+    "iteration": 10,
+    "cost": 0.0,
+    "defect_value": 0.00015957107833168322,
+    "max_scaled_defect": 0.001813837705965397,
+    "penalty": 1000000.0,
+    "trust": 100000000000.0,
+    "alpha": 0.0,
+    "accepted": false,
+    "bounded_steps": 67,
+    "native_steps": 2675764,
+    "reference_max_cart": 2.0713412059710796,
+    "trials": [
+      {
+        "alpha": 1.0,
+        "cost": 1.7385524678697898e+19,
+        "defect_value": 5.332083159509379e-29,
+        "max_scaled_defect": 8.27511384415759e-16,
+        "max_cart": 12.467496155242673
+      },
+      {
+        "alpha": 0.5,
+        "cost": 6.735821813584261e+18,
+        "defect_value": 3.989276958292018e-05,
+        "max_scaled_defect": 0.0009069188529826013,
+        "max_cart": 41.42819176328482
+      },
+      {
+        "alpha": 0.25,
+        "cost": 5.172750619276525e+18,
+        "defect_value": 8.975873156157608e-05,
+        "max_scaled_defect": 0.0013603782794740493,
+        "max_cart": 5.827100459229219
+      },
+      {
+        "alpha": 0.1,
+        "cost": 1.2219032172563192e+19,
+        "defect_value": 0.00012925257344866301,
+        "max_scaled_defect": 0.0016324539353688428,
+        "max_cart": 19.16009253241927
+      },
+      {
+        "alpha": 0.05,
+        "cost": 1.9553488987612266e+19,
+        "defect_value": 0.00014401289819434678,
+        "max_scaled_defect": 0.0017231458206671318,
+        "max_cart": 27.486194857174027
+      },
+      {
+        "alpha": 0.01,
+        "cost": 1.8666248188486845e+18,
+        "defect_value": 0.00015639561387288626,
+        "max_scaled_defect": 0.001795699328905764,
+        "max_cart": 21.691818778444812
+      },
+      {
+        "alpha": 0.005,
+        "cost": 1.3166353076626473e+19,
+        "defect_value": 0.00015797935682532134,
+        "max_scaled_defect": 0.00180476851743558,
+        "max_cart": 8.295029250747426
+      }
+    ],
+    "backward": "residual QR",
+    "terminal_projected_min_eigenvalue": -137.45789087340503
+  },
+  "wall_seconds": 69.1604101999983,
+  "scope": "input motion is a geometric target only; actual gates use the unchanged benchmark"
+}

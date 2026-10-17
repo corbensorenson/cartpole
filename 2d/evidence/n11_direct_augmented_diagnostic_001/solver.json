@@ -1,0 +1,10 @@
+{
+  "backend": "augmented",
+  "status": 3,
+  "message": "accurate unconstrained ridge solution inside bounds",
+  "iterations": 0,
+  "optimality": 8.55814677140245e-17,
+  "cost": 2.348915257742024e-07,
+  "max_scaled_step": 0.07727491369427723,
+  "wall_seconds": 0.8203826000026311
+}

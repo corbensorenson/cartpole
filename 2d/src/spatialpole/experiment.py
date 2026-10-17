@@ -97,6 +97,8 @@ def episode(config, policy_factory, seed, mode="upright", noise=0.02, tape=None)
     if tape:
         np.savez_compressed(tape, states=states, actions=np.asarray(actions, np.float32), raw_actions=raw_actions,
                             tilts=tilts, config=json.dumps(asdict(config)),policy_metadata=json.dumps(getattr(policy,'metadata',{})))
+    if hasattr(policy,'close'):
+        policy.close()
     env.close()
     proof.close()
     return result
@@ -191,7 +193,10 @@ def main():
         config = Config(**json.loads(str(saved["config"])))
         design = {k:saved[k] for k in ("reference","K","P","Q","R")}
         world_balance = a.world_feedback or (bool(saved["world_balance"]) if "world_balance" in saved else False)
-        if 'park_steps' in saved:
+        if 'affine_value' in saved and bool(saved['affine_value']):
+            from .affine_value import affine_policy_from_payload
+            factory = lambda e: affine_policy_from_payload(e,saved)
+        elif 'park_steps' in saved:
             parking = {'reference':saved['parking_reference'],'K':saved['parking_K']}
             factory = lambda e: ParkedRoutePolicy(e,saved['states'],saved['actions'],saved['gains'],design,parking,int(saved['park_steps']),bool(saved['align_gauge']))
         else:

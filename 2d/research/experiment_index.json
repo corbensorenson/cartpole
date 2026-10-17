@@ -41,6 +41,38 @@
       "source_manifest": "output/conditioned_n10_001/inputs.json"
     },
     {
+      "directory": "output/conditioned_n11_001",
+      "status": "completed",
+      "summary_sha256": "46e026f1ad903809b6650af5d41ffe16a86d9eb17087c28907e8357f83282954",
+      "passes": 27,
+      "n_links": 11,
+      "source_manifest": "output/conditioned_n11_001/inputs.json"
+    },
+    {
+      "directory": "output/conditioned_n11_002",
+      "status": "completed",
+      "summary_sha256": "d894103993f130d5d4d63ac8e5a67fcd80ed1b20b0f0da744e5021728e028f4b",
+      "passes": 40,
+      "n_links": 11,
+      "source_manifest": "output/conditioned_n11_002/inputs.json"
+    },
+    {
+      "directory": "output/conditioned_n11_003",
+      "status": "completed",
+      "summary_sha256": "51a115df7ece67736b976b7f7d6f1081213b0dff7ca42560c68c5dc6e87760ed",
+      "passes": 43,
+      "n_links": 11,
+      "source_manifest": "output/conditioned_n11_003/inputs.json"
+    },
+    {
+      "directory": "output/conditioned_n11_004",
+      "status": "completed",
+      "summary_sha256": "1cea437ba82a56aeb8a2b5662fc9c6daa6a62b7247274f5a53d74a807ba384db",
+      "passes": 45,
+      "n_links": 11,
+      "source_manifest": "output/conditioned_n11_004/inputs.json"
+    },
+    {
       "directory": "output/conditioned_n3_001",
       "status": "completed",
       "summary_sha256": "3e6450f192e0503a052329ecb237657d23e60fdb43ff226b5dd410a8f62521d7",
@@ -137,6 +169,118 @@
       "source_manifest": "output/fddp_n4_006/inputs.json"
     },
     {
+      "directory": "output/n11_backward_diagnostic_001",
+      "status": "completed",
+      "summary_sha256": "4470dbec39b81fd4fc50a6ecb6721aa55a71f6114b45b26777824cea60bc5921",
+      "passes": null,
+      "n_links": 11,
+      "source_manifest": "output/n11_backward_diagnostic_001/inputs.json"
+    },
+    {
+      "directory": "output/n11_derivative_order4_001",
+      "status": "completed",
+      "summary_sha256": "f695a854aab08ba8f548cafe287ae7f3a13c9d73fd0db294bc6c1f08d626e9ee",
+      "passes": null,
+      "n_links": 11,
+      "source_manifest": "output/n11_derivative_order4_001/inputs.json"
+    },
+    {
+      "directory": "output/n11_direct_augmented_diagnostic_001",
+      "status": "completed",
+      "summary_sha256": "ea5749b0318b8c6b98c9093b24f96de6d587f4d78cf7f28c3c51d859820e1f89",
+      "passes": null,
+      "n_links": 11,
+      "source_manifest": "output/n11_direct_augmented_diagnostic_001/inputs.json"
+    },
+    {
+      "directory": "output/n11_direct_repair_001",
+      "status": "completed",
+      "summary_sha256": "b3cdb97a748177d67fa121c16a38534951be8c433874d545645efdfb88742ee7",
+      "passes": 0,
+      "n_links": 11,
+      "source_manifest": "output/n11_direct_repair_001/inputs.json"
+    },
+    {
+      "directory": "output/n11_direct_shooting_diagnostic_001",
+      "status": "completed",
+      "summary_sha256": "61f5bf687f5f592c813195994c8c10e0968129572c54a41eb01fba78866a2961",
+      "passes": null,
+      "n_links": 11,
+      "source_manifest": "output/n11_direct_shooting_diagnostic_001/inputs.json"
+    },
+    {
+      "directory": "output/n11_hybrid_affine_001",
+      "status": "completed",
+      "summary_sha256": "f2afcb9afb70c4088097b2eb3f073fcad74d35cca796879760113ac7c9876b7b",
+      "passes": null,
+      "n_links": 11,
+      "source_manifest": "output/n11_hybrid_affine_001/inputs.json"
+    },
+    {
+      "directory": "output/n11_hybrid_finite_001",
+      "status": "completed",
+      "summary_sha256": "8c81a83860918069c94e449ca139ceb551f7c86f32883f2972ccb621fca1b4cb",
+      "passes": null,
+      "n_links": 11,
+      "source_manifest": "output/n11_hybrid_finite_001/inputs.json"
+    },
+    {
+      "directory": "output/n11_hybrid_guard_001",
+      "status": "completed",
+      "summary_sha256": "40c67a340e5d51c4381565b81349ab663f116999a6cbd75538eff4b71fdfe4c1",
+      "passes": null,
+      "n_links": 11,
+      "source_manifest": "output/n11_hybrid_guard_001/inputs.json"
+    },
+    {
+      "directory": "output/n11_hybrid_ten_regression_001",
+      "status": "completed",
+      "summary_sha256": "8ebba73bb854217d6126a5d338594ac7dec162abdbc3b1ec1439be54fc2f05a9",
+      "passes": 1,
+      "n_links": 10,
+      "source_manifest": "output/n11_hybrid_ten_regression_001/inputs.json"
+    },
+    {
+      "directory": "output/n11_linesearch_diagnostic_001",
+      "status": "completed",
+      "summary_sha256": "3b23d6cec1fdf53dcdcfcbb27b3821071d11dff138255bd3e0fd486cc6ecbe81",
+      "passes": null,
+      "n_links": 11,
+      "source_manifest": "output/n11_linesearch_diagnostic_001/inputs.json"
+    },
+    {
+      "directory": "output/n11_online_gauge_pilot_001",
+      "status": "completed",
+      "summary_sha256": "4f3a704738a720f19bfb27644bcdcaace234648b53ead32c683055412fdf553f",
+      "passes": 6,
+      "n_links": 11,
+      "source_manifest": "output/n11_online_gauge_pilot_001/inputs.json"
+    },
+    {
+      "directory": "output/n11_optimizer_fix_regression_001",
+      "status": "completed",
+      "summary_sha256": "fc1da417bcd9ebf8772576b88ae10249146fd6468b35eddf3b75012f429d1865",
+      "passes": 1,
+      "n_links": 10,
+      "source_manifest": "output/n11_optimizer_fix_regression_001/inputs.json"
+    },
+    {
+      "directory": "output/n11_rollout_feedback_diagnostic_001",
+      "status": "completed",
+      "summary_sha256": "0603ccb45227077a3bf5d99efb692901a7c8e744c4200b91c8e5b75f71e460b3",
+      "passes": null,
+      "n_links": 11,
+      "source_manifest": "output/n11_rollout_feedback_diagnostic_001/inputs.json"
+    },
+    {
+      "directory": "output/n11_terminal_value_diagnostic_001",
+      "status": "completed",
+      "summary_sha256": "f27de69dfe8c7f8c3ed6d599a8c0a6756afed4695235234e10e652f481dd7185",
+      "passes": null,
+      "n_links": 11,
+      "source_manifest": "output/n11_terminal_value_diagnostic_001/inputs.json"
+    },
+    {
       "directory": "output/n2_world_handoff_001",
       "status": "completed",
       "summary_sha256": "37a5ac93398866952ae89633a228f4682f814ae3857baaf2e6508ae816bc6505",
@@ -207,6 +351,14 @@
       "passes": 0,
       "n_links": 10,
       "source_manifest": "output/planar_lift_n10_001/inputs.json"
+    },
+    {
+      "directory": "output/planar_lift_n11_001",
+      "status": "completed",
+      "summary_sha256": "094fa35f4abc28e41b26e7dd837abef177a389249b2b9f64bf71f4985bde27a2",
+      "passes": 0,
+      "n_links": 11,
+      "source_manifest": "output/planar_lift_n11_001/inputs.json"
     },
     {
       "directory": "output/planar_lift_n3_001",
@@ -295,6 +447,14 @@
       "passes": 32,
       "n_links": 10,
       "source_manifest": "output/qualify_n10_001/inputs.json"
+    },
+    {
+      "directory": "output/qualify_n11_001",
+      "status": "completed",
+      "summary_sha256": "e84468d1cdb27de3aa0dba9de6c393e71e5573dcb606016dbeeb734e5da8b5c3",
+      "passes": 32,
+      "n_links": 11,
+      "source_manifest": "output/qualify_n11_001/inputs.json"
     },
     {
       "directory": "output/qualify_n1_001",
@@ -391,6 +551,14 @@
       "passes": 1,
       "n_links": 3,
       "source_manifest": "output/regression_n3_cart_armature_001/inputs.json"
+    },
+    {
+      "directory": "output/release10_reproduction_001",
+      "status": "completed",
+      "summary_sha256": "cac0ab45ad4faebbbd4dc19552aaf745e44cfb26083f43dd974df6c44a5fbea8",
+      "passes": 1,
+      "n_links": 10,
+      "source_manifest": "output/release10_reproduction_001/inputs.json"
     },
     {
       "directory": "output/release4_reproduction_001",
@@ -553,6 +721,46 @@
       "source_manifest": "output/tracking_repair_n10_001/inputs.json"
     },
     {
+      "directory": "output/tracking_repair_n11_001",
+      "status": "completed",
+      "summary_sha256": "651272aa7b0bb31cfa3fac48f386f23c1bf381183e410973e3e3305eb71c26e7",
+      "passes": 0,
+      "n_links": 11,
+      "source_manifest": "output/tracking_repair_n11_001/inputs.json"
+    },
+    {
+      "directory": "output/tracking_repair_n11_002",
+      "status": "completed",
+      "summary_sha256": "051ac28796c9e2223a6c5316795fb4f13d8f81c96843bcd3d2845f5096ed2e70",
+      "passes": 0,
+      "n_links": 11,
+      "source_manifest": "output/tracking_repair_n11_002/inputs.json"
+    },
+    {
+      "directory": "output/tracking_repair_n11_003",
+      "status": "completed",
+      "summary_sha256": "25e8d7b5fdd3b2a6d53bcddf712271ddd016474e8910ee861f18012a3d7ec18c",
+      "passes": 0,
+      "n_links": 11,
+      "source_manifest": "output/tracking_repair_n11_003/inputs.json"
+    },
+    {
+      "directory": "output/tracking_repair_n11_004",
+      "status": "completed",
+      "summary_sha256": "36e205ec118bae9df64bdf5957551923f382c68188450ba7edda41a7eb040a03",
+      "passes": 0,
+      "n_links": 11,
+      "source_manifest": "output/tracking_repair_n11_004/inputs.json"
+    },
+    {
+      "directory": "output/tracking_repair_n11_005",
+      "status": "completed",
+      "summary_sha256": "860af1d6ac94d73b82872c99504a2b636b963892dc66a48f54f347eff7be245d",
+      "passes": 0,
+      "n_links": 11,
+      "source_manifest": "output/tracking_repair_n11_005/inputs.json"
+    },
+    {
       "directory": "output/tracking_repair_n4_001",
       "status": "completed",
       "summary_sha256": "b63ed74ac9ebf4bc38a8169d8a2f2d49073241373dd6ec6c894041d879c4f8e4",
@@ -610,6 +818,25 @@
     }
   ],
   "publications": [
+    {
+      "url": "https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-10-link-v1",
+      "tag": "2d-cartpole-10-link-v1",
+      "commit": "c55ebd6eeb8850c65686d78e3880db71eb6b779f",
+      "assets": [
+        {
+          "name": "2d-cartpole-10-link-swingup.mp4",
+          "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-10-link-v1/2d-cartpole-10-link-swingup.mp4",
+          "sha256": "adafc1b7d48cd4e2dd033243b5d954ffd3e1f98e3a886ad792f653356f584054",
+          "size": 1279062
+        },
+        {
+          "name": "2d-cartpole-10-link-evidence.zip",
+          "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-10-link-v1/2d-cartpole-10-link-evidence.zip",
+          "sha256": "62956e2c933cf08c47a81c3db657caded7c153f74245ff4d542db2066cfac582",
+          "size": 650526266
+        }
+      ]
+    },
     {
       "url": "https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-2-link-v1",
       "tag": "2d-cartpole-2-link-v1",

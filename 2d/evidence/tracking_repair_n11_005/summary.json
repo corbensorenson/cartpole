@@ -1,0 +1,133 @@
+{
+  "n_links": 11,
+  "passes": 0,
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 1.6095334911886383,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.020826497244866182,
+      "physics_warning": false,
+      "success": false,
+      "steps": 211,
+      "native_steps": 844,
+      "wall_seconds": 0.10728519999975106,
+      "max_xy": [
+        3.020826497244866,
+        1.590424535134896
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 1.6095334911886383,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 844
+    }
+  ],
+  "design_native_steps": 20099132,
+  "optimizer_iterations": 80,
+  "last_optimizer_record": {
+    "iteration": 79,
+    "cost": 0.07708276674603232,
+    "defect_value": 0.00015565527245765614,
+    "max_scaled_defect": 0.0017914440701096495,
+    "penalty": 1000000000000.0,
+    "trust": 1.0,
+    "alpha": 0.00015625,
+    "accepted": true,
+    "bounded_steps": 83,
+    "native_steps": 20097532,
+    "reference_max_cart": 2.0718813534110283,
+    "trials": [
+      {
+        "alpha": 1.0,
+        "cost": 2.583082074971113e+18,
+        "defect_value": 5.391153009005183e-29,
+        "max_scaled_defect": 1.0467283057891836e-15,
+        "max_cart": 42.906562644032434
+      },
+      {
+        "alpha": 0.5,
+        "cost": 1.0907582819222076e+18,
+        "defect_value": 3.8925981533300686e-05,
+        "max_scaled_defect": 0.0008958620134944211,
+        "max_cart": 49.43476719046776
+      },
+      {
+        "alpha": 0.25,
+        "cost": 9.753233949041733e+17,
+        "defect_value": 8.758345844993111e-05,
+        "max_scaled_defect": 0.0013437930202416413,
+        "max_cart": 25.206037172417062
+      },
+      {
+        "alpha": 0.1,
+        "cost": 1.6511251477222134e+18,
+        "defect_value": 0.00012612018016789925,
+        "max_scaled_defect": 0.0016125516242899882,
+        "max_cart": 31.31286612884869
+      },
+      {
+        "alpha": 0.05,
+        "cost": 1.5541555129278275e+17,
+        "defect_value": 0.00014052279333521652,
+        "max_scaled_defect": 0.0017021378256393985,
+        "max_cart": 11.786681722993919
+      },
+      {
+        "alpha": 0.01,
+        "cost": 5.638029489543276e+18,
+        "defect_value": 0.00015260541800315687,
+        "max_scaled_defect": 0.0017738067867190028,
+        "max_cart": 20.441580908527975
+      },
+      {
+        "alpha": 0.005,
+        "cost": 1.0129790261102734e+18,
+        "defect_value": 0.0001541507794700238,
+        "max_scaled_defect": 0.001782765406853918,
+        "max_cart": 25.362021067312952
+      },
+      {
+        "alpha": 0.0025,
+        "cost": 1.1490435124367236e+18,
+        "defect_value": 0.00015492637965208513,
+        "max_scaled_defect": 0.001787244716921391,
+        "max_cart": 31.233229786829504
+      },
+      {
+        "alpha": 0.00125,
+        "cost": 1.4927940159267244e+19,
+        "defect_value": 0.00015531490960525647,
+        "max_scaled_defect": 0.0017894843719551301,
+        "max_cart": 4.013061943301107
+      },
+      {
+        "alpha": 0.000625,
+        "cost": 5.392777032487163e+18,
+        "defect_value": 0.00015550935704738896,
+        "max_scaled_defect": 0.0017906041994719818,
+        "max_cart": 11.373309352365286
+      },
+      {
+        "alpha": 0.0003125,
+        "cost": 1.0666743240455848e+19,
+        "defect_value": 0.00015560662638483492,
+        "max_scaled_defect": 0.001791164113230446,
+        "max_cart": 12.149909231526781
+      },
+      {
+        "alpha": 0.00015625,
+        "cost": 0.07708276674603232,
+        "defect_value": 0.00015565527245765614,
+        "max_scaled_defect": 0.0017914440701096495,
+        "max_cart": 2.0718813534110283
+      }
+    ],
+    "backward": "residual QR",
+    "terminal_projected_min_eigenvalue": -66.96829411087464
+  },
+  "wall_seconds": 547.420269899998,
+  "scope": "input motion is a geometric target only; actual gates use the unchanged benchmark"
+}

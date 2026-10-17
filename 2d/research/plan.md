@@ -944,3 +944,458 @@ Any failed qualification becomes development only, and a revised policy
 needs a new untouched cohort. Ten-link independent native physical-freedom
 checks are included in the current passing 56-test suite. Retain raw failures
 and distinguish optimizer-trial instability from accepted physical episodes.
+
+## Eleven-link numerical repair amendment, before second native repair
+
+The first native repair accepts no step, stops after 11 iterations / 2,677,380
+design steps, and fails actual nominal at 8.54s with no hold. Its original
+proposal, rejected trials and source are retained. The stored upright value
+has entries around 5e16 and a largest eigenvalue around 1.5e17; binary64 normal
+value updates can lose order-one costs and acquire numerical negative modes.
+The new optional residual-QR backward pass avoids normal-matrix downdates.
+Independent condensed affine/trust optimization, a closed-form two-control
+problem with 1e18 terminal value, an active-circle feedback derivative, and
+native manifold defect closure all pass; the full suite now has 64 tests.
+
+Run `tracking_repair_n11_002` from the ORIGINAL lifted proposal, unchanged
+weights/initial gap penalty 100000, 80 iterations, four workers, <=35M native
+design steps, with `--sqrt-backward`. The terminal optimizer cost is explicitly
+evaluated as a residual norm: the rounded Riccati value's numerical negative
+eigenvalues are projected to zero (material indefiniteness is rejected), and
+the original diagonal Q is stacked separately. Record the smallest projected
+eigenvalue each iteration. This is a disclosed approximation to the optimizer
+terminal value, never a plant change or a change to the stationary runtime gain.
+Full float32 nominal/replay and 12 shared noisy starts remain required. If
+nominal passes but noisy starts fail, the previously chosen 16s hanging/gauge
+wrapper and all 44 shared development starts still apply. Reserved eleven-link
+seeds 20262216..20262247 remain untouched. No qualification relaxation.
+
+## Eleven-link backward/virtual-gap diagnostic, before execution
+
+The residual-QR run also stalls with no accepted step after 11 iterations;
+do not attribute the entire failure to normal-matrix cancellation. Freeze
+`n11_backward_diagnostic_001` from the original lifted route and current source.
+Compute one native derivative batch and both backward implementations at
+trust 1, 1e6, 1e9. For each, test virtual-gap alpha 0, 1e-8, .005, and 1.
+Record gain/feed magnitudes, first reference deviation >1e-6, costs, and all
+finite states/actions/errors. Alpha zero should recover the reference up to
+roundoff; failure there locates a numerical/feedback issue before changing
+weights or physics. This is solely a diagnostic, with <=500k native steps,
+no noisy episodes, no reserved seeds and no success claim.
+
+## Active force-circle curvature correction and third eleven-link repair
+
+The virtual-gap diagnostic completes with 270980 native steps. Alpha zero
+recovers the target within 5.1e-7 state units, while alpha .005 diverges under
+both backward implementations. This rules out gross reference reconstruction
+failure. An independent closed-form two-stage constrained control problem
+then exposes a real optimizer defect: the active force circle's value Hessian
+was missing lambda*K.T*K. For V(x)=.5||x+g||²-2||x+g||+4, g=(3,4), both
+old implementations return the wrong preceding feedback derivative. Both
+regressions fail before the correction and pass afterward. The normal and
+residual-QR backends now retain the force constraint's Lagrange multiplier
+and its curvature; the legacy bounded iLQR path receives the same correction.
+This concerns synthesis, not native physics or saved controller execution.
+The complete 66-test suite passes, including native freedom/replay tests.
+
+Before further development, replay the frozen ten-link first reserved episode
+with current source in `n11_optimizer_fix_regression_001`; require byte-identical
+states/actions/tilts against its accepted tape. Then run `tracking_repair_n11_003`
+from the ORIGINAL lifted proposal with the curvature-corrected residual-QR
+backward, same weights/initial gap penalty 100000, 80 iterations, four workers,
+<=35M native design steps. Use the same nominal-first/12-noisy development
+gates and the same conditional 16s hanging/gauge wrapper and 44 development
+starts. No reserved seeds or benchmark changes. Retain both prior failures.
+
+## Eleven-link symmetry-preserving upright value, before fourth repair
+
+The curvature-corrected third repair also stalls without an accepted step;
+the correction remains independently required and covered by the closed-form
+regression. The frozen ten-link tape remains byte-identical after the fix.
+Further diagnosis finds the combined upright DARE introduces a cross-axis
+value block as large as 2.688e15, although the native X/Y identifications agree
+under rotation within 1.01e-12. A single horizontal-axis DARE after averaging
+those native identifications yields a positive value (minimum eigenvalue
+0.29048) and stable nominal linear feedback (radius 0.98774). Rotate this
+gain/value to the other axis and keep cross-axis value blocks zero, as required
+by upright rotational symmetry. This changes controller design, never native
+XY freedom, joint motion, mechanics, action delivery or benchmark scoring.
+Physical world-rotation feedback and positive-value checks at 3 and 11 links
+pass; the full suite has 68 passing tests.
+
+Run `tracking_repair_n11_004` from the original lifted proposal with
+`--sqrt-backward --axis-design`, same weights, initial gap penalty 100000,
+80 iterations, four workers, <=35M native design steps. Require actual full
+nominal/replay plus the same 12 shared noisy starts, then the existing conditional
+16s hanging/gauge wrapper and all 44 development starts if needed. Reserved
+seeds 20262216..20262247 remain untouched. Preserve every failed variant.
+
+## Eleven-link fine-step diagnostic, before cached-model execution
+
+The fourth repair also stalls after 11 iterations and fails nominal. All four
+failed repairs are terminal, with no reserved seeds used. Before another
+repair, use `n11_linesearch_diagnostic_001` to inspect the untested small-step
+region. Reuse the frozen native A/B/offset/gap arrays from
+`n11_backward_diagnostic_001/linear_models.npz`; copy/hash this input through
+the normal freezing mechanism. Rebuild the current corrected QR backward
+at trust 1 and 1e6 with the axis-separated upright value, and test virtual-gap
+alphas 0, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, .005, 1. Record actual native
+virtual-gap states/actions/errors, cost and defect, and whether the original
+merit would accept at penalties 1e5, 1e8, 1e11. Budget <=120k native steps,
+no actual noisy episodes, no reserved seeds and no accepted-solve claim.
+This distinguishes inadequate minimum line-search size from an inaccurate
+local model; do not repeat the same stalled repair without new evidence.
+
+## Eleven-link finer line search and bounded trust growth, before fifth repair
+
+The cached-model diagnostic completes in 29380 native steps. At trust 1,
+alpha 1e-4 gives cost 5.96856e-6 and would improve the original 1e5-penalty
+merit, while .001 and .005 diverge with costs over 1e18. Trust 1e6 shows the
+same valid small-step region but a higher 1e-4 cost (0.00119371). Thus the old
+minimum alpha .005 excluded valid descent steps. Add optional geometric
+backtracking below .005, and an optional small-step trust growth factor.
+Defaults retain earlier behavior. The full 68-test suite passes.
+
+Run `tracking_repair_n11_005` from the ORIGINAL lifted proposal, corrected QR
+and axis-separated design, same objective weights, initial gap penalty 100000,
+80 iterations, four workers, <=35M native design steps, minimum alpha 1e-8,
+and small-step trust factor 1. Hold trust on a successfully accepted small
+step rather than grow it for that fact alone; failed steps still increase
+trust, and accepted large steps reduce it. No mechanics or acceptance change.
+Require full actual nominal/replay and the same 12 noisy starts. If nominal
+passes but development fails, retain the existing conditional 16s preparation
+and all 44 shared starts. Reserved seeds 20262216..20262247 remain untouched.
+
+## Eleven-link derivative-order diagnostic, before native probes
+
+The fine-step repair is live and accepting updates near alpha .00015625,
+but dynamics defects contract slowly. Keep it running. Add an optional
+fourth-order native derivative batch, with centered state stencils and
+fourth-order inward force stencils near individual component caps. As in the
+existing batched derivative code, this identifies the smooth unquantized
+native force map; probes near a circular boundary may lie infinitesimally
+outside the feasible set, while every optimizer rollout/actual command retains
+the 80N norm bound. No physics or runtime action change. Independent native
+spatial directional derivatives and inward Richardson force checks at both
+saturation signs pass; the complete suite now has 72 passing tests.
+
+Run `n11_derivative_order4_001` from the ORIGINAL lifted route, recomputing
+native derivatives at order 4 / epsilon .001, current corrected QR, axis-
+separated upright value, trust 1, and the same fine alpha diagnostic grid.
+Budget <=600k native steps. Save models and all virtual-gap results, compare
+against `n11_linesearch_diagnostic_001` before choosing another repair. No
+noisy starts, reserved seeds or accepted-solve claim are part of this diagnostic.
+
+## Eleven-link terminal-value conditioning diagnostic, before cached execution
+
+The order-four diagnostic completes in 477380 native steps. It still needs
+alpha around 1e-4; .001 and .005 diverge. Higher-order derivatives alone do not
+resolve the problem, so do not start an expensive repeat with that change.
+The live fifth repair remains intact. Next test whether the enormous terminal
+Riccati value forces an excessively stiff first feasibility correction.
+Run `n11_terminal_value_diagnostic_001` with the original cached native models,
+current QR and axis-separated design, trust 1, and the same fine alpha grid,
+but set only the optimizer terminal Riccati scale to ZERO (retain terminal Q).
+The runtime upright controller design remains unchanged. This is a training
+cost diagnostic, not an easier physical benchmark or an accepted result.
+Budget <=30000 native steps. Save full costs/gaps/virtual rollouts before
+choosing a staged feasibility/terminal-value continuation. No reserved seeds.
+
+## Eleven-link rollout-feedback diagnostic, before cached-model execution
+
+The terminal-value-zero probe still diverges at alpha .001, so do not start
+the proposed terminal-value continuation solely on that evidence. Inspection
+of the saved failing rollout locates in-plane divergence around steps 198–207,
+before transverse error grows. At steps 195–196 and 203–204, the FULL bounded
+feedforward update would saturate at 80N, so its constrained X feedback gain
+is almost zero. A tiny alpha trial is actually far inside the force boundary
+there, but inherits that clamped feedback; nearby steps have gains in the
+millions. Test this mismatch directly before another repair.
+
+Run `n11_rollout_feedback_diagnostic_001` using the cached original native
+models, current corrected QR feedforward, axis-separated upright value, trust
+1 and the same fine alpha grid. Replace ONLY forward feedback with the
+unconstrained finite-horizon residual-QR gain (zero offsets/residuals, identical
+Q/R/value/trust). Each trial still clips its actual force norm to 80N and
+recomputes the true native merit. This is a candidate-generation variant,
+not a claim of solving the same constrained local feedback problem. Budget
+<=30000 native steps, no noisy starts or reserved seeds. Save all evidence.
+
+## Eleven-link simultaneous shooting correction, before sparse solve
+
+The free-feedback probe is worse (divergence already at alpha 1e-5), so retain
+it only as a failed diagnostic. Do not change the running fifth repair's
+feedback. Next diagnose a correction that updates every proposal node together,
+without a causal intermediate feedback rollout. The new sparse defect Jacobian
+uses BOTH SO(3) residual derivatives and full 70-dimensional spatial state
+increments, two force inputs, fixed initial and terminal nodes. Its whole
+native residual directional derivative and independent native interval parity
+tests pass; the full suite now has 76 passing tests.
+
+Run `n11_direct_shooting_diagnostic_001` from the cached ORIGINAL native models.
+Undo their orthogonal gap transport before forming the true manifold residual
+Jacobian. Solve one normalized sparse linear least-squares correction with
+regularization .001, state-increment box +/- .1 normalized units, force-increment
+box +/-20N intersected with +/-80N component bounds, at most 20 TRF iterations
+and 300 LSMR iterations per inner solve. Full-dimensional intermediate proposal
+states are never physical resets. Project every candidate force to the 80N
+disk and recompute independent native interval defects at alphas 1,.5,.25,.1,
+.05,.01. Save the Jacobian, linear solution, solver status, proposals, costs,
+force norms and source. Budget <=15000 native steps. No actual episode, noisy
+start, qualification seed, or accepted-solve claim is part of this diagnostic.
+
+## Eleven-link iterative simultaneous shooting repair, before execution
+
+The fifth feedback/gap repair completes 80 iterations, reduces the defect score
+only from 1.59571e-4 to 1.55655e-4, and fails actual nominal at 4.22s. Preserve
+it as a failed development attempt. The simultaneous shooting diagnostic
+produces a much stronger measured correction: one full spatial update reduces
+the native defect score to 6.48856e-6 (about 96%), maximum normalized defect
+.000521687, cart maximum 2.071100m and force maximum 69.206165N. Its sparse
+linear solve is approximate; measured nonlinear defects determine progress.
+
+Run `n11_direct_repair_001` from the ORIGINAL lifted proposal, with full 70-
+dimensional spatial node increments and two force inputs, fixed initial and
+terminal nodes, 20 iterations, order-four native derivatives / epsilon .001,
+four workers, <=12M design native steps. Each sparse correction uses the same
+normalized .1 state-increment box and 20N force-increment box intersected with
+component actuator bounds, then exact 80N disk projection. Initial increment
+regularization .001; divide it by three after each fifth successful iteration
+(floor 1e-7), multiply by ten after no accepted step. At most 20 TRF iterations
+and 1000 LSMR iterations per linear solve. Backtrack alpha 1,.5,.25,.1,.05,.01,
+.001 using measured native defects plus the increment trust penalty. Stop
+early below maximum normalized defect 1e-11; otherwise retain every checkpoint.
+
+After repair, build unconstrained finite-horizon QR tracking feedback with the
+same local Q/R weights and the axis-separated upright value, then perform a
+separate gap-free native rebuild. Save proposal and rebuilt route distinctly.
+Only actual full float32 nominal/replay and, if nominal passes, the 12 shared
+noisy starts count as execution gates. If nominal passes but noise fails,
+retain the previously chosen 16s hanging/gauge wrapper and 44 development
+starts. No extra clock time, resets, constraints, plant changes, or reserved
+seeds; 20262216..20262247 remain untouched until a frozen controller passes.
+
+## Eleven-link augmented sparse solve diagnostic, before execution
+
+The simultaneous repair is live and accepting full updates, reaching defect
+score 1.6e-10 after eight iterations, but its finite-iteration LSMR solve limits
+accuracy. Add an augmented ridge system [lambda I, J.T; J, -lambda I], avoiding
+normal-equation conditioning. Independent over- and underdetermined dense
+residual least-squares comparisons pass; the full suite has 78 passing tests.
+Run `n11_direct_augmented_diagnostic_001` from the same original cached models,
+same .001 regularization and update/actuator bounds, one linear correction,
+same six native candidate alphas and <=15000 native steps. Use the augmented
+solution only if it lies within all increment bounds; otherwise record the
+violations and fall back to the previous bounded LSMR procedure. This tests
+linear-solve accuracy without relaxing a feasible set, physical plant or gate.
+
+## Hybrid document transfer to 2D, before matched execution
+
+User requests review of `D:/ChatGPT/cartpole/corben-marc-hybrid.md`, revision3.
+Freeze its bytes/identity under research/sources/corben_marc_hybrid_2d_20261016.
+It explicitly concerns 1D; its reported 17-link result is not evidence for this
+spatial plant. Relevant sections 9–14 recommend reachable moving targets,
+full affine QR values/defect offsets, native delivered-action correction and
+complete-policy admission. Sparse shooting, QR, actual tapes, parking and fresh
+qualification are already used here. Scalar state/action/angle conventions,
+independent force clipping, published gains and orbit frequencies cannot be
+copied as spatial controllers. Our force bound is a Euclidean disk and all
+passive ball axes, including twist, remain physically free.
+
+The direct sparse repair001 is terminal: 20 updates, 9744580 design native
+steps, defect score3.73042264e-11, maximum normalized defect1.28568116e-6.
+Despite better optimizer feasibility, rebuilt actual nominal exits at4.58s,
+X3.027691m, no hold, exact replay. The rebuilt execution controller omitted
+the proposal's remaining native defects and affine correction. This does not
+establish the failure cause; test that intervention before more iterations.
+
+Run `n11_hybrid_affine_001` from direct001's shooting_proposal.npz, keeping
+the full spatial states, same Q/R, 10x axis-separated stationary terminal value,
+8s reference, canonical plant/delivery, 30s episode and development seeds fixed.
+Round reference forces with the canonical delivery function before fresh order4
+native derivatives (epsilon .001, four workers). Use the actual logarithmic
+reference-error Jacobian at each native successor, not virtual-gap transport.
+Build full affine QR roots/residuals, offsets and gains; independent condensed
+affine least-squares and predictor-isolation/affine-value native tests pass.
+Three matched arms: same raw proposal/gains with zero offset; full affine
+offset; full affine offset plus a new spatial native-value search. This is a
+2D adaptation, not a reproduction of Marc's scalar B17 proposal algorithm.
+Search every route command: delivered baseline, reference, midpoint, four XY
+axis neighbors at1,.1,.01N around the current best, then one inward F32 neighbor;
+deduplicate delivered bytes, cap16, stable strict-cost ties, full80N disk.
+Retain every candidate/selected action, successor, cost, substep margin and
+native count. Reject invalid/substep-outside-plane predictor candidates.
+Predictors own independent state. After route, unchanged world balance.
+No virtual-node reset or rebuilt-reference substitution in these actual arms.
+
+Run nominal seed20261016 exact hanging for each arm; only nominal full pass
+opens the12 shared noisy starts20261116..27 for that arm. Budget<=2.5M inclusive
+native physics steps including design, candidates, actual episodes and proof.
+Stop after these three arms; a lower value or smaller defect is not a solve.
+Prediction: if omitted affine defects are material, affine improves full native
+behavior over zero-offset; search additionally tests nonlinear action response.
+If all fail early, retain that null result and consider earlier bridge/target
+redesign instead of claiming numerical accuracy alone will suffice. Eleven
+reserved seeds20262216..47 remain untouched. No release without full gates.
+
+## Hybrid finite-tail comparison, before execution
+
+Affine001 is terminal. Matched raw-proposal zero-offset feedback fails at5.08s
+with no hold; preserving affine offsets reaches1.92s hold and exits at10.88s;
+the 16-candidate native search reaches the same hold and exits10.66s, adding
+25600 predictor steps. All three replay exactly. The affine controller tracks
+the proposal to8s with tilt .0003054rad, then switches to stationary world
+balance; tilt grows to .09035rad at8.40s and2.17068rad at8.80s. This identifies
+the handoff as an actionable seam, not proof that finite feedback will fix it.
+
+Test the document's finite continuation/guard recommendation next, retaining
+the same original400-node repaired proposal, canonical plant and Q/R. Extend
+the reference to the full1500 execution commands: preserve the original400
+actions, use one zero-force transition from its final state to an exact upright
+reference, then exact stationary upright/zero-force nodes. Preserve the initial
+tail mismatch explicitly in the affine defect; do not reset any actual state.
+All repeated upright nodes have identical derivative centers, so compute one
+order4/.001 native model and reuse it exactly, plus a fresh bridge-state model.
+Use zero finite terminal Riccati scale (terminal stage L_Q retained). This is a
+stationary continuation experiment, not a periodic/moving target experiment.
+
+Two preregistered design horizons:1500 (`n11_hybrid_finite_001`) and1550
+(`n11_hybrid_guard_001`), both executing only1500 commands/30s. Each compares
+zero-offset and affine feedback with the same per-run gains, no native search.
+Nominal20261016 exact hanging first; a full nominal/replay pass opens only the
+12 shared development starts20261116..27. Per-run inclusive budget<=2.5M
+native steps. New roots/gains/offsets are controller changes, not a relabeling
+of old evidence. Preserve all failures. No reserved seeds or public promotion.
+Prediction: if stationary handoff rather than swing feasibility is decisive,
+the affine finite design extends the physical hold; a guard comparison measures
+terminal-boundary sensitivity. Failure leaves moving destinations/earlier entry
+and accurate sparse correction as open alternatives, not more assumed success.
+
+## Eleven-link finite-affine conditioned launch, before execution
+
+Finite001's full nominal passes30s with23.50s hold and exact replay; all12
+raw noisy starts fail. Zero-offset arm fails4.94s with no hold. Before guard001
+outcomes are inspected, select the FIRST1500-design finite-affine controller
+as the physical incumbent for preparation. Do not replace it with guard001
+using held-out results. The document's affine/finite recommendations produced
+a useful actual nominal pass, but reset reliability remains unestablished.
+
+Run `conditioned_n11_001` from finite001/affine_controller.npz using the
+previously selected16s hanging preparation, causal axial-frame alignment,
+then the first700 commands of the full1500-command value design (30s total).
+The input predates explicit swing/design markers: freeze CLI --swing-steps400,
+retain original1500 roots/residuals/gains/offsets, preserve the old input bytes,
+and save a new schema-marked payload rather than modifying the old checkpoint.
+The reference's8s swing plus6s upright tracking executes after16s parking;
+the value design extends beyond this prefix, as an explicit design guard.
+Rotate feedback AND value-root tangent columns with the axial gauge; additive
+force offsets and value residuals are unchanged. Actual physics states remain
+continuous. No search is added. Native parking design <=1000 physics steps;
+45 actual full episodes plus cold proofs <=540000 steps, inclusive<=550000.
+Evaluate nominal20261016 and44 shared development seeds20261116..27 and
+20261416..47. Only a45/45 pass can open the untouched32-seed qualification
+20262216..47 after a separate freeze/memo. No new solve/public release yet.
+
+## Frozen ten-link execution regression for affine adapter changes
+
+Before using the new affine payload dispatcher for qualification, rerun the
+first already-published ten-link held-out seed20262116 with its unchanged
+frozen controller as `n11_hybrid_ten_regression_001`; compare states, delivered
+actions and tilts byte-for-byte to qualify_n10_001/seed20262116.npz. This is an
+execution-integrity regression, not new success evidence or controller tuning.
+One full30s actual episode plus exact cold proof, <=12000 native physics steps.
+
+## Eleven-link18s conditioned affine comparison, before execution
+
+Conditioned001 is terminal at27/45 complete development successes, including
+nominal7.50s hold. It does not open reserved qualification. Preserve all18
+failures and full tapes. The ten-link regression states/actions/tilts remain
+byte-identical;82 current tests pass. Guard001 also passes nominal23.50s but
+0/12 raw noisy starts, so it supplies no demonstrated reset-reliability gain.
+
+Run `conditioned_n11_002` with ONLY preparation duration changed from16 to18s,
+the same finite001 frozen controller, alignment and44 shared noisy starts.
+Actual execution then uses the first600 of its1500 design commands. Nominal
+upright onset at route6.50s leaves a predicted5.50s hold, measured afresh.
+All phases must complete inside30s; never extend or reset the episode.
+Budget<=550000 inclusive physics steps, parking design<=1000, same nominal
+and development seeds, no reserved seeds. Prediction: more contraction may
+improve finite reset reliability at the cost of two seconds of hold; a full
+45/45 is required to proceed. If it fails, retain the null outcome and redesign
+parking costs, earlier entry or moving-target capture in separate bounded work.
+
+## Eleven-link last finite preparation bracket, before execution
+
+Conditioned002 is terminal40/45 development passes (39/44 noisy), nominal
+5.50s hold, all exact replay. Failed seeds20261416,20261425,20261437,
+20261445,20261447 remain development. More parking helps this finite cohort,
+but does not yet pass the required gate. Before changing reference/gains,
+test ONE final feasible timing point18.40s (`conditioned_n11_003`), same
+finite001 controller/alignment and all44 shared starts. It executes580 commands
+of the original1500-step design; predicted nominal hold5.10s. Budget<=550000
+inclusive native steps. Nominal plus44 development, no reserved seeds. Do not
+extend preparation beyond this bracket to consume the required hold window.
+If it fails, retain it and pivot to launch-policy or reachable-target redesign,
+rather than assume endlessly longer parking is available. No public new count.
+
+## Online axial reference alignment pilot, before execution
+
+Conditioned003 is terminal43/45, nominal5.10s; failures20261445(0.30s hold)
+and20261447(1.86s) remain development. The timing bracket is exhausted.
+Probe a different feedback law, not more parking: `n11_online_gauge_pilot_001`
+uses18s preparation and the SAME finite001 arrays, but aligns the current
+reference's body axial frames at EVERY feedback command using observed state.
+Use closest axial polar angle atan2(R10-R01,R00+R11), rotate reference states
+and gain tangent columns, retain measured angular velocities/spin and additive
+force offsets. No state edit, joint lock, physical torque, future observation
+or new offline synthesis is introduced. This is a changed nonlinear policy.
+Independent1/3/11-link tests show force invariance under arbitrary changes of
+observed passive axial frames, exact observed-state preservation and no native
+physics advance. Earlier static launch alignment remains the baseline.
+
+Pilot nominal20261016 plus the FIVE reused failed18s development seeds:
+20261416,20261425,20261437,20261445,20261447, same resets and30s clock.
+Budget<=73000 inclusive native physics steps (six actual episodes+cold proof,
+parking design<=1000). If6/6, test all44 shared development starts in a new
+frozen run before qualification; if any fail, retain their full physical tapes
+and diagnose/pivot. Native search is disabled; values are not used for actions
+in this gauge-feedback family. No reserved seeds or new qualified count.
+
+## Online axial feedback full development gate, before execution
+
+Pilot001 is terminal6/6 full30s passes,5.50s hold each, exact cold replay,
+including all FIVE failures from static18s preparation.85 tests pass.
+Run `conditioned_n11_004` from the frozen pilot001/route.npz with the identical
+18s preparation,400 swing split, full1500-step affine design and online axial
+reference alignment. Recomputing the same parking design must yield identical
+controller arrays; compare every payload key against pilot001's frozen route.
+No other policy/plant/delivery/timing change is permitted. All44 shared noisy
+development starts20261116..27 and20261416..47 plus exact nominal20261016,
+<=550000 inclusive native physics steps, all complete tapes/cold proof. Pilot
+starts overlap development and are not independent evidence. Only a45/45 pass
+opens fresh reserved qualification after a separate frozen memo. Reserved
+20262216..47 remain untouched. Keep baseline timing and static-gauge failures.
+
+## Eleven-link reserved qualification, before first held-out execution
+
+Conditioned004 is terminal45/45: nominal plus44 shared noisy full30s episodes,
+all5.50s hold and exact independent cold replay. Pilot/controller array parity
+passes all28 payload keys.85 tests pass. Freeze EXACT conditioned004/route.npz
+and CURRENT source into `qualify_n11_001`; no controller, parking, alignment,
+arithmetic, plant or threshold changes after inspecting reserved outcomes.
+
+Execute NEW untouched32 noisy seeds20262216..20262247, independent of all
+development/pilot data. Canonical eleven-link spatial model, hanging reset with
+independentXYZ ball noise .02 and velocity/cart noise from the declared reset;
+18s hanging preparation plus the first600 commands of the full1500-command
+finite-affine design, online axial reference alignment, no native search.
+Each episode must finish1500 commands/30s inside the3m square at every physics
+substep, force norm<=80N after F32 delivery, all rods world tilt<.15 for>=5s,
+no native warning, exact independent cold native tape replay. All32 must pass.
+Budget<=384000 physics steps (32 actual episodes+cold proofs; no setup design).
+Record distinct initial-state count, maximum cart excursion/minimum substep
+margin, minimum hold, maximum launch tilt and force. A failed held-out cohort
+is retained and cannot be relabeled after tuning. Only a32/32 pass earns new
+eleven-link qualification. Render the first reserved seed's full1501 frames,
+verify published-source tests and byte-identical first tape, then normal GitHub
+publication with explicit2D tag/full video/evidence and public hash verification.

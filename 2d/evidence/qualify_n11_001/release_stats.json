@@ -1,0 +1,13 @@
+{
+  "passes": 32,
+  "distinct_initial_states": 32,
+  "minimum_hold_seconds": 5.5,
+  "maximum_cart_coordinate": 2.072389423495433,
+  "minimum_substep_margin": 0.9275869990116159,
+  "maximum_force_norm": 69.0398941040039,
+  "maximum_launch_tilt_from_down": 1.6501312036787397e-06,
+  "inclusive_native_steps": 384000,
+  "all_full": true,
+  "all_replay_exact": true,
+  "all_no_warning": true
+}

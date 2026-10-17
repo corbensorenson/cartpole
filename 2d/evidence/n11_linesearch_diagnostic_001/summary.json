@@ -1,0 +1,296 @@
+{
+  "n_links": 11,
+  "results": [
+    {
+      "backend": "qr",
+      "trust": 1.0,
+      "max_gain": 210459160.5308031,
+      "max_feed": 122.0029380384882,
+      "bounded_steps": 82,
+      "forward": [
+        {
+          "alpha": 0.0,
+          "finite": true,
+          "max_reference_error": 3.604461009665272e-07,
+          "first_error_over_1e6_step": null,
+          "max_cart": 2.0713412048329283,
+          "terminal_cost": 3.0289372664521813e-13,
+          "cost": 1.3490047637081495e-12,
+          "defect_value": 0.00015957107833168462,
+          "would_accept_at_penalty": {
+            "100000.0": false,
+            "100000000.0": false,
+            "100000000000.0": false
+          }
+        },
+        {
+          "alpha": 1e-08,
+          "finite": true,
+          "max_reference_error": 4.323788593829647e-07,
+          "first_error_over_1e6_step": null,
+          "max_cart": 2.071341206248532,
+          "terminal_cost": 4.063666586298404e-13,
+          "cost": 2.291081999533725e-12,
+          "defect_value": 0.00015957107514026278,
+          "would_accept_at_penalty": {
+            "100000.0": true,
+            "100000000.0": true,
+            "100000000000.0": true
+          }
+        },
+        {
+          "alpha": 1e-07,
+          "finite": true,
+          "max_reference_error": 8.742640553727199e-07,
+          "first_error_over_1e6_step": null,
+          "max_cart": 2.0713412070754416,
+          "terminal_cost": 2.800336188276401e-13,
+          "cost": 7.361229204934368e-12,
+          "defect_value": 0.0001595710464174679,
+          "would_accept_at_penalty": {
+            "100000.0": true,
+            "100000000.0": true,
+            "100000000000.0": true
+          }
+        },
+        {
+          "alpha": 1e-06,
+          "finite": true,
+          "max_reference_error": 5.622141618477627e-06,
+          "first_error_over_1e6_step": 175,
+          "max_cart": 2.0713412169989613,
+          "terminal_cost": 1.5377219285871283e-13,
+          "cost": 5.356154842673326e-10,
+          "defect_value": 0.00015957075918968537,
+          "would_accept_at_penalty": {
+            "100000.0": true,
+            "100000000.0": true,
+            "100000000000.0": true
+          }
+        },
+        {
+          "alpha": 1e-05,
+          "finite": true,
+          "max_reference_error": 5.54431988351034e-05,
+          "first_error_over_1e6_step": 73,
+          "max_cart": 2.071341324812847,
+          "terminal_cost": 2.4780224807692073e-11,
+          "cost": 5.366405055023516e-08,
+          "defect_value": 0.00015956788692607365,
+          "would_accept_at_penalty": {
+            "100000.0": true,
+            "100000000.0": true,
+            "100000000000.0": true
+          }
+        },
+        {
+          "alpha": 0.0001,
+          "finite": true,
+          "max_reference_error": 0.000563689251411148,
+          "first_error_over_1e6_step": 1,
+          "max_cart": 2.0713422776568295,
+          "terminal_cost": 1.7705897958206497e-07,
+          "cost": 5.968562401850322e-06,
+          "defect_value": 0.00015953916571172564,
+          "would_accept_at_penalty": {
+            "100000.0": true,
+            "100000000.0": true,
+            "100000000000.0": true
+          }
+        },
+        {
+          "alpha": 0.001,
+          "finite": true,
+          "max_reference_error": 217.41198882419806,
+          "first_error_over_1e6_step": 1,
+          "max_cart": 24.25686753266761,
+          "terminal_cost": 1.495411123303079e+19,
+          "cost": 1.4954111233047265e+19,
+          "defect_value": 0.00015925209574610012,
+          "would_accept_at_penalty": {
+            "100000.0": false,
+            "100000000.0": false,
+            "100000000000.0": false
+          }
+        },
+        {
+          "alpha": 0.005,
+          "finite": true,
+          "max_reference_error": 168.60524677708253,
+          "first_error_over_1e6_step": 1,
+          "max_cart": 27.53911626569389,
+          "terminal_cost": 1.594343361707212e+18,
+          "cost": 1.5943433617203164e+18,
+          "defect_value": 0.00015797935682532427,
+          "would_accept_at_penalty": {
+            "100000.0": false,
+            "100000000.0": false,
+            "100000000000.0": false
+          }
+        },
+        {
+          "alpha": 1.0,
+          "finite": true,
+          "max_reference_error": 145.98612807157735,
+          "first_error_over_1e6_step": 1,
+          "max_cart": 37.40243194870998,
+          "terminal_cost": 4.4755997751553265e+18,
+          "cost": 4.475599775223035e+18,
+          "defect_value": 6.023727940007394e-29,
+          "would_accept_at_penalty": {
+            "100000.0": false,
+            "100000000.0": false,
+            "100000000000.0": false
+          }
+        }
+      ]
+    },
+    {
+      "backend": "qr",
+      "trust": 1000000.0,
+      "max_gain": 148593280.59521398,
+      "max_feed": 119.21164204670096,
+      "bounded_steps": 67,
+      "forward": [
+        {
+          "alpha": 0.0,
+          "finite": true,
+          "max_reference_error": 3.2220741741362247e-07,
+          "first_error_over_1e6_step": null,
+          "max_cart": 2.071341206106005,
+          "terminal_cost": 4.496095918010459e-09,
+          "cost": 4.497270041295168e-09,
+          "defect_value": 0.0001595710783316857,
+          "would_accept_at_penalty": {
+            "100000.0": false,
+            "100000000.0": false,
+            "100000000000.0": false
+          }
+        },
+        {
+          "alpha": 1e-08,
+          "finite": true,
+          "max_reference_error": 4.027836905083626e-07,
+          "first_error_over_1e6_step": null,
+          "max_cart": 2.071341206096322,
+          "terminal_cost": 2.060024806406548e-09,
+          "cost": 2.0613052725372483e-09,
+          "defect_value": 0.00015957107514026343,
+          "would_accept_at_penalty": {
+            "100000.0": true,
+            "100000000.0": true,
+            "100000000000.0": true
+          }
+        },
+        {
+          "alpha": 1e-07,
+          "finite": true,
+          "max_reference_error": 7.495654608113966e-07,
+          "first_error_over_1e6_step": null,
+          "max_cart": 2.0713412082839033,
+          "terminal_cost": 7.600922674643398e-11,
+          "cost": 8.185788135438055e-11,
+          "defect_value": 0.00015957104641746756,
+          "would_accept_at_penalty": {
+            "100000.0": true,
+            "100000000.0": true,
+            "100000000000.0": true
+          }
+        },
+        {
+          "alpha": 1e-06,
+          "finite": true,
+          "max_reference_error": 5.812442138264373e-06,
+          "first_error_over_1e6_step": 175,
+          "max_cart": 2.0713412255578803,
+          "terminal_cost": 2.9101872202256345e-09,
+          "cost": 3.358614235188047e-09,
+          "defect_value": 0.00015957075918968843,
+          "would_accept_at_penalty": {
+            "100000.0": true,
+            "100000000.0": true,
+            "100000000000.0": true
+          }
+        },
+        {
+          "alpha": 1e-05,
+          "finite": true,
+          "max_reference_error": 5.672213942120585e-05,
+          "first_error_over_1e6_step": 73,
+          "max_cart": 2.0713414050068994,
+          "terminal_cost": 3.0654425074187884e-07,
+          "cost": 3.5121741530409593e-07,
+          "defect_value": 0.0001595678869260738,
+          "would_accept_at_penalty": {
+            "100000.0": true,
+            "100000000.0": true,
+            "100000000000.0": true
+          }
+        },
+        {
+          "alpha": 0.0001,
+          "finite": true,
+          "max_reference_error": 0.0006021290444131466,
+          "first_error_over_1e6_step": 1,
+          "max_cart": 2.071343070443242,
+          "terminal_cost": 0.0011889497016433416,
+          "cost": 0.0011937117405706975,
+          "defect_value": 0.00015953916571172501,
+          "would_accept_at_penalty": {
+            "100000.0": true,
+            "100000000.0": true,
+            "100000000000.0": true
+          }
+        },
+        {
+          "alpha": 0.001,
+          "finite": true,
+          "max_reference_error": 170.10978182985656,
+          "first_error_over_1e6_step": 1,
+          "max_cart": 33.217435178620775,
+          "terminal_cost": 2.0377373231911944e+19,
+          "cost": 2.0377373231956693e+19,
+          "defect_value": 0.00015925209574609603,
+          "would_accept_at_penalty": {
+            "100000.0": false,
+            "100000000.0": false,
+            "100000000000.0": false
+          }
+        },
+        {
+          "alpha": 0.005,
+          "finite": true,
+          "max_reference_error": 181.97152763776705,
+          "first_error_over_1e6_step": 1,
+          "max_cart": 17.726698568567866,
+          "terminal_cost": 1.2215003637497503e+18,
+          "cost": 1.2215003637714926e+18,
+          "defect_value": 0.0001579793568253243,
+          "would_accept_at_penalty": {
+            "100000.0": false,
+            "100000000.0": false,
+            "100000000000.0": false
+          }
+        },
+        {
+          "alpha": 1.0,
+          "finite": true,
+          "max_reference_error": 136.76803168396341,
+          "first_error_over_1e6_step": 1,
+          "max_cart": 9.781960199332993,
+          "terminal_cost": 1.40773534464225e+19,
+          "cost": 1.407735344642571e+19,
+          "defect_value": 5.093639073923779e-29,
+          "would_accept_at_penalty": {
+            "100000.0": false,
+            "100000000.0": false,
+            "100000000000.0": false
+          }
+        }
+      ]
+    }
+  ],
+  "terminal_projected_min_eigenvalue": -66.96829411087464,
+  "design_native_steps": 29380,
+  "scope": "backward/virtual-gap diagnostics only; no qualification or accepted physical motion"
+}

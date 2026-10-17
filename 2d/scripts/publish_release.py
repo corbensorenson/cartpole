@@ -54,7 +54,7 @@ All recorded float32 force tapes replay exactly in native MuJoCo 3.3.5.
 3m / 1kg chain, 1kg cart, 80N total XY force norm, +/-3m square boundary,
 50Hz actions, 200Hz RK4; all world link tilts <0.15rad for >=5s required.
 No joint motors, locks, hidden supports or ground contacts. Full-state classical
-trajectory feedback followed by upright LQR; no learned-policy claim.
+trajectory feedback; no learned-policy claim.
 
 The attached full video shows an entire held-out qualification episode.
 The evidence ZIP contains source, frozen synthesis and qualification snapshots,
@@ -70,8 +70,12 @@ assert Config(**json.loads(str(frozen['config']))) == Config(n_links=a.links),'c
 if 'park_steps' in frozen:
     config = json.loads(str(frozen['config']))
     park_seconds = int(frozen['park_steps'])*config['timestep']*config['frame_skip']
-    route_seconds = len(frozen['actions'])*config['timestep']*config['frame_skip']
+    swing_steps = int(frozen['swing_steps']) if 'swing_steps' in frozen else len(frozen['actions'])
+    route_seconds = swing_steps*config['timestep']*config['frame_skip']
     body += f'\nThe frozen policy first applies {park_seconds:.2f}s of hanging LQR, then uses observed axial-frame alignment before its {route_seconds:.2f}s swing. All phases fit inside the same 30s episode; there are no state resets or joint locks.\n'
+    if 'affine_value' in frozen and bool(frozen['affine_value']):
+        design_seconds = len(frozen['actions'])*config['timestep']*config['frame_skip']
+        body += f'\nIts full affine QR feedback was designed over {design_seconds:.2f}s, including an upright continuation; execution uses only the prefix remaining after preparation. The policy aligns reference axial frames at each observed feedback step. Measured twist/spin stays physical and free. Finite design time is not added to episode time.\n'
 if a.links == 3:
     body += '\nThe earlier unconditioned three-link policy failed qualification at 25/32. Its failures were retained and reused only as development data; this release passes a genuinely new 32-start cohort.\n'
 if a.links == 4:
@@ -88,6 +92,8 @@ if a.links == 9:
     body += '\nThe raw nine-link native repair passed nominal but failed all 12 noisy development starts; all failures are retained. The preplanned 18s hanging/gauge wrapper passes nominal plus all 44 development starts before a fresh 32-start qualification cohort. Preparation, the 3.94s swing and upright feedback all run inside the same 30s episode. The near-planar nominal reference is tracked in unrestricted spatial dynamics; nine-link compiled freedoms, persistent native XY replay, axis symmetry and each joint tilt direction/spin are included in the 52-test suite. The independent spatial audit and controlled six-link XY demonstration remain included.\n'
 if a.links == 10:
     body += '\nThe raw ten-link native repair passed nominal but failed all 12 noisy development starts; those failures are retained. Its preplanned 16s hanging/gauge wrapper passes nominal plus all 44 development starts before the fresh 32-start qualification cohort. The 16s preparation, 8s swing and upright feedback fit inside the unchanged 30s episode, without state resets or joint locks. The nominal reference remains near-planar in unrestricted spatial dynamics. Ten-link compiled freedoms, persistent native XY replay, axis symmetry and every joint tilt direction/spin are included in the 56-test suite. The independent spatial audit and controlled six-link XY demonstration remain included. Native instability warnings occurred in rejected optimizer search trials; no accepted actual episode reports a physics warning.\n'
+if a.links == 11:
+    body += '\nEleven-link synthesis uses a historical planar motion only as a geometric proposal for the unchanged spatial model. Full spatial simultaneous sparse shooting repairs native defects, then full affine QR offsets and a finite upright continuation produce a nominal pass. The raw controller fails all 12 noisy development starts. Static launch alignment with 16s, 18s and 18.4s preparation reaches only 27/45, 40/45 and 43/45 development passes. The selected policy uses 18s preparation plus causal per-command axial reference alignment, passes nominal plus all 44 shared noisy development starts, then the NEW 32-start cohort (20262216..20262247). The 30s episode includes its entire preparation, 8s swing and finite upright tracking. Failed optimization, action-search, timing and controller variants are retained. The nominal reference remains near-planar in unrestricted spatial physics; no spatial joint or twist is locked. The 85-test suite includes eleven-link freedoms, native replay, independent affine optima and axial-frame feedback invariance. The separate six-link controlled XY-loop audit remains included. This adapts affine-value and finite-horizon ideas reviewed in corben-marc-hybrid.md; it is not a reproduction of the scalar 1D B17 controller.\n'
 try:
     release = request(base+'/releases/tags/'+tag)
 except HTTPError as exc:

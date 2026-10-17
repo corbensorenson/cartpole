@@ -1,0 +1,59 @@
+{
+  "args": {
+    "route": "output/planar_lift_n11_001/route.npz",
+    "tape": null,
+    "out": "output/tracking_repair_n11_004",
+    "iterations": 80,
+    "workers": 4,
+    "physics_budget": 35000000,
+    "penalty": 100000.0,
+    "sqrt_backward": true,
+    "axis_design": true
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "conditioning.py": "77e86d78c441936eb6d3e4fb6b19a01c745f1769efeffa586173c15db7be10da",
+    "control.py": "4c2563860b28ee6f80ebee6ebf52dd0b17fa63071e96ec99146cb441578fb24e",
+    "env.py": "b1ec1618244f143936fa73c60a3ca3dfaf6c0180a995994855cd3de8f3674a23",
+    "experiment.py": "293743bbd476b7ee3ecaf124bdd1b011f945ae71ab260fa98093045002123d5a",
+    "fddp.py": "e81c6f686a7e4583053c79c0891d09eb2b9b75ded04ae3760a2bd8662e077036",
+    "physical.py": "f05858d25a76279cb09271c3e13ef76e966b542aeca5612e1f7c2e7f288d860d",
+    "tracking_repair.py": "6df086168fc4fdfd256fa0ded9abd074327ed99f941ac8e703ec8cabd8ec0bf6",
+    "transfer.py": "416a514a51a0158175c2a1b7527f2b29da33ba053132c31adfcf06afa71d6914"
+  },
+  "input_artifacts_sha256": {
+    "driver.py": "0b15b17689f273fbfd18bdfc8f0e8cc5f6b105be67886dc79f3438aae8cc0b90",
+    "pyproject.toml": "1219ab00e087e3d51a95cd257425983cbcad689c3abc13dcad32e91dd549b51f",
+    "requirements-lock.txt": "dc59359748d15aed6894cda3f60a9e1a2f2005385af44b76aa47d071ef35ffe7",
+    "input_route.npz": "4e332221333667e5b89584c3eeba69073052630c0ac649979199619e8a47ac38"
+  },
+  "utc": "2026-10-17T00:20:58.636451+00:00",
+  "command": [
+    "scripts/repair_tracking.py",
+    "--route",
+    "output/planar_lift_n11_001/route.npz",
+    "--out",
+    "output/tracking_repair_n11_004",
+    "--iterations",
+    "80",
+    "--physics-budget",
+    "35000000",
+    "--penalty",
+    "100000",
+    "--sqrt-backward",
+    "--axis-design"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5",
+    "packages": {
+      "scipy": "1.17.1",
+      "gymnasium": "1.4.0",
+      "imageio": "2.38.1",
+      "pillow": "12.3.0"
+    },
+    "thread_environment": {}
+  }
+}
