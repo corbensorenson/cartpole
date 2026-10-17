@@ -1,0 +1,146 @@
+{
+  "records": [
+    {
+      "links": 1,
+      "single_transition_cases": 14,
+      "complete_qualified_tape": "research/pufferlib5_native_20261017/baselines/qualify_n1_001/seed20261216.npz",
+      "full_state_and_force_bytes_exact": true,
+      "gate_parity": true,
+      "puffer_buffer_observation_terminal_autoreset_log_checks": true
+    },
+    {
+      "links": 2,
+      "single_transition_cases": 14,
+      "complete_qualified_tape": "research/pufferlib5_native_20261017/baselines/qualify_n2_001/seed20261316.npz",
+      "full_state_and_force_bytes_exact": true,
+      "gate_parity": true,
+      "puffer_buffer_observation_terminal_autoreset_log_checks": true
+    },
+    {
+      "links": 8,
+      "single_transition_cases": 14,
+      "complete_qualified_tape": null,
+      "full_state_and_force_bytes_exact": true,
+      "gate_parity": true,
+      "puffer_buffer_observation_terminal_autoreset_log_checks": true
+    }
+  ],
+  "benchmarks": [
+    {
+      "links": 8,
+      "environments": 1,
+      "lane": "native_threads_1",
+      "control_transitions": 32,
+      "native_steps": 128,
+      "seconds": 0.004652900001019589,
+      "control_steps_per_second": 6877.431277910088
+    },
+    {
+      "links": 8,
+      "environments": 1,
+      "lane": "native_threads_4",
+      "control_transitions": 32,
+      "native_steps": 128,
+      "seconds": 0.004925100000036764,
+      "control_steps_per_second": 6497.330003403206
+    },
+    {
+      "links": 8,
+      "environments": 1,
+      "lane": "authoritative_python_loop",
+      "control_transitions": 32,
+      "native_steps": 128,
+      "seconds": 0.015596999999615946,
+      "control_steps_per_second": 2051.676604525739
+    },
+    {
+      "links": 8,
+      "environments": 16,
+      "lane": "native_threads_1",
+      "control_transitions": 512,
+      "native_steps": 2048,
+      "seconds": 0.07813990000067861,
+      "control_steps_per_second": 6552.350335687062
+    },
+    {
+      "links": 8,
+      "environments": 16,
+      "lane": "native_threads_4",
+      "control_transitions": 512,
+      "native_steps": 2048,
+      "seconds": 0.022831199999927776,
+      "control_steps_per_second": 22425.45288909999
+    },
+    {
+      "links": 8,
+      "environments": 16,
+      "lane": "authoritative_python_loop",
+      "control_transitions": 512,
+      "native_steps": 2048,
+      "seconds": 0.2184858999989956,
+      "control_steps_per_second": 2343.4006496636794
+    },
+    {
+      "links": 8,
+      "environments": 64,
+      "lane": "native_threads_1",
+      "control_transitions": 2048,
+      "native_steps": 8192,
+      "seconds": 0.32423190000008617,
+      "control_steps_per_second": 6316.466701763324
+    },
+    {
+      "links": 8,
+      "environments": 64,
+      "lane": "native_threads_4",
+      "control_transitions": 2048,
+      "native_steps": 8192,
+      "seconds": 0.10223429999859945,
+      "control_steps_per_second": 20032.415735502236
+    },
+    {
+      "links": 8,
+      "environments": 64,
+      "lane": "authoritative_python_loop",
+      "control_transitions": 2048,
+      "native_steps": 8192,
+      "seconds": 0.9138196999992942,
+      "control_steps_per_second": 2241.1423172443992
+    },
+    {
+      "links": 8,
+      "environments": 256,
+      "lane": "native_threads_1",
+      "control_transitions": 8192,
+      "native_steps": 32768,
+      "seconds": 1.2992386000005354,
+      "control_steps_per_second": 6305.231387057484
+    },
+    {
+      "links": 8,
+      "environments": 256,
+      "lane": "native_threads_4",
+      "control_transitions": 8192,
+      "native_steps": 32768,
+      "seconds": 0.48526610000044457,
+      "control_steps_per_second": 16881.4594713962
+    },
+    {
+      "links": 8,
+      "environments": 256,
+      "lane": "authoritative_python_loop",
+      "control_transitions": 8192,
+      "native_steps": 32768,
+      "seconds": 3.9038676000000123,
+      "control_steps_per_second": 2098.4318218169014
+    }
+  ],
+  "additional_native_steps": 160344,
+  "scope": "native CPU plant/adapter parity and matched stepping throughput; no CUDA trainer or learned policy tested",
+  "puffer_ref": "ea7f989371270d2948f96728bda8aec5e7634a4c",
+  "source_sha256": {
+    "spatial_cartpole.h": "99b63eb208858ab767405de94c4099ed0bf947e0fdfdd56b41f3ad740a0e1a4e",
+    "spatial_core.h": "40d56247cc566c5e983924d0266592cc88dbda1324d410da678f15066dac7f0e",
+    "verify_bridge.cpp": "c73b797d9240d6dc9d1480774b041b4073369feebed74e37fff210c96607e650"
+  }
+}
