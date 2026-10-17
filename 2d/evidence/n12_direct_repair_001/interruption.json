@@ -1,0 +1,8 @@
+{
+  "status": "interrupted",
+  "reason": "stopped after verifying source12 coordinate_transform is identity/physical relative; importer wrongly applied normalized cumulative decoding",
+  "last_recorded_native_steps_lower_bound": 565200,
+  "optimizer_rows": 1,
+  "unrecorded_inflight_work": "native calls and wall time after last row are not recovered; do not claim exact total",
+  "scope": "invalid geometric warm start; actual failed physical tapes retained; no qualification seeds consumed"
+}

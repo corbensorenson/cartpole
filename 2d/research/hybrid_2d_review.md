@@ -12,8 +12,10 @@ designing a finite upright continuation produces an eleven-link nominal full
 30s pass with23.50s hold. Raw noisy starts fail, and static preparation improves
 only to43/45. Adding causal per-command axial reference alignment then passes
 45/45 development and32/32 NEW reserved episodes, every full30s with5.50s
-hold and exact cold replay. Eleven is qualified; its source/video release is
-being prepared. The document review supplied useful ideas; the actual spatial
+hold and exact cold replay. Eleven is qualified and public at
+`2d-cartpole-11-link-v1`, source84bd20a56dc15c7e9e470206a55f810c36c987eb.
+Public source/video/archive hashes and packaged-source reproduction pass.
+The document review supplied useful ideas; the actual spatial
 experiments and qualification establish the new count.
 
 ## What transfers and what needs adaptation
@@ -90,12 +92,28 @@ source (`output/n11_hybrid_ten_regression_001/parity.json`).
 
 ## Next decisions
 
-Publish eleven's full source,32 complete held-out tapes and full first-heldout
-video after staged/archive hashes and independent packaged-source reproduction.
+Eleven publication is complete:3335 staged/archive hashes,85 frozen-source
+tests, byte-identical first-heldout reproduction, public tag and asset digests.
 Transfer the procedure to twelve with fresh mechanics/derivatives, a bounded
 synthesis budget and new qualification seeds. Moving-tail/earlier bridge
 proposals remain alternatives. Periodic closure alone cannot establish hanging-start reachability.
 Do not treat2.5/5/6.25Hz1D seeds as universal spatial prescriptions.
+
+The twelve-link follow-up demonstrates why the document's coordinate contracts
+matter. Its donor uses identity/physical relative q/v, while eleven used scaled
+cumulative angles. An initial importer guessed the latter convention and was
+wrong. Invalid-input runs remain with input_correction.json; the first repair
+was stopped deliberately, with incomplete in-flight compute disclosed. The
+corrected adapter inverts the declared full matrix and independently checks
+hanging initialization, native rod directions and stored physical-tape parity.
+The corrected12 donor matches its stored tape exactly. Its native repaired
+proposal plus finite affine continuation passes nominal23.50s, while raw noisy
+starts fail. The18s online-gauge policy passes45/45 development episodes then
+32/32 fresh reserved starts20262316..47, all full30s with5.50s hold and exact
+replay. Twelve is qualified and its source/video release is being prepared.
+Current lab tests96 pass; eleven's immutable public
+release retains85-test scope. A good optimizer gap or a donor coordinate check
+is still not qualification.
 
 The online variant aligns the current reference and gain columns with the
 observed state each command using a closest axial polar rotation. It retains

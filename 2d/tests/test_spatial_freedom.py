@@ -6,7 +6,7 @@ from spatialpole import Config,SpatialCartpole
 from spatialpole.control import balance_design,WorldBalancePolicy
 
 
-@pytest.mark.parametrize('n',[1,3,7,8,9,10,11])
+@pytest.mark.parametrize('n',[1,3,7,8,9,10,11,12])
 def test_persistent_native_multiaxis_motion_matches_environment(n):
     env = SpatialCartpole(Config(n_links=n))
     initial,_ = env.reset(seed=0,options={'mode':'hanging','angle_noise':0.})
@@ -33,7 +33,7 @@ def test_persistent_native_multiaxis_motion_matches_environment(n):
     env.close()
 
 
-@pytest.mark.parametrize('n',[1,3,7,8,9,10,11])
+@pytest.mark.parametrize('n',[1,3,7,8,9,10,11,12])
 def test_force_response_has_no_preferred_horizontal_axis(n):
     env = SpatialCartpole(Config(n_links=n))
     initial,_ = env.reset(seed=0,options={'mode':'hanging','angle_noise':0.})
@@ -50,7 +50,7 @@ def test_force_response_has_no_preferred_horizontal_axis(n):
     env.close()
 
 
-@pytest.mark.parametrize('n',[1,3,7,8,9,10,11])
+@pytest.mark.parametrize('n',[1,3,7,8,9,10,11,12])
 def test_every_ball_joint_retains_both_transverse_directions_and_spin(n):
     env = SpatialCartpole(Config(n_links=n))
     initial,_ = env.reset(seed=0,options={'mode':'hanging','angle_noise':0.})
@@ -68,10 +68,10 @@ def test_every_ball_joint_retains_both_transverse_directions_and_spin(n):
     env.close()
 
 
-@pytest.mark.parametrize('n',[3,11])
+@pytest.mark.parametrize('n',[3,11,12])
 def test_axis_separated_upright_design_rotates_with_physical_world(n):
     env = SpatialCartpole(Config(n_links=n))
-    design = balance_design(env,axis_separated=True)
+    design = balance_design(env,axis_separated=True,value_backend='finite_qr' if n==12 else 'dare')
     assert design['closed_loop_radius']<1.
     rng = np.random.default_rng(418)
     state = env.integrate(env.upright_state(),rng.normal(size=2*env.model.nv)*1e-6)
@@ -87,5 +87,18 @@ def test_axis_separated_upright_design_rotates_with_physical_world(n):
     np.testing.assert_allclose(turned,[-force[1],force[0]],atol=1e-6)
     ix = np.array([0]+[3+3*j for j in range(n)])
     ix = np.r_[ix,ix+env.model.nv]
-    assert np.linalg.eigvalsh(design['P'][np.ix_(ix,ix)])[0]>0.
+    if 'value_factor' in design:
+        assert np.linalg.svd(design['value_factor'][:,ix],compute_uv=False)[-1]>0.
+        np.testing.assert_allclose(design['P'],design['value_factor'].T@design['value_factor'],rtol=2e-13,atol=1e-10)
+    else:
+        assert np.linalg.eigvalsh(design['P'][np.ix_(ix,ix)])[0]>0.
+    env.close()
+
+
+def test_finite_qr_and_dare_agree_on_well_conditioned_native_model():
+    env = SpatialCartpole(Config(n_links=3))
+    dare = balance_design(env,axis_separated=True)
+    qr = balance_design(env,axis_separated=True,value_backend='finite_qr')
+    np.testing.assert_allclose(qr['K'],dare['K'],rtol=1e-7,atol=1e-7)
+    np.testing.assert_allclose(qr['P'],dare['P'],rtol=1e-7,atol=1e-7)
     env.close()

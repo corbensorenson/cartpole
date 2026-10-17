@@ -1,0 +1,34 @@
+{
+  "passes": 0,
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 1.8503199630207403,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.017803745277064298,
+      "physics_warning": false,
+      "success": false,
+      "steps": 117,
+      "native_steps": 468,
+      "wall_seconds": 0.06527120000100695,
+      "max_xy": [
+        2.577578996576737,
+        3.0178037452770643
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 1.8503199630207403,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 468,
+      "policy_metadata": {
+        "policy": "spatial affine feedback",
+        "design_steps": 1500,
+        "execution_route_steps": 1500,
+        "predictor_native_steps": 0,
+        "max_candidates": 0
+      }
+    }
+  ]
+}

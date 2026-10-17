@@ -18,6 +18,39 @@ def lift_planar_state(env,qpos,qvel):
     return out
 
 
+def decode_planar_coordinates(coordinates,source_transform,n_links):
+    """Invert the donor's declared physical-relative -> planner map.
+
+    Different historical donors use different coordinates. An identity map
+    means physical relative angles/rates; a cumulative/scaled map must be
+    inverted as stored, not inferred from the link count or a scale file.
+    """
+    coordinates,source_transform = np.asarray(coordinates,float),np.asarray(source_transform,float)
+    width = 2*(n_links+1)
+    if coordinates.ndim!=2 or coordinates.shape[1]!=width or source_transform.shape!=(width,width):
+        raise ValueError('source coordinate state/transform dimensions disagree')
+    if not np.isfinite(coordinates).all() or not np.isfinite(source_transform).all():
+        raise ValueError('nonfinite source coordinate state or transform')
+    try:
+        return np.linalg.solve(source_transform,coordinates.T).T
+    except np.linalg.LinAlgError as exc:
+        raise ValueError('singular source coordinate transform') from exc
+
+
+def declared_coordinate_projection(env,source_transform):
+    """Project spatial tangent errors through the explicit donor convention."""
+    n,nv = env.config.n_links,env.model.nv
+    physical = np.zeros((2*(n+1),2*nv))
+    physical[0,0],physical[n+1,nv] = 1.,1.
+    for i in range(n):
+        physical[1+i,3+3*i] = 1.
+        physical[n+2+i,nv+3+3*i] = 1.
+    transform = np.asarray(source_transform,float)
+    if transform.shape!=(2*(n+1),2*(n+1)) or not np.isfinite(transform).all():
+        raise ValueError('invalid source coordinate transform for feedback')
+    return transform@physical
+
+
 def coordinate_projection(env,cart_position=1.25,angle=0.15,cart_velocity=0.5,joint_velocity=0.75):
     """Tangent projection for the old dimensionless-absolute transform.
 

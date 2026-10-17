@@ -90,7 +90,7 @@ def test_axial_gauge_transports_full_affine_value_and_force_law():
     env.close()
 
 
-@pytest.mark.parametrize('n',[1,3,11])
+@pytest.mark.parametrize('n',[1,3,11,12])
 def test_online_axial_force_is_invariant_to_observed_passive_frames(n):
     env = SpatialCartpole(Config(n_links=n))
     rng = np.random.default_rng(999)

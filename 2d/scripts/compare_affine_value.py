@@ -20,6 +20,7 @@ p.add_argument('--extend-to-episode',action='store_true')
 p.add_argument('--design-guard',type=int,default=0)
 p.add_argument('--terminal-scale',type=float,default=10.)
 p.add_argument('--arms',nargs='+',choices=['zero_offset','affine','affine_search'],default=['zero_offset','affine','affine_search'])
+p.add_argument('--balance-backend',choices=['dare','finite_qr'],default='dare')
 a = p.parse_args()
 out = Path(a.out)
 freeze_inputs(out,a)
@@ -55,14 +56,14 @@ defects = np.array([env.difference(f,x) for f,x in zip(predicted,states[1:])])
 # logarithmic error chart. This is not the virtual-gap forward map transport.
 models = [(difference_jacobian(env,f,x)@A,difference_jacobian(env,f,x)@B)
           for (A,B),f,x in zip(models,predicted,states[1:])]
-design = balance_design(env,axis_separated=True)
+design = balance_design(env,axis_separated=True,value_backend=a.balance_backend)
 nv,nx = env.model.nv,2*env.model.nv
 Q = np.diag(np.r_[[4.,4.],np.full(nv-2,40.),np.full(nv,.05)])
 for j in range(config.n_links):
     Q[4+3*j,4+3*j] = .1
     Q[nv+4+3*j,nv+4+3*j] = .005
 L,R = np.sqrt(Q),np.eye(2)*.001
-root,_ = positive_value_factor(a.terminal_scale*design['P'])
+root = np.sqrt(a.terminal_scale)*design['value_factor'] if 'value_factor' in design else positive_value_factor(a.terminal_scale*design['P'])[0]
 feed,gains,roots,residuals = affine_tracking_values(models,defects,[L]*len(actions),R,np.vstack((root,L)))
 np.savez_compressed(out/'affine_controller.npz',states=states,actions=actions,feed=feed,
     gains=gains,roots=roots,residuals=residuals,tracking_R=R,defects=defects,

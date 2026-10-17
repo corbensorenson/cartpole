@@ -1,0 +1,9 @@
+{
+  "correction": "invalid donor coordinate decoding",
+  "source_contract": "controller.coordinate_transform is identity: physical relative q/v",
+  "incorrect_assumption": "normalized cumulative world angles from legacy scale spec",
+  "consequence": "geometric initial state is not hanging; independent source-tape parity failed",
+  "disposition": "preserve original runs; do not interpret as intended-source repair/feedback performance",
+  "next": "explicit-matrix decoder, hanging/source-physical/native-direction checks, new002 outputs",
+  "physics_scope": "canonical native physical tapes remain genuine failed episodes; no simulation state or accepted controller was changed"
+}

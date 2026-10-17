@@ -224,7 +224,12 @@ def difference_jacobian(env,state,reference):
     return jac
 
 
-def balance_design(env, r=0.01, angle_weight=20., cart_weight=1., reference=None,axis_separated=False):
+def balance_design(env, r=0.01, angle_weight=20., cart_weight=1., reference=None,axis_separated=False,
+                   value_backend='dare',finite_steps=1500):
+    if value_backend not in ('dare','finite_qr'):
+        raise ValueError('unknown upright value backend')
+    if value_backend=='finite_qr' and (not axis_separated or reference is not None or finite_steps<1):
+        raise ValueError('finite QR value requires upright axis separation and a positive horizon')
     ref = env.upright_state() if reference is None else np.asarray(reference).copy()
     A, B = linearize(env, ref, np.zeros(2))
     Q = state_cost(env, angle_weight, cart_weight)
@@ -250,8 +255,22 @@ def balance_design(env, r=0.01, angle_weight=20., cart_weight=1., reference=None
         signs = np.tile(np.r_[1.,-np.ones(n)],2)
         ax = (A[np.ix_(ix,ix)]+signs[:,None]*A[np.ix_(iy,iy)]*signs[None,:])/2
         bx = (B[ix,0:1]+signs[:,None]*B[iy,1:2])/2
-        px = solve_discrete_are(ax,bx,Q[np.ix_(ix,ix)],R[:1,:1])
-        kx = np.linalg.solve(R[:1,:1]+bx.T@px@bx,bx.T@px@ax)[0]
+        qx = Q[np.ix_(ix,ix)]
+        if value_backend=='finite_qr':
+            from .affine_value import affine_tracking_values
+            _,gains,roots,_ = affine_tracking_values([(ax,bx)]*finite_steps,
+                np.zeros((finite_steps,len(ax))),[np.linalg.cholesky(qx).T]*finite_steps,
+                R[:1,:1],np.zeros_like(qx))
+            kx,sx = gains[0,0],roots[0]
+            px = sx.T@sx
+            # Preserve this factor: forming a highly conditioned P in F64 can
+            # introduce negative rounded eigenvalues despite a positive cost.
+            value_factor = np.zeros_like(A)
+            value_factor[np.ix_(ix,ix)] = sx
+            value_factor[np.ix_(iy,iy)] = sx*signs[None,:]
+        else:
+            px = solve_discrete_are(ax,bx,qx,R[:1,:1])
+            kx = np.linalg.solve(R[:1,:1]+bx.T@px@bx,bx.T@px@ax)[0]
         K[0,ix],K[1,iy] = kx,signs*kx
         P[np.ix_(ix,ix)] = px
         P[np.ix_(iy,iy)] = signs[:,None]*px*signs[None,:]
@@ -260,9 +279,12 @@ def balance_design(env, r=0.01, angle_weight=20., cart_weight=1., reference=None
         p = solve_discrete_are(ar, br, qr, R)
         k = np.linalg.solve(R + br.T @ p @ br, br.T @ p @ ar)
         K[:, ids], P[np.ix_(ids, ids)] = k, p
-    return {"reference": ref, "K": K, "P": P, "Q": Q, "R": R,
+    result = {"reference": ref, "K": K, "P": P, "Q": Q, "R": R,
             "closed_loop_radius": float(np.max(np.abs(np.linalg.eigvals(ar - br @ k)))),
             "axis_separated":bool(axis_separated)}
+    if value_backend=='finite_qr':
+        result.update(value_factor=value_factor,value_backend=value_backend,finite_value_steps=finite_steps)
+    return result
 
 
 class BalancePolicy:

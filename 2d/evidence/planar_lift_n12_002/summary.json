@@ -1,0 +1,43 @@
+{
+  "n_links": 12,
+  "passes": 0,
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 2.351855007747343,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.006854887722576031,
+      "physics_warning": false,
+      "success": false,
+      "steps": 57,
+      "native_steps": 228,
+      "wall_seconds": 0.0308751000011398,
+      "max_xy": [
+        0.0938737350451673,
+        3.006854887722576
+      ],
+      "max_force_norm": 80.0,
+      "final_tilt": 2.351855007747343,
+      "replay_exact": true,
+      "replay_max_error": 0.0,
+      "proof_native_steps": 228
+    }
+  ],
+  "design_native_steps": 283228,
+  "foreign_reconstruction_error": 0.0,
+  "source_scales": {
+    "cart_position": 1.25,
+    "angle": 0.15,
+    "cart_velocity": 0.5,
+    "joint_velocity": 0.75
+  },
+  "source_decoding": "inverse of explicit controller.coordinate_transform; scale spec retained as provenance only",
+  "source_coordinate_transform_sha256": "bd34d6324edc4b475e9d5f90d5bbc10fd9d0c2dfc0b455a96e573c5cf5b0a2b4",
+  "initial_hanging_error": 0.0,
+  "reference_only": false,
+  "coordinate_direction_error": 1.7763568394002505e-15,
+  "source_plant_difference": "old total damping 0.015 vs new 0.0075; old slide armature 0.0005 vs new 0; ball joints and XY cart free",
+  "wall_seconds": 13.833234699999593
+}

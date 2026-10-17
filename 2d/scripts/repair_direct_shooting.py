@@ -25,6 +25,7 @@ p.add_argument('--max-solver-iterations',type=int,default=20)
 p.add_argument('--derivative-order',type=int,choices=[2,4],default=4)
 p.add_argument('--derivative-eps',type=float,default=.001)
 p.add_argument('--linear-solver',choices=['lsmr','augmented'],default='lsmr')
+p.add_argument('--balance-backend',choices=['dare','finite_qr'],default='dare')
 a = p.parse_args()
 out = Path(a.out)
 freeze_inputs(out,a)
@@ -41,16 +42,25 @@ scales = np.r_[[3.,3.],np.full(nv-2,.15),[4.,4.],np.full(nv-2,15.)]
 history = []
 regularization = a.regularization
 started = time.perf_counter()
+
+def stage(name,**details):
+    row = dict(stage=name,native_steps=e.native_steps,wall_seconds=time.perf_counter()-started,**details)
+    with (out/'stages.jsonl').open('a',encoding='utf-8') as f:
+        f.write(json.dumps(row)+'\n')
+    print(json.dumps(row),flush=True)
+
 for iteration in range(a.iterations):
     # Leave enough for the final derivative/gain design and native rebuild.
     estimate = (1+a.derivative_order*(nx+2))*H*config.frame_skip
     if e.native_steps+2*estimate+10*H*config.frame_skip>a.physics_budget:
         break
+    stage('native_model_start',iteration=iteration)
     models,predicted = linearize_many(e,xs[:-1],us,eps=a.derivative_eps,
                                       return_next=True,order=a.derivative_order)
     residual = np.array([e.difference(f,x) for f,x in zip(predicted,xs[1:])])/scales
     baseline = .5*float(np.sum(residual**2))
     maximum = float(np.max(np.abs(residual)))
+    stage('native_model_complete',iteration=iteration,defect_value=baseline,max_scaled_defect=maximum)
     if maximum<1e-11:
         break
     J = shooting_jacobian(e,xs,predicted,models,scales,fix_terminal=True)
@@ -62,8 +72,10 @@ for iteration in range(a.iterations):
     solve_started = time.perf_counter()
     solution,backend,bound_violations = None,'lsmr',None
     if a.linear_solver=='augmented':
+        stage('augmented_solve_start',iteration=iteration)
         step = solve_augmented_ridge(J,residual.ravel(),regularization)
         bound_violations = int(np.count_nonzero((step<lower-1e-12)|(step>upper+1e-12)))
+        stage('augmented_solve_complete',iteration=iteration,bound_violations=bound_violations)
         if not bound_violations:
             step = np.clip(step,lower,upper)
             error = M@step-rhs
@@ -71,6 +83,7 @@ for iteration in range(a.iterations):
                 optimality=float(np.max(np.abs(M.T@error))))
             backend = 'augmented'
     if solution is None:
+        stage('bounded_lsmr_start',iteration=iteration)
         solution = lsq_linear(M,rhs,bounds=(lower,upper),tol=1e-8,lsmr_tol=1e-10,
             max_iter=a.max_solver_iterations,lsmr_maxiter=a.max_lsmr)
     solve_wall = time.perf_counter()-solve_started
@@ -109,14 +122,15 @@ for iteration in range(a.iterations):
     np.savez_compressed(out/'checkpoints'/('iteration_'+str(iteration).zfill(3)+'.npz'),
                         states=xs,actions=us,config=json.dumps(asdict(config)))
 np.savez_compressed(out/'shooting_proposal.npz',states=xs,actions=us,config=json.dumps(asdict(config)))
-design = balance_design(e,axis_separated=True)
+stage('final_feedback_design_start',optimizer_iterations=len(history))
+design = balance_design(e,axis_separated=True,value_backend=a.balance_backend)
 models = linearize_many(e,xs[:-1],us,eps=a.derivative_eps,order=a.derivative_order)
 Q = np.diag(np.r_[[4.,4.],np.full(nv-2,40.),np.full(nv,.05)])
 for j in range(config.n_links):
     Q[4+3*j,4+3*j] = .1
     Q[nv+4+3*j,nv+4+3*j] = .005
 L,R = np.sqrt(Q),.001*np.eye(2)
-root,_ = positive_value_factor(10*design['P'])
+root = np.sqrt(10)*design['value_factor'] if 'value_factor' in design else positive_value_factor(10*design['P'])[0]
 terminal = np.vstack((root,L))
 _,K,_ = least_squares_backward(models,np.zeros((H,nx)),np.zeros_like(us),[L]*H,
     [np.zeros(nx)]*H,terminal,np.zeros(len(terminal)),R,1e30)

@@ -1399,3 +1399,244 @@ is retained and cannot be relabeled after tuning. Only a32/32 pass earns new
 eleven-link qualification. Render the first reserved seed's full1501 frames,
 verify published-source tests and byte-identical first tape, then normal GitHub
 publication with explicit2D tag/full video/evidence and public hash verification.
+
+## Eleven publication and twelve-link upright-design diagnostic
+
+Eleven is public at source/tag84bd20a56dc15c7e9e470206a55f810c36c987eb,
+2d-cartpole-11-link-v1.3335 staged/archive hashes pass; published source85
+tests passes and reproduces first reserved states/actions/tilts byte-identically.
+Public MP4 SHA6089f9b985ed9a4d39a6c6077a06d1283808b129f5525ff9b5457f61be1a410f,
+ZIP1443984255 bytes SHA240edd10022dbea5e82660b02e8fad5d3bd4a5d4d68ee3e0a0de003febb1e71a.
+Both public asset hashes/sizes and tag->commit verified. No eleven archive is
+rebuilt after publication. Goal stays active; proceed to twelve.
+
+Extending physical tests to12 passes native persistent multiaxis replay,
+X/Y force symmetry, every ball joint's transverse/spin freedoms, and online
+axial force invariance. The additional axis-separated STATIONARY design test
+fails: existing binary64 DARE gives closed-loop radius1.5096127638. This is
+a controller-design failure, not evidence of locked physics or impossibility.
+Do not remove/relax that failing assertion to make the new count appear green.
+
+Run `n12_upright_value_diagnostic_001` before importing/synthesizing a12-link
+route. Freeze canonical config, native A/B/Q/R and existing DARE output; compare
+identical native axis-averaged SISO26-state models with full residual-QR finite
+backward designs at horizons500,1500,3000 (zero terminal value, same Q/R).
+Retain gain/root, native matrix closed-loop radius, gain norms, value minimum
+eigenvalue and measured design costs. No actual episode, noise or qualification;
+budget<=2000 native physics steps, no target/plant change. These are numerical
+diagnostics, not stationary physical robustness or a solved twelve-link count.
+If finite QR produces a positive/stabilizing value, add it as an OPTIONAL
+stationary design backend, preserving defaults and prior frozen controllers.
+Check independent finite condensed/QR agreement and world rotation before
+using it. If not, keep the limitation explicit and use a fully finite zero-
+terminal trajectory design without claiming stationary stability.
+
+## Upright-value diagnostic correction, before rerun
+
+Diagnostic001 is terminal but its finite-QR comparison is INVALID as a same-Q
+comparison: it used elementwise sqrt(Q) on the coupled world-angle cost matrix.
+Its finite costs therefore differ from the declared Q; retain the original run
+as a corrected failed-method comparison, do not claim its radius0.9927 fixes
+the original DARE problem. The stationary DARE failure remains independently
+observed. Fix the residual factor to Cholesky(Q).T, verify L.T@L=Q, and run
+`n12_upright_value_diagnostic_002`, same frozen native model/three horizons,
+<=2000 native steps, no actual episodes/noise/reserved seeds. Save minimum
+singular value of each QR root separately from rounded P eigenvalues: forming
+S.T@S can lose positive definiteness in this ill-conditioned binary64 matrix.
+Future design must retain the root as the authoritative nonnegative cost and
+must not relabel a negative rounded eigenvalue as a physical instability.
+
+## Twelve-link reference transfer and synthesis recipe, before execution
+
+Corrected diagnostic002 (Cholesky root of SAME Q) has finite-QR native model
+radii .98802591/.98802137/.98802142 at500/1500/3000 horizons.1500-step
+root has minimum singular .537247; rounded P has numerical negative modes.
+Existing DARE value has a MATERIAL negative mode about-1.497e19 and radius
+1.5096. Add optional value_backend=finite_qr to upright axis-separated design,
+retain authoritative value_factor and finite_value_steps, preserve all defaults.
+Independent three-link native DARE/QR agreement, twelve world-rotation and
+factor-based nonnegative cost tests pass;91 total tests pass. This is local
+linear evidence, not native physical balance qualification. The published
+eleven tag/archive/controller remain immutable and retain their85-test scope.
+
+Run `planar_lift_n12_001` with reference-only importer and finite_qr upright
+backend. Read-only historical geometric source and full-source:
+`D:/ChatGPT/cartpole/runs/swingup12_uniform/twelve_link_controller.json`;
+config `configs/swingup12_uniform.yaml`; scale spec
+`benchmarks/p1_capture_envelope.yaml`. The file explicitly labels itself
+not_solution/single-state diagnostic; do not promote it as spatial evidence.
+It contains451 cumulative-world-angle coordinate states,450 actions/9s,
+nominal old-model cart maximum1.913863756m. Freeze original files/hashes,
+validate the material angle/rate map and all native world directions<1e-10,
+rebuild canonical12-link mechanics and target feedback. Old planar damping
+and slide/hinge mechanics remain distinct from the spatial model.
+Evaluate full nominal/cold replay; only if nominal passes,12 shared noisy
+starts20261116..27. Budget<=500000 inclusive native physics steps. Foreign
+states/gains remain proposals regardless of native transfer outcome. No reserved
+seeds or new qualified count. Twelve reserved cohort20262316..47 is untouched.
+
+After transfer is terminal, use its saved geometric route in
+`n12_direct_repair_001`:20 full76-dimensional spatial simultaneous state/two-
+force shooting iterations, fixed initial/terminal nodes, order4 native stencil
+epsilon .001,four workers, <=12M DESIGN steps. Use augmented sparse ridge when
+its correction satisfies every registered state/control increment box; otherwise
+fall back to the same bounded LSMR1000/TRF20 solver. Initial ridge .001, reduce
+by3 after each fifth accepted update, floor1e-7; same native backtracking and
+80N disk projection as eleven. Use finite_qr upright value FACTOR for the final
+native QR/gap-free baseline; retain proposal separately even if baseline fails.
+Nominal and conditional12 shared noisy actual/cold gates add<=156000 steps.
+If appropriate, next test the same full-affine1500-step finite upright design
+used successfully at eleven, with its own frozen driver/memo/output. Do not
+assume the imported source or an improved defect score constitutes a solve.
+
+## Optional-value-backend execution regression, before execution
+
+Rerun already-published eleven's first held-out seed20262216 with its exact
+frozen payload as `n12_value_backend_n11_regression_001` after the optional
+finite_qr design-backend addition. One full actual30s plus cold proof<=12000
+physics steps. Compare states/actions/tilts byte-for-byte with qualify_n11_001.
+This is integrity regression, not new qualification or tuning data. The optional
+synthesis backend must not affect execution of frozen gains/offsets/policies.
+
+## Twelve-link raw-reference finite-affine comparison, before execution
+
+Direct repair001 remains authoritatively LIVE (session33228, PID37724, first
+bounded solve; no optimizer row yet). Do not restart it or infer termination
+from an observation timeout. Its frozen numerical thread environment is empty.
+While it runs, test whether native-defect-aware execution can use the original
+geometric proposal without waiting for near-perfect shooting feasibility.
+
+Run `n12_hybrid_raw_finite_001` from planar_lift_n12_001/route.npz, unchanged
+canonical twelve-link model, full76D tangent state and two force components.
+Fresh order4/.001 native derivatives (four native workers), same local Q/R as
+eleven, zero finite terminal Riccati scale, exact upright continuation to1500
+design/execution steps, no guard, no search, optional finite_qr upright backend.
+Use full native log-chart defect offsets/QR roots and additive feed offsets.
+Compare zero-offset and affine execution with shared gains/reference per design.
+Explicit OPENBLAS_NUM_THREADS=1/OMP_NUM_THREADS=1 for this new experiment,
+recorded in its runtime; this does not change the already-running repair.
+Nominal seed20261016 exact hanging in each arm; only a full nominal/replay
+pass opens12 shared noisy development seeds20261116..27 in that arm.
+<=2.5M inclusive native steps, same30s/F32/80N-disk/substep-square gates,
+complete tapes/cold replay. No twelve reserved seeds20262316..47 are used.
+Prediction: if precise proposal feasibility is unnecessary for a useful affine
+continuation, nominal may pass; failure is retained and does not invalidate the
+ongoing repair. This is a separate controller comparison, not a restart or
+claim of a newly qualified count. Do not choose using reserved outcomes.
+
+## Twelve-link donor-coordinate correction and rerun, before execution
+
+Raw finite001 fails both nominal arms (zero-offset2.34s, affine1.42s), but
+these runs use an INCORRECT donor-coordinate interpretation and cannot assess
+the intended twelve-link donor. Source12 explicitly declares identity26x26
+coordinate_transform: physical relative q/v, initial root angle-PI and all
+other relative angles0. The importer guessed the earlier dimensionless,
+cumulative-angle convention instead, producing an initial geometric reference
+with root-.47124rad and most world directions upright. Its reported1.11e-15
+direction match compared against that same wrong assumption. The independent
+physical-tape discrepancy3.13948 was the warning; reference-only incorrectly
+allowed this mismatch without checking the initial hanging state.
+
+Source11's declared transform really is the earlier cumulative/scaled map;
+its published controller is unaffected. The simulation and native physical
+tapes were not edited. Stop INVALID-INPUT direct repair001 (verified PID37724
+command line matches; process termination and session exit1 confirmed). It has
+one completed optimizer row565200 native steps, defect163.8035; in-flight work
+after that row is not recovered, so total compute is only lower-bounded. Save
+interruption.json and input_correction.json, never overwrite bad001 outputs.
+
+Fix source decoding by inverting the donor's explicit physical-relative ->
+planner coordinate matrix; project feedback through that same map. Require
+finite/invertible correct dimensions, exact hanging initial error<=1e-6 and
+native world-direction agreement with cumulative DECODED relative angles.
+Retain scale spec only as provenance; never silently apply it over a declared
+identity map. Independent identity/scaled-cumulative and tangent-feedback
+tests pass, including all rods hanging down at identity-donor initialization.
+Source12 decoded q/v matches its first450 physical tape rows EXACTLY offline.
+
+Run `planar_lift_n12_002` with same original files/finite_qr backend and
+WITHOUT reference-only: enforce independent foreign physical-tape parity<2e-6,
+plus new initial/direction gates. <=500000 inclusive native steps; exact nominal
+20261016, conditional12 shared noisy starts only on a full pass. No reserved
+seeds. Then `n12_direct_repair_002` uses the corrected saved proposal, same
+20/full76D/order4/.001/four-workers/12M-design recipe and bounds/augmented
+inside-box solve plus bounded LSMR fallback. Explicit BLAS/OMP thread1 for
+these corrected experiments. Preserve the old input/error evidence separately.
+Only full actual episodes/cold proof and later fresh qualification can solve12.
+
+## Corrected twelve-link finite-affine execution gate, before execution
+
+Corrected import002 is terminal: foreign physical-tape error0, exact initial
+hanging error0, decoded native-direction error1.776e-15; transferred policy
+still fails nominal1.14s/Y3.006855m with no hold and exact replay. Repair002
+is live and uses feasible augmented corrections (zero bound violations); after
+seven updates its measured native defect score is3.703844e-14 and maximum
+normalized defect1.978423e-8. Do not equate those scores with actual success.
+
+Once repair002 is authoritatively TERMINAL, run `n12_hybrid_finite_001` from
+its FINAL shooting_proposal.npz, regardless of its gap-free baseline's outcome.
+Do not select an intermediate proposal using later reserved data. Same recipe
+as eleven: full76D native order4/.001 logarithmic-chart models, Q cart4/
+relative rotations40/velocities.05 with passive axial.1/.005, R=.001 I2,
+full affine QR values/offsets, reference forces rounded through canonical F32
+delivery, exact upright continuation from9s proposal through1500 design steps,
+terminal Riccati scale0 (final local stage root retained), no guard/search,
+finite_qr upright backend, BLAS/OMP1 and four native derivative workers.
+Compare zero-offset and affine arms with identical gains/reference within run.
+Full30s nominal20261016 and, only if a nominal/replay pass,12 shared noisy
+starts20261116..27. Budget<=2.5M inclusive native steps. Keep all native tapes,
+source/control arrays/roots/defects and replay. No reserved seeds. If nominal
+passes but noise fails, select this first1500-step affine design for the same
+18s hanging/per-command axial-reference alignment development gate used at
+eleven, with its own pre-execution memo. No reset, physical joint constraint,
+extra episode time or accepted-count claim follows from a proposal score.
+
+## Twelve-link conditioned online-axial development gate, before execution
+
+Repair002 is terminal:20 accepted augmented full corrections,11869828 design
+native steps, final defect5.337252e-16/max normalized1.496971e-8. Its separate
+gap-free baseline fails11.18s with4.24s hold and exact replay. Finite001 is
+terminal: zero-offset arm fails10.72s/3.82s hold, full affine passes nominal
+30s/23.50s hold, but all12 raw noisy starts fail. Keep these physical failures.
+
+Select this FIRST corrected1500-step affine design for `conditioned_n12_001`.
+Freeze finite001/affine_controller.npz,18s hanging preparation, causal static
+launch alignment PLUS per-command closest-axial reference alignment, no search,
+same canonical mechanics/delivery/full physical state. Use450 swing commands
+(9s source) and execute only the first600 of the original1500 design commands
+after parking; do not regenerate a shortened value recursion. Nominal upright
+onset6.50s after launch predicts5.50s hold in the unchanged30s episode.
+No live state change or locked joint; measured passive spin/rates are retained.
+
+Evaluate exact nominal20261016 plus all44 shared noisy development starts
+20261116..27 and20261416..47. Explicit BLAS/OMP1. Native parking design<=1000;
+45 actual full episodes plus cold proofs<=540000; inclusive budget<=550000.
+Only a45/45 complete pass opens a separately frozen NEW32-seed qualification
+20262316..47. No reserved seeds used here, no public twelve count until gates.
+If any fail, preserve the full tapes and test a declared controller change;
+neither nominal success nor a tiny proposal defect substitutes for this gate.
+
+## Twelve-link frozen reserved qualification, before first held-out execution
+
+Conditioned001 is terminal45/45, all full1500 commands/30s,5.50s hold,
+no native warning and exact cold replay; same fixed finite001 arrays and18s
+online-axial preparation throughout.96 tests pass. Freeze EXACT
+conditioned_n12_001/route.npz and current source/driver/runtime as
+`qualify_n12_001`; no policy/synthesis/timing change after reserved inspection.
+
+Run NEW untouched32 noisy hanging seeds20262316..20262347, disjoint from
+all twelve development/pilot/invalid-input experiments. Canonical twelve-link
+plant, full physical XYZ noisy reset and same fixed F32 delivery/80N disk,
+all physics substeps inside3m square, every world rod tilt<.15 for>=5s,
+complete30s/no warning, exact independent cold replay required for every seed.
+18s preparation plus600 commands of the full1500-step finite-affine design;
+9s geometric source and final3s upright tracking all fit inside30s. No search,
+state overwrite, physical gauge edit or joint lock. Explicit BLAS/OMP1.
+Budget<=384000 native steps including all actual episodes and proofs; no
+online model design queries. All32 must pass to qualify twelve. Record all
+initial-state hashes, longest streaks, maximum cart/force and minimum substep
+margin. On success render first held-out seed's FULL1501 frames/50fps and
+normal-speed preview, inspect video, verify packaged-source tests and first
+tape byte parity, staged/archive hashes, normal fast-forward GitHub publication
+with explicit2D tag/video/evidence and public asset/tag verification. Preserve
+invalid-input/corrected-failure records and their typed coordinate correction.

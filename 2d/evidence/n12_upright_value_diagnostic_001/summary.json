@@ -1,0 +1,37 @@
+{
+  "n_links": 12,
+  "results": [
+    {
+      "backend": "dare",
+      "closed_loop_radius": 1.5096127638466974,
+      "gain_max": 1689148436.7571962,
+      "value_min_eigenvalue": -1.496981657755274e+19
+    },
+    {
+      "backend": "finite_qr",
+      "horizon": 500,
+      "closed_loop_radius": 0.9927901344962431,
+      "gain_max": 526662884.22962564,
+      "value_min_eigenvalue": -4.077800856137702,
+      "wall_seconds": 0.0597925000001851
+    },
+    {
+      "backend": "finite_qr",
+      "horizon": 1500,
+      "closed_loop_radius": 0.992713286041048,
+      "gain_max": 526813050.8409198,
+      "value_min_eigenvalue": -1831.8844289960548,
+      "wall_seconds": 0.17329079999763053
+    },
+    {
+      "backend": "finite_qr",
+      "horizon": 3000,
+      "closed_loop_radius": 0.9927132518555633,
+      "gain_max": 526813050.7370424,
+      "value_min_eigenvalue": -6.300008899090338,
+      "wall_seconds": 0.3510743000006187
+    }
+  ],
+  "design_native_steps": 1256,
+  "claim": "upright linear design diagnostic only; no physical episode or new solved count"
+}

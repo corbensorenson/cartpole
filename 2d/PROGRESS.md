@@ -387,8 +387,69 @@ with states/actions/tilts byte-identical after the new payload adapter changes.
 Full held-out eleven video/preview rendered and inspected:1501 frames/50fps,
 30.02s encoding; normal-speed300-frame30s GIF. Video SHA256
 6089f9b985ed9a4d39a6c6077a06d1283808b129f5525ff9b5457f61be1a410f.
-Source/package reproduction and public release verification are next.
+Published source passes85 tests and reproduces the first held-out state/action/
+tilt tape byte-for-byte (`release11_reproduction_001/parity.json`). All3335
+staged/archive hashes verify. Eleven is public at tag2d-cartpole-11-link-v1,
+source84bd20a56dc15c7e9e470206a55f810c36c987eb. Public MP4 digest/size match;
+evidence ZIP1443984255 bytes SHA256
+240edd10022dbea5e82660b02e8fad5d3bd4a5d4d68ee3e0a0de003febb1e71a.
+Public API confirms both assets and exact tag/source commit; master also matches.
 No upper frontier has been established.
+
+Twelve-link native motion/joint/gauge checks pass. Extending the stationary
+axis-DARE test exposes a real numerical design failure: radius1.5096 and a
+materially indefinite value. `n12_upright_value_diagnostic_001` mistakenly
+uses elementwise sqrt on coupled Q and is invalid as a same-cost comparison;
+the corrected002 retains Cholesky(Q).T and shows finite-QR model radius.9880214
+at1500 steps. The factored value remains nonnegative while rounded P loses
+small eigenmodes. New OPTIONAL finite_qr backend preserves its authoritative
+factor and defaults; three-link DARE agreement, twelve world rotation and
+root-based value checks pass. Current suite91 tests passes. This is local
+linear design evidence, not twelve-link physical balance acceptance.
+`n12_value_backend_n11_regression_001` repeats eleven's first published held-out
+tape with states/actions/tilts byte-identical after these optional synthesis changes.
+`planar_lift_n12_001` has an INPUT DECODING ERROR: the donor declares identity
+coordinates (physical relative q/v), but the importer applies an earlier
+normalized cumulative convention. Its direction check was against the same
+wrong interpretation, and its3.13948 physical-tape mismatch was incorrectly
+allowed by reference-only. Initial geometric reference is not hanging. Raw
+finite001 fails both arms; these are genuine failed physical tapes but not
+valid tests of the intended donor. Correction notes preserve the full evidence.
+Invalid-input direct repair001 is deliberately stopped after one completed
+row565200 native steps/defect163.8035; in-flight work is not recovered, so this
+is only a lower bound on total compute. Session33228 terminal exit1 confirmed.
+
+Importer now inverts the explicit donor coordinate_transform, uses that same
+map for feedback, and checks exact hanging initialization, decoded native
+directions and independent source physical-tape parity. Identity and legacy
+cumulative/scaled tests pass;96 total tests pass. Eleven's frozen physical
+controller/tapes are unchanged. `planar_lift_n12_002` WITHOUT reference-only
+matches old source physical states EXACTLY (error0), initial hanging error0,
+native world-direction error1.776e-15. Its direct policy still fails1.14s,
+Y3.006855m/no hold, exact replay; design283228 native steps. The source remains
+a proposal for the different canonical spatial mechanics, never accepted evidence.
+`n12_direct_repair_002` completes20 full76D augmented corrections, each inside
+registered bounds,11869828 native design steps. Defect1.45213169e-4 becomes
+5.33725194e-16; maximum normalized1.49697125e-8. The separate gap-free baseline
+fails11.18s with4.24s hold and exact replay. `n12_hybrid_finite_001` on the final
+proposal has zero-offset failure10.72s/3.82s hold; full affine finite continuation
+passes nominal30s/23.50s hold but0/12 raw noisy starts. These actual failures
+are retained; tiny defects do not establish task success.
+`conditioned_n12_001` uses this first finite design,
+18s hanging feedback, online axial reference alignment and600 tracking commands
+of its original1500-step design, including a9s swing. Nominal holds5.50s;
+all45 development episodes pass, full30s/5.50s hold/no warning/exact replay.
+Inclusive native cost540628. `qualify_n12_001` then passes all32 NEW reserved
+starts20262316..20262347, every full30s with5.50s hold and exact replay,
+no native warning.32 distinct initial states; maximum cart coordinate1.914864091m,
+minimum substep margin1.085023719m, maximum force norm62.186687470N,
+maximum launch tilt2.43815e-6rad. All384000 actual/proof native steps counted.
+Independent saved-tape longest-streak and force/config checks pass. This
+qualifies TWELVE. No search/state reset/extra episode time.
+Full first-heldout video/normal-speed preview are rendered and inspected:
+1501 frames/50fps,30.02s encoding,300-frame30s GIF. MP4 SHA256
+2bc5c79efb073b417d3de42df7a7c9a38b14a680c5faa81c9e956863dd84c57f.
+Next: source/archive verification, packaged-source reproduction and public release.
 
 Each new count needs a frozen controller, full nominal/development episode
 tapes, fresh qualification, independent replay, source/runtime/config hashes,
@@ -402,8 +463,8 @@ established. Thirty-two reset-noise trials do not certify arbitrary disturbances
 
 ## Resume checkpoint
 
-One through ten are public; eleven qualification is complete, qualified frontier
-ELEVEN. Eleven direct transfer (`output/planar_lift_n11_001`)
+One through ELEVEN are public; TWELVE qualification/video are complete.
+Eleven direct transfer (`output/planar_lift_n11_001`)
 fails nominal at 4.64s, X=3.261849m, no hold and exact replay. Repairs 001–004
 and005 are terminal failures. Simultaneous direct repair001 closes proposal
 defects but fails actual execution. The hybrid-document affine/finite design
@@ -412,15 +473,28 @@ noisy starts. Its16s conditioned wrapper passes27/45 development episodes.
 Static18s preparation improves to40/45;18.4s reaches43/45. Per-command axial
 reference alignment at18s passes45/45 in conditioned004, then all32 fresh
 qualification starts in qualify_n11_001. The full video is rendered/inspected.
-Next: package eleven, published-source85 tests and byte-identical first-heldout
-reproduction, normal GitHub source push/release/upload/public hash verification,
-then begin twelve. No live training process at this checkpoint.
-No native search is used in the qualified policy; goal remains active.
+Eleven publication is complete at84bd20a56dc15c7e9e470206a55f810c36c987eb,
+with85 published-source tests, byte-identical first-heldout reproduction and
+3335 staged/archive hashes. Invalid-input twelve001 is STOPPED and corrected;
+corrected transfer002 has source physical-tape parity0, hanging error0, native
+direction error1.776e-15, but direct policy fails1.14s. Direct repair002 is
+terminal with20 accepted updates, tiny proposal defects and a failed4.24s-hold
+baseline. Full affine1500-step finite001 passes nominal23.50s hold/0 of12 raw
+noisy starts. Terminal output/conditioned_n12_001 uses
+18s hanging/online-gauge feedback then600 commands from the same1500-step
+design, passes45/45. Fresh32 qualification in qualify_n12_001 also passes all
+full30s/5.50s holds/exact replays. Full video/preview inspected. No live solve
+process now. Package twelve, verify frozen source96 tests and first-heldout
+byte parity, stage/hash/archive checks, normal GitHub source push/release/assets
+and public tag/digest verification, then begin thirteen. Twelve reserved cohort
+20262316..47 is consumed successfully; thirteen reserves20262416..47, untouched.
+No native search is used in the eleven qualified policy; goal remains active.
 Historical proposal:
 `runs/swingup11_uniform/eleven_link_controller.json`, 400 commands / 8s,
 uniform eleven links, nominal cart maximum 2.071342m; source config
 `configs/swingup11_uniform.yaml`. It is only a geometric proposal for unchanged
-spatial mechanics. Eleven-link freedom/solver/affine regression checks:85 tests pass.
+spatial mechanics. Current freedom/solver/affine/12-link/coordinate checks:96 pass;
+eleven's frozen publication retains its85-test source scope.
 Keep physical freedom and near-planar-reference scope explicit. User authorizes
 continued higher counts. Check live processes/terminal markers before resuming.
 Historical planar route proposals are available in the original read-only
@@ -431,7 +505,8 @@ Record the chosen method, warm start, seeds and compute limit BEFORE execution.
 Do not restart an experiment while its process is alive or its completed marker
 exists. Checkpoints are proposals until full actual float32 gates pass. Eleven-link
 reserved qualification seeds20262216..20262247 are now consumed successfully;
-twelve's next fresh cohort will be20262316..20262347, untouched.
+twelve's fresh cohort20262316..20262347 also passed; thirteen will use NEW
+20262416..20262447, untouched.
 All future successful count releases require an explicitly 2D label, full video,
 state/action evidence and hashes. No upper frontier has been established.
 

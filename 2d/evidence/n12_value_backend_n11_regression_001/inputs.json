@@ -1,0 +1,72 @@
+{
+  "args": {
+    "task": "evaluate",
+    "links": 11,
+    "max_links": 8,
+    "episodes": 1,
+    "noise": 0.02,
+    "seed": 20262216,
+    "iterations": 60,
+    "route_seconds": 8.0,
+    "amplitude": 12.0,
+    "frequency": 0.45,
+    "out": "output/n12_value_backend_n11_regression_001",
+    "route": "output/qualify_n11_001/frozen_route.npz",
+    "tape": null,
+    "world_feedback": false,
+    "world_terminal": false,
+    "extend_seconds": 0.0,
+    "hold_start": null,
+    "derivative_workers": 1,
+    "bounded_backward": false,
+    "direction_cost": false,
+    "terminal_scale": 1.0
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "affine_value.py": "123b818026e08938dbaf93d421796efbbc46b594c65808ac5f28a15bde8fcd38",
+    "conditioning.py": "77e86d78c441936eb6d3e4fb6b19a01c745f1769efeffa586173c15db7be10da",
+    "control.py": "dd8b77fc654174544a4bcc9a03929247b2584dbee6a275e75fe62088f64ee81b",
+    "direct_shooting.py": "9b54d5a39cf8fb01d76436ab51d43cb9611e4aa48fb044364f19b29557fe77e8",
+    "env.py": "b1ec1618244f143936fa73c60a3ca3dfaf6c0180a995994855cd3de8f3674a23",
+    "experiment.py": "ffacaaea8d885881e211ced51e9cdc5e81dc250431f559488f9f13f4eb47cbc1",
+    "fddp.py": "e81c6f686a7e4583053c79c0891d09eb2b9b75ded04ae3760a2bd8662e077036",
+    "physical.py": "f05858d25a76279cb09271c3e13ef76e966b542aeca5612e1f7c2e7f288d860d",
+    "tracking_repair.py": "8a42fd0736e1a55c9a83ea5e7fabfe8569b688357f2a496a0b0f4c49efd54bc6",
+    "transfer.py": "416a514a51a0158175c2a1b7527f2b29da33ba053132c31adfcf06afa71d6914"
+  },
+  "input_artifacts_sha256": {
+    "driver.py": "ffacaaea8d885881e211ced51e9cdc5e81dc250431f559488f9f13f4eb47cbc1",
+    "pyproject.toml": "1219ab00e087e3d51a95cd257425983cbcad689c3abc13dcad32e91dd549b51f",
+    "requirements-lock.txt": "dc59359748d15aed6894cda3f60a9e1a2f2005385af44b76aa47d071ef35ffe7",
+    "input_route.npz": "bb175bcf980e98b88d1d8c55a14e36fad38e99accdf56421bedf63da2bec9d5a"
+  },
+  "utc": "2026-10-17T01:01:31.321069+00:00",
+  "command": [
+    "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\src\\spatialpole\\experiment.py",
+    "evaluate",
+    "--links",
+    "11",
+    "--route",
+    "output/qualify_n11_001/frozen_route.npz",
+    "--episodes",
+    "1",
+    "--seed",
+    "20262216",
+    "--out",
+    "output/n12_value_backend_n11_regression_001"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5",
+    "packages": {
+      "scipy": "1.17.1",
+      "gymnasium": "1.4.0",
+      "imageio": "2.38.1",
+      "pillow": "12.3.0"
+    },
+    "thread_environment": {}
+  }
+}
