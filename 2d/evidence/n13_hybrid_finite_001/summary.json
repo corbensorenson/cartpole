@@ -1,0 +1,424 @@
+{
+  "n_links": 13,
+  "arms": {
+    "zero_offset": {
+      "passes": 0,
+      "results": [
+        {
+          "seed": 20261016,
+          "initialization": "hanging",
+          "angle_noise": 0.0,
+          "max_tilt": 3.087804705754087,
+          "best_hold_seconds": 0.02,
+          "plane_margin": -0.1186262574591046,
+          "physics_warning": false,
+          "success": false,
+          "steps": 311,
+          "native_steps": 1244,
+          "wall_seconds": 0.18244689999846742,
+          "max_xy": [
+            3.1186262574591046,
+            0.1406335326065275
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 3.087804705754087,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 1244,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        }
+      ]
+    },
+    "affine": {
+      "passes": 1,
+      "results": [
+        {
+          "seed": 20261016,
+          "initialization": "hanging",
+          "angle_noise": 0.0,
+          "max_tilt": 5.960464477539064e-08,
+          "best_hold_seconds": 23.5,
+          "plane_margin": 1.0071995194405414,
+          "physics_warning": false,
+          "success": true,
+          "steps": 1500,
+          "native_steps": 6000,
+          "wall_seconds": 0.870165199998155,
+          "max_xy": [
+            1.9926515703243768,
+            1.1040183449752443e-06
+          ],
+          "max_force_norm": 61.775814056396484,
+          "final_tilt": 5.960464477539064e-08,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 6000,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        },
+        {
+          "seed": 20261116,
+          "initialization": "hanging",
+          "angle_noise": 0.02,
+          "max_tilt": 2.5157857236644063,
+          "best_hold_seconds": 0.0,
+          "plane_margin": -0.04727485552709476,
+          "physics_warning": false,
+          "success": false,
+          "steps": 214,
+          "native_steps": 856,
+          "wall_seconds": 0.12686849999954575,
+          "max_xy": [
+            3.0472748555270948,
+            2.70945248206384
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 2.5157857236644063,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 856,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        },
+        {
+          "seed": 20261117,
+          "initialization": "hanging",
+          "angle_noise": 0.02,
+          "max_tilt": 2.2891009726976046,
+          "best_hold_seconds": 0.0,
+          "plane_margin": -0.015977986102536867,
+          "physics_warning": false,
+          "success": false,
+          "steps": 216,
+          "native_steps": 864,
+          "wall_seconds": 0.12660440000036033,
+          "max_xy": [
+            1.2032452871553339,
+            3.015977986102537
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 2.2891009726976046,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 864,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        },
+        {
+          "seed": 20261118,
+          "initialization": "hanging",
+          "angle_noise": 0.02,
+          "max_tilt": 2.239065957966264,
+          "best_hold_seconds": 0.0,
+          "plane_margin": -0.011419798551564941,
+          "physics_warning": false,
+          "success": false,
+          "steps": 224,
+          "native_steps": 896,
+          "wall_seconds": 0.13207599999805097,
+          "max_xy": [
+            3.011419798551565,
+            0.9469894210315014
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 2.239065957966264,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 896,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        },
+        {
+          "seed": 20261119,
+          "initialization": "hanging",
+          "angle_noise": 0.02,
+          "max_tilt": 1.9468992876304476,
+          "best_hold_seconds": 0.0,
+          "plane_margin": -0.020044237174896118,
+          "physics_warning": false,
+          "success": false,
+          "steps": 255,
+          "native_steps": 1020,
+          "wall_seconds": 0.20523189999948954,
+          "max_xy": [
+            1.671246761432289,
+            3.020044237174896
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 1.9468992876304476,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 1020,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        },
+        {
+          "seed": 20261120,
+          "initialization": "hanging",
+          "angle_noise": 0.02,
+          "max_tilt": 2.0685520717313453,
+          "best_hold_seconds": 0.0,
+          "plane_margin": -0.0054922917387267844,
+          "physics_warning": false,
+          "success": false,
+          "steps": 209,
+          "native_steps": 836,
+          "wall_seconds": 0.1306568999971205,
+          "max_xy": [
+            1.3059938874577492,
+            3.004809136748752
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 2.0685520717313453,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 836,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        },
+        {
+          "seed": 20261121,
+          "initialization": "hanging",
+          "angle_noise": 0.02,
+          "max_tilt": 1.811435966751779,
+          "best_hold_seconds": 0.0,
+          "plane_margin": -0.08484317003645403,
+          "physics_warning": false,
+          "success": false,
+          "steps": 203,
+          "native_steps": 812,
+          "wall_seconds": 0.1166663999974844,
+          "max_xy": [
+            1.2528009622047829,
+            3.084843170036454
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 1.811435966751779,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 812,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        },
+        {
+          "seed": 20261122,
+          "initialization": "hanging",
+          "angle_noise": 0.02,
+          "max_tilt": 1.9492153770787928,
+          "best_hold_seconds": 0.0,
+          "plane_margin": -0.1217872587657629,
+          "physics_warning": false,
+          "success": false,
+          "steps": 210,
+          "native_steps": 840,
+          "wall_seconds": 0.12132410000049276,
+          "max_xy": [
+            3.121787258765763,
+            0.9649168088433314
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 1.9492153770787928,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 840,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        },
+        {
+          "seed": 20261123,
+          "initialization": "hanging",
+          "angle_noise": 0.02,
+          "max_tilt": 1.778787555294453,
+          "best_hold_seconds": 0.0,
+          "plane_margin": -0.028176809941965697,
+          "physics_warning": false,
+          "success": false,
+          "steps": 203,
+          "native_steps": 812,
+          "wall_seconds": 0.11700290000226232,
+          "max_xy": [
+            3.0281768099419657,
+            0.8917243864266015
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 1.778787555294453,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 812,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        },
+        {
+          "seed": 20261124,
+          "initialization": "hanging",
+          "angle_noise": 0.02,
+          "max_tilt": 2.419957021530461,
+          "best_hold_seconds": 0.0,
+          "plane_margin": -0.036938259804951024,
+          "physics_warning": false,
+          "success": false,
+          "steps": 254,
+          "native_steps": 1016,
+          "wall_seconds": 0.14630970000143861,
+          "max_xy": [
+            2.152514104944075,
+            3.036938259804951
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 2.419957021530461,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 1016,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        },
+        {
+          "seed": 20261125,
+          "initialization": "hanging",
+          "angle_noise": 0.02,
+          "max_tilt": 2.4103173118025656,
+          "best_hold_seconds": 0.0,
+          "plane_margin": -0.08494673169636302,
+          "physics_warning": false,
+          "success": false,
+          "steps": 214,
+          "native_steps": 856,
+          "wall_seconds": 0.1264512999987346,
+          "max_xy": [
+            1.38274041970033,
+            3.084946731696363
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 2.4103173118025656,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 856,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        },
+        {
+          "seed": 20261126,
+          "initialization": "hanging",
+          "angle_noise": 0.02,
+          "max_tilt": 2.234620292309004,
+          "best_hold_seconds": 0.0,
+          "plane_margin": -0.020357871073683143,
+          "physics_warning": false,
+          "success": false,
+          "steps": 214,
+          "native_steps": 856,
+          "wall_seconds": 0.12606880000021192,
+          "max_xy": [
+            1.286450149569127,
+            3.020357871073683
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 2.234620292309004,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 856,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        },
+        {
+          "seed": 20261127,
+          "initialization": "hanging",
+          "angle_noise": 0.02,
+          "max_tilt": 2.339514887610196,
+          "best_hold_seconds": 0.0,
+          "plane_margin": -0.030485549774569964,
+          "physics_warning": false,
+          "success": false,
+          "steps": 215,
+          "native_steps": 860,
+          "wall_seconds": 0.12549959999887506,
+          "max_xy": [
+            3.03048554977457,
+            0.9975002010746092
+          ],
+          "max_force_norm": 80.0,
+          "final_tilt": 2.339514887610196,
+          "replay_exact": true,
+          "replay_max_error": 0.0,
+          "proof_native_steps": 860,
+          "policy_metadata": {
+            "policy": "spatial affine feedback",
+            "design_steps": 1500,
+            "execution_route_steps": 1500,
+            "predictor_native_steps": 0,
+            "max_candidates": 0
+          }
+        }
+      ]
+    }
+  },
+  "design_native_steps": 609972,
+  "inclusive_native_steps": 645508,
+  "claim": "matched development diagnostics only; no reserved seeds or new qualified count"
+}

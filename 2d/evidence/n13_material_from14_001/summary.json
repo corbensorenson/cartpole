@@ -1,0 +1,11 @@
+{
+  "n_links": 13,
+  "source_links": 14,
+  "source_physical_tape_error": 0.0,
+  "initial_hanging_error": 0.0,
+  "coordinate_direction_error": 1.1102230246251565e-15,
+  "design_native_steps": 0,
+  "reference_steps": 450,
+  "source_nominal_hold_seconds": 24.16,
+  "claim": "material angle/rate proposal only; canonical target rebuilt, no physical episode or qualified count"
+}

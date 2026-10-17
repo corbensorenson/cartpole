@@ -54,5 +54,14 @@ report = dict(passes=32,distinct_initial_states=32,minimum_hold_seconds=min(hold
     inclusive_native_steps=sum(r['native_steps']+r['proof_native_steps'] for r in rows),
     all_full=True,all_replay_exact=True,all_no_warning=True,
     scope='saved-tape post-state rescore; substep margins and exact replay from actual native execution records')
+predictor_steps = sum(r.get('policy_metadata',{}).get('predictor_native_steps',0) for r in rows)
+if predictor_steps:
+    report['actual_and_cold_replay_native_steps'] = report['inclusive_native_steps']
+    report['predictor_native_steps'] = predictor_steps
+    report['inclusive_native_steps'] += predictor_steps
+    parity = json.loads((folder/'forecast_actual_parity.json').read_text())
+    assert parity['episodes']==32 and parity['all_selected_forecasts_byte_exact']
+    assert parity['predictor_native_steps']==predictor_steps
+    assert parity['inclusive_native_steps']==report['inclusive_native_steps']
 write_json(folder/'release_stats.json',report)
 print(json.dumps(report,indent=2))

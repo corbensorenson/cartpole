@@ -81,6 +81,38 @@
       "source_manifest": "output/conditioned_n12_001/inputs.json"
     },
     {
+      "directory": "output/conditioned_n13_001",
+      "status": "completed",
+      "summary_sha256": "2602e2ca8262fecc0638a5a65f13275db4eed80794655c7e8a44092d52a9f44f",
+      "passes": 30,
+      "n_links": 13,
+      "source_manifest": "output/conditioned_n13_001/inputs.json"
+    },
+    {
+      "directory": "output/conditioned_n13_admission_001",
+      "status": "completed",
+      "summary_sha256": "da152334fc13ec49201b8e683b6b3f44c82741e9a61073bddcd7638244561f2a",
+      "passes": 45,
+      "n_links": 13,
+      "source_manifest": "output/conditioned_n13_admission_001/inputs.json"
+    },
+    {
+      "directory": "output/conditioned_n13_from14_001",
+      "status": "completed",
+      "summary_sha256": "4c6141471535a9378b44f1a548a5d6bb91a2d4aa2176a08169ca0286379d4afa",
+      "passes": 44,
+      "n_links": 13,
+      "source_manifest": "output/conditioned_n13_from14_001/inputs.json"
+    },
+    {
+      "directory": "output/conditioned_n13_yoffset_001",
+      "status": "completed",
+      "summary_sha256": "c93528f48c9340fd264078868e94203abc39298e94370e09441787b4768f3655",
+      "passes": 44,
+      "n_links": 13,
+      "source_manifest": "output/conditioned_n13_yoffset_001/inputs.json"
+    },
+    {
       "directory": "output/conditioned_n3_001",
       "status": "completed",
       "summary_sha256": "3e6450f192e0503a052329ecb237657d23e60fdb43ff226b5dd410a8f62521d7",
@@ -349,6 +381,142 @@
       "source_manifest": "output/n12_value_backend_n11_regression_001/inputs.json"
     },
     {
+      "directory": "output/n13_admission_n12_regression_001",
+      "status": "completed",
+      "summary_sha256": "ecd20680aff6139a66dafe220eeb644ccdb8be7cadd9d61516ab7ad551013a66",
+      "passes": 1,
+      "n_links": 12,
+      "source_manifest": "output/n13_admission_n12_regression_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_direct_from14_001",
+      "status": "completed",
+      "summary_sha256": "bc4c6d1ca15fcf5d4b678ba8d73b16e0c2885c593385a5896f63f8c6a0382f55",
+      "passes": 0,
+      "n_links": 13,
+      "source_manifest": "output/n13_direct_from14_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_direct_repair_001",
+      "status": "completed",
+      "summary_sha256": "ea22923910a42cde181ab2cd308272ab7ab3bc013b7f69f08b2476f93d469e8c",
+      "passes": 0,
+      "n_links": 13,
+      "source_manifest": "output/n13_direct_repair_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_from14_cart_origin_pilot_001",
+      "status": "completed",
+      "summary_sha256": "e2d70818aa175d0c27363bd47743224d2150d9b9d535741232194887a1141752",
+      "passes": 1,
+      "n_links": 13,
+      "source_manifest": "output/n13_from14_cart_origin_pilot_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_from14_finite_001",
+      "status": "completed",
+      "summary_sha256": "cbc6c50654e33cc9801747eede2fa893aeacf4a47fd77e05e9028309ed0a741e",
+      "passes": null,
+      "n_links": 13,
+      "source_manifest": "output/n13_from14_finite_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_from14_late_pilot_001",
+      "status": "completed",
+      "summary_sha256": "88985e37e60cf4eee99162aee5f9168f8f614ca429d9f9a1dd29f9a82cd2a775",
+      "passes": 1,
+      "n_links": 13,
+      "source_manifest": "output/n13_from14_late_pilot_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_from14_yoffset_pilot_001",
+      "status": "completed",
+      "summary_sha256": "bd4a658245ef2a4e2a7b46abc4e4a4a3998baecb1656523ad4aaee87af251ce9",
+      "passes": 2,
+      "n_links": 13,
+      "source_manifest": "output/n13_from14_yoffset_pilot_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_hybrid_finite_001",
+      "status": "completed",
+      "summary_sha256": "c619404f408f1218cc4d3a1534855d0aa974726a26a98ffa0586563586774305",
+      "passes": null,
+      "n_links": 13,
+      "source_manifest": "output/n13_hybrid_finite_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_launch_admission_pilot_001",
+      "status": "completed",
+      "summary_sha256": "f8c20026b39b14304aa803946ef541295058f251769f920030f5cb0620da1968",
+      "passes": 3,
+      "n_links": 13,
+      "source_manifest": "output/n13_launch_admission_pilot_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_launch_profiles_diagnostic_001",
+      "status": "completed",
+      "summary_sha256": "aeda7e851248342eb7d4b33727b536ce847f62a1bb6e41399a1ffb85c6cb32d0",
+      "passes": 1,
+      "n_links": 13,
+      "source_manifest": "output/n13_launch_profiles_diagnostic_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_material_from14_001",
+      "status": "completed",
+      "summary_sha256": "480c91af82492fbd4b4d51c2278b5c99135ee67215e939e02ce9818bfe33ff7c",
+      "passes": null,
+      "n_links": 13,
+      "source_manifest": "output/n13_material_from14_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_observable_finite_001",
+      "status": "completed",
+      "summary_sha256": "f806d1df3eefab3dea888ccc398cfe5099f6067ed9c88d443b9531628bfc817b",
+      "passes": null,
+      "n_links": 13,
+      "source_manifest": "output/n13_observable_finite_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_observable_pilot_001",
+      "status": "completed",
+      "summary_sha256": "0ff9ccee5bd1c5def36d06dd20ce3800df20b6d30464df1024214e60392540cd",
+      "passes": 1,
+      "n_links": 13,
+      "source_manifest": "output/n13_observable_pilot_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_online_parking_pilot_001",
+      "status": "completed",
+      "summary_sha256": "80d25fbc83ecd3138ae1ad5a2df5e00c1c53e34e64184c0dbb6d8f26ccd778ba",
+      "passes": 1,
+      "n_links": 13,
+      "source_manifest": "output/n13_online_parking_pilot_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_optional_policy_n12_regression_001",
+      "status": "completed",
+      "summary_sha256": "638f7347af1cb92d91cf9ba1c7aa899657c3c316a6967b8d9383d1d9970cc217",
+      "passes": 1,
+      "n_links": 12,
+      "source_manifest": "output/n13_optional_policy_n12_regression_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_planar_reference_finite_001",
+      "status": "completed",
+      "summary_sha256": "c6bbb83ca6ce447be0d940cf2527ee3369e48ba7a0eb342e3ea82a0a244a7c3a",
+      "passes": null,
+      "n_links": 13,
+      "source_manifest": "output/n13_planar_reference_finite_001/inputs.json"
+    },
+    {
+      "directory": "output/n13_planar_reference_pilot_001",
+      "status": "completed",
+      "summary_sha256": "6635247624d8eb3d06ef32d2e1191a388e7cb70b37ee72d3ebfcd02053eb6846",
+      "passes": 1,
+      "n_links": 13,
+      "source_manifest": "output/n13_planar_reference_pilot_001/inputs.json"
+    },
+    {
       "directory": "output/n2_world_handoff_001",
       "status": "completed",
       "summary_sha256": "37a5ac93398866952ae89633a228f4682f814ae3857baaf2e6508ae816bc6505",
@@ -445,6 +613,14 @@
       "passes": 0,
       "n_links": 12,
       "source_manifest": "output/planar_lift_n12_002/inputs.json"
+    },
+    {
+      "directory": "output/planar_lift_n13_001",
+      "status": "completed",
+      "summary_sha256": "3c35f548d8c4604f13ab95a8b1d81c68373eb9418be1ee97d2998d55d3cf7956",
+      "passes": 0,
+      "n_links": 13,
+      "source_manifest": "output/planar_lift_n13_001/inputs.json"
     },
     {
       "directory": "output/planar_lift_n3_001",
@@ -549,6 +725,14 @@
       "passes": 32,
       "n_links": 12,
       "source_manifest": "output/qualify_n12_001/inputs.json"
+    },
+    {
+      "directory": "output/qualify_n13_001",
+      "status": "completed",
+      "summary_sha256": "02130e5697ccbf7702f2ee7eb87bcf1d3982764e75ca28b7f8f909576dc68d69",
+      "passes": 32,
+      "n_links": 13,
+      "source_manifest": "output/qualify_n13_001/inputs.json"
     },
     {
       "directory": "output/qualify_n1_001",
@@ -661,6 +845,14 @@
       "passes": 1,
       "n_links": 11,
       "source_manifest": "output/release11_reproduction_001/inputs.json"
+    },
+    {
+      "directory": "output/release12_reproduction_001",
+      "status": "completed",
+      "summary_sha256": "a0f82308d34aab9a913987a74e139baab4190973d5da03204f8de215c3094032",
+      "passes": 1,
+      "n_links": 12,
+      "source_manifest": "output/release12_reproduction_001/inputs.json"
     },
     {
       "directory": "output/release4_reproduction_001",
@@ -955,6 +1147,25 @@
           "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-11-link-v1/2d-cartpole-11-link-evidence.zip",
           "sha256": "240edd10022dbea5e82660b02e8fad5d3bd4a5d4d68ee3e0a0de003febb1e71a",
           "size": 1443984255
+        }
+      ]
+    },
+    {
+      "url": "https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-12-link-v1",
+      "tag": "2d-cartpole-12-link-v1",
+      "commit": "1ff88386cc1b563bc85b6938712f24894a36361d",
+      "assets": [
+        {
+          "name": "2d-cartpole-12-link-swingup.mp4",
+          "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-12-link-v1/2d-cartpole-12-link-swingup.mp4",
+          "sha256": "2bc5c79efb073b417d3de42df7a7c9a38b14a680c5faa81c9e956863dd84c57f",
+          "size": 1142592
+        },
+        {
+          "name": "2d-cartpole-12-link-evidence.zip",
+          "url": "https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-12-link-v1/2d-cartpole-12-link-evidence.zip",
+          "sha256": "b0774bac8ff0f3fc93ceb8747c3ee274f9ed4243a950f5edbec9b417afd49848",
+          "size": 1753666834
         }
       ]
     },

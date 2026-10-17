@@ -1,0 +1,62 @@
+{
+  "args": {
+    "route": "output/n13_from14_finite_001/affine_controller.npz",
+    "out": "output/conditioned_n13_from14_001",
+    "park_seconds": 19.0,
+    "no_align": false,
+    "extra_development_summary": null,
+    "swing_steps": 450,
+    "online_gauge": true,
+    "online_parking": false,
+    "development_seeds": null
+  },
+  "source_sha256": {
+    "__init__.py": "54e61188dcebfc53dac13d40ebda203c4b46f713fd243d1a3fe8ff0bfa9cb5e0",
+    "affine_value.py": "8b95fdf353b6367da4f19f58259ec6bb26aa410269d8629efbb721d6aaeeef7d",
+    "conditioning.py": "77e86d78c441936eb6d3e4fb6b19a01c745f1769efeffa586173c15db7be10da",
+    "control.py": "dd8b77fc654174544a4bcc9a03929247b2584dbee6a275e75fe62088f64ee81b",
+    "direct_shooting.py": "9b54d5a39cf8fb01d76436ab51d43cb9611e4aa48fb044364f19b29557fe77e8",
+    "env.py": "b1ec1618244f143936fa73c60a3ca3dfaf6c0180a995994855cd3de8f3674a23",
+    "experiment.py": "ffacaaea8d885881e211ced51e9cdc5e81dc250431f559488f9f13f4eb47cbc1",
+    "fddp.py": "e81c6f686a7e4583053c79c0891d09eb2b9b75ded04ae3760a2bd8662e077036",
+    "physical.py": "4f60f476c5c55ef889b56f754747b478f33a06f09116294986604a4df588a135",
+    "symmetry.py": "789e2a11a55c5e2a5426c699942308db7611d4e07f8146b8863565e586cf119f",
+    "tracking_repair.py": "8a42fd0736e1a55c9a83ea5e7fabfe8569b688357f2a496a0b0f4c49efd54bc6",
+    "transfer.py": "45532f63a717ade2d635c7a6a0df8397298f2a28b60d5b3f56081e1669db519d"
+  },
+  "input_artifacts_sha256": {
+    "driver.py": "83c8434a94c2edb2239bc0e73cc3ed9dd79fc629cde9c9994cef8ff61d0ac4e8",
+    "pyproject.toml": "1219ab00e087e3d51a95cd257425983cbcad689c3abc13dcad32e91dd549b51f",
+    "requirements-lock.txt": "dc59359748d15aed6894cda3f60a9e1a2f2005385af44b76aa47d071ef35ffe7",
+    "input_route.npz": "1dd8ecc3bf6ae2f8019f2db173908e104dc78c489d1192a359df8aaaabc914bd"
+  },
+  "utc": "2026-10-17T02:02:33.440822+00:00",
+  "command": [
+    "scripts/condition_route.py",
+    "--route",
+    "output/n13_from14_finite_001/affine_controller.npz",
+    "--park-seconds",
+    "19",
+    "--swing-steps",
+    "450",
+    "--online-gauge",
+    "--out",
+    "output/conditioned_n13_from14_001"
+  ],
+  "runtime": {
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "numpy": "2.4.6",
+    "mujoco": "3.3.5",
+    "packages": {
+      "scipy": "1.17.1",
+      "gymnasium": "1.4.0",
+      "imageio": "2.38.1",
+      "pillow": "12.3.0"
+    },
+    "thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1"
+    }
+  }
+}

@@ -7,7 +7,14 @@ development was underway. Source: revision3 of
 Its read-only source copy and identity are retained in
 `sources/corben_marc_hybrid_2d_20261016/`. The original1D checkout was not changed.
 
-**Useful result already measured:** preserving affine native defects and
+**Useful results measured:** eleven and twelve are qualified and public after
+adapting full affine feedback, finite continuation and observed axial alignment.
+Thirteen tests the document's material transfer and complete observed-launch
+admission; it passes45/45 development and32/32 NEW qualification starts, all
+full30s/5.16s hold/exact cold replay. Its publication is being prepared.
+The simulator still permits arbitrary XY motion and unrestricted passive joints.
+
+Preserving affine native defects and
 designing a finite upright continuation produces an eleven-link nominal full
 30s pass with23.50s hold. Raw noisy starts fail, and static preparation improves
 only to43/45. Adding causal per-command axial reference alignment then passes
@@ -29,6 +36,8 @@ experiments and qualification establish the new count.
 | Sparse residual shooting / no normal-equation conditioning (4.1,10) | Existing full-spatial shooting; new augmented ridge diagnostic | Stronger measured local defect correction; standalone actual controller still fails |
 | Physical references and separate incumbents (12.1) | Keep raw proposal, rebuilt route and actual tapes separately | Failed rebuild retained; nominal finite-affine pass preserved independently |
 | Measured launch correction demand (8,12) | Existing hanging wrapper, full affine values and causal per-command axial reference alignment | Static16s:27/45;18s:40/45;18.4s:43/45; online18s:45/45 development then32/32 reserved |
+| Material-coordinate count transfer (7) | Decode donor's explicit coordinates; interpolate unwrapped cumulative angle/rate fields at material centers; native target repair | Alternate14->13 donor improves prepared development30/45->44/45; donor/timing change together |
+| Complete continuation admission from observed launch (14) | Two fixed reference offsets, independent native full-suffix forecasts, first passing continuation; no seed input | New13 pilot3/3, full development45/45, then32/32 NEW qualification; all chosen forecast/actual suffixes byte-identical |
 | Actual admission, fresh qualification, cold replay (14–16) | Existing gates retained | No eleven reserved seeds consumed by these development tests |
 
 The scalar B17 controller is not copied. Spatial errors have quaternion tangent
@@ -83,7 +92,7 @@ full design; regenerating a shorter value recursion would be another controller.
 Axial alignment rotates state references, gain columns and value-root columns;
 force offsets and value residuals remain unchanged. It never edits a live state.
 
-Current verification:85 tests pass, including independent dense affine optimum,
+Eleven's frozen verification:85 tests pass, including independent dense affine optimum,
 nonzero-residual action selection, native candidate replay, live/predictor
 isolation, cap/deduplication, gauge transport and online force invariance at1/3/11
 links under equivalent observed axial frame coordinates. The published ten-link first
@@ -110,10 +119,48 @@ The corrected12 donor matches its stored tape exactly. Its native repaired
 proposal plus finite affine continuation passes nominal23.50s, while raw noisy
 starts fail. The18s online-gauge policy passes45/45 development episodes then
 32/32 fresh reserved starts20262316..47, all full30s with5.50s hold and exact
-replay. Twelve is qualified and its source/video release is being prepared.
-Current lab tests96 pass; eleven's immutable public
+replay. Twelve is public at1ff88386cc1b563bc85b6938712f24894a36361d,
+with96 packaged-source tests, exact first-tape reproduction and3708 staged/
+archive hashes. Public video/archive digests and tag verify. Current lab tests101
+pass after13-link component checks; eleven's immutable public
 release retains85-test scope. A good optimizer gap or a donor coordinate check
 is still not qualification.
+
+At thirteen, the first finite design again passes nominal23.50s but its prepared
+cohort is only30/45. Three bounded probes (negligible planar-reference cleanup,
+physical observable tracking cost, and online hanging-frame alignment) each
+fail the five reused adversarial development starts. Cleanup shrinks cross-plane
+gain by over400x without a measured reliability benefit. This supports the
+document's warning against ranking destinations/controllers by gain norm alone.
+Material transfer of a different fourteen-link angle/rate field, then native
+thirteen repair, yields an earlier-arrival finite design (nominal24.16s hold).
+With19s hanging preparation it passes44/45 development episodes, with5.16s hold
+on successes. A19.1s pilot and observed-cart-origin alignment each still fail
+the retained difficult start. Those null results remain in the evidence.
+
+The document's bounded launch-continuation test is useful here. Nine native
+forecasts from that observed launch reproduce the zero-profile failure exactly;
+only a fixed reference offset(0,-.001)m passes. Its actual pilot matches the
+forecast byte-for-byte. Its full gate is also44/45, with a DIFFERENT failure.
+Neither fixed policy is qualified. The new causal two-profile admission policy
+forecasts both full suffixes from the current observed launch, selects the first
+complete passing forecast, and records all query steps/tapes. It never edits
+physical positions, boundaries or spin and has no seed input. Pilot nominal and
+both reused failures pass3/3; selected states/actions/raw forces/tilts equal their
+forecasts exactly. The unchanged full45-start development gate passes45/45:
+44 select zero offset, one selects-1mm Y. Inclusive737180 native steps include
+196504 predictor steps. Frozen32-start qualification passes32/32, all30s/5.16s
+hold/exact cold replay; every chosen suffix matches forecast byte-for-byte.
+All reserved starts choose profile0; development also exercises profile1. Both
+forecasts are always evaluated. Qualification524800 inclusive native steps
+include140800 predictor steps. Complete forecasts are conditional on that
+observed state/runtime/policy, not a general disturbance certificate.
+The131-test suite passes, and
+twelve's first published heldout tape is byte-identical under current source.
+Thirteen's reserved cohort20262416..47 is consumed successfully. This supports testing
+complete native continuation rather than ranking candidate value or gain size;
+thirteen is now qualified under that finite reset distribution. Publication
+checks are pending; no hardware real-time execution claim is made.
 
 The online variant aligns the current reference and gain columns with the
 observed state each command using a closest axial polar rotation. It retains

@@ -19,6 +19,10 @@ p.add_argument('--no-align',action='store_true')
 p.add_argument('--extra-development-summary')
 p.add_argument('--swing-steps',type=int,help='explicit swing/design split for older finite-affine checkpoints')
 p.add_argument('--online-gauge',action='store_true')
+p.add_argument('--online-parking',action='store_true')
+p.add_argument('--align-cart-origin',action='store_true')
+p.add_argument('--cart-offset',type=float,nargs=2)
+p.add_argument('--launch-admission',action='store_true')
 p.add_argument('--development-seeds',type=int,nargs='+',help='explicit reused development subset, never reserved')
 a = p.parse_args()
 out = Path(a.out)
@@ -41,8 +45,14 @@ values.update(park_steps=park_steps,align_gauge=not a.no_align,
               parking_reference=parking['reference'],parking_K=parking['K'],
               parking_P=parking['P'],parking_Q=parking['Q'],parking_R=parking['R'])
 if affine:
-    values.update(affine_value=True,native_search=False,swing_steps=swing_steps,online_gauge=a.online_gauge)
-elif a.online_gauge:
+    values.update(affine_value=True,native_search=False,swing_steps=swing_steps,
+                  online_gauge=a.online_gauge,online_parking=a.online_parking,
+                  align_cart_origin=a.align_cart_origin)
+    if a.cart_offset is not None:
+        values['cart_reference_offset'] = np.asarray(a.cart_offset,float)
+    if a.launch_admission:
+        values['launch_reference_profiles'] = np.array([[0.,0.],[0.,-.001]])
+elif a.online_gauge or a.online_parking or a.align_cart_origin:
     raise ValueError('online gauge variant requires an affine payload')
 np.savez_compressed(out/'route.npz',**values)
 factory = (lambda e: affine_policy_from_payload(e,values)) if affine else (lambda e: ParkedRoutePolicy(e,source['states'],source['actions'],source['gains'],design,parking,park_steps,not a.no_align))

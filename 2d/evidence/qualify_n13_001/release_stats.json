@@ -1,0 +1,16 @@
+{
+  "passes": 32,
+  "distinct_initial_states": 32,
+  "minimum_hold_seconds": 5.16,
+  "maximum_cart_coordinate": 1.883801164935185,
+  "minimum_substep_margin": 1.1158444609672522,
+  "maximum_force_norm": 65.98469545124328,
+  "maximum_launch_tilt_from_down": 8.903365875667646e-07,
+  "inclusive_native_steps": 524800,
+  "all_full": true,
+  "all_replay_exact": true,
+  "all_no_warning": true,
+  "scope": "saved-tape post-state rescore; substep margins and exact replay from actual native execution records",
+  "actual_and_cold_replay_native_steps": 384000,
+  "predictor_native_steps": 140800
+}

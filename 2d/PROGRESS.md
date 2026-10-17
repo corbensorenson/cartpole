@@ -449,7 +449,84 @@ qualifies TWELVE. No search/state reset/extra episode time.
 Full first-heldout video/normal-speed preview are rendered and inspected:
 1501 frames/50fps,30.02s encoding,300-frame30s GIF. MP4 SHA256
 2bc5c79efb073b417d3de42df7a7c9a38b14a680c5faa81c9e956863dd84c57f.
-Next: source/archive verification, packaged-source reproduction and public release.
+Packaged source96 tests passes; first held-out states/actions/tilts reproduce
+byte-for-byte and its11 source module hashes match qualification.3708 staged/
+archive hashes verify. Twelve is PUBLIC at tag2d-cartpole-12-link-v1, source
+1ff88386cc1b563bc85b6938712f24894a36361d. MP4 is1142592 bytes with the hash
+above. ZIP1753666834 bytes SHA256
+b0774bac8ff0f3fc93ceb8747c3ee274f9ed4243a950f5edbec9b417afd49848.
+Both public asset digests/sizes and exact tag/master commit verify. Do not rebuild
+this published archive with later source. Current13-link freedom/rotation/gauge
+extensions pass, bringing the lab to101 tests; twelve's frozen scope remains96.
+`planar_lift_n13_001` completes strict import of the read-only9s physical-
+relative donor: stored physical-tape parity0, hanging error0, native rod-direction
+error2.165e-15. Native design304876 steps. Its direct baseline fails2.52s,
+Y3.014954m/no hold, exact replay. The original file remains explicitly a
+single-state/not_solution proposal. `n13_direct_repair_001` completes20 accepted
+updates/12777076 native design steps, defect1.308216e-14/max6.583040e-8.
+Its gap-free baseline fails8.00s/Y3.029320m with0.02s hold, exact replay.
+`n13_hybrid_finite_001` passes full nominal23.50s hold but0/12 raw noisy starts.
+`conditioned_n13_001` with18s online-gauge preparation passes30/45; no reserved
+cohort is opened. All fifteen failed development starts/tapes are retained.
+
+Optional exact-planar reference cleanup changes state/force only1.3644e-12/
+2.5488e-12 normalized and reduces forbidden cross-plane gain5.1695e7->1.2006e5,
+but its declared five-failure pilot passes only nominal (1/6). It has no measured
+reliability gain. Optional physical-observable direction/transverse-rate tracking
+also passes nominal23.50s/0 of12 raw starts and only1/6 prepared pilot. Its
+kinematic factors independently match native observables, respect gauge-null
+directions and leave genuine spin physical. Online alignment during hanging
+preparation, using original arrays/18s clock, also passes only1/6; every original
+payload array remains unchanged except the added flag. These are failed probes,
+not qualified policies or evidence that all13 approaches are exhausted.
+
+Current new trajectory: `n13_material_from14_001` transfers unwrapped cumulative
+angle/rate fields at material centers from a historical14-link9s donor into
+canonical13 mechanics, preserving cart state/cadence. Donor stored-tape parity0,
+target hanging error0 and native direction error1.11e-15. This is a proposal
+only. Donor's old nominal entry was earlier (24.16s hold versus23.50s), offering
+a different arrival/time margin to test. Terminal `n13_direct_from14_001`
+completes20 accepted full82D updates/12777076 design steps, with augmented
+ridge and bounded LSMR fallback. Final defect6.129852e-16/max1.567505e-8;
+its gap-free baseline fails7.36s with.26s hold. Finite-affine execution passes
+nominal24.16s but0/12 raw noisy starts. The declared19s prepared gate reaches
+44/45 with5.16s hold; only20261437 fails. A19.1s pilot and observed-cart-origin
+alignment each still fail that start. Nine bounded observed-launch native
+forecasts exactly reproduce the baseline failed suffix; only profile8,
+reference offset(0,-.001)m, passes. Its actual pilot matches forecast exactly.
+The fixed-offset full gate also reaches44/45; it fixes20261437 but fails20261444.
+Neither fixed policy is qualified; all variants remain retained.
+
+NEW causal launch admission forecasts BOTH fixed references from the current
+observed state at command950, then selects the first full passing continuation.
+No seed input, future actual state, physical recentering or resets. All forecast
+states/actions/raw forces/tilts and query counts are saved. Pilot nominal plus
+20261437/20261444 passes3/3, each full30s/5.16s hold/cold replay; every chosen
+forecast equals actual suffix byte-for-byte. Inclusive pilot48380 native steps,
+including11704 predictor steps. Unchanged `conditioned_n13_admission_001` is
+terminal45/45, all5.16s holds/full30s/cold replay/chosen forecast suffix parity.
+Inclusive737180 native steps include196504 predictor steps, within750000 budget.
+Profile0 selected44 times/profile1 once. Payload35 arrays match pilot.
+Frozen fresh qualification `qualify_n13_001` is terminal32/32, NEW noisy starts
+20262416..47, all full30s/5.16s holds/no warning/exact cold replay. Every chosen
+forecast states/actions/raw actions/tilts equals the actual suffix byte-for-byte.
+All32 choose zero profile; the unchanged policy forecasts both candidates.
+Inclusive524800 native steps include384000 actual+cold and140800 predictors.
+All32 initial states differ. Maximum recorded-command cart coordinate1.883801165m,
+minimum substep margin1.115844461m, maximum delivered force norm65.984695451N.
+Thirteen QUALIFIES; publication/source/archive gates are being prepared.
+Full first-heldout video1501frames50fps/30.02s encoding, normal-speed300frame
+30s GIF and two contact sheets inspected. Video1144425 bytes SHA256
+c87797b5a375c9bac212287e5e2817a5a7a4c727f6088cad2e0521539199976a.
+Current suite131 tests passes. `n13_admission_n12_regression_001` preserves
+twelve's first published states/actions/tilts byte-for-byte. Reserved13 seeds
+20262416..47 are consumed successfully. Predictor cost is not hardware real-time proof.
+
+Release packaging from13 includes complete current source/runtime, every new
+or changed evidence file, and hash-bound immutable prior bundles for unchanged
+historical evidence. All historical files remain in the Git checkout/full
+inventory. Recursive ZIP verification is tested. Existing public ZIPs/tags are
+create-only and unchanged. No13 archive exists before qualification/video gates.
 
 Each new count needs a frozen controller, full nominal/development episode
 tapes, fresh qualification, independent replay, source/runtime/config hashes,
@@ -463,7 +540,8 @@ established. Thirty-two reset-noise trials do not certify arbitrary disturbances
 
 ## Resume checkpoint
 
-One through ELEVEN are public; TWELVE qualification/video are complete.
+One through TWELVE are qualified/public; full videos/evidence/asset hashes verify.
+THIRTEEN is now qualified32/32 fresh starts; publication gates are pending.
 Eleven direct transfer (`output/planar_lift_n11_001`)
 fails nominal at 4.64s, X=3.261849m, no hold and exact replay. Repairs 001–004
 and005 are terminal failures. Simultaneous direct repair001 closes proposal
@@ -483,18 +561,29 @@ baseline. Full affine1500-step finite001 passes nominal23.50s hold/0 of12 raw
 noisy starts. Terminal output/conditioned_n12_001 uses
 18s hanging/online-gauge feedback then600 commands from the same1500-step
 design, passes45/45. Fresh32 qualification in qualify_n12_001 also passes all
-full30s/5.50s holds/exact replays. Full video/preview inspected. No live solve
-process now. Package twelve, verify frozen source96 tests and first-heldout
-byte parity, stage/hash/archive checks, normal GitHub source push/release/assets
-and public tag/digest verification, then begin thirteen. Twelve reserved cohort
-20262316..47 is consumed successfully; thirteen reserves20262416..47, untouched.
+full30s/5.50s holds/exact replays. Twelve publication is complete at
+1ff88386cc1b563bc85b6938712f24894a36361d,3708 staged/archive hashes,
+96 frozen-source tests, exact packaged-source first-tape parity, verified
+public assets/tag/master. Thirteen strict transfer001 passes stored-tape parity0,
+hanging error0/directions2.165e-15 but direct policy fails2.52s. Direct001 is
+terminal; finite001 passes nominal23.50s but0/12 raw noisy starts, and its18s
+online-gauge wrapper passes only30/45 development episodes. Cleanup/observable-
+metric/online-parking pilots each fail all five reused failures (nominal1/6).
+Earlier-entry material14->13 repair/finite design are terminal. Its original
+and fixed-1mm-Y gates each reach44/45, with different failures. New observed-
+launch two-profile native admission pilot passes3/3 and full gate45/45, with
+exact chosen forecast suffix parity. Qualification output/qualify_n13_001 is
+terminal32/32 NEW seeds20262416..47; all full30s/5.16s hold/no warning/cold
+replay and forecast parity.524800 inclusive native steps. Publish13 with full
+video/evidence after source/hash gates, then begin14. No live native job.
+Twelve/thirteen reserved cohorts20262316..47/20262416..47 are consumed successfully.
 No native search is used in the eleven qualified policy; goal remains active.
 Historical proposal:
 `runs/swingup11_uniform/eleven_link_controller.json`, 400 commands / 8s,
 uniform eleven links, nominal cart maximum 2.071342m; source config
 `configs/swingup11_uniform.yaml`. It is only a geometric proposal for unchanged
-spatial mechanics. Current freedom/solver/affine/12-link/coordinate checks:96 pass;
-eleven's frozen publication retains its85-test source scope.
+spatial mechanics. Current freedom/solver/affine/admission/archive checks:131 pass;
+eleven/twelve frozen publications retain85/96-test source scopes respectively.
 Keep physical freedom and near-planar-reference scope explicit. User authorizes
 continued higher counts. Check live processes/terminal markers before resuming.
 Historical planar route proposals are available in the original read-only
@@ -505,8 +594,8 @@ Record the chosen method, warm start, seeds and compute limit BEFORE execution.
 Do not restart an experiment while its process is alive or its completed marker
 exists. Checkpoints are proposals until full actual float32 gates pass. Eleven-link
 reserved qualification seeds20262216..20262247 are now consumed successfully;
-twelve's fresh cohort20262316..20262347 also passed; thirteen will use NEW
-20262416..20262447, untouched.
+twelve's fresh cohort20262316..20262347 also passed; thirteen's NEW
+20262416..20262447 frozen qualification passes32/32.
 All future successful count releases require an explicitly 2D label, full video,
 state/action evidence and hashes. No upper frontier has been established.
 

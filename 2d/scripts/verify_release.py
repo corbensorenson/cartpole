@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import subprocess
 import zipfile
+from release_archive import verify_archive
 
 p = argparse.ArgumentParser()
 p.add_argument('--links',type=int,required=True)
@@ -26,9 +27,5 @@ for name in files:
     position = end+size+2
     assert hashlib.sha256(blob).hexdigest()==manifest['files_sha256'][name],name
 archive = root/f'output/2d-cartpole-{a.links}-link-evidence.zip'
-with zipfile.ZipFile(archive) as z:
-    bundled = json.loads(z.read('2d/manifest.json'))
-    assert bundled == manifest
-    for name,digest in manifest['files_sha256'].items():
-        assert hashlib.sha256(z.read('2d/'+name)).hexdigest()==digest,name
-print(f'Verified {len(files)} staged blobs and archived files; no mismatches.')
+coverage = verify_archive(archive,manifest)
+print(f'Verified {len(files)} staged blobs and complete archive coverage: {coverage}; no mismatches.')

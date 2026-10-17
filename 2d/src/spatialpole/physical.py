@@ -70,6 +70,32 @@ def direction_residuals(env,states):
     return result
 
 
+def direction_tracking_factors(env,states,weights,eps=1e-5):
+    """Local tracking factors for physical rod directions/transverse rates.
+
+    The tracked target is each reference's own observable vector. The constant
+    upright offset in direction_residuals cancels when differentiated. Axial
+    gauge changes have zero observable cost; measured spin remains in the full
+    state and can affect future native dynamics. No physics step or live-state
+    update is performed here.
+    """
+    states,weights = np.atleast_2d(states),np.asarray(weights,float)
+    nx = 2*env.model.nv
+    if weights.shape!=(nx,) or not np.isfinite(weights).all() or np.any(weights<0):
+        raise ValueError('invalid observable tracking weights')
+    if not np.isfinite(eps) or eps<=0:
+        raise ValueError('invalid observable derivative epsilon')
+    queries = []
+    for state in states:
+        for j in range(nx):
+            delta = np.zeros(nx)
+            delta[j] = eps
+            queries.extend((env.integrate(state,delta),env.integrate(state,-delta)))
+    residual = direction_residuals(env,np.array(queries)).reshape(len(states),2*nx,nx)
+    jac = np.transpose((residual[:,0::2]-residual[:,1::2])/(2*eps),(0,2,1))
+    return np.sqrt(weights)[None,:,None]*jac
+
+
 def residual_cost_derivatives(env, states, weight, residual_function, eps=1e-5):
     """Batched centered tangent secants and Gauss-Newton cost Hessians."""
     states = np.atleast_2d(states)

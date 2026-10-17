@@ -51,6 +51,33 @@ def declared_coordinate_projection(env,source_transform):
     return transform@physical
 
 
+def regrid_planar_material_states(physical,source_lengths,target_lengths):
+    """Interpolate cumulative angle/rate at material centers, preserve cart.
+
+    Inputs and outputs are physical relative q/v, with unwrapped angle branches
+    retained. This is a geometric warm start; target dynamics must be rebuilt.
+    """
+    physical = np.asarray(physical,float)
+    source_lengths,target_lengths = np.asarray(source_lengths,float),np.asarray(target_lengths,float)
+    for lengths in (source_lengths,target_lengths):
+        if lengths.ndim!=1 or len(lengths)<1 or not np.isfinite(lengths).all() or np.any(lengths<=0):
+            raise ValueError('material lengths must be finite and positive')
+    ns,nt = len(source_lengths),len(target_lengths)
+    if physical.ndim!=2 or physical.shape[1]!=2*(ns+1) or not np.isfinite(physical).all():
+        raise ValueError('invalid physical source states')
+    source_centers = (np.cumsum(source_lengths)-source_lengths/2)/np.sum(source_lengths)
+    target_centers = (np.cumsum(target_lengths)-target_lengths/2)/np.sum(target_lengths)
+    angles = np.cumsum(physical[:,1:ns+1],axis=1)
+    rates = np.cumsum(physical[:,ns+2:],axis=1)
+    new_angles = np.array([np.interp(target_centers,source_centers,row) for row in angles])
+    new_rates = np.array([np.interp(target_centers,source_centers,row) for row in rates])
+    out = np.zeros((len(physical),2*(nt+1)))
+    out[:,0],out[:,nt+1] = physical[:,0],physical[:,ns+1]
+    out[:,1:nt+1] = np.diff(np.c_[np.zeros(len(physical)),new_angles],axis=1)
+    out[:,nt+2:] = np.diff(np.c_[np.zeros(len(physical)),new_rates],axis=1)
+    return out
+
+
 def coordinate_projection(env,cart_position=1.25,angle=0.15,cart_velocity=0.5,joint_velocity=0.75):
     """Tangent projection for the old dimensionless-absolute transform.
 

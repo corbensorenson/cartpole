@@ -4,15 +4,15 @@ A cart moves over an XY plane, driven by two forces. Every link has a passive,
 unlimited ball joint: it can tilt in both directions and twist about its axis.
 This is a separate benchmark from the one-dimensional cart and hinge chain.
 
-**One- through twelve-link hanging-start swing-ups are qualified:** 32/32 fresh
+**One- through thirteen-link hanging-start swing-ups are qualified:** 32/32 fresh
 noisy 3D starts at each count, in addition to nominal and development checks.
-Episodes run 30 seconds; the latest twelve-link controller holds upright for
-5.50 seconds. All delivered-action
+Episodes run 30 seconds; the latest thirteen-link controller holds upright for
+5.16 seconds. All delivered-action
 tapes replay exactly. Both cart axes are used. Full-state simulation feedback,
 not a learned policy or a hardware demonstration.
 
 The benchmark permits arbitrary XY cart motion and unrestricted ball joints,
-but does not require a nonplanar nominal swing. The four- through twelve-link
+but does not require a nonplanar nominal swing. The four- through thirteen-link
 reference swings are essentially planar; Y feedback handles spatial start
 perturbations. This is a controller/reference bias, not a locked simulator axis.
 The independent [spatial freedom audit](https://github.com/corbensorenson/cartpole/tree/master/2d/audits/spatial_freedom_001)
@@ -54,6 +54,9 @@ checks native two-axis motion and includes a controlled six-link XY loop.
 [Full twelve-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-12-link-v1/2d-cartpole-12-link-swingup.mp4)
 · [Twelve-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-12-link-v1)
 
+[Full thirteen-link video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-13-link-v1/2d-cartpole-13-link-swingup.mp4)
+· [Thirteen-link release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-13-link-v1)
+
 | Milestone | Current evidence | Upright hold |
 |---|---|---|
 | One-link hanging-start swing-up | 32/32 final qualification; full video | 21.74s |
@@ -68,7 +71,8 @@ checks native two-axis motion and includes a controlled six-link XY loop.
 | Ten-link hanging-start swing-up | 32/32 fresh final qualification; full video | 6.12s |
 | Eleven-link hanging-start swing-up | 32/32 fresh final qualification; full video | 5.50s |
 | Twelve-link hanging-start swing-up | 32/32 fresh final qualification; full video | 5.50s |
-| Thirteen-link hanging-start swing-up | Next development count | — |
+| Thirteen-link hanging-start swing-up | 32/32 fresh final qualification; full video | 5.16s |
+| Fourteen-link hanging-start swing-up | Next development count | — |
 | Near-upright balance, 1–3 links | 12/12 local perturbed starts at each count | — |
 | Near-upright balance, 4 links | 9/12; incomplete, not accepted | — |
 
@@ -85,15 +89,24 @@ $env:OMP_NUM_THREADS='1'
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-Re-evaluate the frozen one-link controller on a new cohort:
+Reproduce the frozen thirteen-link controller on its recorded qualification starts:
 
 ```powershell
-.\.venv\Scripts\python.exe -m spatialpole.experiment evaluate --route evidence/swing_n1_001/route.npz --episodes 32 --seed 20261216 --out output/reproduce_one_link
-.\.venv\Scripts\python.exe -m spatialpole.experiment video --tape output/reproduce_one_link/seed20261216.npz --out output/2d-cartpole-one-link.mp4
+.\.venv\Scripts\python.exe -m spatialpole.experiment evaluate --links 13 --route evidence/qualify_n13_001/frozen_route.npz --episodes 32 --seed 20262416 --out output/reproduce_thirteen
+.\.venv\Scripts\python.exe -m spatialpole.experiment video --tape output/reproduce_thirteen/seed20262416.npz --out output/2d-cartpole-thirteen-link.mp4
 ```
 
-Local development uses `output/swing_n1_001/route.npz` before publication packaging.
-Output directories must be new; failed runs are preserved.
+Local development uses `output/qualify_n13_001/frozen_route.npz` before packaging.
+Output directories must be new; failed runs are preserved. These are previously
+tested starts, so reproduction does not add independent qualification evidence.
+
+From count13 onward, each ZIP contains complete current source/runtime and all
+new or changed evidence. Unchanged historical raw evidence is retained in
+earlier immutable bundles, linked by URL, size, SHA256 and exact prior manifest
+in `manifest.json`; all historical files remain in the Git checkout. The current
+count reproduces from its ZIP alone. Older examples below require the matching
+count's release bundle or the complete checkout. `verify_release.py` also checks
+historical coverage recursively when prior ZIPs are beside the current one.
 
 For the qualified two-link controller use
 `evidence/n2_world_handoff_001/controller.npz` with `evaluate`; its saved
@@ -273,7 +286,7 @@ for matched results and the moving-target/native-search ideas still unproven.
 Reproduce eleven using `evidence/qualify_n11_001/frozen_route.npz` with `evaluate`.
 Its saved affine/online-alignment flags select the complete frozen execution law.
 
-The current lab has96 passing tests, adding twelve-link physical freedoms and
+The twelve-link release has96 passing tests, adding twelve-link physical freedoms and
 an optional finite-QR upright value backend after the stationary DARE design
 became numerically indefinite. Historical donor coordinates now decode through
 their explicit matrix, with hanging-start/native-direction/physical-tape checks;
@@ -290,6 +303,28 @@ force norm62.186687N. All32 initial states differ. Reproduce using
 upright tracking are a600-command prefix of the full1500-command design.
 Measured physical spin and all ball axes remain free. The frozen eleven-link
 first-heldout tape still reproduces byte-for-byte after the synthesis changes.
+
+The current lab has131 passing tests, including thirteen-link native freedoms,
+world rotation, gauge/observable tracking, material transfer and causal native
+launch admission. The first thirteen donor reaches30/45 development passes;
+an earlier-arrival material donor reaches44/45 at19s preparation. A fixed-1mm
+Y-reference offset also reaches44/45, with a different failed start. A new
+controller forecasts both full continuations from the observed launch and
+selects the first complete passing forecast. Its pilot passes nominal and both
+reused failures, then all45 development episodes, with byte-identical
+forecast/actual suffixes. Frozen qualification passes32/32 NEW noisy starts
+20262416..20262447, each full30s/5.16s hold/no warning/exact cold replay.
+Every chosen forecast states/actions/raw forces/tilts equals the actual suffix.
+All32 choose profile0; development also exercises profile1. The full law always
+forecasts both candidates. Inclusive524800 native steps comprise384000 actual+
+cold proof and140800 predictor steps. Maximum recorded-command cart coordinate
+1.883801m, minimum substep boundary margin1.115844m, maximum delivered force
+norm65.984695N;32 distinct initial states. Prediction cost is recorded, with no
+hardware real-time guarantee. The full video has1501 frames/50fps and includes
+19s preparation,9s swing and2s upright tracking, a550-command prefix of the
+original1500-command design. Fourteen is next. The frozen twelve first-heldout
+tape still reproduces exactly. See the hybrid-document review for the useful
+finite-affine, material-transfer and native-admission ideas.
 
 Each experiment freezes source, arguments, runtime and the pre-experiment memo,
 then records optimizer history, states, raw/delivered forces, tilts, counts,

@@ -1,0 +1,6 @@
+{
+  "max_transverse_gain_from_in_plane_state": 120056.50160058068,
+  "max_in_plane_gain_from_transverse_state": 64414.7495808052,
+  "max_transverse_feed": 0.00029547530246320955,
+  "scope": "fresh full native models; no derivative symmetry projection or physical joint constraint"
+}

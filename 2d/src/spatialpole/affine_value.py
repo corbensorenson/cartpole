@@ -134,6 +134,11 @@ class ParkedAffineValuePolicy:
         self.env,self.payload,self.route = env,payload,None
         self.park_steps = int(payload['park_steps'])
         self.online_gauge = bool(payload.get('online_gauge',False))
+        self.online_parking = bool(payload.get('online_parking',False))
+        self.align_cart_origin = bool(payload.get('align_cart_origin',False))
+        self.cart_reference_offset = np.asarray(payload.get('cart_reference_offset',np.zeros(2)),float)
+        if self.cart_reference_offset.shape!=(2,) or not np.isfinite(self.cart_reference_offset).all():
+            raise ValueError('reference cart offset must contain two finite coordinates')
         if self.online_gauge and bool(payload['native_search']):
             raise ValueError('online axial feedback and native-value search are separate tested families')
         self.parking = BalancePolicy(env,dict(reference=payload['parking_reference'],K=payload['parking_K']))
@@ -142,15 +147,27 @@ class ParkedAffineValuePolicy:
             design_steps=len(payload['actions']),execution_tracking_steps=env.config.horizon-self.park_steps,
             align_axial_frames=bool(payload['align_gauge']),policy='parked spatial affine value')
         self.metadata['online_axial_alignment'] = self.online_gauge
+        self.metadata['online_parking_alignment'] = self.online_parking
+        self.metadata['align_reference_cart_origin'] = self.align_cart_origin
 
     def __call__(self,state,step):
         if step<self.park_steps:
+            if self.online_parking:
+                return axial_aligned_affine_force(self.env,state,self.parking.design['reference'],
+                    np.zeros(2),np.zeros(2),self.parking.design['K'])
             return self.parking(state,step)
         if self.route is None:
             from .conditioning import launch_gauge_angles,axial_gauge_route
             p,e = self.payload,self.env
             angles = launch_gauge_angles(e,p['states'][0],state) if bool(p['align_gauge']) else np.zeros(e.config.n_links)
             states,gains = axial_gauge_route(e,p['states'],p['gains'],angles)
+            if self.align_cart_origin or np.any(self.cart_reference_offset):
+                translation = self.cart_reference_offset.copy()
+                if self.align_cart_origin:
+                    translation += state[:2]-states[0,:2]
+                states = states.copy()
+                states[:,:2] += translation
+                self.metadata['reference_cart_translation'] = translation.tolist()
             # Values act on the same local error coordinates as feedback gains.
             # Feed offsets/residuals are unchanged by this local axial basis map.
             _,roots = axial_gauge_route(e,p['states'],p['roots'],angles)
@@ -174,7 +191,86 @@ class ParkedAffineValuePolicy:
             self.route.close()
 
 
+class LaunchAdmissionPolicy:
+    """Choose a frozen reference from complete causal native launch forecasts."""
+    def __init__(self,env,payload):
+        self.env,self.payload = env,payload
+        self.profiles = np.asarray(payload['launch_reference_profiles'],float)
+        if self.profiles.shape!=(2,2) or not np.isfinite(self.profiles).all():
+            raise ValueError('launch admission requires two finite XY reference profiles')
+        if bool(payload['native_search']):
+            raise ValueError('launch admission does not combine native action search')
+        self.park_steps = int(payload['park_steps'])
+        self.policy = ParkedAffineValuePolicy(env,payload)
+        self.metadata = self.policy.metadata
+        self.forecast_tapes = {}
+        self.selected = None
+
+    def __call__(self,state,step):
+        if step<self.park_steps:
+            return self.policy(state,step)
+        observed_time = self.env.data.time
+        if self.selected is None:
+            if step!=self.park_steps:
+                raise ValueError('launch admission must begin at the declared launch command')
+            records = []
+            for index,offset in enumerate(self.profiles):
+                predictor = SpatialCartpole(self.env.config)
+                forecast_policy = None
+                try:
+                    predicted = np.asarray(state).copy()
+                    predictor.set_state(predicted)
+                    predictor.steps = step
+                    predictor.streak = self.env.streak
+                    predictor.best_streak = self.env.best_streak
+                    predictor.min_plane_margin = self.env.min_plane_margin
+                    predictor.warning_seen = self.env.warning_seen
+                    candidate = dict(self.payload,cart_reference_offset=offset.copy())
+                    forecast_policy = ParkedAffineValuePolicy(predictor,candidate)
+                    states,actions,raw_actions,tilts = [predicted],[],[],[]
+                    for t in range(step,self.env.config.horizon):
+                        raw = forecast_policy(predicted,t)
+                        action = predictor.deliver(raw)
+                        predicted,_,terminated,truncated,info = predictor.step_force(action)
+                        states.append(predicted)
+                        actions.append(action)
+                        raw_actions.append(raw)
+                        tilts.append(predictor.tilts())
+                        if terminated or truncated:
+                            break
+                    for name,values in dict(states=states,actions=actions,
+                                            raw_actions=raw_actions,tilts=tilts).items():
+                        self.forecast_tapes[f'forecast_{index}_{name}'] = np.asarray(values)
+                    records.append(dict(profile=index,reference_cart_offset=offset.tolist(),
+                        **info,steps=predictor.steps,native_steps=predictor.native_steps))
+                finally:
+                    if forecast_policy is not None:
+                        forecast_policy.close()
+                    predictor.close()
+            admissible = [r['profile'] for r in records if r['success'] and
+                r['steps']==self.env.config.horizon and not r['physics_warning'] and r['plane_margin']>=0]
+            self.selected = admissible[0] if admissible else 0
+            self.policy.close()
+            self.policy = ParkedAffineValuePolicy(self.env,dict(self.payload,
+                cart_reference_offset=self.profiles[self.selected].copy()))
+            self.metadata.update(launch_forecasts=records,selected_launch_profile=self.selected,
+                launch_admitted=bool(admissible),launch_forecast_start_step=step,
+                launch_predictor_native_steps=sum(r['native_steps'] for r in records))
+        force = self.policy(state,step)
+        # Reference transport forwards scratch states; preserve the caller's
+        # clock as well as the already-restored observed physical q/v.
+        self.env.data.time = observed_time
+        self.metadata.update(self.policy.metadata)
+        self.metadata['predictor_native_steps'] = self.metadata['launch_predictor_native_steps']
+        return force
+
+    def close(self):
+        self.policy.close()
+
+
 def affine_policy_from_payload(env,payload):
+    if 'launch_reference_profiles' in payload:
+        return LaunchAdmissionPolicy(env,payload)
     if 'park_steps' in payload:
         return ParkedAffineValuePolicy(env,payload)
     design = {k:payload[k] for k in ('reference','K','P','Q','R')}

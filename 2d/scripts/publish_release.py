@@ -66,6 +66,13 @@ This is empirical reset-noise evidence, not arbitrary disturbance rejection,
 indefinite stability or hardware real-time validation.
 '''
 frozen = np.load(qualification/'frozen_route.npz')
+manifest = json.loads((root/'publication/2d/manifest.json').read_text())
+assert manifest['accepted_swingup_links']==a.links
+if manifest.get('archive_schema')==2:
+    body = body.replace('controller/gains, all final state/action tapes, failed two-link baseline and\nits optimizer history, tests, runtime, research plans and SHA256 manifest.',
+        'controller/gains, all current-count state/action tapes and failed variants,\ntests, runtime, research plans and SHA256 manifest. Unchanged historical raw\nevidence stays in earlier immutable release bundles and in the Git checkout.')
+    prior = manifest['prior_evidence_bundle']
+    body += f"\nHistorical evidence dependency: [{prior['links']}-link evidence bundle]({prior['url']}), SHA256 `{prior['sha256']}`. The manifest binds its exact bytes and prior inventory. Current-count reproduction uses the current ZIP alone.\n"
 assert Config(**json.loads(str(frozen['config']))) == Config(n_links=a.links),'cannot publish an altered-plant result as this benchmark'
 if 'park_steps' in frozen:
     config = json.loads(str(frozen['config']))
@@ -96,6 +103,10 @@ if a.links == 11:
     body += '\nEleven-link synthesis uses a historical planar motion only as a geometric proposal for the unchanged spatial model. Full spatial simultaneous sparse shooting repairs native defects, then full affine QR offsets and a finite upright continuation produce a nominal pass. The raw controller fails all 12 noisy development starts. Static launch alignment with 16s, 18s and 18.4s preparation reaches only 27/45, 40/45 and 43/45 development passes. The selected policy uses 18s preparation plus causal per-command axial reference alignment, passes nominal plus all 44 shared noisy development starts, then the NEW 32-start cohort (20262216..20262247). The 30s episode includes its entire preparation, 8s swing and finite upright tracking. Failed optimization, action-search, timing and controller variants are retained. The nominal reference remains near-planar in unrestricted spatial physics; no spatial joint or twist is locked. The 85-test suite includes eleven-link freedoms, native replay, independent affine optima and axial-frame feedback invariance. The separate six-link controlled XY-loop audit remains included. This adapts affine-value and finite-horizon ideas reviewed in corben-marc-hybrid.md; it is not a reproduction of the scalar 1D B17 controller.\n'
 if a.links == 12:
     body += '\nTwelve-link synthesis decodes a historical physical-relative donor through its explicit coordinate matrix, verifies exact stored physical-tape parity and hanging initialization, and repairs its proposal on the unchanged full spatial plant. An earlier incorrect cumulative-coordinate import and its interrupted repair are retained with correction notes. Native full-state sparse shooting uses augmented ridge solves within registered bounds; a factored finite-QR upright design avoids a numerically indefinite stationary Riccati value. The repaired baseline holds 4.24s and later fails. Full affine finite feedback passes nominal23.50s but all12 raw noisy starts fail. The selected18s hanging/online-axial policy passes nominal plus all44 noisy development starts, then all32 NEW reserved starts20262316..20262347, each completing30s with5.50s hold and exact replay. Its9s swing and final3s upright tracking execute a600-command prefix of a1500-command design. Physical XYZ joint freedom and passive spin remain intact. The96-test suite includes12-link native freedoms, independent affine optima, gauge invariance, factored design checks and typed donor-coordinate regression. The nominal reference remains near-planar; the separate six-link controlled XY-loop audit remains included.\n'
+if a.links == 13:
+    assert 'launch_reference_profiles' in frozen
+    assert (qualification/'forecast_actual_parity.json').exists()
+    body += '\nThirteen transfers an unwrapped material angle/rate field from a historical fourteen-link geometric proposal and repairs it on native thirteen-link mechanics. The first thirteen donor reaches only30/45 development passes; the new earlier-arrival donor reaches44/45. A fixed -1mm Y reference offset also reaches44/45, with a different failure. Both complete failed gates are retained. The selected causal controller prepares for19s, then forecasts BOTH frozen references from the observed launch state in owned native environments and selects the first complete passing continuation. There is no seed lookup, future actual state or plant reset. Every forecast tape and physics-query count is saved. Its9s swing plus2s tracking executes550 commands of the original1500-command finite affine QR design. Nominal plus44 noisy development starts pass, followed by32 NEW reserved starts20262416..20262447. Every chosen forecast matches actual suffix states, delivered/raw forces and tilts byte-for-byte. All actual episodes complete30s with5.16s hold and exact independent cold replay. The131-test suite includes native spatial freedoms, predictor isolation/admission/fallback and archive integrity. The nominal motion remains nearly planar in fully unrestricted spatial physics. Prediction cost is reported separately; no hardware real-time claim is made.\n'
 try:
     release = request(base+'/releases/tags/'+tag)
 except HTTPError as exc:
@@ -109,6 +120,7 @@ assets = {x['name']:x for x in request(release['assets_url'])}
 receipts = []
 for name,kind in [(f'2d-cartpole-{a.links}-link-swingup.mp4','video/mp4'),(f'2d-cartpole-{a.links}-link-evidence.zip','application/zip')]:
     file = root/'output'/name
+    assert file.stat().st_size<2**31,'release asset exceeds GitHub per-file limit'
     digest = hashlib.sha256(file.read_bytes()).hexdigest()
     if name in assets:
         asset = assets[name]

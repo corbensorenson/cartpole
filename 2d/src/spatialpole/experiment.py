@@ -96,7 +96,8 @@ def episode(config, policy_factory, seed, mode="upright", noise=0.02, tape=None)
         result['policy_metadata'] = policy.metadata
     if tape:
         np.savez_compressed(tape, states=states, actions=np.asarray(actions, np.float32), raw_actions=raw_actions,
-                            tilts=tilts, config=json.dumps(asdict(config)),policy_metadata=json.dumps(getattr(policy,'metadata',{})))
+                            tilts=tilts, config=json.dumps(asdict(config)),policy_metadata=json.dumps(getattr(policy,'metadata',{})),
+                            **getattr(policy,'forecast_tapes',{}))
     if hasattr(policy,'close'):
         policy.close()
     env.close()

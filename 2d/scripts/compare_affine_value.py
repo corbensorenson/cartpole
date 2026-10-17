@@ -21,6 +21,8 @@ p.add_argument('--design-guard',type=int,default=0)
 p.add_argument('--terminal-scale',type=float,default=10.)
 p.add_argument('--arms',nargs='+',choices=['zero_offset','affine','affine_search'],default=['zero_offset','affine','affine_search'])
 p.add_argument('--balance-backend',choices=['dare','finite_qr'],default='dare')
+p.add_argument('--planar-reference',action='store_true',help='remove only sub-tolerance off-plane proposal roundoff')
+p.add_argument('--tracking-metric',choices=['relative','directions'],default='relative')
 a = p.parse_args()
 out = Path(a.out)
 freeze_inputs(out,a)
@@ -34,6 +36,10 @@ env = SpatialCartpole(config)
 env.derivative_workers = 4
 states = source['states'].copy()
 actions = np.array([env.deliver(u) for u in source['actions']],float)
+if a.planar_reference:
+    from spatialpole.symmetry import clean_planar_reference
+    states,actions,record = clean_planar_reference(env,states,actions)
+    write_json(out/'reference_cleanup.json',record)
 models,predicted = linearize_many(env,states[:-1],actions,eps=.001,order=4,return_next=True)
 if a.extend_to_episode:
     count = config.horizon+a.design_guard-len(actions)
@@ -59,16 +65,44 @@ models = [(difference_jacobian(env,f,x)@A,difference_jacobian(env,f,x)@B)
 design = balance_design(env,axis_separated=True,value_backend=a.balance_backend)
 nv,nx = env.model.nv,2*env.model.nv
 Q = np.diag(np.r_[[4.,4.],np.full(nv-2,40.),np.full(nv,.05)])
-for j in range(config.n_links):
-    Q[4+3*j,4+3*j] = .1
-    Q[nv+4+3*j,nv+4+3*j] = .005
-L,R = np.sqrt(Q),np.eye(2)*.001
+if a.tracking_metric=='relative':
+    for j in range(config.n_links):
+        Q[4+3*j,4+3*j] = .1
+        Q[nv+4+3*j,nv+4+3*j] = .005
+    L = np.sqrt(Q)
+    factors,terminal_local = [L]*len(actions),L
+else:
+    from spatialpole.physical import direction_tracking_factors
+    if a.extend_to_episode:
+        original_horizon = len(source['actions'])
+        assert np.array_equal(states[original_horizon+1:],np.repeat(states[-1:],len(states)-original_horizon-1,axis=0))
+        # Only identical upright centers share a factor; all swing and bridge
+        # centers get their own fresh physical kinematic Jacobian.
+        queried = np.vstack((states[:original_horizon+1],states[-1:]))
+        physical_factors = direction_tracking_factors(env,queried,np.diag(Q))
+        terminal_local = physical_factors[-1]
+        factors = list(physical_factors[:-1])+[terminal_local]*(len(actions)-original_horizon-1)
+    else:
+        physical_factors = direction_tracking_factors(env,states,np.diag(Q))
+        factors,terminal_local = list(physical_factors[:-1]),physical_factors[-1]
+R = np.eye(2)*.001
 root = np.sqrt(a.terminal_scale)*design['value_factor'] if 'value_factor' in design else positive_value_factor(a.terminal_scale*design['P'])[0]
-feed,gains,roots,residuals = affine_tracking_values(models,defects,[L]*len(actions),R,np.vstack((root,L)))
+feed,gains,roots,residuals = affine_tracking_values(models,defects,factors,R,np.vstack((root,terminal_local)))
+if a.planar_reference:
+    from spatialpole.symmetry import reflection_signs
+    parity = reflection_signs(env)
+    write_json(out/'reflection_gain_diagnostic.json',dict(
+        max_transverse_gain_from_in_plane_state=float(np.max(np.abs(gains[:,1,parity>0]))),
+        max_in_plane_gain_from_transverse_state=float(np.max(np.abs(gains[:,0,parity<0]))),
+        max_transverse_feed=float(np.max(np.abs(feed[:,1]))),
+        scope='fresh full native models; no derivative symmetry projection or physical joint constraint'))
 np.savez_compressed(out/'affine_controller.npz',states=states,actions=actions,feed=feed,
     gains=gains,roots=roots,residuals=residuals,tracking_R=R,defects=defects,
     **design,world_balance=True,affine_value=True,native_search=False,swing_steps=len(source['actions']),
+    tracking_metric=a.tracking_metric,
     config=json.dumps(asdict(config)))
+if a.tracking_metric=='directions':
+    np.savez_compressed(out/'observable_tracking_factors.npz',factors=np.array(factors),terminal=terminal_local,weights=np.diag(Q))
 design_steps = env.native_steps
 env.close()
 results = {}
