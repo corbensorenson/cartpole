@@ -117,3 +117,26 @@ SP_EXPORT void np_close(void* ptr) {
     PufferSmoke* b = (PufferSmoke*)ptr;
     puf_close(&b->env); delete b;
 }
+
+#ifdef SP_EVALUATION_IO
+SP_EXPORT void* np_create_eval(const char* xml, const char* plan, const char* directory) {
+    PufferSmoke* b = new PufferSmoke();
+    Dict config = {0};
+    dict_set_str(&config, "model_path", xml);
+    dict_set(&config, "angle_noise", .02);
+    dict_set(&config, "normalized_effort", 1);
+    dict_set_str(&config, "evaluation_plan", plan);
+    dict_set_str(&config, "trace_directory", directory);
+    char accounting[8192];
+    snprintf(accounting, sizeof(accounting), "%s/accounting.json", directory);
+    dict_set_str(&config, "accounting_file", accounting);
+    puf_init(&b->env, &config);
+    dict_clear(&config);
+    b->env.agents[0].observations = b->obs;
+    b->env.agents[0].actions = b->action;
+    b->env.agents[0].rewards = b->reward;
+    b->env.agents[0].terminals = b->terminal;
+    puf_reset(&b->env);
+    return b;
+}
+#endif

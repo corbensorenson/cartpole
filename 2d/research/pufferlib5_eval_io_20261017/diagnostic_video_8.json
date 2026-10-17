@@ -1,0 +1,13 @@
+{
+  "frames": 174,
+  "fps": 50,
+  "encoded_seconds": 3.48,
+  "simulated_seconds": 3.46,
+  "links": 8,
+  "full_tape_no_trimming": true,
+  "diagnostic": true,
+  "qualified": false,
+  "checkpoint_sha256": null,
+  "tape_sha256": "2f7d950470c4fef129fcb2aab24cfbbffba814ed36c35f297f000e49f4d6ca93",
+  "video_sha256": "cb5c0b625457c9cbffd3876a6019730fe3ee9e9beb01feebb0f2ca58877f6e84"
+}

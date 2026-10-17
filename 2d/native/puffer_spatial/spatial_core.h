@@ -57,11 +57,21 @@ static void sp_set_state(SpatialCore* s, const double* state) {
     sp_sync(s);
 }
 
+static void sp_update_tilts(SpatialCore* s) {
+    s->max_tilt = 0;
+    for (int i = 0; i < SPATIAL_LINKS; ++i) {
+        double z = s->data->xmat[9 * s->link_ids[i] + 8];
+        s->tilts[i] = acos(fmax(-1., fmin(1., z)));
+        s->max_tilt = fmax(s->max_tilt, s->tilts[i]);
+    }
+}
+
 static void sp_reset_state(SpatialCore* s, const double* state) {
     sp_set_state(s, state);
     s->steps = s->streak = s->best = s->warning = s->done = s->success = 0;
     s->margin = 3.;
     s->delivered[0] = s->delivered[1] = 0;
+    sp_update_tilts(s);
 }
 
 static uint64_t sp_random(uint64_t* rng) {
@@ -115,12 +125,7 @@ static int sp_step(SpatialCore* s, const double* raw) {
     mj_forward(s->model, s->data);
     sp_sync(s);
     s->steps++;
-    s->max_tilt = 0;
-    for (int i = 0; i < SPATIAL_LINKS; ++i) {
-        double z = s->data->xmat[9 * s->link_ids[i] + 8];
-        s->tilts[i] = acos(fmax(-1., fmin(1., z)));
-        s->max_tilt = fmax(s->max_tilt, s->tilts[i]);
-    }
+    sp_update_tilts(s);
     s->streak = s->max_tilt < .15 ? s->streak + 1 : 0;
     if (s->streak > s->best) s->best = s->streak;
     int finite = 1;

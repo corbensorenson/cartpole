@@ -1,0 +1,425 @@
+{
+  "schema": 1,
+  "puffer_ref": "ea7f989371270d2948f96728bda8aec5e7634a4c",
+  "new_link_qualification": false,
+  "gpu_training_tested": false,
+  "capture_stage_native_steps_including_failed_harness_and_cold_replay": 240696,
+  "latest_capture_inclusive_native_steps": 40176,
+  "files": [
+    {
+      "path": "native/puffer_spatial/evaluation_io.h",
+      "bytes": 4373,
+      "sha256": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b"
+    },
+    {
+      "path": "native/puffer_spatial/README.md",
+      "bytes": 8193,
+      "sha256": "e5e6f62473b52684f6df120fbed1dd1e717a01c169ea02cc0b4aaf910895c3cf"
+    },
+    {
+      "path": "native/puffer_spatial/spatial_cartpole.h",
+      "bytes": 6037,
+      "sha256": "59c397fc971dbc9314f4c23941308a86bb52e20f48b03a6238c472953574d6fb"
+    },
+    {
+      "path": "native/puffer_spatial/spatial_core.h",
+      "bytes": 5993,
+      "sha256": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc"
+    },
+    {
+      "path": "native/puffer_spatial/verify_bridge.cpp",
+      "bytes": 5176,
+      "sha256": "1d1ea68217213e38568f7ee8b219b0793cb696cb60fe54a91d6429e50776bdac"
+    },
+    {
+      "path": "scripts/build_puffer_native_probe.py",
+      "bytes": 4218,
+      "sha256": "fe1926b29b1c6185b9b8b35814d1944b16993359b10e52a18bfcb11645e329b2"
+    },
+    {
+      "path": "scripts/verify_puffer_native.py",
+      "bytes": 11733,
+      "sha256": "3a436ee91f5d66e024a74fdf137f28b174ac4b996edb2f4b8672c7c1f60c452e"
+    },
+    {
+      "path": "scripts/prepare_puffer_environment.py",
+      "bytes": 3864,
+      "sha256": "43e9e6a431ad1ee347b5c43e529f0599627352faec053c045904ab9656e4c02f"
+    },
+    {
+      "path": "scripts/verify_puffer_eval_io.py",
+      "bytes": 5684,
+      "sha256": "549adeefffffb8c31cc3f81ab1bcaafc50015f71474c03817fe2640fd15f9f11"
+    },
+    {
+      "path": "scripts/puffer_eval_io.py",
+      "bytes": 13015,
+      "sha256": "8aac21b480251a8d06e2e296abbe23e09737ecae18c1569558cc7a357515c290"
+    },
+    {
+      "path": "scripts/render_puffer_evaluation.py",
+      "bytes": 3627,
+      "sha256": "d86c003041fbee115caadf5587b1d91e54b98d2b84eb41b5ec7850b2756ad27a"
+    },
+    {
+      "path": "scripts/puffer_training_support.py",
+      "bytes": 4128,
+      "sha256": "55ff1f799628b494da89873b96de188c8f6974ffa6d7f18b5b397f20d3f98643"
+    },
+    {
+      "path": "scripts/run_puffer_training.py",
+      "bytes": 10623,
+      "sha256": "908440d9d710ed15ec628060dd13baa32d63be17aab7bd011a6f4c1315808fde"
+    },
+    {
+      "path": "scripts/verify_puffer_weight_layout.py",
+      "bytes": 6927,
+      "sha256": "12c213a15ac6e9c02edd4d467a4b85529789d0666b663b945f15b3793554341b"
+    },
+    {
+      "path": "research/pufferlib5_environment.md",
+      "bytes": 10053,
+      "sha256": "ee3ad2eb14f7b2f361f36c8acf3187396306e7c1c3599ab845f6fa8711b59676"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/summary.json",
+      "bytes": 1581,
+      "sha256": "b41e08f76fc218f53b6ee9b37ee4857c91b9a3967668a19aea2599ef8b59f811"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/build.json",
+      "bytes": 5155,
+      "sha256": "1a49daa7bf02ffd05eef8d97a19e23a9a747b63c59780a749f23d330c0d2169b"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/plan_n1/model.xml",
+      "bytes": 1549,
+      "sha256": "61137e67515e70b19e6788e864d5ac018d8b714bbab315689099504c68c8cd36"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/plan_n1/plan.bin",
+      "bytes": 456,
+      "sha256": "cbeece319bfe4c7a6bf71546d0d91f9bff7e499561deca24614fc8ae5d0f7fa8"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/plan_n1/plan.json",
+      "bytes": 2413,
+      "sha256": "cf9fd9caa16d11b4ed61a030ee66128500cbbd328bd1ff05715601970460edc5"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n1/accounting.json",
+      "bytes": 94,
+      "sha256": "0c4f4cd715b806a2b1d4547879f321f3a5e48210653255a8db70541c6057dd66"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n1/episode0000.sptrace",
+      "bytes": 38200,
+      "sha256": "6a6dd322991dc9f83141373741c3e34bab24ad70803e1e277cc9193ff44a0580"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n1/episode0001.sptrace",
+      "bytes": 330140,
+      "sha256": "49123ef39d80de65876a104a054e0651be83a4b94ccd08baaf10a9ecc03ead5a"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n1/episode0002.sptrace",
+      "bytes": 360,
+      "sha256": "55c91ad4b14afa60a25c392429be04002fc92dd647b797774a6cce3a78b4e834"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n1/episode0003.sptrace",
+      "bytes": 360,
+      "sha256": "5b38700f05b21d789fab19c0b095aae9946d149bfe1a0b0f3a165195be29efaa"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n1/native_accounting.json",
+      "bytes": 94,
+      "sha256": "0c4f4cd715b806a2b1d4547879f321f3a5e48210653255a8db70541c6057dd66"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n1/seed20261017.npz",
+      "bytes": 8680,
+      "sha256": "fe7f34c3a7dcb61cba2621cbe752f2f4c7137f23e19dc8a7beefa44e8f12b5cd"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n1/seed20261018.npz",
+      "bytes": 2496,
+      "sha256": "15f8ccaaa6429654c484dc1bb47ed9a47d949ac123d652ddfe2761e165857bb3"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n1/seed20261019.npz",
+      "bytes": 2363,
+      "sha256": "0b43ba1b26b9ed0ba7a7448231b67713b77a310a42ec6e5b8040722b9d7027f9"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n1/seed20261116.npz",
+      "bytes": 31937,
+      "sha256": "4ca7ff50876281ed355f2b2df7629ab08211441a500b3cc2e038c2d22d634a42"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n1/summary.json",
+      "bytes": 3140,
+      "sha256": "cdfdc89bec33c37a8ef5b3e17419e8f4109989ba2c028387d11250ab4f4fdcb8"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/plan_n2/model.xml",
+      "bytes": 1868,
+      "sha256": "18fcc1af2a9c34391070367390b494f5feb20140989b15509e31286e497d7a28"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/plan_n2/plan.bin",
+      "bytes": 680,
+      "sha256": "12b1310b0bfcafce681438115f5e49bd9cb0c4e7c7309b6d0bf905c146cddb58"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/plan_n2/plan.json",
+      "bytes": 2922,
+      "sha256": "0b7bfeb40d98161c3360ff36eeb162dae26876c70bcf125fb8a72843b6cf954f"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n2/accounting.json",
+      "bytes": 94,
+      "sha256": "567fef287df4df94f764448ef13fba08cd9e7a2a509646423327edf7181f694a"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n2/episode0000.sptrace",
+      "bytes": 54172,
+      "sha256": "a181e4dbc0c029263c8755e6abed7e0e57eb84f5e53e8810ded1d046ce5d585b"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n2/episode0001.sptrace",
+      "bytes": 468196,
+      "sha256": "b8799cfb5f28366cf772e4143a1b316400a0cc02cca72bc03a280a01c47cedd8"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n2/episode0002.sptrace",
+      "bytes": 508,
+      "sha256": "e9612ed11cd349103a043289ccaa020b21c2c4e9801627d7df3ac750e880a522"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n2/episode0003.sptrace",
+      "bytes": 508,
+      "sha256": "71d8c6276f1480a2890f1cadba161186302af46c1062c7cfb89928daf77476b8"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n2/native_accounting.json",
+      "bytes": 94,
+      "sha256": "567fef287df4df94f764448ef13fba08cd9e7a2a509646423327edf7181f694a"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n2/seed20261017.npz",
+      "bytes": 10567,
+      "sha256": "be8e8553664a60774b4394c170447c9d7afddeae1d7f207be3c77e4884e671c7"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n2/seed20261018.npz",
+      "bytes": 2565,
+      "sha256": "eeaabca705df0076c5e5aefc7ad7f7bc7e20750d80fe34ae69b37a54c17ca621"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n2/seed20261019.npz",
+      "bytes": 2366,
+      "sha256": "a836d87516ca1530fe1c82553cf1fdf7dd640c13f9999e5b088af720828931c5"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n2/seed20261116.npz",
+      "bytes": 47087,
+      "sha256": "4ce54002deeb8ded1dd66810ea6dafa5db802fd9ab70ecf944cac91b3728b50d"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n2/summary.json",
+      "bytes": 3138,
+      "sha256": "5ffc296918dc7cccede970519bf0ab4dd527cb1676725a883b8a59be3e242d47"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/plan_n8/model.xml",
+      "bytes": 3851,
+      "sha256": "82092daa64c64c28ad19a04ca3b802db0131a01f675edae580118964cb9133a6"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/plan_n8/plan.bin",
+      "bytes": 2024,
+      "sha256": "94df569a740ba46c1ba3cfeab3a02d4b6b96361490d92de0e81d390ab8fc12cd"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/plan_n8/plan.json",
+      "bytes": 5977,
+      "sha256": "209f6921f4fc40c38b826417ecbe7ecd5224f0b1ebf870d6b617c9f0ff91fb87"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n8/accounting.json",
+      "bytes": 94,
+      "sha256": "0fe2e4385927731e5b610a61e5914ecd58037bd3b4ba204138c49fb6d0a58b61"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n8/episode0000.sptrace",
+      "bytes": 150004,
+      "sha256": "b38572a7c039b212d2155f748dc3e71499ba39bb87236b16f8f4f803aa5e020e"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n8/episode0001.sptrace",
+      "bytes": 1296532,
+      "sha256": "c1cba81ee336b27e20b13a5f7077eccf880f73b2a44cc9012bc2f280d0bb4852"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n8/episode0002.sptrace",
+      "bytes": 1396,
+      "sha256": "1eaebd1ba82b6ceeb3edd75b26d7cafbaa501776ddb52e77f5b16521ddb5bac5"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/traces_n8/episode0003.sptrace",
+      "bytes": 1396,
+      "sha256": "853d9592ee70be0d28c3d74efe89d692b65222889f757e138360d7d8d777b811"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n8/native_accounting.json",
+      "bytes": 94,
+      "sha256": "0fe2e4385927731e5b610a61e5914ecd58037bd3b4ba204138c49fb6d0a58b61"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n8/seed20261017.npz",
+      "bytes": 15338,
+      "sha256": "cf73cee6b5fea3adfd3ea7a30b25a7c179ba85321825ecc2e3e14e9e7c21b2d1"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n8/seed20261018.npz",
+      "bytes": 2923,
+      "sha256": "40922334250f69d9e83d21145bf2e26b4410902b3d601882dad24194d6384b01"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n8/seed20261019.npz",
+      "bytes": 2367,
+      "sha256": "a62bbd76b3acf6b95efdeca4bad862152d0ee671057da4d95e436318c78bd06a"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n8/seed20261116.npz",
+      "bytes": 138821,
+      "sha256": "2f7d950470c4fef129fcb2aab24cfbbffba814ed36c35f297f000e49f4d6ca93"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/capture_003/import_n8/summary.json",
+      "bytes": 3135,
+      "sha256": "117a9695721caad04600c27d65aba47845ff71b91b009e8dd81aa7bf4de69567"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/earlier_attempts/pufferlib5_evaluation_io_001.json",
+      "bytes": 4770,
+      "sha256": "777b817ff22179b614971fd2986002332625b851e5aeed783b760fb9bfbc9265"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/earlier_attempts/pufferlib5_evaluation_io_002.json",
+      "bytes": 1425,
+      "sha256": "0cf9a3c48ebcf429754eaea6980d895b399393b01a1c7096c7f2605a76177f4a"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/weight_layout/patched_2.build.log",
+      "bytes": 15,
+      "sha256": "1ce431796839ecff34040f64cab0bfecf91c3a24d248ee05a9968023c6bac9a1"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/weight_layout/patched_2.cpp",
+      "bytes": 5831,
+      "sha256": "760c3a7456f2ea2bebe3aeceb1147cd86868fb4f1351ec9f8002fb0cdee9bd8d"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/weight_layout/patched_4.build.log",
+      "bytes": 15,
+      "sha256": "1132eb5bc0a8ef9ca4329a703dd7f85a186f71a1667ed07f5103f977173b4019"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/weight_layout/patched_4.cpp",
+      "bytes": 5831,
+      "sha256": "760c3a7456f2ea2bebe3aeceb1147cd86868fb4f1351ec9f8002fb0cdee9bd8d"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/weight_layout/summary.json",
+      "bytes": 10603,
+      "sha256": "da018b2f6ad4be93dab4f67b6d76708598b48853703885f89132f87a34197dc8"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/weight_layout/upstream_2.build.log",
+      "bytes": 16,
+      "sha256": "0cd3aaa19bdc95246df4bce2657e2da24a67ab4c3fe2b74792dc9a220f498280"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/weight_layout/upstream_2.cpp",
+      "bytes": 5629,
+      "sha256": "14964251bed1d2952037a726f30a082092dae34a6ed27471d8ec3b0f563089c4"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/weight_layout/upstream_4.build.log",
+      "bytes": 16,
+      "sha256": "3900d808086b1582b8117d6aa35edd94cd26440a00f60727749a641285b4c956"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/weight_layout/upstream_4.cpp",
+      "bytes": 5629,
+      "sha256": "14964251bed1d2952037a726f30a082092dae34a6ed27471d8ec3b0f563089c4"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/pufferlib-LICENSE",
+      "bytes": 1086,
+      "sha256": "8046987d722ee7f8325b4dee542fc0ea630233cde70f744bc538b3a70bffb936"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/training_plans/pufferlib5_smoke_plan_001.json",
+      "bytes": 4933,
+      "sha256": "f0180d27e169e231e4927ceee6c20052d01c89fff9e122285ab0f42d71bf28aa"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/training_plans/pufferlib5_learning_plan_001.json",
+      "bytes": 4971,
+      "sha256": "b16154a24205c942a102ec1b813b78a52f3e21efb28151cb60184abf2c2ccabd"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/training_plans/protocol_summary.json",
+      "bytes": 846,
+      "sha256": "8f1eef8ac08883fe9a5acd811f100c095ad3f392729340d0a2f03eee1945bf53"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/training_plans/protocol_driver.py",
+      "bytes": 3399,
+      "sha256": "2c403dbe1d92fb8f5a97f9e850be42016cb6047f7eca8b7736f82a8bbdc5ba7b"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/training_plans/training_integration.json",
+      "bytes": 1061,
+      "sha256": "67635b46fe0363e9dd66ec69af89162069be18173c572e0cced0d6a508bbac47"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/training_plans/evaluation_integration.json",
+      "bytes": 1060,
+      "sha256": "c75d3e25ac826c2831ff0521a8511b4ede1fc222e949d9b49550c64e46842360"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/diagnostic_video_8.mp4",
+      "bytes": 262292,
+      "sha256": "cb5c0b625457c9cbffd3876a6019730fe3ee9e9beb01feebb0f2ca58877f6e84"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/diagnostic_video_8.json",
+      "bytes": 391,
+      "sha256": "55da90711ea914c64ddca65340890b1075769bbb43103c004c8c6c1048c35a3d"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/diagnostic_video_source_002.npz",
+      "bytes": 138821,
+      "sha256": "2f7d950470c4fef129fcb2aab24cfbbffba814ed36c35f297f000e49f4d6ca93"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/video-frame0000.png",
+      "bytes": 252660,
+      "sha256": "fbb2bb474964fafde06363bc8aa75b396451bdbd521c0c65116c4556cf258e09"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/video-frame0075.png",
+      "bytes": 258136,
+      "sha256": "6aa714d93de538d6f6c6acc1813be292e3a22fd7643935494d45f51fa31bc66b"
+    },
+    {
+      "path": "research/pufferlib5_eval_io_20261017/video-frame0173.png",
+      "bytes": 261755,
+      "sha256": "b5ead29254e006464e11b51381bb4e28a99961abca2e71604addf554fc2a5ce2"
+    }
+  ]
+}

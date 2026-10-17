@@ -14,10 +14,12 @@ PUFFER_REF = 'ea7f989371270d2948f96728bda8aec5e7634a4c'
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def build_probe(output, links):
+def build_probe(output, links, evaluation_io=False):
     from setuptools._distutils._msvccompiler import _get_vc_env
     output = Path(output).resolve()
     output.mkdir(parents=True, exist_ok=False)
+    native_source = {p.name:hashlib.sha256(p.read_bytes()).hexdigest()
+                     for p in (ROOT/'native/puffer_spatial').iterdir() if p.suffix in ('.h','.cpp')}
     deps = output / 'deps'
     deps.mkdir()
     urls = {
@@ -47,7 +49,7 @@ def build_probe(output, links):
     commands = [[librarian, '/nologo', '/machine:x64', f'/def:{definition}', f'/out:{lib}']]
     for n in links:
         commands.append([compiler, '/nologo', '/LD', '/O2', '/fp:strict', '/EHsc', '/MD', '/openmp', '/std:c++17',
-                         f'/DSPATIAL_LINKS={n}', f'/I{sdk / "include"}', f'/I{deps}',
+                         f'/DSPATIAL_LINKS={n}', *(['/DSP_EVALUATION_IO'] if evaluation_io else []), f'/I{sdk / "include"}', f'/I{deps}',
                          f'/I{ROOT / "native/puffer_spatial"}',
                          str(ROOT / 'native/puffer_spatial/verify_bridge.cpp'), str(lib),
                          f'/Fo{output / ("spatial_" + str(n) + ".obj")}',
@@ -58,10 +60,13 @@ def build_probe(output, links):
             log.write(result.stdout)
             if result.returncode:
                 raise RuntimeError(f'Native build failed; see {output / "build.log"}')
-    report = dict(puffer_ref=PUFFER_REF, dependencies=sources, commands=commands,
+    report = dict(puffer_ref=PUFFER_REF, evaluation_io=evaluation_io, dependencies=sources, commands=commands,
+                  native_source_sha256=native_source,
                   compiler=compiler, mujoco_version=mujoco.__version__,
                   mujoco_dll_sha256=hashlib.sha256((sdk / 'mujoco.dll').read_bytes()).hexdigest())
     (output / 'build.json').write_text(json.dumps(report, indent=2))
+    assert native_source == {p.name:hashlib.sha256(p.read_bytes()).hexdigest()
+                             for p in (ROOT/'native/puffer_spatial').iterdir() if p.suffix in ('.h','.cpp')}
     return output
 
 
@@ -70,5 +75,6 @@ if __name__ == '__main__':
     p = argparse.ArgumentParser()
     p.add_argument('--out', required=True)
     p.add_argument('--links', nargs='+', type=int, default=[1, 2, 8])
+    p.add_argument('--evaluation-io', action='store_true')
     a = p.parse_args()
-    build_probe(a.out, a.links)
+    build_probe(a.out, a.links, a.evaluation_io)

@@ -1,0 +1,102 @@
+{
+  "puffer_ref": "ea7f989371270d2948f96728bda8aec5e7634a4c",
+  "evaluation_io": true,
+  "dependencies": [
+    {
+      "path": "pufferenv.h",
+      "url": "https://raw.githubusercontent.com/PufferAI/PufferLib/ea7f989371270d2948f96728bda8aec5e7634a4c/src/pufferenv.h",
+      "sha256": "3324a670791e2b3e46cbe7d10d9233d52fbc258e0d7e37d5b0c470e580de880c"
+    },
+    {
+      "path": "ini.h",
+      "url": "https://raw.githubusercontent.com/PufferAI/PufferLib/ea7f989371270d2948f96728bda8aec5e7634a4c/src/ini.h",
+      "sha256": "cd4c83ba12ba40a7bef03ad810246cc0a5880f81e8566f6ac5a089b5c598859f"
+    },
+    {
+      "path": "raylib.h",
+      "url": "https://raw.githubusercontent.com/raysan5/raylib/5.5/src/raylib.h",
+      "sha256": "afb287ecd313de61e0000921375190b7e1cc35cd381ad6caf914489473a3c871"
+    }
+  ],
+  "commands": [
+    [
+      "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\lib.exe",
+      "/nologo",
+      "/machine:x64",
+      "/def:C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_native_build_005\\mujoco.def",
+      "/out:C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_native_build_005\\mujoco.lib"
+    ],
+    [
+      "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+      "/nologo",
+      "/LD",
+      "/O2",
+      "/fp:strict",
+      "/EHsc",
+      "/MD",
+      "/openmp",
+      "/std:c++17",
+      "/DSPATIAL_LINKS=1",
+      "/DSP_EVALUATION_IO",
+      "/IC:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\.venv\\Lib\\site-packages\\mujoco\\include",
+      "/IC:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_native_build_005\\deps",
+      "/IC:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\native\\puffer_spatial",
+      "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\native\\puffer_spatial\\verify_bridge.cpp",
+      "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_native_build_005\\mujoco.lib",
+      "/FoC:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_native_build_005\\spatial_1.obj",
+      "/link",
+      "/OUT:C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_native_build_005\\spatial_1.dll"
+    ],
+    [
+      "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+      "/nologo",
+      "/LD",
+      "/O2",
+      "/fp:strict",
+      "/EHsc",
+      "/MD",
+      "/openmp",
+      "/std:c++17",
+      "/DSPATIAL_LINKS=2",
+      "/DSP_EVALUATION_IO",
+      "/IC:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\.venv\\Lib\\site-packages\\mujoco\\include",
+      "/IC:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_native_build_005\\deps",
+      "/IC:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\native\\puffer_spatial",
+      "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\native\\puffer_spatial\\verify_bridge.cpp",
+      "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_native_build_005\\mujoco.lib",
+      "/FoC:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_native_build_005\\spatial_2.obj",
+      "/link",
+      "/OUT:C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_native_build_005\\spatial_2.dll"
+    ],
+    [
+      "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+      "/nologo",
+      "/LD",
+      "/O2",
+      "/fp:strict",
+      "/EHsc",
+      "/MD",
+      "/openmp",
+      "/std:c++17",
+      "/DSPATIAL_LINKS=8",
+      "/DSP_EVALUATION_IO",
+      "/IC:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\.venv\\Lib\\site-packages\\mujoco\\include",
+      "/IC:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_native_build_005\\deps",
+      "/IC:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\native\\puffer_spatial",
+      "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\native\\puffer_spatial\\verify_bridge.cpp",
+      "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_native_build_005\\mujoco.lib",
+      "/FoC:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_native_build_005\\spatial_8.obj",
+      "/link",
+      "/OUT:C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_native_build_005\\spatial_8.dll"
+    ]
+  ],
+  "native_source_sha256": {
+    "evaluation_io.h": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b",
+    "spatial_cartpole.h": "59c397fc971dbc9314f4c23941308a86bb52e20f48b03a6238c472953574d6fb",
+    "spatial_core.h": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc",
+    "verify_bridge.cpp": "1d1ea68217213e38568f7ee8b219b0793cb696cb60fe54a91d6429e50776bdac"
+  },
+  "compiler": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+  "mujoco_version": "3.3.5",
+  "mujoco_dll_sha256": "03e4540cc3296c3c7502183db0940919d1947b97b06f72c0a9ea7dbd7a5fda05"
+}

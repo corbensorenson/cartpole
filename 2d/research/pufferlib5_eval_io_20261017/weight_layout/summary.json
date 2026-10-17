@@ -1,0 +1,324 @@
+{
+  "passed": true,
+  "scope": "host allocation/registration, flat checkpoint/actor copy and optimizer offsets; no CUDA execution",
+  "upstream": {
+    "pufferl.cu": "b9a1c912f6224e17bb060cbdf14bbfa71adae4b63b6f212f5c2eeb8b5b7f2ed9",
+    "algo.cu": "711f859b353494c81bd0bc23e47becff0be270285e631b5000208f2c16fc2405"
+  },
+  "cases": [
+    {
+      "patched": false,
+      "element_bytes": 4,
+      "cases": [
+        {
+          "links": 1,
+          "continuous": false,
+          "element_bytes": 4,
+          "logical_elements": 25728,
+          "physical_bytes": 102912,
+          "flat_bytes": 102912,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 1,
+          "continuous": true,
+          "element_bytes": 4,
+          "logical_elements": 25666,
+          "physical_bytes": 102672,
+          "flat_bytes": 102664,
+          "roundtrip_bad_tensors": 1,
+          "optimizer_bad_slices": 2
+        },
+        {
+          "links": 2,
+          "continuous": false,
+          "element_bytes": 4,
+          "logical_elements": 26176,
+          "physical_bytes": 104704,
+          "flat_bytes": 104704,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 2,
+          "continuous": true,
+          "element_bytes": 4,
+          "logical_elements": 26114,
+          "physical_bytes": 104464,
+          "flat_bytes": 104456,
+          "roundtrip_bad_tensors": 1,
+          "optimizer_bad_slices": 2
+        },
+        {
+          "links": 8,
+          "continuous": false,
+          "element_bytes": 4,
+          "logical_elements": 28864,
+          "physical_bytes": 115456,
+          "flat_bytes": 115456,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 8,
+          "continuous": true,
+          "element_bytes": 4,
+          "logical_elements": 28802,
+          "physical_bytes": 115216,
+          "flat_bytes": 115208,
+          "roundtrip_bad_tensors": 1,
+          "optimizer_bad_slices": 2
+        }
+      ],
+      "command": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+        "/nologo",
+        "/std:c++20",
+        "/O2",
+        "/EHsc",
+        "/DPRECISION_BYTES=4",
+        "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_weight_layout_003\\upstream_4.cpp",
+        "/Fe:C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_weight_layout_003\\upstream_4.exe",
+        "/Fo:C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_weight_layout_003\\upstream_4.obj"
+      ],
+      "source_sha256": "14964251bed1d2952037a726f30a082092dae34a6ed27471d8ec3b0f563089c4"
+    },
+    {
+      "patched": false,
+      "element_bytes": 2,
+      "cases": [
+        {
+          "links": 1,
+          "continuous": false,
+          "element_bytes": 2,
+          "logical_elements": 25728,
+          "physical_bytes": 51456,
+          "flat_bytes": 51456,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 1,
+          "continuous": true,
+          "element_bytes": 2,
+          "logical_elements": 25666,
+          "physical_bytes": 51344,
+          "flat_bytes": 51332,
+          "roundtrip_bad_tensors": 1,
+          "optimizer_bad_slices": 2
+        },
+        {
+          "links": 2,
+          "continuous": false,
+          "element_bytes": 2,
+          "logical_elements": 26176,
+          "physical_bytes": 52352,
+          "flat_bytes": 52352,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 2,
+          "continuous": true,
+          "element_bytes": 2,
+          "logical_elements": 26114,
+          "physical_bytes": 52240,
+          "flat_bytes": 52228,
+          "roundtrip_bad_tensors": 1,
+          "optimizer_bad_slices": 2
+        },
+        {
+          "links": 8,
+          "continuous": false,
+          "element_bytes": 2,
+          "logical_elements": 28864,
+          "physical_bytes": 57728,
+          "flat_bytes": 57728,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 8,
+          "continuous": true,
+          "element_bytes": 2,
+          "logical_elements": 28802,
+          "physical_bytes": 57616,
+          "flat_bytes": 57604,
+          "roundtrip_bad_tensors": 1,
+          "optimizer_bad_slices": 2
+        }
+      ],
+      "command": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+        "/nologo",
+        "/std:c++20",
+        "/O2",
+        "/EHsc",
+        "/DPRECISION_BYTES=2",
+        "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_weight_layout_003\\upstream_2.cpp",
+        "/Fe:C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_weight_layout_003\\upstream_2.exe",
+        "/Fo:C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_weight_layout_003\\upstream_2.obj"
+      ],
+      "source_sha256": "14964251bed1d2952037a726f30a082092dae34a6ed27471d8ec3b0f563089c4"
+    },
+    {
+      "patched": true,
+      "element_bytes": 4,
+      "cases": [
+        {
+          "links": 1,
+          "continuous": false,
+          "element_bytes": 4,
+          "logical_elements": 25728,
+          "physical_bytes": 102912,
+          "flat_bytes": 102912,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 1,
+          "continuous": true,
+          "element_bytes": 4,
+          "logical_elements": 25666,
+          "physical_bytes": 102672,
+          "flat_bytes": 102672,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 2,
+          "continuous": false,
+          "element_bytes": 4,
+          "logical_elements": 26176,
+          "physical_bytes": 104704,
+          "flat_bytes": 104704,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 2,
+          "continuous": true,
+          "element_bytes": 4,
+          "logical_elements": 26114,
+          "physical_bytes": 104464,
+          "flat_bytes": 104464,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 8,
+          "continuous": false,
+          "element_bytes": 4,
+          "logical_elements": 28864,
+          "physical_bytes": 115456,
+          "flat_bytes": 115456,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 8,
+          "continuous": true,
+          "element_bytes": 4,
+          "logical_elements": 28802,
+          "physical_bytes": 115216,
+          "flat_bytes": 115216,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        }
+      ],
+      "command": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+        "/nologo",
+        "/std:c++20",
+        "/O2",
+        "/EHsc",
+        "/DPRECISION_BYTES=4",
+        "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_weight_layout_003\\patched_4.cpp",
+        "/Fe:C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_weight_layout_003\\patched_4.exe",
+        "/Fo:C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_weight_layout_003\\patched_4.obj"
+      ],
+      "source_sha256": "760c3a7456f2ea2bebe3aeceb1147cd86868fb4f1351ec9f8002fb0cdee9bd8d"
+    },
+    {
+      "patched": true,
+      "element_bytes": 2,
+      "cases": [
+        {
+          "links": 1,
+          "continuous": false,
+          "element_bytes": 2,
+          "logical_elements": 25728,
+          "physical_bytes": 51456,
+          "flat_bytes": 51456,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 1,
+          "continuous": true,
+          "element_bytes": 2,
+          "logical_elements": 25666,
+          "physical_bytes": 51344,
+          "flat_bytes": 51344,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 2,
+          "continuous": false,
+          "element_bytes": 2,
+          "logical_elements": 26176,
+          "physical_bytes": 52352,
+          "flat_bytes": 52352,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 2,
+          "continuous": true,
+          "element_bytes": 2,
+          "logical_elements": 26114,
+          "physical_bytes": 52240,
+          "flat_bytes": 52240,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 8,
+          "continuous": false,
+          "element_bytes": 2,
+          "logical_elements": 28864,
+          "physical_bytes": 57728,
+          "flat_bytes": 57728,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 8,
+          "continuous": true,
+          "element_bytes": 2,
+          "logical_elements": 28802,
+          "physical_bytes": 57616,
+          "flat_bytes": 57616,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        }
+      ],
+      "command": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX64\\x64\\cl.exe",
+        "/nologo",
+        "/std:c++20",
+        "/O2",
+        "/EHsc",
+        "/DPRECISION_BYTES=2",
+        "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_weight_layout_003\\patched_2.cpp",
+        "/Fe:C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_weight_layout_003\\patched_2.exe",
+        "/Fo:C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_weight_layout_003\\patched_2.obj"
+      ],
+      "source_sha256": "760c3a7456f2ea2bebe3aeceb1147cd86868fb4f1351ec9f8002fb0cdee9bd8d"
+    }
+  ],
+  "native_steps": 0,
+  "gpu_training": false
+}

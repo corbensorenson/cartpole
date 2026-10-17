@@ -1,0 +1,106 @@
+{
+  "results": [
+    {
+      "seed": 20261116,
+      "initialization": "hanging",
+      "angle_noise": 0.02,
+      "max_tilt": 2.757011581142212,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.041776224225476,
+      "physics_warning": false,
+      "success": false,
+      "policy_failure": false,
+      "steps": 173,
+      "native_steps": 692,
+      "proof_native_steps": 692,
+      "replay_exact": true,
+      "park_seconds": 0.0,
+      "max_force_norm": 33.83719253540039,
+      "max_xy": [
+        3.041776224225476,
+        0.8544081990138197
+      ],
+      "trace_sha256": "b38572a7c039b212d2155f748dc3e71499ba39bb87236b16f8f4f803aa5e020e"
+    },
+    {
+      "seed": 20261017,
+      "initialization": "diagnostic",
+      "angle_noise": 0.0,
+      "max_tilt": 0.0,
+      "best_hold_seconds": 30.0,
+      "plane_margin": 3.0,
+      "physics_warning": false,
+      "success": true,
+      "policy_failure": false,
+      "steps": 1500,
+      "native_steps": 6000,
+      "proof_native_steps": 6000,
+      "replay_exact": true,
+      "park_seconds": 0.0,
+      "max_force_norm": 0.0,
+      "max_xy": [
+        0.0,
+        0.0
+      ],
+      "trace_sha256": "c1cba81ee336b27e20b13a5f7077eccf880f73b2a44cc9012bc2f280d0bb4852"
+    },
+    {
+      "seed": 20261018,
+      "initialization": "diagnostic",
+      "angle_noise": 0.0,
+      "max_tilt": 0.00010976649588320661,
+      "best_hold_seconds": 0.02,
+      "plane_margin": -0.19896188589632313,
+      "physics_warning": false,
+      "success": false,
+      "policy_failure": false,
+      "steps": 1,
+      "native_steps": 4,
+      "proof_native_steps": 4,
+      "replay_exact": true,
+      "park_seconds": 0.0,
+      "max_force_norm": 0.0,
+      "max_xy": [
+        3.198961885896323,
+        3.1761096934467194e-27
+      ],
+      "trace_sha256": "1eaebd1ba82b6ceeb3edd75b26d7cafbaa501776ddb52e77f5b16521ddb5bac5"
+    },
+    {
+      "seed": 20261019,
+      "initialization": "diagnostic",
+      "angle_noise": 0.0,
+      "max_tilt": 0.0,
+      "best_hold_seconds": 0.0,
+      "plane_margin": 3.0,
+      "physics_warning": false,
+      "success": false,
+      "policy_failure": true,
+      "steps": 0,
+      "native_steps": 0,
+      "proof_native_steps": 0,
+      "replay_exact": true,
+      "park_seconds": 0.0,
+      "max_force_norm": 0.0,
+      "max_xy": [
+        0.0,
+        0.0
+      ],
+      "trace_sha256": "853d9592ee70be0d28c3d74efe89d692b65222889f757e138360d7d8d777b811"
+    }
+  ],
+  "passes": 1,
+  "cases": 4,
+  "actual_native_steps": 6696,
+  "additional_native_steps": 6696,
+  "inclusive_native_steps": 13392,
+  "qualification": false,
+  "scope": "diagnostic",
+  "checkpoint_sha256": null,
+  "every_state_and_delivered_force_byte_exact": true,
+  "every_preobservation_byte_exact": true,
+  "every_world_tilt_and_gate_reconstructed": true,
+  "frozen_closed_loop_reexecution": false,
+  "native_shutdown_accounting_verified": true,
+  "limitation": "cold replay and interface evidence; does not prove neural inference, training quality or a new link certificate"
+}

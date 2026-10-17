@@ -1,0 +1,148 @@
+{
+  "records": [
+    {
+      "links": 1,
+      "single_transition_cases": 14,
+      "complete_qualified_tape": "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\qualify_n1_001\\seed20261216.npz",
+      "full_state_and_force_bytes_exact": true,
+      "gate_parity": true,
+      "puffer_buffer_observation_terminal_autoreset_log_checks": true
+    },
+    {
+      "links": 2,
+      "single_transition_cases": 14,
+      "complete_qualified_tape": "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\qualify_n2_001\\seed20261316.npz",
+      "full_state_and_force_bytes_exact": true,
+      "gate_parity": true,
+      "puffer_buffer_observation_terminal_autoreset_log_checks": true
+    },
+    {
+      "links": 8,
+      "single_transition_cases": 14,
+      "complete_qualified_tape": null,
+      "full_state_and_force_bytes_exact": true,
+      "gate_parity": true,
+      "puffer_buffer_observation_terminal_autoreset_log_checks": true
+    }
+  ],
+  "benchmarks": [
+    {
+      "links": 8,
+      "environments": 1,
+      "lane": "native_threads_1",
+      "control_transitions": 32,
+      "native_steps": 128,
+      "seconds": 0.0047534000004816335,
+      "control_steps_per_second": 6732.023393099178
+    },
+    {
+      "links": 8,
+      "environments": 1,
+      "lane": "native_threads_4",
+      "control_transitions": 32,
+      "native_steps": 128,
+      "seconds": 0.0051195999985793605,
+      "control_steps_per_second": 6250.488321134403
+    },
+    {
+      "links": 8,
+      "environments": 1,
+      "lane": "authoritative_python_loop",
+      "control_transitions": 32,
+      "native_steps": 128,
+      "seconds": 0.01576490000115882,
+      "control_steps_per_second": 2029.825751996384
+    },
+    {
+      "links": 8,
+      "environments": 16,
+      "lane": "native_threads_1",
+      "control_transitions": 512,
+      "native_steps": 2048,
+      "seconds": 0.07532809999975143,
+      "control_steps_per_second": 6796.932353287678
+    },
+    {
+      "links": 8,
+      "environments": 16,
+      "lane": "native_threads_4",
+      "control_transitions": 512,
+      "native_steps": 2048,
+      "seconds": 0.021839099999851896,
+      "control_steps_per_second": 23444.189550094656
+    },
+    {
+      "links": 8,
+      "environments": 16,
+      "lane": "authoritative_python_loop",
+      "control_transitions": 512,
+      "native_steps": 2048,
+      "seconds": 0.2147913000007975,
+      "control_steps_per_second": 2383.709209814825
+    },
+    {
+      "links": 8,
+      "environments": 64,
+      "lane": "native_threads_1",
+      "control_transitions": 2048,
+      "native_steps": 8192,
+      "seconds": 0.30412929999874905,
+      "control_steps_per_second": 6733.977949537989
+    },
+    {
+      "links": 8,
+      "environments": 64,
+      "lane": "native_threads_4",
+      "control_transitions": 2048,
+      "native_steps": 8192,
+      "seconds": 0.07204530000126397,
+      "control_steps_per_second": 28426.55940032271
+    },
+    {
+      "links": 8,
+      "environments": 64,
+      "lane": "authoritative_python_loop",
+      "control_transitions": 2048,
+      "native_steps": 8192,
+      "seconds": 0.8947181999992608,
+      "control_steps_per_second": 2288.9888682287806
+    },
+    {
+      "links": 8,
+      "environments": 256,
+      "lane": "native_threads_1",
+      "control_transitions": 8192,
+      "native_steps": 32768,
+      "seconds": 1.282573999998931,
+      "control_steps_per_second": 6387.155828830795
+    },
+    {
+      "links": 8,
+      "environments": 256,
+      "lane": "native_threads_4",
+      "control_transitions": 8192,
+      "native_steps": 32768,
+      "seconds": 0.4130596999984846,
+      "control_steps_per_second": 19832.484263243437
+    },
+    {
+      "links": 8,
+      "environments": 256,
+      "lane": "authoritative_python_loop",
+      "control_transitions": 8192,
+      "native_steps": 32768,
+      "seconds": 3.567351100000451,
+      "control_steps_per_second": 2296.3817606848297
+    }
+  ],
+  "additional_native_steps": 160344,
+  "scope": "native CPU plant/adapter parity and matched stepping throughput; no CUDA trainer or learned policy tested",
+  "puffer_ref": "ea7f989371270d2948f96728bda8aec5e7634a4c",
+  "source_sha256": {
+    "evaluation_io.h": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b",
+    "README.md": "68466809c47a1e4ab0bf4b1cc74485eb161be0fdbd54f680a7ad6cca4627fcc5",
+    "spatial_cartpole.h": "aeeaa8fd1d320d6c04f5a8651c0d7fde1b53a35b1403f25b37f928ce279da9ea",
+    "spatial_core.h": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc",
+    "verify_bridge.cpp": "b68c0ad5ffbb8d940433aaaf7830254e1388f41bc6d585339feed2ccc958406d"
+  }
+}

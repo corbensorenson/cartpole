@@ -1,0 +1,47 @@
+{
+  "results": [
+    {
+      "links": 1,
+      "actual_native_steps": 6696,
+      "proof_native_steps": 6696,
+      "diagnostic_only": true,
+      "cases": 4,
+      "actual_tape_and_preobservation_bytes_exact": true,
+      "complete_upright_horizon": true,
+      "rail_and_nonfinite_rejection": true,
+      "eof_no_extra_physics": true
+    },
+    {
+      "links": 2,
+      "actual_native_steps": 6696,
+      "proof_native_steps": 6696,
+      "diagnostic_only": true,
+      "cases": 4,
+      "actual_tape_and_preobservation_bytes_exact": true,
+      "complete_upright_horizon": true,
+      "rail_and_nonfinite_rejection": true,
+      "eof_no_extra_physics": true
+    },
+    {
+      "links": 8,
+      "actual_native_steps": 6696,
+      "proof_native_steps": 6696,
+      "diagnostic_only": true,
+      "cases": 4,
+      "actual_tape_and_preobservation_bytes_exact": true,
+      "complete_upright_horizon": true,
+      "rail_and_nonfinite_rejection": true,
+      "eof_no_extra_physics": true
+    }
+  ],
+  "negative_cases": [
+    "preobservation_corruption",
+    "truncated_record"
+  ],
+  "inclusive_native_steps": 40176,
+  "actual_native_steps": 20088,
+  "additional_proof_native_steps": 20088,
+  "trained_policy": false,
+  "qualification": false,
+  "scope": "diagnostic evaluation-interface capture/replay/EOF/terminal/video-input checks; no learning or hanging-start certificate"
+}

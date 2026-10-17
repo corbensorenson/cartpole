@@ -1,0 +1,104 @@
+{
+  "schema": 1,
+  "puffer_ref": "ea7f989371270d2948f96728bda8aec5e7634a4c",
+  "config": {
+    "n_links": 1,
+    "total_length": 3.0,
+    "total_mass": 1.0,
+    "cart_mass": 1.0,
+    "cart_armature": 0.0,
+    "plane_limit": 3.0,
+    "force_limit": 80.0,
+    "timestep": 0.005,
+    "frame_skip": 4,
+    "episode_seconds": 30.0,
+    "angle_threshold": 0.15,
+    "sustain_seconds": 5.0,
+    "joint_damping": 0.0075,
+    "armature": 0.0005,
+    "link_radius": 0.025
+  },
+  "scope": "diagnostic",
+  "qualification": false,
+  "cases": [
+    {
+      "seed": 20261116,
+      "angle_noise": 0.02,
+      "mode": 0,
+      "initial_state": [
+        -0.03044415858313291,
+        -0.008171618590567663,
+        0.002131242349900435,
+        -0.002213711926509331,
+        0.9999818449099429,
+        0.005183351817042896,
+        -0.029569956602330326,
+        0.02780655468716583,
+        -0.020037642041246882,
+        -0.027693300279044993,
+        -0.0036982730748472484
+      ],
+      "state_sha256": "dda4a571c6576fe1092ac6aa6198fb3923645f73304235f9007ec8a10f7e6c3e"
+    },
+    {
+      "seed": 20261017,
+      "angle_noise": 0.0,
+      "mode": 1,
+      "initial_state": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "state_sha256": "6c74a3c5263a6c77eac1b62f3f954dff33a234f4acfb6d1adc131ceb25ccc009"
+    },
+    {
+      "seed": 20261018,
+      "angle_noise": 0.0,
+      "mode": 2,
+      "initial_state": [
+        2.999,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        10.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "state_sha256": "903221ada08af3560c6532b24592c307a07ccde101eb433b76758c7483f4a3d5"
+    },
+    {
+      "seed": 20261019,
+      "angle_noise": 0.0,
+      "mode": 2,
+      "initial_state": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "state_sha256": "6c74a3c5263a6c77eac1b62f3f954dff33a234f4acfb6d1adc131ceb25ccc009"
+    }
+  ],
+  "checkpoint_sha256": null,
+  "model_sha256": "61137e67515e70b19e6788e864d5ac018d8b714bbab315689099504c68c8cd36",
+  "plan_sha256": "cbeece319bfe4c7a6bf71546d0d91f9bff7e499561deca24614fc8ae5d0f7fa8"
+}

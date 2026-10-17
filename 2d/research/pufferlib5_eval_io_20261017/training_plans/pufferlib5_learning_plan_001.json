@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "puffer_ref": "ea7f989371270d2948f96728bda8aec5e7634a4c",
+  "trainer_patch": "spatial-flat-layout-v1",
+  "links": 1,
+  "training_started": false,
+  "training_completed": false,
+  "qualified": false,
+  "dry_run": true,
+  "checkout": "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_training_003",
+  "control_transition_budget": 999424,
+  "native_step_budget": 3997696,
+  "batch_size": 4096,
+  "epochs": 244,
+  "seed": 73,
+  "automatic_evaluation_episodes": 0,
+  "reserved_cases_consumed": 0,
+  "wall_time_cap_per_phase_seconds": 600,
+  "build_command": [
+    "bash",
+    "build_spatial.sh",
+    "spatial_cartpole",
+    "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_learning_plan_001\\spatial_trainer",
+    "--float"
+  ],
+  "training_command": [
+    "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_learning_plan_001\\spatial_trainer",
+    "train",
+    "--base.seed=73",
+    "--base.run_id=n1_s73_t999424",
+    "--base.eval_episodes=0",
+    "--base.checkpoint_dir=C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_learning_plan_001\\checkpoints",
+    "--base.log_dir=C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_learning_plan_001\\logs",
+    "--base.load_model_path=None",
+    "--base.load_enemy_model_path=None",
+    "--train.total_timesteps=999424",
+    "--train.gpus=1",
+    "--env.accounting_file=C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_learning_plan_001\\native_accounting.json"
+  ],
+  "overrides": {
+    "base.seed": 73,
+    "base.run_id": "n1_s73_t999424",
+    "base.eval_episodes": 0,
+    "base.checkpoint_dir": "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_learning_plan_001\\checkpoints",
+    "base.log_dir": "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_learning_plan_001\\logs",
+    "base.load_model_path": "None",
+    "base.load_enemy_model_path": "None",
+    "train.total_timesteps": 999424,
+    "train.gpus": 1,
+    "env.accounting_file": "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\output\\pufferlib5_learning_plan_001\\native_accounting.json"
+  },
+  "expected_checkpoint_layout": {
+    "bytes": 102672,
+    "float32_elements": 25668,
+    "tensors": [
+      {
+        "name": "encoder",
+        "byte_offset": 0,
+        "elements": 896
+      },
+      {
+        "name": "decoder",
+        "byte_offset": 3584,
+        "elements": 192
+      },
+      {
+        "name": "logstd",
+        "byte_offset": 4352,
+        "elements": 2
+      },
+      {
+        "name": "mingru0",
+        "byte_offset": 4368,
+        "elements": 12288
+      },
+      {
+        "name": "mingru1",
+        "byte_offset": 53520,
+        "elements": 12288
+      }
+    ]
+  },
+  "frozen_sha256": {
+    "build_spatial.sh": "a02a37d9e8abea63edc37ec405e782235c2ef2428fba6deff56914b6daac3a3b",
+    "prepare_puffer_environment.py": "43e9e6a431ad1ee347b5c43e529f0599627352faec053c045904ab9656e4c02f",
+    "puffer_training_support.py": "55ff1f799628b494da89873b96de188c8f6974ffa6d7f18b5b397f20d3f98643",
+    "run_puffer_training.py": "0b99033e7785249e9808fe60b5dd66493b0962c329f6bd9e524133620b5c38de",
+    "config/default.ini": "12cbb049a7eee9437b15645f3c1149e765491a0020b8bfb4c6d96e12728539eb",
+    "config/spatial_cartpole.ini": "6a6534a35ecc89855e27c6a729c77a5767454ebef7d3ee1bb96d07d3bb36d161",
+    "ocean/spatial_cartpole/evaluation_io.h": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b",
+    "ocean/spatial_cartpole/spatial_cartpole.h": "18a96f0fcec79cd0c3e4d3816bb6e732b32ab89854d6e8d3256ec92fdc05db8a",
+    "ocean/spatial_cartpole/spatial_core.h": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc",
+    "resources/spatial_cartpole/integration.json": "67635b46fe0363e9dd66ec69af89162069be18173c572e0cced0d6a508bbac47",
+    "resources/spatial_cartpole/model.xml": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33",
+    "spatial_patches/algo.cu": "9566889afd9fb87768898a69429b8be23ce554bf70c9e48eb7f4de2fc3371e60",
+    "spatial_patches/pufferl.cu": "3ed2595fbcdb24d82c53706eee9cd1784a4c803e4962ea43dfe5814a7add72a6",
+    "src/algo.cu": "711f859b353494c81bd0bc23e47becff0be270285e631b5000208f2c16fc2405",
+    "src/constellation.c": "e4b4a07714a8d4584ee9f873a01b4a625e674c5ad1792ac4f11cc84667791f1a",
+    "src/ini.h": "af3923d806e7e88ec6386deab4ad8dce73778c7f26da524a11a309f08e6e6dc3",
+    "src/ocean.cu": "f56639c3bf831039cd494bc8dd2ff8fe57ddc38afc24281ed8e78e795d111b39",
+    "src/protein.cu": "06e69f6f301f5a54808100bdf76b63369f1e3e9bacb45fdd258c0ba3d653e9e7",
+    "src/puffercpu.c": "e4082922fd5dc35fbf7c8a7df991753dad3b20fcc47c3cf47a95067bcefeda4b",
+    "src/pufferenv.h": "3148ae7aa64fd122242578764c6b9a2837e4f8c92139e355ed7181943c169c85",
+    "src/pufferl.cu": "b9a1c912f6224e17bb060cbdf14bbfa71adae4b63b6f212f5c2eeb8b5b7f2ed9"
+  }
+}

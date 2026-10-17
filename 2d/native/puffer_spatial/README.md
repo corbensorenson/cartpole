@@ -62,16 +62,86 @@ Inside Linux/WSL, with the PufferLib 5 toolchain and MuJoCo **3.3.5 Linux** SDK:
 export MUJOCO_DIR=/absolute/path/to/mujoco-3.3.5
 export MUJOCO_LIBRARY="$MUJOCO_DIR/lib/libmujoco.so.3.3.5"
 bash build_spatial.sh spatial_cartpole spatial_n1 --float
-./spatial_n1 train spatial_cartpole
+./spatial_n1 train
 ```
 
-The example config starts at 64 environments and one million control transitions.
+The example config starts at 64 environments and 999,424 control transitions
+(244 complete 4,096-transition batches, within the one-million budget).
+The environment name is compiled into the executable, not a positional CLI argument.
+Final automatic evaluation is disabled; use separately recorded evaluation plans.
 It is an initial experiment, not tuned hyperparameters. Rebuild in another
 isolated checkout for the next count. Version 5 `--cpu` is evaluation only;
 `--float` selects float32 training on the existing Turing GPU. The CUDA trainer
 build and learning run have **not** yet been tested on this Windows machine.
 There is currently no installed WSL distribution. Native rendering is a no-op;
 qualification videos must use saved full-state tapes and the existing renderer.
+
+## Recorded evaluation and bounded training
+
+Prepare a separate evaluation checkout with `--evaluation-io`. This compiles in
+fixed-state plan loading and create-only binary traces; ordinary training has
+capture compiled out. Native traces contain pre-step observations, policy
+actions, delivered forces, every post-state, tilts, terminal gates and physical
+integration counters. They are written before auto-reset. Exhausting a plan
+does not start extra physics. The optional `env.accounting_file` writes totals
+only after all native environments have closed.
+
+```powershell
+python scripts/build_puffer_native_probe.py --out output/io_build --links 1 2 8 --evaluation-io
+python scripts/verify_puffer_eval_io.py --build output/io_build --out output/io_checks
+```
+
+The recorded-interface checks cover full synthetic upright episodes, noisy
+hanging motion, rail failure, nonfinite policy rejection, EOF and corrupted
+trace rejection. These are diagnostic cases, not learned swing-up results.
+`scripts/puffer_eval_io.py plan` creates the original 13/45-case development
+cohorts and freezes a supplied checkpoint; `import` independently verifies
+actual recorded transitions and exports full-state NPZ tapes. It does not prove
+neural inference; a frozen GPU closed-loop rerun is still required.
+
+For a recorded GPU evaluation use exactly one environment, including all three
+vector overrides (upstream does not adjust num_buffers when eval_agents changes):
+
+```bash
+./spatial_eval eval /absolute/frozen_policy.bin --headless \
+  --base.eval_episodes=13 --base.eval_agents=1 \
+  --vec.total_agents=1 --vec.num_buffers=1 --vec.num_threads=1 \
+  --train.horizon=64 --train.minibatch_size=64 \
+  --env.evaluation_plan=/absolute/plan/plan.bin \
+  --env.trace_directory=/absolute/new_trace_directory \
+  --env.accounting_file=/absolute/new_trace_directory/accounting.json
+```
+
+The trace directory must already exist and be empty. Use the same MuJoCo shared
+library in the native binary and Python replay, rather than assuming bitwise
+identity across Windows and Linux builds. `render_puffer_evaluation.py` renders
+the complete imported tape with an XY inset and explicit diagnostic/development
+labels. It never labels a development tape as qualified.
+
+The preparation driver now also adds `spatial_patches/pufferl.cu` and `algo.cu`.
+The pinned upstream allocator inserts 16-byte gaps which its flat tensor lengths
+and Muon tensor walk omit. With two continuous actions this truncates the final
+two float32 weights and shifts recurrent optimizer slices. The copied trainer
+uses physical byte spans and aligned optimizer offsets. Tracked upstream files
+are unchanged. `verify_puffer_weight_layout.py` host-compiles the actual pinned
+allocator/registration bodies, reproduces the original issue and verifies the
+correction for 1/2/8 links, two precision sizes and discrete controls. It does
+not run CUDA. The upstream CPU checkpoint reader is not supported for this path.
+
+From the lab/2d repository, prepare a fresh training checkout, then create a plan:
+
+```bash
+python scripts/run_puffer_training.py --checkout /absolute/puffer_training \
+  --out /absolute/new_smoke_plan --steps 4096
+```
+
+The default performs a dry run only. Under Linux, add `--execute` with a new
+output directory to build `--float` and run the experiment. The launcher freezes
+inputs and commands, checks the native/Python library identity, caps build and
+training wall time, verifies actual shutdown integration counts and the complete
+finite checkpoint, and disables automatic final evaluation. The first registered
+seed is 73; the subsequent initial learning budget is 999,424 transitions.
+These execution checks are implemented but await the Linux GPU smoke test.
 
 Further work: run the Linux GPU smoke test, compare actual wall-clock learning
 curves at 1 then 2 links, export exact evaluation tapes/checkpoints, and retain

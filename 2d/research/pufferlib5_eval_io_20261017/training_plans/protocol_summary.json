@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "case": "partial_batch",
+      "rejected_before_output_creation": true
+    },
+    {
+      "case": "over_budget",
+      "rejected_before_output_creation": true
+    },
+    {
+      "case": "unregistered_seed",
+      "rejected_before_output_creation": true
+    },
+    {
+      "case": "unpatched_checkout",
+      "rejected_before_output_creation": true
+    },
+    {
+      "case": "windows_execution",
+      "rejected_before_output_creation": true
+    },
+    {
+      "case": "modified_native_source",
+      "rejected_before_execution": true
+    },
+    {
+      "case": "pufferlib5_smoke_plan_001",
+      "valid_dry_run": true
+    },
+    {
+      "case": "pufferlib5_learning_plan_001",
+      "valid_dry_run": true
+    }
+  ],
+  "native_steps": 0,
+  "gpu_training": false
+}
