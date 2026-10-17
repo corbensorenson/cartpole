@@ -1,0 +1,14 @@
+{
+  "evidence": {
+    "name": "2d-cartpole-6-link-immediate-v1-evidence.zip",
+    "bytes": 247155356,
+    "sha256": "46fcb9c2145315de301bb5205ed7f41ceb775accd53ff5549f66233968b63309"
+  },
+  "video": {
+    "name": "2d-cartpole-6-link-immediate.mp4",
+    "bytes": 1211156,
+    "sha256": "ebca311b3be443642ec3fa21100461c5ccd3cc6ee906909cf9c21e321deb7b41",
+    "frames": 1501,
+    "fps": 50
+  }
+}
