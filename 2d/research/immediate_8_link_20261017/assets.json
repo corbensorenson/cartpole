@@ -1,0 +1,26 @@
+{
+  "evidence": [
+    {
+      "name": "2d-cartpole-8-link-immediate-evidence.zip",
+      "bytes": 1788157911,
+      "sha256": "3ce2bf7a434f5a44988b1be616c38bbf9c8a91925fcabb0cd084836c6d4ca6b4"
+    },
+    {
+      "name": "2d-cartpole-8-link-immediate-evidence-part2.zip",
+      "bytes": 1776797423,
+      "sha256": "b5c8698f7b6bc8053793621064be8c69debfef2cae31f089105e1f101dd460bb"
+    },
+    {
+      "name": "2d-cartpole-8-link-immediate-evidence-part3.zip",
+      "bytes": 752672570,
+      "sha256": "4efb21265ec23f5ed6857fb1b2ac68a0b55aef54fdafc38a63d78f7eec3df624"
+    }
+  ],
+  "video": {
+    "name": "2d-cartpole-8-link-immediate.mp4",
+    "bytes": 1221763,
+    "sha256": "7494abb625e6cfffd61ec9a69affc8049832798346a7e57e7d67d053a7f3c1fe",
+    "frames": 1501,
+    "fps": 50
+  }
+}
