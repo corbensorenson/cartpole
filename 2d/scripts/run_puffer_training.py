@@ -55,6 +55,7 @@ def main():
     p=argparse.ArgumentParser()
     p.add_argument('--checkout',required=True);p.add_argument('--out',required=True)
     p.add_argument('--steps',type=int,default=4096);p.add_argument('--seed',type=int,default=73)
+    p.add_argument('--budget-tier',choices=['initial','extended'],default='initial')
     p.add_argument('--max-seconds',type=int,default=600);p.add_argument('--execute',action='store_true')
     args=p.parse_args();checkout=Path(args.checkout).resolve();out=Path(args.out).resolve()
     integration=verify_integration(checkout)
@@ -62,13 +63,17 @@ def main():
     if args.execute and platform.system()!='Linux':raise ValueError('--execute requires the Linux CUDA toolchain')
     config=configparser.ConfigParser(interpolation=None)
     config.read([checkout/'config/default.ini',checkout/'config/spatial_cartpole.ini'],encoding='utf-8')
+    for key in ('accounting_file','evaluation_plan','trace_directory'):
+        if not config.has_option('env',key):
+            raise ValueError(f'Prepare a fresh integration with the CLI key env.{key}')
     for section,key,value in [('vec','total_agents',64),('vec','num_buffers',2),('vec','num_threads',4),
                               ('vec','num_policies',1),('train','horizon',64),('train','gpus',1),
                               ('policy','hidden_size',64),('policy','num_layers',2),('selfplay','enabled',0)]:
         if config.getint(section,key)!=value:raise ValueError(f'Unexpected initial experiment setting: {section}.{key}')
     batch=config.getint('vec','total_agents')*config.getint('train','horizon')
-    if not (batch<=args.steps<=999424 and args.steps%batch==0):
-        raise ValueError('Use complete 4096-transition batches, at most 999424 transitions')
+    cap={'initial':999424,'extended':9998336}[args.budget_tier]
+    if not (batch<=args.steps<=cap and args.steps%batch==0):
+        raise ValueError(f'Use complete 4096-transition batches, at most {cap} transitions for this tier')
     if args.seed!=73:raise ValueError('First registered training seed is 73; register a new experiment before adding seeds')
     if not 1<=args.max_seconds<=3600:raise ValueError('Wall-time cap must be 1..3600 seconds')
     out.mkdir(parents=True,exist_ok=False);frozen=out/'frozen_inputs';frozen.mkdir()
@@ -94,6 +99,8 @@ def main():
                   training_started=False,training_completed=False,qualified=False,dry_run=not args.execute,
                   checkout=str(checkout),control_transition_budget=args.steps,native_step_budget=4*args.steps,
                   batch_size=batch,epochs=args.steps//batch,seed=args.seed,automatic_evaluation_episodes=0,
+                  budget_tier=args.budget_tier,
+                  training_reward_offset=config.getfloat('env','reward_offset',fallback=0.),
                   reserved_cases_consumed=0,wall_time_cap_per_phase_seconds=args.max_seconds,
                   build_command=build,training_command=command,overrides=overrides,
                   expected_checkpoint_layout=float_weight_layout(integration['links']),

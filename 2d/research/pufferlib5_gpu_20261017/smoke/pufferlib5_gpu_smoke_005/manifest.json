@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "puffer_ref": "ea7f989371270d2948f96728bda8aec5e7634a4c",
+  "trainer_patch": "spatial-flat-layout-v1",
+  "links": 1,
+  "training_started": true,
+  "training_completed": true,
+  "qualified": false,
+  "dry_run": false,
+  "checkout": "/home/cartpole/puffer_training_n1_003",
+  "control_transition_budget": 4096,
+  "native_step_budget": 16384,
+  "batch_size": 4096,
+  "epochs": 1,
+  "seed": 73,
+  "automatic_evaluation_episodes": 0,
+  "reserved_cases_consumed": 0,
+  "wall_time_cap_per_phase_seconds": 600,
+  "build_command": [
+    "bash",
+    "build_spatial.sh",
+    "spatial_cartpole",
+    "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_005/spatial_trainer",
+    "--float"
+  ],
+  "training_command": [
+    "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_005/spatial_trainer",
+    "train",
+    "--base.seed=73",
+    "--base.run_id=n1_s73_t4096",
+    "--base.eval_episodes=0",
+    "--base.checkpoint_dir=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_005/checkpoints",
+    "--base.log_dir=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_005/logs",
+    "--base.load_model_path=None",
+    "--base.load_enemy_model_path=None",
+    "--train.total_timesteps=4096",
+    "--train.gpus=1",
+    "--env.accounting_file=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_005/native_accounting.json"
+  ],
+  "overrides": {
+    "base.seed": 73,
+    "base.run_id": "n1_s73_t4096",
+    "base.eval_episodes": 0,
+    "base.checkpoint_dir": "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_005/checkpoints",
+    "base.log_dir": "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_005/logs",
+    "base.load_model_path": "None",
+    "base.load_enemy_model_path": "None",
+    "train.total_timesteps": 4096,
+    "train.gpus": 1,
+    "env.accounting_file": "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_005/native_accounting.json"
+  },
+  "expected_checkpoint_layout": {
+    "bytes": 102672,
+    "float32_elements": 25668,
+    "tensors": [
+      {
+        "name": "encoder",
+        "byte_offset": 0,
+        "elements": 896
+      },
+      {
+        "name": "decoder",
+        "byte_offset": 3584,
+        "elements": 192
+      },
+      {
+        "name": "logstd",
+        "byte_offset": 4352,
+        "elements": 2
+      },
+      {
+        "name": "mingru0",
+        "byte_offset": 4368,
+        "elements": 12288
+      },
+      {
+        "name": "mingru1",
+        "byte_offset": 53520,
+        "elements": 12288
+      }
+    ]
+  },
+  "frozen_sha256": {
+    "build_spatial.sh": "362e9df2f8ab3de76ee8f2e48af443990e59e3e9c0a56d30b0f08f25d9ef69d4",
+    "run_puffer_training.py": "910acfb67dc65be77f9966848f58d0229286ebdf73b6457bc6681c60a2ac55c3",
+    "prepare_puffer_environment.py": "49b0e056038bbe318e26bfeae0d73cc331f4594ec128a7f35afe8dcda44af25e",
+    "puffer_training_support.py": "55ff1f799628b494da89873b96de188c8f6974ffa6d7f18b5b397f20d3f98643",
+    "spatial_patches/algo.cu": "9566889afd9fb87768898a69429b8be23ce554bf70c9e48eb7f4de2fc3371e60",
+    "spatial_patches/pufferl.cu": "3ed2595fbcdb24d82c53706eee9cd1784a4c803e4962ea43dfe5814a7add72a6",
+    "config/default.ini": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084",
+    "config/spatial_cartpole.ini": "93039302c64024010f1cd970e695a5e323a6205e32cff4f5e92681360f13ecd0",
+    "src/pufferenv.h": "3324a670791e2b3e46cbe7d10d9233d52fbc258e0d7e37d5b0c470e580de880c",
+    "src/ocean.cu": "511ea7c7c516f3fa658eb6e55f3b4b7204b467d0ce1c816b152ed90f10c5f7ff",
+    "src/puffercpu.c": "6bbcd2d5f37e133972f9bb6df45e3412b8b856893c23764e1ce77582550a7adf",
+    "src/algo.cu": "4f9a8c6189ebd3c2f058c78aa78f4bfec26ceee0df6995f65e3c306fd2ae9a65",
+    "src/constellation.c": "deda12600fb99755994dcb0a9b84c442dac76259b15910eea83e398150c1f6c4",
+    "src/protein.cu": "7127fe4fa3e9b0ab76ae0b8a4703357318366b1292f835f02b23bd98a6c90538",
+    "src/pufferl.cu": "8feb0cc5334468e60e2db6527121dee8e7028694beed1e431f96e8e2e7843d4a",
+    "src/ini.h": "cd4c83ba12ba40a7bef03ad810246cc0a5880f81e8566f6ac5a089b5c598859f",
+    "ocean/spatial_cartpole/evaluation_io.h": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b",
+    "ocean/spatial_cartpole/spatial_core.h": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc",
+    "ocean/spatial_cartpole/spatial_cartpole.h": "18a96f0fcec79cd0c3e4d3816bb6e732b32ab89854d6e8d3256ec92fdc05db8a",
+    "resources/spatial_cartpole/integration.json": "5508a47258cb6e6aa4302fd7c67d83badf0ac3310672c4b95bffe164de332e28",
+    "resources/spatial_cartpole/model.xml": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+  }
+}

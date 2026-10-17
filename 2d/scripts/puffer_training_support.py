@@ -30,7 +30,7 @@ def replace_once(source, old, new):
     return source.replace(old, new, 1)
 
 
-def patched_sources(checkout):
+def patched_sources(checkout, deterministic_eval=False):
     """Keep aligned slabs intact in flat copies/checkpoints and optimizer slices.
 
     The upstream logical total_elems omits internal 16-byte alignment gaps.
@@ -58,6 +58,10 @@ def patched_sources(checkout):
         '        offset = (offset + 16 / sizeof(precision_t) - 1)\n'
         '            & ~(16 / sizeof(precision_t) - 1);\n'
         '        precision_t* gc_ptr = grads.data + offset;')
+    if deterministic_eval:
+        trainer = replace_once(trainer,
+            '                mean + std * curand_normal(&state), -1.0e6f, 1.0e6f);',
+            '                mean, -1.0e6f, 1.0e6f); // Explicit GPU mean-action evaluation only')
     return {'pufferl.cu': trainer, 'algo.cu': algorithm}
 
 
@@ -73,7 +77,7 @@ def verify_integration(checkout):
         path = (checkout / name).resolve()
         if not path.is_relative_to(checkout) or sha256(path) != expected:
             raise ValueError(f'Integration file changed: {name}')
-    for name, content in patched_sources(checkout).items():
+    for name, content in patched_sources(checkout, manifest.get('deterministic_evaluation',False)).items():
         if (checkout / 'spatial_patches' / name).read_text(encoding='utf-8') != content:
             raise ValueError(f'Trainer patch differs from pinned transformation: {name}')
     return manifest

@@ -1,0 +1,40 @@
+{
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 1.896135449626884,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.0035511829853596133,
+      "physics_warning": false,
+      "success": false,
+      "policy_failure": false,
+      "steps": 46,
+      "native_steps": 184,
+      "proof_native_steps": 184,
+      "replay_exact": true,
+      "park_seconds": 0.0,
+      "max_force_norm": 80.0,
+      "max_xy": [
+        2.8470938767758,
+        3.0035511829853596
+      ],
+      "trace_sha256": "ed54e450f9c135bec0dea4fc9bbbe4d8a0e83ed3e36bb39ba193951dc941704a"
+    }
+  ],
+  "passes": 0,
+  "cases": 1,
+  "actual_native_steps": 184,
+  "additional_native_steps": 184,
+  "inclusive_native_steps": 368,
+  "qualification": false,
+  "scope": "development",
+  "checkpoint_sha256": "1e342aa05611dd3c8ec4df0c44f57b8ea75407b8feed7d3a9bffe5a63d83c563",
+  "every_state_and_delivered_force_byte_exact": true,
+  "every_preobservation_byte_exact": true,
+  "every_world_tilt_and_gate_reconstructed": true,
+  "frozen_closed_loop_reexecution": false,
+  "native_shutdown_accounting_verified": true,
+  "limitation": "cold replay and interface evidence; does not prove neural inference, training quality or a new link certificate"
+}

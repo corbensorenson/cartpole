@@ -1,0 +1,14 @@
+Compiling ocean/spatial_cartpole/spatial_cartpole.h -> /home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_003/spatial_trainer...
+/usr/bin/ld: warning: libnvJitLink.so.12, needed by /usr/local/cuda-12.6/lib64/libcusolver.so, not found (try using -rpath or -rpath-link)
+/usr/bin/ld: warning: libcusparse.so.12, needed by /usr/local/cuda-12.6/lib64/libcusolver.so, not found (try using -rpath or -rpath-link)
+/usr/bin/ld: /usr/local/cuda-12.6/lib64/libcusolver.so: undefined reference to `cusparseDestroyMatDescr@libcusparse.so.12'
+/usr/bin/ld: /usr/local/cuda-12.6/lib64/libcusolver.so: undefined reference to `cusparseGetMatFillMode@libcusparse.so.12'
+/usr/bin/ld: /usr/local/cuda-12.6/lib64/libcusolver.so: undefined reference to `cusparseGetMatIndexBase@libcusparse.so.12'
+/usr/bin/ld: /usr/local/cuda-12.6/lib64/libcusolver.so: undefined reference to `cusparseSetMatType@libcusparse.so.12'
+/usr/bin/ld: /usr/local/cuda-12.6/lib64/libcusolver.so: undefined reference to `cusparseSetMatDiagType@libcusparse.so.12'
+/usr/bin/ld: /usr/local/cuda-12.6/lib64/libcusolver.so: undefined reference to `cusparseCreateMatDescr@libcusparse.so.12'
+/usr/bin/ld: /usr/local/cuda-12.6/lib64/libcusolver.so: undefined reference to `cusparseSetMatIndexBase@libcusparse.so.12'
+/usr/bin/ld: /usr/local/cuda-12.6/lib64/libcusolver.so: undefined reference to `cusparseSetMatFillMode@libcusparse.so.12'
+/usr/bin/ld: /usr/local/cuda-12.6/lib64/libcusolver.so: undefined reference to `cusparseGetMatType@libcusparse.so.12'
+/usr/bin/ld: /usr/local/cuda-12.6/lib64/libcusolver.so: undefined reference to `cusparseGetMatDiagType@libcusparse.so.12'
+collect2: error: ld returned 1 exit status

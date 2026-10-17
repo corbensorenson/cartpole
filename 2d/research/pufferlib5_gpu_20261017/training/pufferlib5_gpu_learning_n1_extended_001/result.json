@@ -1,0 +1,50 @@
+{
+  "training_started": true,
+  "training_completed": true,
+  "qualified": false,
+  "native_steps": 39993344,
+  "mujoco_library": "/home/cartpole/cartpole-lab/.venv/lib/python3.12/site-packages/mujoco/libmujoco.so.3.3.5",
+  "mujoco_library_sha256": "4d9f4d74b9a4dc78d0b0aa4da1c69df905941f23f39dd127ad39a16c085e6ac1",
+  "build": {
+    "command": [
+      "bash",
+      "build_spatial.sh",
+      "spatial_cartpole",
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_learning_n1_extended_001/spatial_trainer",
+      "--float"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 6.9296157469999855
+  },
+  "binary_sha256": "314e81b2badcc4ca9f0fbc0d7118cd93404ebd6ee5714359fd019b719e856a48",
+  "train": {
+    "command": [
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_learning_n1_extended_001/spatial_trainer",
+      "train",
+      "--base.seed=73",
+      "--base.run_id=n1_s73_t9998336",
+      "--base.eval_episodes=0",
+      "--base.checkpoint_dir=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_learning_n1_extended_001/checkpoints",
+      "--base.log_dir=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_learning_n1_extended_001/logs",
+      "--base.load_model_path=None",
+      "--base.load_enemy_model_path=None",
+      "--train.total_timesteps=9998336",
+      "--train.gpus=1",
+      "--env.accounting_file=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_learning_n1_extended_001/native_accounting.json"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 147.42578243900002
+  },
+  "native_accounting": {
+    "schema": 1,
+    "links": 1,
+    "closed_environments": 64,
+    "native_steps": 39993344,
+    "control_transitions": 9998336
+  },
+  "checkpoint_sha256": "1c134a836945742beb889bf96023d467b324145487ea638ec835935bf25c1726",
+  "checkpoint_bytes": 102672,
+  "control_transitions_per_second": 67819.45352155065
+}

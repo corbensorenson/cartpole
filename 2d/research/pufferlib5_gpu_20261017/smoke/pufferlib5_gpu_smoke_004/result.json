@@ -1,0 +1,43 @@
+{
+  "training_started": true,
+  "training_completed": false,
+  "qualified": false,
+  "native_steps": null,
+  "mujoco_library": "/home/cartpole/cartpole-lab/.venv/lib/python3.12/site-packages/mujoco/libmujoco.so.3.3.5",
+  "mujoco_library_sha256": "4d9f4d74b9a4dc78d0b0aa4da1c69df905941f23f39dd127ad39a16c085e6ac1",
+  "build": {
+    "command": [
+      "bash",
+      "build_spatial.sh",
+      "spatial_cartpole",
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_004/spatial_trainer",
+      "--float"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 6.845282273000009
+  },
+  "binary_sha256": "87f811f8d3df16868708a64aee8a467e307467ff7e3ede6365fc9dc21bb5c88d",
+  "train": {
+    "command": [
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_004/spatial_trainer",
+      "train",
+      "--base.seed=73",
+      "--base.run_id=n1_s73_t4096",
+      "--base.eval_episodes=0",
+      "--base.checkpoint_dir=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_004/checkpoints",
+      "--base.log_dir=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_004/logs",
+      "--base.load_model_path=None",
+      "--base.load_enemy_model_path=None",
+      "--train.total_timesteps=4096",
+      "--train.gpus=1",
+      "--env.accounting_file=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_004/native_accounting.json"
+    ],
+    "exit_code": 1,
+    "timed_out": false,
+    "elapsed_seconds": 0.11439465799998061
+  },
+  "error": "RuntimeError: Training failed or timed out",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/cartpole/cartpole-lab/scripts/run_puffer_training.py\", line 133, in main\n    if report['train']['exit_code'] or report['train']['timed_out']:raise RuntimeError('Training failed or timed out')\n                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: Training failed or timed out\n",
+  "native_cost_unknown": true
+}

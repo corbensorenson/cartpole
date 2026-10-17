@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "qualified": false,
+  "cohort": "pilot13",
+  "links": 1,
+  "checkpoint_sha256": "1e342aa05611dd3c8ec4df0c44f57b8ea75407b8feed7d3a9bffe5a63d83c563",
+  "inclusive_native_budget": 168000,
+  "frozen_closed_loop_reexecution": true,
+  "reserved_cases_consumed": 0,
+  "build": {
+    "command": [
+      "bash",
+      "build_spatial.sh",
+      "spatial_cartpole",
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_001/spatial_eval",
+      "--float"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 7.732343748999999
+  },
+  "binary_sha256": "e122197f98145a6d2355c9629bfed4d505bc7b376da181d9244a025c2fcc9481",
+  "evaluation": {
+    "command": [
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_001/spatial_eval",
+      "eval",
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_001/plan/frozen_policy.bin",
+      "--headless",
+      "--base.seed=73",
+      "--base.eval_episodes=13",
+      "--base.eval_agents=1",
+      "--vec.total_agents=1",
+      "--vec.num_buffers=1",
+      "--vec.num_threads=1",
+      "--train.horizon=64",
+      "--train.minibatch_size=64",
+      "--env.evaluation_plan=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_001/plan/plan.bin",
+      "--env.trace_directory=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_001/evaluation_traces",
+      "--env.accounting_file=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_001/evaluation_traces/accounting.json"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 1.0167370869999992
+  },
+  "repeat": {
+    "command": [
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_001/spatial_eval",
+      "eval",
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_001/repeat_plan/frozen_policy.bin",
+      "--headless",
+      "--base.seed=73",
+      "--base.eval_episodes=1",
+      "--base.eval_agents=1",
+      "--vec.total_agents=1",
+      "--vec.num_buffers=1",
+      "--vec.num_threads=1",
+      "--train.horizon=64",
+      "--train.minibatch_size=64",
+      "--env.evaluation_plan=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_001/repeat_plan/plan.bin",
+      "--env.trace_directory=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_001/repeat_traces",
+      "--env.accounting_file=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_001/repeat_traces/accounting.json"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 0.5151325079999971
+  },
+  "cases": 13,
+  "passes": 0,
+  "actual_native_steps": 2152,
+  "cold_proof_native_steps": 2152,
+  "inclusive_native_steps": 4304,
+  "first_case_trace_sha256": "ed54e450f9c135bec0dea4fc9bbbe4d8a0e83ed3e36bb39ba193951dc941704a",
+  "every_state_and_command_byte_exact": true,
+  "completed": true
+}

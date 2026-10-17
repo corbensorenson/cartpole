@@ -1,0 +1,16 @@
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0               🐡 GPU:  20%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate       90ms  97%    Losses     105.266    │
+│ Params            25.7K      Model         7ms   7%    policy       8.727    │
+│ Steps              4.1K      Env          39ms  42%    value       48.276    │
+│ SPS               43.9K      Copy          4ms   3%    entropy      2.838    │
+│ Epoch                 1    Train           2ms   2%    old_kl       0.000    │
+│ Uptime             93ms      Model         2ms   2%    kl           0.000    │
+│ To go               0ms      Misc          0ms   0%    clipfrac     0.000    │
+│                                                                              │
+│ perf                          0.000   score                         0.000    │
+│ episode_return              -33.174   episode_length               37.941    │
+│ hold_seconds                  0.000   rail_exits                    1.000    │
+│ physics_warnings              0.000                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯

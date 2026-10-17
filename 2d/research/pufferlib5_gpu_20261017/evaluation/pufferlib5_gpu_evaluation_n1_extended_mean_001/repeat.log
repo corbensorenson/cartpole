@@ -1,0 +1,29 @@
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0               🐡 GPU:  13%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate        0ms   0%    Losses                │
+│ Params            25.7K      Model         0ms   0%    policy                │
+│ Steps              64.0      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime             32ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0              🐡  GPU:  26%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate        0ms   0%    Losses                │
+│ Params            25.7K      Model         0ms   0%    policy                │
+│ Steps              1.5K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime            298ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.000   score                         0.060    │
+│ episode_return             2833.137   episode_length             1500.000    │
+│ hold_seconds                  0.060   rail_exits                    0.000    │
+│ physics_warnings              0.000                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+CUDA_EVAL env=spatial_cartpole score=0.060000 perf=0.000000 games=1 params=25668

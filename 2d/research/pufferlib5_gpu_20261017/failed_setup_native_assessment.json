@@ -1,0 +1,8 @@
+{
+  "smoke001": 0,
+  "smoke002": 0,
+  "smoke003": 0,
+  "smoke004": 0,
+  "basis": "001-003 failed before training; 004 exits in ini CLI validation before run_train/environment creation (missing env.accounting_file). Raw started-process receipt retained.",
+  "shell_entry_failure_before_smoke001_native_steps": 0
+}

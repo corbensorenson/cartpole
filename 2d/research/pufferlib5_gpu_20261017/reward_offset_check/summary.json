@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "commands": 64,
+  "offsets": [
+    0.0,
+    2.0
+  ],
+  "states_observations_gates_and_forces_byte_identical": true,
+  "independent_physics_byte_exact": true,
+  "reward_formula_and_offset_f32_exact": true,
+  "actual_native_steps": 512,
+  "proof_native_steps": 256,
+  "inclusive_native_steps": 768,
+  "training": false,
+  "qualified": false,
+  "build_manifest_sha256": "833505b684a2b45c16fcc83e57ea498e59c3cc9b817c42854aa7ee90f5973384"
+}

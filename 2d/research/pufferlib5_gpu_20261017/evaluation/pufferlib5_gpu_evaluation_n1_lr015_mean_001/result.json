@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "qualified": false,
+  "cohort": "pilot13",
+  "links": 1,
+  "checkpoint_sha256": "8c8dbdfc45cd5015e6e082bfb215c38a3e96ce909ba6471217e996dc671da1c0",
+  "action_selection": "gpu_mean",
+  "inclusive_native_budget": 168000,
+  "frozen_closed_loop_reexecution": true,
+  "reserved_cases_consumed": 0,
+  "build": {
+    "command": [
+      "bash",
+      "build_spatial.sh",
+      "spatial_cartpole",
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_lr015_mean_001/spatial_eval",
+      "--float"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 6.651624824999999
+  },
+  "binary_sha256": "cf1aea8796a449081dc1c71f3281f62f6f3abdec5838d6505e1faae6226c8ca2",
+  "evaluation": {
+    "command": [
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_lr015_mean_001/spatial_eval",
+      "eval",
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_lr015_mean_001/plan/frozen_policy.bin",
+      "--headless",
+      "--base.seed=73",
+      "--base.eval_episodes=13",
+      "--base.eval_agents=1",
+      "--vec.total_agents=1",
+      "--vec.num_buffers=1",
+      "--vec.num_threads=1",
+      "--train.horizon=64",
+      "--train.minibatch_size=64",
+      "--env.evaluation_plan=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_lr015_mean_001/plan/plan.bin",
+      "--env.trace_directory=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_traces",
+      "--env.accounting_file=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_traces/accounting.json"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 3.3845844510000234
+  },
+  "repeat": {
+    "command": [
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_lr015_mean_001/spatial_eval",
+      "eval",
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_lr015_mean_001/repeat_plan/frozen_policy.bin",
+      "--headless",
+      "--base.seed=73",
+      "--base.eval_episodes=1",
+      "--base.eval_agents=1",
+      "--vec.total_agents=1",
+      "--vec.num_buffers=1",
+      "--vec.num_threads=1",
+      "--train.horizon=64",
+      "--train.minibatch_size=64",
+      "--env.evaluation_plan=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_lr015_mean_001/repeat_plan/plan.bin",
+      "--env.trace_directory=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_lr015_mean_001/repeat_traces",
+      "--env.accounting_file=/home/cartpole/cartpole-lab/output/pufferlib5_gpu_evaluation_n1_lr015_mean_001/repeat_traces/accounting.json"
+    ],
+    "exit_code": 0,
+    "timed_out": false,
+    "elapsed_seconds": 0.7664943010000798
+  },
+  "cases": 13,
+  "passes": 0,
+  "actual_native_steps": 77184,
+  "cold_proof_native_steps": 77184,
+  "inclusive_native_steps": 154368,
+  "first_case_trace_sha256": "ef09c81093cb863565af27d75c506670e6263cd105809f9c42b100ec238d8e21",
+  "every_state_and_command_byte_exact": true,
+  "completed": true
+}

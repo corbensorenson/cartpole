@@ -1,0 +1,97 @@
+Collecting absl-py==2.5.1 (from -r requirements-lock.txt (line 1))
+  Downloading absl_py-2.5.1-py3-none-any.whl.metadata (3.3 kB)
+Collecting cloudpickle==3.1.2 (from -r requirements-lock.txt (line 2))
+  Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+Collecting colorama==0.4.6 (from -r requirements-lock.txt (line 3))
+  Downloading colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+Collecting etils==1.14.0 (from -r requirements-lock.txt (line 4))
+  Downloading etils-1.14.0-py3-none-any.whl.metadata (6.5 kB)
+Collecting Farama-Notifications==0.0.6 (from -r requirements-lock.txt (line 5))
+  Downloading farama_notifications-0.0.6-py3-none-any.whl.metadata (729 bytes)
+Collecting fsspec==2026.9.0 (from -r requirements-lock.txt (line 6))
+  Downloading fsspec-2026.9.0-py3-none-any.whl.metadata (10 kB)
+Collecting glfw==2.11.0 (from -r requirements-lock.txt (line 7))
+  Downloading glfw-2.11.0-py2.py3-none-manylinux_2_28_x86_64.whl.metadata (5.5 kB)
+Collecting gymnasium==1.4.0 (from -r requirements-lock.txt (line 8))
+  Downloading gymnasium-1.4.0-py3-none-any.whl.metadata (9.0 kB)
+Collecting ImageIO==2.38.1 (from -r requirements-lock.txt (line 9))
+  Downloading imageio-2.38.1-py3-none-any.whl.metadata (9.7 kB)
+Collecting imageio-ffmpeg==0.6.0 (from -r requirements-lock.txt (line 10))
+  Downloading imageio_ffmpeg-0.6.0-py3-none-manylinux2014_x86_64.whl.metadata (1.5 kB)
+Collecting iniconfig==2.3.1 (from -r requirements-lock.txt (line 11))
+  Downloading iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+Collecting mujoco==3.3.5 (from -r requirements-lock.txt (line 12))
+  Downloading mujoco-3.3.5-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (41 kB)
+Collecting mpmath==1.3.0 (from -r requirements-lock.txt (line 13))
+  Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+Collecting numpy==2.4.6 (from -r requirements-lock.txt (line 14))
+  Downloading numpy-2.4.6-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting packaging==26.3 (from -r requirements-lock.txt (line 15))
+  Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+Collecting pillow==12.3.0 (from -r requirements-lock.txt (line 16))
+  Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.1 kB)
+Collecting pluggy==1.7.0 (from -r requirements-lock.txt (line 17))
+  Downloading pluggy-1.7.0-py3-none-any.whl.metadata (5.0 kB)
+Collecting Pygments==2.21.0 (from -r requirements-lock.txt (line 18))
+  Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting PyOpenGL==3.1.10 (from -r requirements-lock.txt (line 19))
+  Downloading pyopengl-3.1.10-py3-none-any.whl.metadata (3.3 kB)
+Collecting pytest==9.1.1 (from -r requirements-lock.txt (line 20))
+  Downloading pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+Collecting scipy==1.17.1 (from -r requirements-lock.txt (line 21))
+  Downloading scipy-1.17.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+Collecting typing_extensions==4.16.0 (from -r requirements-lock.txt (line 22))
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting zipp==4.1.1 (from -r requirements-lock.txt (line 23))
+  Downloading zipp-4.1.1-py3-none-any.whl.metadata (3.6 kB)
+Downloading absl_py-2.5.1-py3-none-any.whl (137 kB)
+Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+Downloading colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Downloading etils-1.14.0-py3-none-any.whl (172 kB)
+Downloading farama_notifications-0.0.6-py3-none-any.whl (2.9 kB)
+Downloading fsspec-2026.9.0-py3-none-any.whl (221 kB)
+Downloading glfw-2.11.0-py2.py3-none-manylinux_2_28_x86_64.whl (248 kB)
+Downloading gymnasium-1.4.0-py3-none-any.whl (476 kB)
+Downloading imageio-2.38.1-py3-none-any.whl (328 kB)
+Downloading imageio_ffmpeg-0.6.0-py3-none-manylinux2014_x86_64.whl (29.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 29.5/29.5 MB 67.9 MB/s  0:00:00
+Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+Downloading mujoco-3.3.5-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.7/6.7 MB 79.1 MB/s  0:00:00
+Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 kB 24.2 MB/s  0:00:00
+Downloading numpy-2.4.6-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.6/16.6 MB 89.1 MB/s  0:00:00
+Downloading packaging-26.3-py3-none-any.whl (129 kB)
+Downloading pillow-12.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.9/6.9 MB 83.2 MB/s  0:00:00
+Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
+Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 54.3 MB/s  0:00:00
+Downloading pyopengl-3.1.10-py3-none-any.whl (3.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.2/3.2 MB 77.8 MB/s  0:00:00
+Downloading pytest-9.1.1-py3-none-any.whl (386 kB)
+Downloading scipy-1.17.1-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.2/35.2 MB 85.3 MB/s  0:00:00
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Downloading zipp-4.1.1-py3-none-any.whl (10 kB)
+Installing collected packages: PyOpenGL, mpmath, glfw, Farama-Notifications, zipp, typing_extensions, Pygments, pluggy, pillow, packaging, numpy, iniconfig, imageio-ffmpeg, fsspec, etils, colorama, cloudpickle, absl-py, scipy, pytest, ImageIO, gymnasium, mujoco
+
+Successfully installed Farama-Notifications-0.0.6 ImageIO-2.38.1 PyOpenGL-3.1.10 Pygments-2.21.0 absl-py-2.5.1 cloudpickle-3.1.2 colorama-0.4.6 etils-1.14.0 fsspec-2026.9.0 glfw-2.11.0 gymnasium-1.4.0 imageio-ffmpeg-0.6.0 iniconfig-2.3.1 mpmath-1.3.0 mujoco-3.3.5 numpy-2.4.6 packaging-26.3 pillow-12.3.0 pluggy-1.7.0 pytest-9.1.1 scipy-1.17.1 typing_extensions-4.16.0 zipp-4.1.1
+Obtaining file:///home/cartpole/cartpole-lab
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: spatial-cartpole
+  Building editable for spatial-cartpole (pyproject.toml): started
+  Building editable for spatial-cartpole (pyproject.toml): finished with status 'done'
+  Created wheel for spatial-cartpole: filename=spatial_cartpole-0.1.0-0.editable-py3-none-any.whl size=1405 sha256=83743a076dacd7db4d74ea25ecaf7b48a82a71ec7f756a22f9afd4fae6fa3dc4
+  Stored in directory: /tmp/pip-ephem-wheel-cache-ti9kt6ve/wheels/3d/55/99/b61c6a8692358aa200bd762673299407616596cdc76b666881
+Successfully built spatial-cartpole
+Installing collected packages: spatial-cartpole
+Successfully installed spatial-cartpole-0.1.0

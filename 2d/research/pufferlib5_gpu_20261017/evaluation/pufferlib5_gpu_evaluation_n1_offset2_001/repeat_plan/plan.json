@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "puffer_ref": "ea7f989371270d2948f96728bda8aec5e7634a4c",
+  "config": {
+    "n_links": 1,
+    "total_length": 3.0,
+    "total_mass": 1.0,
+    "cart_mass": 1.0,
+    "cart_armature": 0.0,
+    "plane_limit": 3.0,
+    "force_limit": 80.0,
+    "timestep": 0.005,
+    "frame_skip": 4,
+    "episode_seconds": 30.0,
+    "angle_threshold": 0.15,
+    "sustain_seconds": 5.0,
+    "joint_damping": 0.0075,
+    "armature": 0.0005,
+    "link_radius": 0.025
+  },
+  "scope": "development",
+  "qualification": false,
+  "cases": [
+    {
+      "seed": 20261016,
+      "angle_noise": 0.0,
+      "mode": 0,
+      "initial_state": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "state_sha256": "ffe7b20f6a752ccbfa956db565699636ba6a9ccda7d227e876fc3f880873b376"
+    }
+  ],
+  "checkpoint_sha256": "44a005a0cea207a97679ed1dfde691440d31f7e984629b8478cbebc4dd8b2a4c",
+  "model_sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33",
+  "plan_sha256": "58956a21f33749c18e102ae932eee078e2a66884c8d0e77705a4dd40b66b9c20"
+}

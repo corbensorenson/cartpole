@@ -1,0 +1,2279 @@
+{
+  "schema": 1,
+  "puffer_ref": "ea7f989371270d2948f96728bda8aec5e7634a4c",
+  "inclusive_native_steps": 52611208,
+  "reserved_cases_consumed": 0,
+  "new_link_qualification": false,
+  "files": [
+    {
+      "path": "native/puffer_spatial/README.md",
+      "bytes": 10069,
+      "sha256": "1ec3c0d1358aeb0f7e48f9941102166f5bf2e7a1bd9143b080ae892d28ada4d8"
+    },
+    {
+      "path": "native/puffer_spatial/spatial_cartpole.h",
+      "bytes": 6303,
+      "sha256": "93b89b37481c3b7d3e7825f95003f6e031687cbb34720e0d70b71ccbe3a819d1"
+    },
+    {
+      "path": "native/puffer_spatial/verify_bridge.cpp",
+      "bytes": 5525,
+      "sha256": "4dc050ca3b1cfe46f3c69d579738c592012dba2f3aa862192c0932335671e5e1"
+    },
+    {
+      "path": "scripts/prepare_puffer_environment.py",
+      "bytes": 4632,
+      "sha256": "ac59ea17b1ed7baee9a7d540a2b64f94f5d188b6a29557da194a099986266c1f"
+    },
+    {
+      "path": "scripts/puffer_eval_io.py",
+      "bytes": 13191,
+      "sha256": "7353b52cb7c8363147501fa64dab498c918552e1b0a2b6670f843be005515f82"
+    },
+    {
+      "path": "scripts/puffer_training_support.py",
+      "bytes": 4453,
+      "sha256": "4d22488a4fe92210c46cc9886eb9261c53c5e5c1813c7432b5d34094d0431ca9"
+    },
+    {
+      "path": "scripts/run_puffer_training.py",
+      "bytes": 11129,
+      "sha256": "f51e07fd2040d0bfc0d207045b74ec02a016ca1e91f206df3555635245d1722b"
+    },
+    {
+      "path": "scripts/run_puffer_evaluation.py",
+      "bytes": 7079,
+      "sha256": "a92f8f58301fb03ab407b0bc56d25eb2b26a8a10a27956b6b1dc7e072d6fbd85"
+    },
+    {
+      "path": "scripts/setup_puffer_wsl.sh",
+      "bytes": 2324,
+      "sha256": "d4269edb49e46788f8607e171398dead36dc3e1accad07945d606f23aea41fbb"
+    },
+    {
+      "path": "scripts/execute_puffer_wsl.sh",
+      "bytes": 698,
+      "sha256": "49a51420f94949eb326fa1231cdaafaf0e1ae62e6e1dda1460672c2afd3a04c5"
+    },
+    {
+      "path": "scripts/verify_puffer_reward_offset.py",
+      "bytes": 3123,
+      "sha256": "94716015abb4b9d9bb5202e068cfb26b9c5f661f9bd61f9029fbde65ec66621f"
+    },
+    {
+      "path": "research/pufferlib5_environment.md",
+      "bytes": 14378,
+      "sha256": "d108a874d8b4d5dbddc3906b0acc6fb16cb052307d1874334433e70a054f993f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/experiment_summary.json",
+      "bytes": 3073,
+      "sha256": "37ff6f9a8cfedc278ff5e86d205a7cb49c86e67a9f56fb3b0c658e22d2e78c5a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/platform.json",
+      "bytes": 446,
+      "sha256": "3c06bec6eed7b802bc24503ebff11f56936d964cfb60d3b983261fd85b83b6d0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/PUFFERLIB_LICENSE",
+      "bytes": 1086,
+      "sha256": "8046987d722ee7f8325b4dee542fc0ea630233cde70f744bc538b3a70bffb936"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/apt-base.log",
+      "bytes": 90284,
+      "sha256": "10705a80e6137e58331145c932e28c05f89ae3a76e48f9859c978ff19e5cb5ab"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/apt-cuda-update.log",
+      "bytes": 509,
+      "sha256": "9f35388b0c21d3124c7afbad55158560db2022fb2360e9b16b197e566b9797fe"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/apt-cuda.log",
+      "bytes": 8137,
+      "sha256": "c8347b9864621df2242940e200b5637191b77e3dcf72c5cf68e9e5442a502404"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/apt-nccl.log",
+      "bytes": 1684,
+      "sha256": "f0d837589c78521eb766cc70d25f1929ad2cb61eeb233336f77204a71d9835a6"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/apt-profiler-api.log",
+      "bytes": 1332,
+      "sha256": "5a3845373b8a1b9375f109f34add5e5eb9364e548ad13ccd8f6f702d7c52e48e"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/apt-solver-runtime.log",
+      "bytes": 1652,
+      "sha256": "833a3330a85e76528abc7d8848ee9cd9c08bbf0485bf52f3c94bb18eb16f9e47"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/apt-update.log",
+      "bytes": 4594,
+      "sha256": "aedbcaba9da13bcc9df04705d1aa557a0ccae205de4dcebcded535c6acf6eb60"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/cuda-install-plan.log",
+      "bytes": 3937,
+      "sha256": "eae7fe3842de52a754b5839bd2238837eaac9a6386a296c4ffa0a801c6f27351"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/cuda-keyring.sha256",
+      "bytes": 93,
+      "sha256": "253ec960bd39e33f96ad188c9c64dfa3369b687085bbdbbd6a8ab0932a2dca36"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/cuda-keyring_1.1-1_all.deb",
+      "bytes": 4328,
+      "sha256": "d2a6b11c096396d868758b86dab1823b25e14d70333f1dfa74da5ddaf6a06dba"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/evaluation_mean_integration.json",
+      "bytes": 1130,
+      "sha256": "d89d12659f907817a368af7b48cd18acb202058922211000e9344cfb1e57e5e5"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/nccl-available.txt",
+      "bytes": 4138,
+      "sha256": "15ab7ba1c9710e8250bad6c36a9b7f74d93b71613a1a7d3e85e4af0901f8fa87"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/packages.tsv",
+      "bytes": 24730,
+      "sha256": "9defacc8abef3ca2723394229f769575a96b15700ae551a52b08a091245adacf"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/packages_after.tsv",
+      "bytes": 24819,
+      "sha256": "3acc61265879ab898dcf18e68ca362d91d0314089759a96728ea44dbcae51c6f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/pip-bootstrap.log",
+      "bytes": 569,
+      "sha256": "7f99e9956f580fd411ea3946fe0d1ebcda1b3a89fcb6a7e65bbc1ecbdb3feead"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/pip-lab.log",
+      "bytes": 7805,
+      "sha256": "94703d0d74878ad282dee24469cf10c8eb0eb275fe4ef75c7cf5ea96227dc85d"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/python_freeze.txt",
+      "bytes": 480,
+      "sha256": "d2844307115d23dc57fbd156b33b7711faa941615f3ecfa5ced3f985e0b6d11f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/training_initial_integration.json",
+      "bytes": 1045,
+      "sha256": "5508a47258cb6e6aa4302fd7c67d83badf0ac3310672c4b95bffe164de332e28"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/training_lr015_integration.json",
+      "bytes": 1095,
+      "sha256": "fbedb04e0c8acb8f256340cdff45e3a1acee2414c5220e59c9a4c46932475711"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/setup/training_offset_integration.json",
+      "bytes": 1069,
+      "sha256": "3fe1e98c080b458e617b066b461f7941c0e9efebc40d8700d15085b2bfb3665c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/linux_weight_layout/patched_2.build.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/linux_weight_layout/patched_2.cpp",
+      "bytes": 5689,
+      "sha256": "9ae68408c6496ea50db1654460de2070384862bea4ea12a18ba0061945659ba5"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/linux_weight_layout/patched_4.build.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/linux_weight_layout/patched_4.cpp",
+      "bytes": 5689,
+      "sha256": "9ae68408c6496ea50db1654460de2070384862bea4ea12a18ba0061945659ba5"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/linux_weight_layout/summary.json",
+      "bytes": 9146,
+      "sha256": "9f2aa218d506796a3468b13e12bc5f818fe79c651549396c83c0701deaa87d3d"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/linux_weight_layout/upstream_2.build.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/linux_weight_layout/upstream_2.cpp",
+      "bytes": 5490,
+      "sha256": "33e88d4017c7656c3d0e3d806ca1575e7a56577088e28bc87c40dfb1827f4cee"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/linux_weight_layout/upstream_4.build.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/linux_weight_layout/upstream_4.cpp",
+      "bytes": 5490,
+      "sha256": "33e88d4017c7656c3d0e3d806ca1575e7a56577088e28bc87c40dfb1827f4cee"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/reward_offset_check/comparison.npz",
+      "bytes": 7126,
+      "sha256": "648794b8cb2d74aa4a9fbaa6a0eeddebfb48ef28672c94e671f37fcec6a04e2a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/reward_offset_check/driver.py",
+      "bytes": 3123,
+      "sha256": "94716015abb4b9d9bb5202e068cfb26b9c5f661f9bd61f9029fbde65ec66621f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/reward_offset_check/inputs.json",
+      "bytes": 3732,
+      "sha256": "f981845ca1f898e56c66b9c32e1d64f9abb09b4e0a7e5e6e8fdde4c6c3973907"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/reward_offset_check/model.xml",
+      "bytes": 1549,
+      "sha256": "61137e67515e70b19e6788e864d5ac018d8b714bbab315689099504c68c8cd36"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/reward_offset_check/summary.json",
+      "bytes": 473,
+      "sha256": "611693a7734e537e733dfbf702775ce85b37b1472891518dcf60cdaaa225a2f9"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/reward_offset_check/build.json",
+      "bytes": 2975,
+      "sha256": "833505b684a2b45c16fcc83e57ea498e59c3cc9b817c42854aa7ee90f5973384"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_001/result.json",
+      "bytes": 1136,
+      "sha256": "355dc8e7e151f44af0e9a86f69736962f3e2c475fd4491dac0dcf89a597aa86e"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_001/manifest.json",
+      "bytes": 4603,
+      "sha256": "57500a292ad7a68a04a931d4c93764d88d37ffbe605940ff377fe4a6df8f1af0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_001/build.log",
+      "bytes": 305,
+      "sha256": "6c8dad62777734113d42403429843a9b9b5839e936dfb36328a9a54d6fb2ee22"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_002/result.json",
+      "bytes": 1138,
+      "sha256": "cf15f3272ae5b7bc3afb58abbdee8dabe35ef8ac0902e82f5035f0682c54de62"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_002/manifest.json",
+      "bytes": 4603,
+      "sha256": "279a872b797339324add9e9a8a2ad7c5b0e4b12f3b4daabaad565800a8e044c5"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_002/build.log",
+      "bytes": 562,
+      "sha256": "e38d200b36600bc988d98d08ee856e0619a11282a33b6fcbbc2316e926b39636"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_003/result.json",
+      "bytes": 1136,
+      "sha256": "e2eef4f7ac6e13baa26d37a065f79656c6714cf53bbbf3ca889c4e17e437ad24"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_003/manifest.json",
+      "bytes": 4603,
+      "sha256": "f798ec5fe6e025c8225d9ba62c0c0b5fb1f326044695ebd568c9f2c5d4235f17"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_003/build.log",
+      "bytes": 1669,
+      "sha256": "260dab67716cea964646a7a1b12e112d87394a8be1100c8b3e1a5afffbadbb1f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_004/result.json",
+      "bytes": 1980,
+      "sha256": "67574eb335c2812a28650cbc2b6d3387add99d0a860c4042032b8b83067b7876"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_004/manifest.json",
+      "bytes": 4602,
+      "sha256": "51baac0ca14bc31afb8e7049bf1569244159227cbd25d7d0c684a3f8d453f987"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_004/build.log",
+      "bytes": 219,
+      "sha256": "19701b6ceabe3b62ab3b074a0fa1f6b52f53885b7f96dbe79a4aac2b04b895b7"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_004/train.log",
+      "bytes": 34,
+      "sha256": "5e9df3a95b1d18da60013c29f72d745e871a44acc6871450de3af0c834460073"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_005/result.json",
+      "bytes": 1791,
+      "sha256": "ce75b3b933a62d0f79812ba6c180505b8ca84b30d4549f33f7abb0a33b704f18"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_005/manifest.json",
+      "bytes": 4601,
+      "sha256": "6c738f0bfa0aa45a4314acc55efb686456d77021380eb96e2d1c373f9baff604"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_005/build.log",
+      "bytes": 257,
+      "sha256": "2509ecc1e6544189748d059796ba075d70cebf2a502eb357589ff34348b4cacf"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_005/train.log",
+      "bytes": 1674,
+      "sha256": "3b37de2bac371e14804dd38f60f8d58a507f7f86289ebe712143c556d8c24a5b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_005/native_accounting.json",
+      "bytes": 96,
+      "sha256": "dde5af4692c8cf8169021a398d6ca4fccd5e2e712bb4de62a3a0a193475c69ea"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/smoke/pufferlib5_gpu_smoke_005/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "cb01b022bda0724f47b19c058c3a59a54a6ca22d475defe470672bcfde5c6fbe"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/result.json",
+      "bytes": 1832,
+      "sha256": "ce73e1804cd5a644df42a329bcab04c34a059a25645f804b421b75171dd319bc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/manifest.json",
+      "bytes": 4663,
+      "sha256": "f1fbdbba4b603cb35c11bc228c6fd492f13cf495fc796e5296a5f50a918f1d11"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/native_accounting.json",
+      "bytes": 100,
+      "sha256": "f330b6eff4df577344ddaf4e480840f112a498bdc1455e37862d5c8b6405f67c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "1e342aa05611dd3c8ec4df0c44f57b8ea75407b8feed7d3a9bffe5a63d83c563"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/build.log",
+      "bytes": 231,
+      "sha256": "5b1fc2fe90bd3f865398f959a90a39f477376c31505d7860efdcbe13f224539c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/train.log",
+      "bytes": 40176,
+      "sha256": "37bb94999f38b61d1fcd4d4abeafb49ecbf3c61b0d286b97adb9c479a333d776"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/ldd.txt",
+      "bytes": 1650,
+      "sha256": "859777bb7d8ee501df00f63b97a93d321889310fed6559ab363e34f079bd8513"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/nvcc.txt",
+      "bytes": 208,
+      "sha256": "d039bce5999cd136f7ea930eee0408e108a8887b3ae7b0050de6071f20cd9817"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/nvidia-smi.txt",
+      "bytes": 1689,
+      "sha256": "ba962ed438574288833f594c81eaf14fe32401663a77b9b4f4f1d11e4895bf54"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/logs/spatial_cartpole/n1_s73_t999424.ini",
+      "bytes": 5368,
+      "sha256": "8b289ae85c34a47160371df2031609f901b40c5ffe66980ffea543e0a192a364"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/checkpoints/spatial_cartpole/n1_s73_t999424/0000000000999424.bin",
+      "bytes": 102672,
+      "sha256": "1e342aa05611dd3c8ec4df0c44f57b8ea75407b8feed7d3a9bffe5a63d83c563"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/build_spatial.sh",
+      "bytes": 20547,
+      "sha256": "362e9df2f8ab3de76ee8f2e48af443990e59e3e9c0a56d30b0f08f25d9ef69d4"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/prepare_puffer_environment.py",
+      "bytes": 3942,
+      "sha256": "49b0e056038bbe318e26bfeae0d73cc331f4594ec128a7f35afe8dcda44af25e"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/puffer_training_support.py",
+      "bytes": 4128,
+      "sha256": "55ff1f799628b494da89873b96de188c8f6974ffa6d7f18b5b397f20d3f98643"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/run_puffer_training.py",
+      "bytes": 10828,
+      "sha256": "910acfb67dc65be77f9966848f58d0229286ebdf73b6457bc6681c60a2ac55c3"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/config/default.ini",
+      "bytes": 5129,
+      "sha256": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/config/spatial_cartpole.ini",
+      "bytes": 485,
+      "sha256": "93039302c64024010f1cd970e695a5e323a6205e32cff4f5e92681360f13ecd0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/ocean/spatial_cartpole/evaluation_io.h",
+      "bytes": 4373,
+      "sha256": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/ocean/spatial_cartpole/spatial_cartpole.h",
+      "bytes": 6061,
+      "sha256": "18a96f0fcec79cd0c3e4d3816bb6e732b32ab89854d6e8d3256ec92fdc05db8a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/ocean/spatial_cartpole/spatial_core.h",
+      "bytes": 5993,
+      "sha256": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/resources/spatial_cartpole/integration.json",
+      "bytes": 1045,
+      "sha256": "5508a47258cb6e6aa4302fd7c67d83badf0ac3310672c4b95bffe164de332e28"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/resources/spatial_cartpole/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/spatial_patches/algo.cu",
+      "bytes": 69278,
+      "sha256": "9566889afd9fb87768898a69429b8be23ce554bf70c9e48eb7f4de2fc3371e60"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/spatial_patches/pufferl.cu",
+      "bytes": 134609,
+      "sha256": "3ed2595fbcdb24d82c53706eee9cd1784a4c803e4962ea43dfe5814a7add72a6"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/src/algo.cu",
+      "bytes": 69073,
+      "sha256": "4f9a8c6189ebd3c2f058c78aa78f4bfec26ceee0df6995f65e3c306fd2ae9a65"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/src/constellation.c",
+      "bytes": 56112,
+      "sha256": "deda12600fb99755994dcb0a9b84c442dac76259b15910eea83e398150c1f6c4"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/src/ini.h",
+      "bytes": 14358,
+      "sha256": "cd4c83ba12ba40a7bef03ad810246cc0a5880f81e8566f6ac5a089b5c598859f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/src/ocean.cu",
+      "bytes": 2844,
+      "sha256": "511ea7c7c516f3fa658eb6e55f3b4b7204b467d0ce1c816b152ed90f10c5f7ff"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/src/protein.cu",
+      "bytes": 47240,
+      "sha256": "7127fe4fa3e9b0ab76ae0b8a4703357318366b1292f835f02b23bd98a6c90538"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/src/puffercpu.c",
+      "bytes": 33242,
+      "sha256": "6bbcd2d5f37e133972f9bb6df45e3412b8b856893c23764e1ce77582550a7adf"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/src/pufferenv.h",
+      "bytes": 2130,
+      "sha256": "3324a670791e2b3e46cbe7d10d9233d52fbc258e0d7e37d5b0c470e580de880c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_001/frozen_inputs/src/pufferl.cu",
+      "bytes": 134525,
+      "sha256": "8feb0cc5334468e60e2db6527121dee8e7028694beed1e431f96e8e2e7843d4a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/result.json",
+      "bytes": 1882,
+      "sha256": "db456a2a64f5d577b2f082c4f1965c5db633667ff3bf3b5c076f0b7d77195f9e"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/manifest.json",
+      "bytes": 4810,
+      "sha256": "7e3af96b27216e706e02427034bff1c16a625822731dc528e2ddd8d8fd8ea683"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/native_accounting.json",
+      "bytes": 102,
+      "sha256": "b9bb8fa0237aeb09872b2507cb50a19632f76225e370222e632fde7d11a4bf2e"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "1c134a836945742beb889bf96023d467b324145487ea638ec835935bf25c1726"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/build.log",
+      "bytes": 249,
+      "sha256": "5baf6cf98fff359dc3f8c8d742e8b7b8d02a40fc74365a35821b843d56e9106b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/train.log",
+      "bytes": 391716,
+      "sha256": "b03f15bfb1b9b756660c1bf85e18ac2ac83b9c1a8077c61be3d24ff6d00f30eb"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/ldd.txt",
+      "bytes": 1650,
+      "sha256": "6d289dae0c3c64f9d246d75399d477dbba0501ca3aa4710b512faaddb7a3cc2a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/nvcc.txt",
+      "bytes": 208,
+      "sha256": "d039bce5999cd136f7ea930eee0408e108a8887b3ae7b0050de6071f20cd9817"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/nvidia-smi.txt",
+      "bytes": 1689,
+      "sha256": "6cf4fab634729ce8d0d6a9a0a1a7fc9f08b49b63bdf7f148eb3ba15f61d1997c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/logs/spatial_cartpole/n1_s73_t9998336.ini",
+      "bytes": 5674,
+      "sha256": "3ec4df660bd081c426da5901acdc740e7d443e2711023770efb2d3d6885af0d1"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/checkpoints/spatial_cartpole/n1_s73_t9998336/0000000002048000.bin",
+      "bytes": 102672,
+      "sha256": "51162aa3a02c62c8f4acdd2bd6e2a2cd39a8c27d3b952fdd9da5e4dfefe66470"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/checkpoints/spatial_cartpole/n1_s73_t9998336/0000000004096000.bin",
+      "bytes": 102672,
+      "sha256": "9fbf5d63d669c382265aa54f16ee397abbe8aa59984daadd087f9324e908bfd6"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/checkpoints/spatial_cartpole/n1_s73_t9998336/0000000006144000.bin",
+      "bytes": 102672,
+      "sha256": "7529438446a0648661dbc357f926208f5efc035dba768454afb1892eb75d284c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/checkpoints/spatial_cartpole/n1_s73_t9998336/0000000008192000.bin",
+      "bytes": 102672,
+      "sha256": "afdfaec497624f8631881da4750b95762aff59515bccae556e7838284ebc36ec"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/checkpoints/spatial_cartpole/n1_s73_t9998336/0000000009998336.bin",
+      "bytes": 102672,
+      "sha256": "1c134a836945742beb889bf96023d467b324145487ea638ec835935bf25c1726"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/build_spatial.sh",
+      "bytes": 20547,
+      "sha256": "362e9df2f8ab3de76ee8f2e48af443990e59e3e9c0a56d30b0f08f25d9ef69d4"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/prepare_puffer_environment.py",
+      "bytes": 4327,
+      "sha256": "2092b440d84ae0d0f3bdab5459929fb317ff5416c6921fe0cf775cf732b20efc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/puffer_training_support.py",
+      "bytes": 4128,
+      "sha256": "55ff1f799628b494da89873b96de188c8f6974ffa6d7f18b5b397f20d3f98643"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/run_puffer_training.py",
+      "bytes": 11129,
+      "sha256": "f51e07fd2040d0bfc0d207045b74ec02a016ca1e91f206df3555635245d1722b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/config/default.ini",
+      "bytes": 5129,
+      "sha256": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/config/spatial_cartpole.ini",
+      "bytes": 505,
+      "sha256": "284ed920be5957c59c2fbe23117b95f3aec2c5e7c64b02c9a3600285c7f70e7f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/ocean/spatial_cartpole/evaluation_io.h",
+      "bytes": 4373,
+      "sha256": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/ocean/spatial_cartpole/spatial_cartpole.h",
+      "bytes": 6327,
+      "sha256": "7ed64e48c7aaa5c20a2f7cf8f258a953b12868d3a20375275a23fca0208d689a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/ocean/spatial_cartpole/spatial_core.h",
+      "bytes": 5993,
+      "sha256": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/resources/spatial_cartpole/integration.json",
+      "bytes": 1095,
+      "sha256": "fbedb04e0c8acb8f256340cdff45e3a1acee2414c5220e59c9a4c46932475711"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/resources/spatial_cartpole/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/spatial_patches/algo.cu",
+      "bytes": 69278,
+      "sha256": "9566889afd9fb87768898a69429b8be23ce554bf70c9e48eb7f4de2fc3371e60"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/spatial_patches/pufferl.cu",
+      "bytes": 134609,
+      "sha256": "3ed2595fbcdb24d82c53706eee9cd1784a4c803e4962ea43dfe5814a7add72a6"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/src/algo.cu",
+      "bytes": 69073,
+      "sha256": "4f9a8c6189ebd3c2f058c78aa78f4bfec26ceee0df6995f65e3c306fd2ae9a65"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/src/constellation.c",
+      "bytes": 56112,
+      "sha256": "deda12600fb99755994dcb0a9b84c442dac76259b15910eea83e398150c1f6c4"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/src/ini.h",
+      "bytes": 14358,
+      "sha256": "cd4c83ba12ba40a7bef03ad810246cc0a5880f81e8566f6ac5a089b5c598859f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/src/ocean.cu",
+      "bytes": 2844,
+      "sha256": "511ea7c7c516f3fa658eb6e55f3b4b7204b467d0ce1c816b152ed90f10c5f7ff"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/src/protein.cu",
+      "bytes": 47240,
+      "sha256": "7127fe4fa3e9b0ab76ae0b8a4703357318366b1292f835f02b23bd98a6c90538"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/src/puffercpu.c",
+      "bytes": 33242,
+      "sha256": "6bbcd2d5f37e133972f9bb6df45e3412b8b856893c23764e1ce77582550a7adf"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/src/pufferenv.h",
+      "bytes": 2130,
+      "sha256": "3324a670791e2b3e46cbe7d10d9233d52fbc258e0d7e37d5b0c470e580de880c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_extended_001/frozen_inputs/src/pufferl.cu",
+      "bytes": 134525,
+      "sha256": "8feb0cc5334468e60e2db6527121dee8e7028694beed1e431f96e8e2e7843d4a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/result.json",
+      "bytes": 1862,
+      "sha256": "4304d6de370d2b259e1abb7aba8bc96ee4b1095fb574dd555bf05de5f8241d66"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/manifest.json",
+      "bytes": 4750,
+      "sha256": "db63e2f4f5e8e479093cdc61aaf5e14ef01410d8c175c331c96191c41ac624fb"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/native_accounting.json",
+      "bytes": 100,
+      "sha256": "f330b6eff4df577344ddaf4e480840f112a498bdc1455e37862d5c8b6405f67c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "8c8dbdfc45cd5015e6e082bfb215c38a3e96ce909ba6471217e996dc671da1c0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/build.log",
+      "bytes": 281,
+      "sha256": "d351c694a5d1586e211a56b4ea5f8512076a3cc75a8801bb2ef17edd17c722c5"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/train.log",
+      "bytes": 36828,
+      "sha256": "3e8ddaca5caea2812ec066a6761a144bac90e48e127750948274676d610ec309"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/ldd.txt",
+      "bytes": 1650,
+      "sha256": "8590e2de2ae718aedec23d41a9d19065b6b810802e56d25ca856d28117e2bdcb"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/nvcc.txt",
+      "bytes": 208,
+      "sha256": "d039bce5999cd136f7ea930eee0408e108a8887b3ae7b0050de6071f20cd9817"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/nvidia-smi.txt",
+      "bytes": 1689,
+      "sha256": "a2564c22ed4714b153174cf9f97c7fae6df45defd16facd6593b4210201c792a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/logs/spatial_cartpole/n1_s73_t999424.ini",
+      "bytes": 5604,
+      "sha256": "77dac1ff4f69e128157da4d735f7bb980145476b2c33cde302d3214d323bcf67"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/checkpoints/spatial_cartpole/n1_s73_t999424/0000000000999424.bin",
+      "bytes": 102672,
+      "sha256": "8c8dbdfc45cd5015e6e082bfb215c38a3e96ce909ba6471217e996dc671da1c0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/build_spatial.sh",
+      "bytes": 20547,
+      "sha256": "362e9df2f8ab3de76ee8f2e48af443990e59e3e9c0a56d30b0f08f25d9ef69d4"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/prepare_puffer_environment.py",
+      "bytes": 4327,
+      "sha256": "2092b440d84ae0d0f3bdab5459929fb317ff5416c6921fe0cf775cf732b20efc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/puffer_training_support.py",
+      "bytes": 4128,
+      "sha256": "55ff1f799628b494da89873b96de188c8f6974ffa6d7f18b5b397f20d3f98643"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/run_puffer_training.py",
+      "bytes": 10921,
+      "sha256": "6f26fff6f9574533785212b956c02545ad8b04fa4460292824974079d2c245b4"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/config/default.ini",
+      "bytes": 5129,
+      "sha256": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/config/spatial_cartpole.ini",
+      "bytes": 505,
+      "sha256": "284ed920be5957c59c2fbe23117b95f3aec2c5e7c64b02c9a3600285c7f70e7f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/ocean/spatial_cartpole/evaluation_io.h",
+      "bytes": 4373,
+      "sha256": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/ocean/spatial_cartpole/spatial_cartpole.h",
+      "bytes": 6327,
+      "sha256": "7ed64e48c7aaa5c20a2f7cf8f258a953b12868d3a20375275a23fca0208d689a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/ocean/spatial_cartpole/spatial_core.h",
+      "bytes": 5993,
+      "sha256": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/resources/spatial_cartpole/integration.json",
+      "bytes": 1095,
+      "sha256": "fbedb04e0c8acb8f256340cdff45e3a1acee2414c5220e59c9a4c46932475711"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/resources/spatial_cartpole/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/spatial_patches/algo.cu",
+      "bytes": 69278,
+      "sha256": "9566889afd9fb87768898a69429b8be23ce554bf70c9e48eb7f4de2fc3371e60"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/spatial_patches/pufferl.cu",
+      "bytes": 134609,
+      "sha256": "3ed2595fbcdb24d82c53706eee9cd1784a4c803e4962ea43dfe5814a7add72a6"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/src/algo.cu",
+      "bytes": 69073,
+      "sha256": "4f9a8c6189ebd3c2f058c78aa78f4bfec26ceee0df6995f65e3c306fd2ae9a65"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/src/constellation.c",
+      "bytes": 56112,
+      "sha256": "deda12600fb99755994dcb0a9b84c442dac76259b15910eea83e398150c1f6c4"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/src/ini.h",
+      "bytes": 14358,
+      "sha256": "cd4c83ba12ba40a7bef03ad810246cc0a5880f81e8566f6ac5a089b5c598859f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/src/ocean.cu",
+      "bytes": 2844,
+      "sha256": "511ea7c7c516f3fa658eb6e55f3b4b7204b467d0ce1c816b152ed90f10c5f7ff"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/src/protein.cu",
+      "bytes": 47240,
+      "sha256": "7127fe4fa3e9b0ab76ae0b8a4703357318366b1292f835f02b23bd98a6c90538"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/src/puffercpu.c",
+      "bytes": 33242,
+      "sha256": "6bbcd2d5f37e133972f9bb6df45e3412b8b856893c23764e1ce77582550a7adf"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/src/pufferenv.h",
+      "bytes": 2130,
+      "sha256": "3324a670791e2b3e46cbe7d10d9233d52fbc258e0d7e37d5b0c470e580de880c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_lr015_001/frozen_inputs/src/pufferl.cu",
+      "bytes": 134525,
+      "sha256": "8feb0cc5334468e60e2db6527121dee8e7028694beed1e431f96e8e2e7843d4a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/result.json",
+      "bytes": 1864,
+      "sha256": "e39e25ec2a819b308aeab64a1bb36dacb0bd4f20030e9b7e5554e6ddc1f2b4f5"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/manifest.json",
+      "bytes": 4768,
+      "sha256": "efaf22a6f9dcf0eece7be92f67188366b40e7f5afc8a641519b216a30e5496fb"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/native_accounting.json",
+      "bytes": 100,
+      "sha256": "f330b6eff4df577344ddaf4e480840f112a498bdc1455e37862d5c8b6405f67c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "44a005a0cea207a97679ed1dfde691440d31f7e984629b8478cbebc4dd8b2a4c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/build.log",
+      "bytes": 285,
+      "sha256": "ae3c6e944cdc49c4a71ef7f4e7148f7c06d87e7ace5d4f96a88bf075f979e79a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/train.log",
+      "bytes": 38502,
+      "sha256": "d0e245bda8278a72555f4d658fa84a9136095e4b20f62438bdeaf4f7d69cee7b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/ldd.txt",
+      "bytes": 1650,
+      "sha256": "f528c913781b489fd451176642c9ba37bad35311feed5a8a1c3e1768fc5f0345"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/nvcc.txt",
+      "bytes": 208,
+      "sha256": "d039bce5999cd136f7ea930eee0408e108a8887b3ae7b0050de6071f20cd9817"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/nvidia-smi.txt",
+      "bytes": 1689,
+      "sha256": "276976f391e06375d23505c401cb284429b03c3e020ecf8c1aa920942c5dd264"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/logs/spatial_cartpole/n1_s73_t999424.ini",
+      "bytes": 5390,
+      "sha256": "91a445f49beac5b2b5c803492a2203263de1c96c3334a58180014b47683c221c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/checkpoints/spatial_cartpole/n1_s73_t999424/0000000000999424.bin",
+      "bytes": 102672,
+      "sha256": "44a005a0cea207a97679ed1dfde691440d31f7e984629b8478cbebc4dd8b2a4c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/build_spatial.sh",
+      "bytes": 20547,
+      "sha256": "362e9df2f8ab3de76ee8f2e48af443990e59e3e9c0a56d30b0f08f25d9ef69d4"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/prepare_puffer_environment.py",
+      "bytes": 4141,
+      "sha256": "bf0f429abb587b2572b8585741c75766bb94e887deb40e97549468feaf83e778"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/puffer_training_support.py",
+      "bytes": 4128,
+      "sha256": "55ff1f799628b494da89873b96de188c8f6974ffa6d7f18b5b397f20d3f98643"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/run_puffer_training.py",
+      "bytes": 10921,
+      "sha256": "6f26fff6f9574533785212b956c02545ad8b04fa4460292824974079d2c245b4"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/config/default.ini",
+      "bytes": 5129,
+      "sha256": "7f493977f49f2537a59c18c2a283f062e5d6063d9e130c2d15f6be075cda1084"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/config/spatial_cartpole.ini",
+      "bytes": 505,
+      "sha256": "a3366f827e4c63a741175cb94bf08162f7ccdc609d08ab3249b9a11954a481ab"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/ocean/spatial_cartpole/evaluation_io.h",
+      "bytes": 4373,
+      "sha256": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/ocean/spatial_cartpole/spatial_cartpole.h",
+      "bytes": 6327,
+      "sha256": "7ed64e48c7aaa5c20a2f7cf8f258a953b12868d3a20375275a23fca0208d689a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/ocean/spatial_cartpole/spatial_core.h",
+      "bytes": 5993,
+      "sha256": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/resources/spatial_cartpole/integration.json",
+      "bytes": 1069,
+      "sha256": "3fe1e98c080b458e617b066b461f7941c0e9efebc40d8700d15085b2bfb3665c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/resources/spatial_cartpole/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/spatial_patches/algo.cu",
+      "bytes": 69278,
+      "sha256": "9566889afd9fb87768898a69429b8be23ce554bf70c9e48eb7f4de2fc3371e60"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/spatial_patches/pufferl.cu",
+      "bytes": 134609,
+      "sha256": "3ed2595fbcdb24d82c53706eee9cd1784a4c803e4962ea43dfe5814a7add72a6"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/src/algo.cu",
+      "bytes": 69073,
+      "sha256": "4f9a8c6189ebd3c2f058c78aa78f4bfec26ceee0df6995f65e3c306fd2ae9a65"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/src/constellation.c",
+      "bytes": 56112,
+      "sha256": "deda12600fb99755994dcb0a9b84c442dac76259b15910eea83e398150c1f6c4"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/src/ini.h",
+      "bytes": 14358,
+      "sha256": "cd4c83ba12ba40a7bef03ad810246cc0a5880f81e8566f6ac5a089b5c598859f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/src/ocean.cu",
+      "bytes": 2844,
+      "sha256": "511ea7c7c516f3fa658eb6e55f3b4b7204b467d0ce1c816b152ed90f10c5f7ff"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/src/protein.cu",
+      "bytes": 47240,
+      "sha256": "7127fe4fa3e9b0ab76ae0b8a4703357318366b1292f835f02b23bd98a6c90538"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/src/puffercpu.c",
+      "bytes": 33242,
+      "sha256": "6bbcd2d5f37e133972f9bb6df45e3412b8b856893c23764e1ce77582550a7adf"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/src/pufferenv.h",
+      "bytes": 2130,
+      "sha256": "3324a670791e2b3e46cbe7d10d9233d52fbc258e0d7e37d5b0c470e580de880c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/training/pufferlib5_gpu_learning_n1_offset2_001/frozen_inputs/src/pufferl.cu",
+      "bytes": 134525,
+      "sha256": "8feb0cc5334468e60e2db6527121dee8e7028694beed1e431f96e8e2e7843d4a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/result.json",
+      "bytes": 2873,
+      "sha256": "56497a695a1f77ce92c484935b3ffc3a03aea3324985525c6721b69c9b8061c4"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/driver.py",
+      "bytes": 6752,
+      "sha256": "342719fb8add34256472a584faef5a9163ce429c2f8a1294f367e15d888e8ae1"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/inputs.json",
+      "bytes": 3862,
+      "sha256": "dc4272cf57e51e34f40c2f556b5e8aec6a0314db0d35173d7163432d0d3c57b2"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/build.log",
+      "bytes": 267,
+      "sha256": "85e88148a7eb6d7020c543951a78b121ab45f1e01308fedbd012d067e8a38ecd"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation.log",
+      "bytes": 3430,
+      "sha256": "f31ade57e844b105866f0a485b712614c96a46b61c851cf32b83bb483d8aadf1"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/repeat.log",
+      "bytes": 3429,
+      "sha256": "79b015c82c89e6bb829a437506b88ae70f47cd67eac13108529dc097d2f8e08a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/ldd.txt",
+      "bytes": 1650,
+      "sha256": "d893ef9e49cd02b87a29603596cec6186ace56cf828bc981a87715c5ad40d1cd"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/plan/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "1e342aa05611dd3c8ec4df0c44f57b8ea75407b8feed7d3a9bffe5a63d83c563"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/plan/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/plan/plan.bin",
+      "bytes": 1428,
+      "sha256": "abf3549e308a486e7b6a1b74cfa65ed12b23c656f416b598354a2bfc6632e3f0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/plan/plan.json",
+      "bytes": 7569,
+      "sha256": "65ab967ca45224b2e82966a20c32cfbfd38ff9ccffc44800368a2a6f681bc7d9"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/repeat_plan/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "1e342aa05611dd3c8ec4df0c44f57b8ea75407b8feed7d3a9bffe5a63d83c563"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/repeat_plan/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/repeat_plan/plan.bin",
+      "bytes": 132,
+      "sha256": "58956a21f33749c18e102ae932eee078e2a66884c8d0e77705a4dd40b66b9c20"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/repeat_plan/plan.json",
+      "bytes": 1143,
+      "sha256": "0fd43a5145787eec4cacae6dcc37807171d1e27c1c750ef29dca2058ac03856d"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/build_inputs/build_spatial.sh",
+      "bytes": 20565,
+      "sha256": "69ebeec01aa7831086e76a5a8cb8f0c9fa492761d0bbc35ae534425d30a0707a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/build_inputs/config/spatial_cartpole.ini",
+      "bytes": 485,
+      "sha256": "93039302c64024010f1cd970e695a5e323a6205e32cff4f5e92681360f13ecd0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/build_inputs/ocean/spatial_cartpole/evaluation_io.h",
+      "bytes": 4373,
+      "sha256": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/build_inputs/ocean/spatial_cartpole/spatial_cartpole.h",
+      "bytes": 6061,
+      "sha256": "18a96f0fcec79cd0c3e4d3816bb6e732b32ab89854d6e8d3256ec92fdc05db8a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/build_inputs/ocean/spatial_cartpole/spatial_core.h",
+      "bytes": 5993,
+      "sha256": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/build_inputs/resources/spatial_cartpole/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/build_inputs/spatial_patches/algo.cu",
+      "bytes": 69278,
+      "sha256": "9566889afd9fb87768898a69429b8be23ce554bf70c9e48eb7f4de2fc3371e60"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/build_inputs/spatial_patches/pufferl.cu",
+      "bytes": 134609,
+      "sha256": "3ed2595fbcdb24d82c53706eee9cd1784a4c803e4962ea43dfe5814a7add72a6"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/native_accounting.json",
+      "bytes": 93,
+      "sha256": "5566f3668644fcbee3ec970955864bcb5c660a2faa794090af3ccc22936e0daf"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/seed20261016.npz",
+      "bytes": 10507,
+      "sha256": "6f3a2d9face4a09f9150150ba6e8ee1611d0bd80629003acbafe5c9db1c26fca"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/seed20261116.npz",
+      "bytes": 9198,
+      "sha256": "a76a5edd9d792f83d2fe9dc7b3b7bbd0c3e392f7c8994ce5eae41b865bd2ab5d"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/seed20261117.npz",
+      "bytes": 8680,
+      "sha256": "139c66eac82e663ee8c8708381d2c43fa9820bd2fad4d83d7df8cf4d760eb1bd"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/seed20261118.npz",
+      "bytes": 7994,
+      "sha256": "67b4c9a327aa5cdbf193df414f41379317c82e7110dc3c303a0acb4c7df1658c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/seed20261119.npz",
+      "bytes": 10243,
+      "sha256": "27685f00f934d5f3911f5e1330f500f85fbde410eaf5b94c83556b526e50ecff"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/seed20261120.npz",
+      "bytes": 11968,
+      "sha256": "7c5f23332d0a60217c90cf2c45e71e156f9dd2ff82aac25d15897df485a2a60d"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/seed20261121.npz",
+      "bytes": 8340,
+      "sha256": "3ae544ce828f73d12c700a9c989886646615bf6e0652461f4d86a935b4f7945f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/seed20261122.npz",
+      "bytes": 7309,
+      "sha256": "308c788572717ec953a60ece112d5b38fa97d919d541ecf19cee32d9b24b3294"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/seed20261123.npz",
+      "bytes": 7655,
+      "sha256": "8df627a1af12a1f0a34b6f6baaf1d1305051ed0766ccbe7e036f3b4f5f1f0fe8"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/seed20261124.npz",
+      "bytes": 7987,
+      "sha256": "ad7ef7c0c1a65e17bf3780c6b21b24eb6b0aff8f45f46838c899b6d3e92f8dfb"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/seed20261125.npz",
+      "bytes": 9376,
+      "sha256": "65b3664441de72ff68a8ed84f8a7db47210a27829c6b66c2e12979e978473489"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/seed20261126.npz",
+      "bytes": 9720,
+      "sha256": "724dd434c277a1dd6a71bf857227b37b125f28ed8cec4e97def13ad69d9966cc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/seed20261127.npz",
+      "bytes": 10260,
+      "sha256": "eca5f9374770c8beab91a0ccf4f6729ebe5dfcebe9cc9140b1ea564248bf3455"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/evaluation_import/summary.json",
+      "bytes": 8910,
+      "sha256": "743016da3cfee9a9bbefa30c3d28daa65fafb4f486f5990a4b2ea965bc6a69a8"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/repeat_import/native_accounting.json",
+      "bytes": 91,
+      "sha256": "c4718dc9f2912b568477f01061175043790563578c03c7cf5ae47ec6abe47722"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/repeat_import/seed20261016.npz",
+      "bytes": 10507,
+      "sha256": "6f3a2d9face4a09f9150150ba6e8ee1611d0bd80629003acbafe5c9db1c26fca"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/repeat_import/summary.json",
+      "bytes": 1291,
+      "sha256": "26e982a90fde4c26a67c07bc61c6ea694ee7e1a002f26a679c7cecdfe90fbe84"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_001/native_traces.zip",
+      "bytes": 107300,
+      "sha256": "0b3f758513c40fd54bd8b25552d2eae44b18b4833ba3c0cdf51e9edb139d7e63"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/result.json",
+      "bytes": 3064,
+      "sha256": "2988104cd3ff94f570bbcf44c3771378ee2e86fbf4dee959704364a5f79172ce"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/driver.py",
+      "bytes": 7079,
+      "sha256": "a92f8f58301fb03ab407b0bc56d25eb2b26a8a10a27956b6b1dc7e072d6fbd85"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/inputs.json",
+      "bytes": 3918,
+      "sha256": "a042ad9b543896a1ab394a6e0a0874194f983ce2758633ea948f459c3d1f96aa"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/build.log",
+      "bytes": 295,
+      "sha256": "ef0fabfa7b81ecf7aafdc9e51708e6581cf876d28cf25676ce34ac5162faf311"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation.log",
+      "bytes": 19830,
+      "sha256": "1c8d552ff4abf03e76e22cc973c953c94214cd56b0c33b6394b259948ecf1586"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/repeat.log",
+      "bytes": 3089,
+      "sha256": "61396c5d3ce931c9d7329bb37bef29740dab408d7d6c6478fbaffa9d7b8a9e7a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/ldd.txt",
+      "bytes": 1650,
+      "sha256": "a5ba6ea934e7a1438bfada13502d5a69d47871e5ef7a0a7ec2e63dbceacb0fea"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/plan/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "1c134a836945742beb889bf96023d467b324145487ea638ec835935bf25c1726"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/plan/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/plan/plan.bin",
+      "bytes": 1428,
+      "sha256": "abf3549e308a486e7b6a1b74cfa65ed12b23c656f416b598354a2bfc6632e3f0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/plan/plan.json",
+      "bytes": 7603,
+      "sha256": "efa7b0f374301db18205f43b9db69060d6e7fd3f75209cd685a346cd583f9d70"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/repeat_plan/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "1c134a836945742beb889bf96023d467b324145487ea638ec835935bf25c1726"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/repeat_plan/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/repeat_plan/plan.bin",
+      "bytes": 132,
+      "sha256": "58956a21f33749c18e102ae932eee078e2a66884c8d0e77705a4dd40b66b9c20"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/repeat_plan/plan.json",
+      "bytes": 1177,
+      "sha256": "966a69971bd4bcbd1feeb0306c82b2715a5faf55c1c52d7f7da60cf5a9c91092"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/build_inputs/build_spatial.sh",
+      "bytes": 20565,
+      "sha256": "69ebeec01aa7831086e76a5a8cb8f0c9fa492761d0bbc35ae534425d30a0707a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/build_inputs/config/spatial_cartpole.ini",
+      "bytes": 505,
+      "sha256": "a3366f827e4c63a741175cb94bf08162f7ccdc609d08ab3249b9a11954a481ab"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/build_inputs/ocean/spatial_cartpole/evaluation_io.h",
+      "bytes": 4373,
+      "sha256": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/build_inputs/ocean/spatial_cartpole/spatial_cartpole.h",
+      "bytes": 6327,
+      "sha256": "7ed64e48c7aaa5c20a2f7cf8f258a953b12868d3a20375275a23fca0208d689a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/build_inputs/ocean/spatial_cartpole/spatial_core.h",
+      "bytes": 5993,
+      "sha256": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/build_inputs/resources/spatial_cartpole/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/build_inputs/spatial_patches/algo.cu",
+      "bytes": 69278,
+      "sha256": "9566889afd9fb87768898a69429b8be23ce554bf70c9e48eb7f4de2fc3371e60"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/build_inputs/spatial_patches/pufferl.cu",
+      "bytes": 134623,
+      "sha256": "4a27159db29ff62d99fccc2be0e10a1d667127852752baf1028de83c0fd52e1b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/native_accounting.json",
+      "bytes": 96,
+      "sha256": "c42bf03183622cdf4112d0bcb96e9f3407701fc0ca1eb53a002d31d8098f28d9"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/seed20261016.npz",
+      "bytes": 256532,
+      "sha256": "e3eacc9ca8bd774d8ebab8f736cda5982c0997fbbb3c611ba979796008dbc2b1"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/seed20261116.npz",
+      "bytes": 256573,
+      "sha256": "19ac63228fa23743e3ccd76c174c81ee8dfb32a9c8287bfe7f30fd0539b197cd"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/seed20261117.npz",
+      "bytes": 256449,
+      "sha256": "3a934f732eadad10af94fd904fdfa3a0572cff9b2d7d55ab1c263fb3881013e5"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/seed20261118.npz",
+      "bytes": 256404,
+      "sha256": "c047e546fceec7f762953f7abc042787c275dc9e1615902a8c52b356555bf4bc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/seed20261119.npz",
+      "bytes": 256394,
+      "sha256": "67f1ffcc1484a271c40797cdbecc9964b8f72bd5ceada7cbb28f7ec983ce7b40"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/seed20261120.npz",
+      "bytes": 256579,
+      "sha256": "7a125c63af4dbccae917f20695b784795b9dfc8dd4d424a4981e349c4d6300d5"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/seed20261121.npz",
+      "bytes": 256617,
+      "sha256": "ba2ceccad4cfdf04245a12800625edd09eb623d2f580120be4819a25cd7c9837"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/seed20261122.npz",
+      "bytes": 255176,
+      "sha256": "0c499de76801e065df6c63f136d43f48434479a94d4630c4392abfa2ddf93bc8"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/seed20261123.npz",
+      "bytes": 256470,
+      "sha256": "006e299bc450e516b942e49eb790fdffcb52a559f7de782772355ad695fdd40b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/seed20261124.npz",
+      "bytes": 256451,
+      "sha256": "14d1d7e42671fe78bc070f05f9540bf38f79a3090fd2335268df7ce4c0d84555"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/seed20261125.npz",
+      "bytes": 228200,
+      "sha256": "e7bb0b1f0b16fc5f8d3b6f056ec865fa46b3f815b1675910a1738a8cc8d1cadd"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/seed20261126.npz",
+      "bytes": 249826,
+      "sha256": "668cafb3fbde1aba011d669d95249309df75265a77f25c60833831766d81e113"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/seed20261127.npz",
+      "bytes": 256380,
+      "sha256": "090d8837cc791ea160ec7306b32b32f9740db8565b43f9dacce451ffa04efa9c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/evaluation_import/summary.json",
+      "bytes": 8957,
+      "sha256": "feff0a16a1360b09f16d90205425a13412d6565a80d68c8e1c56a39fab66725f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/repeat_import/native_accounting.json",
+      "bytes": 94,
+      "sha256": "e8827bda5cf0925e3554e434468d48008e7e2a09bf9d3779f0d2875779594869"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/repeat_import/seed20261016.npz",
+      "bytes": 256532,
+      "sha256": "e3eacc9ca8bd774d8ebab8f736cda5982c0997fbbb3c611ba979796008dbc2b1"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/repeat_import/summary.json",
+      "bytes": 1300,
+      "sha256": "647d285dcaa26c0499184ff3d537e9b76d12f486d4490f6593261143f8d2fdec"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_mean_001/native_traces.zip",
+      "bytes": 3832254,
+      "sha256": "70c89dd1627571a385c77dcf6fba3bc57d38c51e4ee8e0a84e9f29f5a1476e7d"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/result.json",
+      "bytes": 3100,
+      "sha256": "d815d85a9f6193a530d815cb4012b9ecb0050e7f81ba12709cd77b5e231e54af"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/driver.py",
+      "bytes": 7079,
+      "sha256": "a92f8f58301fb03ab407b0bc56d25eb2b26a8a10a27956b6b1dc7e072d6fbd85"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/inputs.json",
+      "bytes": 3930,
+      "sha256": "1e39f1b5d9e035dc1104f62728d451dd705f2ac17a7711b8af339827cd5a86f4"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/build.log",
+      "bytes": 263,
+      "sha256": "fceeefd71eabf7addc6dc9321e6fc94641f679cfd41c8004dfa4bc80215410b7"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation.log",
+      "bytes": 19830,
+      "sha256": "22060939e3e616841589fd493069de222eefa0e4dbb79d1715130dcdd374a1b8"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/repeat.log",
+      "bytes": 3089,
+      "sha256": "6e69564573e82c47adc2d40806577eccdde349130eea0472bbe8c44704a92acb"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/ldd.txt",
+      "bytes": 1650,
+      "sha256": "3844d710955e003ccfd7c66e5632e5f74f09d790c34f6d2b13294164be660bca"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/plan/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "1c134a836945742beb889bf96023d467b324145487ea638ec835935bf25c1726"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/plan/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/plan/plan.bin",
+      "bytes": 1428,
+      "sha256": "abf3549e308a486e7b6a1b74cfa65ed12b23c656f416b598354a2bfc6632e3f0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/plan/plan.json",
+      "bytes": 7606,
+      "sha256": "31af52929ae14dca931fe58bfeb042628de00504b8b303ccf5ccf335772d5120"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/repeat_plan/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "1c134a836945742beb889bf96023d467b324145487ea638ec835935bf25c1726"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/repeat_plan/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/repeat_plan/plan.bin",
+      "bytes": 132,
+      "sha256": "58956a21f33749c18e102ae932eee078e2a66884c8d0e77705a4dd40b66b9c20"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/repeat_plan/plan.json",
+      "bytes": 1180,
+      "sha256": "508521cc2b130bb3072eb62d2c1746b22bbef95bedbedf275b726093b02626cf"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/build_inputs/build_spatial.sh",
+      "bytes": 20565,
+      "sha256": "69ebeec01aa7831086e76a5a8cb8f0c9fa492761d0bbc35ae534425d30a0707a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/build_inputs/config/spatial_cartpole.ini",
+      "bytes": 505,
+      "sha256": "a3366f827e4c63a741175cb94bf08162f7ccdc609d08ab3249b9a11954a481ab"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/build_inputs/ocean/spatial_cartpole/evaluation_io.h",
+      "bytes": 4373,
+      "sha256": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/build_inputs/ocean/spatial_cartpole/spatial_cartpole.h",
+      "bytes": 6327,
+      "sha256": "7ed64e48c7aaa5c20a2f7cf8f258a953b12868d3a20375275a23fca0208d689a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/build_inputs/ocean/spatial_cartpole/spatial_core.h",
+      "bytes": 5993,
+      "sha256": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/build_inputs/resources/spatial_cartpole/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/build_inputs/spatial_patches/algo.cu",
+      "bytes": 69278,
+      "sha256": "9566889afd9fb87768898a69429b8be23ce554bf70c9e48eb7f4de2fc3371e60"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/build_inputs/spatial_patches/pufferl.cu",
+      "bytes": 134609,
+      "sha256": "3ed2595fbcdb24d82c53706eee9cd1784a4c803e4962ea43dfe5814a7add72a6"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/native_accounting.json",
+      "bytes": 96,
+      "sha256": "f412387bb82b27d7ac374e761b8330d170996d773877cd5b1ad705235635efa1"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/seed20261016.npz",
+      "bytes": 257600,
+      "sha256": "b760c7d5beffdd42e4f49ece37fe9ec61cce1c5cf22444e1c7940545113d44a6"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/seed20261116.npz",
+      "bytes": 257779,
+      "sha256": "a5d0ca4b246ca668c61b0675a7072e96972d9c2350daf631f288fe9d41b4fde9"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/seed20261117.npz",
+      "bytes": 245671,
+      "sha256": "c9f54a15e4368fcfadcc793d8dbe256962b1a75ad07b4c00d1501c836aefb041"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/seed20261118.npz",
+      "bytes": 217145,
+      "sha256": "5a7fc5e16f8f4f4d57cb862f536ab9e1faf28f77132cd382863e6f2b64073fb8"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/seed20261119.npz",
+      "bytes": 257833,
+      "sha256": "5c0426ffbce233b38ece08f681657868b40ca96155c6ed32131173f239689ef4"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/seed20261120.npz",
+      "bytes": 213663,
+      "sha256": "204ac3d1bbc402a6d3bcac4f3d221e0589257f49e318e631f469ce952bef30e1"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/seed20261121.npz",
+      "bytes": 257724,
+      "sha256": "1689820553e13d0ffe124e9c60af0591daaba900c93fa9cfc71dfa5796650536"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/seed20261122.npz",
+      "bytes": 257631,
+      "sha256": "179b67f4f30441ea4c53e7ee5170eeff0e6ee266bae23384f172951b9780c2ee"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/seed20261123.npz",
+      "bytes": 255702,
+      "sha256": "3cc469d1db001ada95e797e7836cb4ce78f4b0c1a965ee883cdeaf8ab8453c09"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/seed20261124.npz",
+      "bytes": 257639,
+      "sha256": "caab9279e0ef126fbc38a87449099d8cd32341a7b70ca71c626b307c7621789d"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/seed20261125.npz",
+      "bytes": 257765,
+      "sha256": "5708a65ee2687b49a94c95cfbc60571b151281593c61c6b09c45cfa01166b9bc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/seed20261126.npz",
+      "bytes": 239794,
+      "sha256": "b7d9473fa5dd02c3fd73ae4a3c908933b9b18307c0150111a703d530ad353cbe"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/seed20261127.npz",
+      "bytes": 236404,
+      "sha256": "902be7fbc6102c1729e0c4f5ffaa2c4091cdf199920a0f0633457868b088768d"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/evaluation_import/summary.json",
+      "bytes": 8956,
+      "sha256": "2d511831840433bb49144283fcd84339735f4148e3fea85363de968af1b84833"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/repeat_import/native_accounting.json",
+      "bytes": 94,
+      "sha256": "e8827bda5cf0925e3554e434468d48008e7e2a09bf9d3779f0d2875779594869"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/repeat_import/seed20261016.npz",
+      "bytes": 257600,
+      "sha256": "b760c7d5beffdd42e4f49ece37fe9ec61cce1c5cf22444e1c7940545113d44a6"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/repeat_import/summary.json",
+      "bytes": 1300,
+      "sha256": "7f9d62a5d61d12c1d466aee9ae4255517a74fded6e82dc689555481d2db4d7f1"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_extended_sampled_001/native_traces.zip",
+      "bytes": 3749726,
+      "sha256": "3c84e4e415e4da2298404de938db2227fa01a2681f50a4da9cdfd16e4062b9f9"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/result.json",
+      "bytes": 2942,
+      "sha256": "65cc1592cc7ef176ff0b4142c24391f1f3f3fbba97183fb1ae1668c6a9115863"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/driver.py",
+      "bytes": 6918,
+      "sha256": "c71bd9e7e474667806ae1b5629dca56158d8a2d5c97a1a56237930208cca3351"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/inputs.json",
+      "bytes": 3902,
+      "sha256": "e0abfb8f26129d78634b4b805d7ce88cf043a3c8b1c70fecb7d54b2d6f16df35"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/build.log",
+      "bytes": 241,
+      "sha256": "e42a0faf828d513e8bff3edba0275dd100aad9172a950861f308c2db7e23026d"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation.log",
+      "bytes": 9786,
+      "sha256": "7e9edaafa5193c354cfbd19d54305dfd3a6db26d11d2ba0ae581b80176054e34"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/repeat.log",
+      "bytes": 3089,
+      "sha256": "79800a6ed3e6ef81fe83a9001848e0c677583b333f8ff42d9517d75c68f72251"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/ldd.txt",
+      "bytes": 1650,
+      "sha256": "e1d985aaaf6512a86c405072605f1404c37325b1f20878ffa9ee975549626bda"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/plan/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "8c8dbdfc45cd5015e6e082bfb215c38a3e96ce909ba6471217e996dc671da1c0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/plan/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/plan/plan.bin",
+      "bytes": 1428,
+      "sha256": "abf3549e308a486e7b6a1b74cfa65ed12b23c656f416b598354a2bfc6632e3f0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/plan/plan.json",
+      "bytes": 7569,
+      "sha256": "00de73f22a1abc03237b95f5e0a425e1f5cf1d344bbb8b7f68e32f4440bc5c29"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/repeat_plan/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "8c8dbdfc45cd5015e6e082bfb215c38a3e96ce909ba6471217e996dc671da1c0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/repeat_plan/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/repeat_plan/plan.bin",
+      "bytes": 132,
+      "sha256": "58956a21f33749c18e102ae932eee078e2a66884c8d0e77705a4dd40b66b9c20"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/repeat_plan/plan.json",
+      "bytes": 1143,
+      "sha256": "221e4856c3809616468ac3debd640b6d969e0739264bcdfce9469433772637c6"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/build_inputs/build_spatial.sh",
+      "bytes": 20565,
+      "sha256": "69ebeec01aa7831086e76a5a8cb8f0c9fa492761d0bbc35ae534425d30a0707a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/build_inputs/config/spatial_cartpole.ini",
+      "bytes": 505,
+      "sha256": "a3366f827e4c63a741175cb94bf08162f7ccdc609d08ab3249b9a11954a481ab"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/build_inputs/ocean/spatial_cartpole/evaluation_io.h",
+      "bytes": 4373,
+      "sha256": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/build_inputs/ocean/spatial_cartpole/spatial_cartpole.h",
+      "bytes": 6327,
+      "sha256": "7ed64e48c7aaa5c20a2f7cf8f258a953b12868d3a20375275a23fca0208d689a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/build_inputs/ocean/spatial_cartpole/spatial_core.h",
+      "bytes": 5993,
+      "sha256": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/build_inputs/resources/spatial_cartpole/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/build_inputs/spatial_patches/algo.cu",
+      "bytes": 69278,
+      "sha256": "9566889afd9fb87768898a69429b8be23ce554bf70c9e48eb7f4de2fc3371e60"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/build_inputs/spatial_patches/pufferl.cu",
+      "bytes": 134609,
+      "sha256": "3ed2595fbcdb24d82c53706eee9cd1784a4c803e4962ea43dfe5814a7add72a6"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/native_accounting.json",
+      "bytes": 96,
+      "sha256": "4b5a103eef88585396eb8e2b43683f4f3bd9cae8395b4271b5ed06b5839c70b3"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/seed20261016.npz",
+      "bytes": 113802,
+      "sha256": "d6491064540bb083afff29b38f34fdf34dee82c35c98c15dd452e4c5ff0822be"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/seed20261116.npz",
+      "bytes": 144706,
+      "sha256": "1e7dfecca12cd05afed03fe04d1fad9b91f6d525028ce9d4399e1ce102b7199b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/seed20261117.npz",
+      "bytes": 193656,
+      "sha256": "c0824baeea3244f9db1826e82a8d0d6177f405a20c54ff386506e1751d6f72ae"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/seed20261118.npz",
+      "bytes": 164294,
+      "sha256": "843501987832db657db0e0787d8664fac60c463dedfe1887e38d51c3be11b993"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/seed20261119.npz",
+      "bytes": 178473,
+      "sha256": "9e5b591f25e8c6afaa4a702e2d91b5cde8fc58cddcb06cc1c5a31cac4ef9fa13"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/seed20261120.npz",
+      "bytes": 238906,
+      "sha256": "50aeb8db79c4de96bf2e347b6a896feff0da2a85364e942e7b8196f05ddc6718"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/seed20261121.npz",
+      "bytes": 252078,
+      "sha256": "6d78b14d56365898fca466af485918cb5bc04d4cc7d4f4fa97a61e2b5d1019f2"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/seed20261122.npz",
+      "bytes": 251400,
+      "sha256": "51796afab79109b6cd7c05d9e819f24a978bc20661868d8f7baabdd24e3b362d"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/seed20261123.npz",
+      "bytes": 158480,
+      "sha256": "e06d5493c50ffb2f24564ea6e6c3ffbb3e3ab892836cb4cfa2301d5bf498e6de"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/seed20261124.npz",
+      "bytes": 233938,
+      "sha256": "162a96d6cd023d45000b02edd911200b8123a0f8ac16063afe5b8c6c99752b0a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/seed20261125.npz",
+      "bytes": 167068,
+      "sha256": "a8261920e28e714cf857babe147219099a909015ccb6ada62ce96624bb67405d"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/seed20261126.npz",
+      "bytes": 62497,
+      "sha256": "3f710da23a5428ba75f33d5aaec7ad50e46781a1afe5b43bf10d145f3a755ae7"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/seed20261127.npz",
+      "bytes": 231207,
+      "sha256": "a24e8c60f1164c974c2e17705451c34d98190bf3f23acf185faba9802c5b45a5"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/evaluation_import/summary.json",
+      "bytes": 8963,
+      "sha256": "6eb1de8f60c651decbf04980dd72af9b0ff2848bfdf7a6b71394500f59521b0e"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/repeat_import/native_accounting.json",
+      "bytes": 93,
+      "sha256": "b6d2487a1b6f3347a1b81f0e32c15b92989840d504e73882ef89959df2c1c077"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/repeat_import/seed20261016.npz",
+      "bytes": 113802,
+      "sha256": "d6491064540bb083afff29b38f34fdf34dee82c35c98c15dd452e4c5ff0822be"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/repeat_import/summary.json",
+      "bytes": 1299,
+      "sha256": "5936762700dbf9565a1367083e1299a1e56134b759e119da934400169b2692c3"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_001/native_traces.zip",
+      "bytes": 2648582,
+      "sha256": "d2c098e2681e511a9e368c817ae315c99674fdcc69ba65010b6042cd2d334be7"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/result.json",
+      "bytes": 3032,
+      "sha256": "81db3d1c0257d175789017f8c86a59e84d01b7910e10f9a334eff9a264f052ab"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/driver.py",
+      "bytes": 7079,
+      "sha256": "a92f8f58301fb03ab407b0bc56d25eb2b26a8a10a27956b6b1dc7e072d6fbd85"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/inputs.json",
+      "bytes": 3906,
+      "sha256": "dcd15444211967b8f03dec4467dd99e3868327a4070a233d6f5e30b521f6905f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/build.log",
+      "bytes": 251,
+      "sha256": "4336ab15bd7b6cbfba16ca8322c11c7637a76487059cabc2c18ad957369f4679"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation.log",
+      "bytes": 9786,
+      "sha256": "9816a4a26884fd507ac0e7457c1773e0c79d1835c1a04797b8b082c2b0f0ecd6"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/repeat.log",
+      "bytes": 3089,
+      "sha256": "668deee95eb3f43e9a652a6a5a77e57c8e230cf1a752b0bded16a2814912ff92"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/ldd.txt",
+      "bytes": 1650,
+      "sha256": "d845f8b75779f643ba5e421e84d546121e1ad05416df62856d4781e8c0ef5305"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/plan/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "8c8dbdfc45cd5015e6e082bfb215c38a3e96ce909ba6471217e996dc671da1c0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/plan/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/plan/plan.bin",
+      "bytes": 1428,
+      "sha256": "abf3549e308a486e7b6a1b74cfa65ed12b23c656f416b598354a2bfc6632e3f0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/plan/plan.json",
+      "bytes": 7603,
+      "sha256": "880eae86597375060af2babba7b04c3d36ad921d33607b822f03db179f7a64a9"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/repeat_plan/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "8c8dbdfc45cd5015e6e082bfb215c38a3e96ce909ba6471217e996dc671da1c0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/repeat_plan/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/repeat_plan/plan.bin",
+      "bytes": 132,
+      "sha256": "58956a21f33749c18e102ae932eee078e2a66884c8d0e77705a4dd40b66b9c20"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/repeat_plan/plan.json",
+      "bytes": 1177,
+      "sha256": "ef42ec215c4e2490408ecf46c139c8beab00bf7bac6d5c5ee19f4794cc668cce"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/build_inputs/build_spatial.sh",
+      "bytes": 20565,
+      "sha256": "69ebeec01aa7831086e76a5a8cb8f0c9fa492761d0bbc35ae534425d30a0707a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/build_inputs/config/spatial_cartpole.ini",
+      "bytes": 505,
+      "sha256": "a3366f827e4c63a741175cb94bf08162f7ccdc609d08ab3249b9a11954a481ab"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/build_inputs/ocean/spatial_cartpole/evaluation_io.h",
+      "bytes": 4373,
+      "sha256": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/build_inputs/ocean/spatial_cartpole/spatial_cartpole.h",
+      "bytes": 6327,
+      "sha256": "7ed64e48c7aaa5c20a2f7cf8f258a953b12868d3a20375275a23fca0208d689a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/build_inputs/ocean/spatial_cartpole/spatial_core.h",
+      "bytes": 5993,
+      "sha256": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/build_inputs/resources/spatial_cartpole/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/build_inputs/spatial_patches/algo.cu",
+      "bytes": 69278,
+      "sha256": "9566889afd9fb87768898a69429b8be23ce554bf70c9e48eb7f4de2fc3371e60"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/build_inputs/spatial_patches/pufferl.cu",
+      "bytes": 134623,
+      "sha256": "4a27159db29ff62d99fccc2be0e10a1d667127852752baf1028de83c0fd52e1b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/native_accounting.json",
+      "bytes": 96,
+      "sha256": "b856099be91441eed108a75dae11c9a9f979599bba777a0448ae4d06310ea2b1"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/seed20261016.npz",
+      "bytes": 257076,
+      "sha256": "27bccc2ed355f07063420401e0e50ad411d12a8d33b1faeb15afbbd975f3cbc2"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/seed20261116.npz",
+      "bytes": 196972,
+      "sha256": "b364d015e14c974c18a34306711b0170a1159d642486ca337444a80ba6e00877"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/seed20261117.npz",
+      "bytes": 225690,
+      "sha256": "368f416217a22df98f4c97954dfd4fb6475b2e201fb155784d29db8ef9fadfef"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/seed20261118.npz",
+      "bytes": 257214,
+      "sha256": "fc9f1715460efff328340ef7edbbcdbb47f4cce8ac6f221279ee2d4188ea22bf"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/seed20261119.npz",
+      "bytes": 249388,
+      "sha256": "c45b615dcc3e69be52df83fe34cc5e33a307eac7552fab8d076669764a41916e"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/seed20261120.npz",
+      "bytes": 219356,
+      "sha256": "bc387b6f270e68a33de605a950133df9da3339842b26871f742a078b0194d0ee"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/seed20261121.npz",
+      "bytes": 240350,
+      "sha256": "1780cf939c0d10e29bbfcc682240ea3f08ca5cd7615893a734bce132d4ecee07"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/seed20261122.npz",
+      "bytes": 257384,
+      "sha256": "e8799c1477692e7005c3c52734acacdbc63de0db7c53662c9d1b0a76ed687214"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/seed20261123.npz",
+      "bytes": 195021,
+      "sha256": "ffc21cffc1ebb6ff5e9d3efe9ab9736beac4ef4dea80648dea7a2e2799085a27"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/seed20261124.npz",
+      "bytes": 253143,
+      "sha256": "efd7dcac8bb8ad0b8f2dd67ad75932212079c1415a8166084ab83ae82e99f42a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/seed20261125.npz",
+      "bytes": 218074,
+      "sha256": "cdb0d45a254d042952814ec35823f1bca525e1410acad1649c20d196f7101cc0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/seed20261126.npz",
+      "bytes": 227987,
+      "sha256": "f76fa246a0e7cad1e09dee654941e417cc08fe9b35529057ff3a7489f033400f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/seed20261127.npz",
+      "bytes": 257147,
+      "sha256": "f12d850674494557fa8113a88e1a85007126b7697353ec8c1ff84fa6af69acb4"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/evaluation_import/summary.json",
+      "bytes": 8963,
+      "sha256": "c6c8eb9034e39f9a6a79cb9c0472ac757a0ec033af5a24dfba6955b7dc5659a1"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/repeat_import/native_accounting.json",
+      "bytes": 94,
+      "sha256": "e8827bda5cf0925e3554e434468d48008e7e2a09bf9d3779f0d2875779594869"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/repeat_import/seed20261016.npz",
+      "bytes": 257076,
+      "sha256": "27bccc2ed355f07063420401e0e50ad411d12a8d33b1faeb15afbbd975f3cbc2"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/repeat_import/summary.json",
+      "bytes": 1298,
+      "sha256": "598221e5f22329627a30b7afaf38948bc40c02ace5984375c978c0dc34e63964"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_lr015_mean_001/native_traces.zip",
+      "bytes": 3509408,
+      "sha256": "1b0ce5b1e856ac138f3fb656f5c17240210ce1901d1f9c51c5f59cf686894a78"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/result.json",
+      "bytes": 2961,
+      "sha256": "3441602ffaf2d767f620ad540538913b4a7e0de2f1e56dc1dac62c74a5d122c7"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/driver.py",
+      "bytes": 6918,
+      "sha256": "c71bd9e7e474667806ae1b5629dca56158d8a2d5c97a1a56237930208cca3351"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/inputs.json",
+      "bytes": 3910,
+      "sha256": "dab78f7c5c4aeef73378537a0d12c7492b3d18ade73eb898f7209bc5d691d81c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/build.log",
+      "bytes": 283,
+      "sha256": "fec569e4f93affd9ac82a4370b4fd86807550bd84bcb3eb5a3ce10d739b2614e"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation.log",
+      "bytes": 3430,
+      "sha256": "4b42436c6afcf2c823b4da89fe90c3ec3c15abc96108a4db4f44da51234dfb10"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/repeat.log",
+      "bytes": 3429,
+      "sha256": "5170050404c2862a7efbf61fad1e7f9fe856853f472142950b52953cc5d0b66e"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/ldd.txt",
+      "bytes": 1650,
+      "sha256": "9a8b243653d35fb47ca71f5eef9994ed19fea47b55b7943bce2cf64bb7f02c8a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/plan/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "44a005a0cea207a97679ed1dfde691440d31f7e984629b8478cbebc4dd8b2a4c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/plan/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/plan/plan.bin",
+      "bytes": 1428,
+      "sha256": "abf3549e308a486e7b6a1b74cfa65ed12b23c656f416b598354a2bfc6632e3f0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/plan/plan.json",
+      "bytes": 7569,
+      "sha256": "2bb4c8769bcf37cb3c24d43a7fc078de74922c9135640cddfe02d673559d9083"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/repeat_plan/frozen_policy.bin",
+      "bytes": 102672,
+      "sha256": "44a005a0cea207a97679ed1dfde691440d31f7e984629b8478cbebc4dd8b2a4c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/repeat_plan/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/repeat_plan/plan.bin",
+      "bytes": 132,
+      "sha256": "58956a21f33749c18e102ae932eee078e2a66884c8d0e77705a4dd40b66b9c20"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/repeat_plan/plan.json",
+      "bytes": 1143,
+      "sha256": "142176371ccc79a99bf0a95f0ea4f55d9a67bc19a24a0830534f41e18531a6e9"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/build_inputs/build_spatial.sh",
+      "bytes": 20565,
+      "sha256": "69ebeec01aa7831086e76a5a8cb8f0c9fa492761d0bbc35ae534425d30a0707a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/build_inputs/config/spatial_cartpole.ini",
+      "bytes": 505,
+      "sha256": "a3366f827e4c63a741175cb94bf08162f7ccdc609d08ab3249b9a11954a481ab"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/build_inputs/ocean/spatial_cartpole/evaluation_io.h",
+      "bytes": 4373,
+      "sha256": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/build_inputs/ocean/spatial_cartpole/spatial_cartpole.h",
+      "bytes": 6327,
+      "sha256": "7ed64e48c7aaa5c20a2f7cf8f258a953b12868d3a20375275a23fca0208d689a"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/build_inputs/ocean/spatial_cartpole/spatial_core.h",
+      "bytes": 5993,
+      "sha256": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/build_inputs/resources/spatial_cartpole/model.xml",
+      "bytes": 1530,
+      "sha256": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/build_inputs/spatial_patches/algo.cu",
+      "bytes": 69278,
+      "sha256": "9566889afd9fb87768898a69429b8be23ce554bf70c9e48eb7f4de2fc3371e60"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/build_inputs/spatial_patches/pufferl.cu",
+      "bytes": 134609,
+      "sha256": "3ed2595fbcdb24d82c53706eee9cd1784a4c803e4962ea43dfe5814a7add72a6"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/native_accounting.json",
+      "bytes": 93,
+      "sha256": "5d2dd3beef6661a250c5905977a6e501bc15a468f8f5974f4958a72d2fed1531"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/seed20261016.npz",
+      "bytes": 12033,
+      "sha256": "fe7bbfb7a7cd8c0120a27394766770bee55e0323999c0ee49d834940515e8797"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/seed20261116.npz",
+      "bytes": 11804,
+      "sha256": "bcdd9e9583af031f18eb08c6fab65ac2e79a4c33ef42d63312da365a00d85a90"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/seed20261117.npz",
+      "bytes": 9879,
+      "sha256": "b73a6960804c9d53bdfb166304bb7ab48a052a367cb5f8c4d733e69c21427619"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/seed20261118.npz",
+      "bytes": 11445,
+      "sha256": "c6258c2a3f0b841b5771b6ce0372582fc3e30607b073e10a00da5cb5b3e2e411"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/seed20261119.npz",
+      "bytes": 13003,
+      "sha256": "9ed81ec3f8d2434f57e8ea6e3143ba621ab0e1976592bc27c97d2527ce551738"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/seed20261120.npz",
+      "bytes": 8495,
+      "sha256": "e533f9e3a97d31e0b05321d92df8fae057e28338414a53de4a9cd801150f6eeb"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/seed20261121.npz",
+      "bytes": 6943,
+      "sha256": "d73fe22620fa5905da73067a4c256b93e616930eaad4c6962d53a0941328916c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/seed20261122.npz",
+      "bytes": 9882,
+      "sha256": "02b21f145522247f6598c63f9de9cea0e33a57e062884648ae329304e450822c"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/seed20261123.npz",
+      "bytes": 10767,
+      "sha256": "f1f08f1f89893003970d1c1c56718bd2747411c31c20d6143997966bcdbcefa7"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/seed20261124.npz",
+      "bytes": 10411,
+      "sha256": "71cd7740dbeb913fa7fdc48ee93f9b8b62df73c4abfa1ad2e137094804d1c782"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/seed20261125.npz",
+      "bytes": 10403,
+      "sha256": "84b3202f745acbb29b557a939dd087f31c80931a86f18583cf6bf616b6b61680"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/seed20261126.npz",
+      "bytes": 12307,
+      "sha256": "3c2e375cd9610998b0345aa8d3b61cd2e8b0aa8fd5948f4dc6049e328bd4f114"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/seed20261127.npz",
+      "bytes": 7467,
+      "sha256": "89e2c5001b48fef58d3c9b872e0c325959d7e109e19ee3c8c03a46b6951c2eeb"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/evaluation_import/summary.json",
+      "bytes": 8911,
+      "sha256": "0ca3ad1d1ce2608d87f11703ea4b581f4933f956794a6a8c7126c6e5fda2e065"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/repeat_import/native_accounting.json",
+      "bytes": 91,
+      "sha256": "23e891d5861a431e8be447835ec31f5e76a368f091d40339395dbbf6ecb68d14"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/repeat_import/seed20261016.npz",
+      "bytes": 12033,
+      "sha256": "fe7bbfb7a7cd8c0120a27394766770bee55e0323999c0ee49d834940515e8797"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/repeat_import/summary.json",
+      "bytes": 1293,
+      "sha256": "684d1f9dde8061176a62d45e170cc3ec4283d52486262036edc458bb7715400f"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/evaluation/pufferlib5_gpu_evaluation_n1_offset2_001/native_traces.zip",
+      "bytes": 126684,
+      "sha256": "b726ab1ff45e25382ef043f2aa49941499985e080c291ff337d32e6fdc72ccd0"
+    },
+    {
+      "path": "research/pufferlib5_gpu_20261017/failed_setup_native_assessment.json",
+      "bytes": 319,
+      "sha256": "b92959cea16a9f5cf7dc11db4d19b09d1e536689159a0bcf2f42f6521c0125ed"
+    }
+  ]
+}

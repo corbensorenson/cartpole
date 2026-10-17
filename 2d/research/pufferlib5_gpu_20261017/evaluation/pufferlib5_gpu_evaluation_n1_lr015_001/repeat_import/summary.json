@@ -1,0 +1,40 @@
+{
+  "results": [
+    {
+      "seed": 20261016,
+      "initialization": "hanging",
+      "angle_noise": 0.0,
+      "max_tilt": 1.0883310375352149,
+      "best_hold_seconds": 0.0,
+      "plane_margin": -0.023501934587395024,
+      "physics_warning": false,
+      "success": false,
+      "policy_failure": false,
+      "steps": 654,
+      "native_steps": 2616,
+      "proof_native_steps": 2616,
+      "replay_exact": true,
+      "park_seconds": 0.0,
+      "max_force_norm": 80.0,
+      "max_xy": [
+        3.023501934587395,
+        2.5898053133878136
+      ],
+      "trace_sha256": "fa6dea7e681ad14a0b58e21bd6e389709cd9b9c633c8c7fd1ea56a60f3186a57"
+    }
+  ],
+  "passes": 0,
+  "cases": 1,
+  "actual_native_steps": 2616,
+  "additional_native_steps": 2616,
+  "inclusive_native_steps": 5232,
+  "qualification": false,
+  "scope": "development",
+  "checkpoint_sha256": "8c8dbdfc45cd5015e6e082bfb215c38a3e96ce909ba6471217e996dc671da1c0",
+  "every_state_and_delivered_force_byte_exact": true,
+  "every_preobservation_byte_exact": true,
+  "every_world_tilt_and_gate_reconstructed": true,
+  "frozen_closed_loop_reexecution": false,
+  "native_shutdown_accounting_verified": true,
+  "limitation": "cold replay and interface evidence; does not prove neural inference, training quality or a new link certificate"
+}

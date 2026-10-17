@@ -1,0 +1,189 @@
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0               🐡 GPU:  11%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate        0ms   0%    Losses                │
+│ Params            25.7K      Model         0ms   0%    policy                │
+│ Steps              64.0      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime             53ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0              🐡  GPU:  11%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate        0ms   0%    Losses                │
+│ Params            25.7K      Model         0ms   0%    policy                │
+│ Steps              1.7K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime            662ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.000   score                         0.020    │
+│ episode_return             2552.036   episode_length             1500.000    │
+│ hold_seconds                  0.020   rail_exits                    0.000    │
+│ physics_warnings              0.000                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0             🐡   GPU:  85%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate        0ms   0%    Losses                │
+│ Params            25.7K      Model         0ms   0%    policy                │
+│ Steps              3.5K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         1s 274ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.000   score                         0.040    │
+│ episode_return             2699.773   episode_length             1500.000    │
+│ hold_seconds                  0.040   rail_exits                    0.000    │
+│ physics_warnings              0.000                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0            🐡    GPU:  85%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate        0ms   0%    Losses                │
+│ Params            25.7K      Model         0ms   0%    policy                │
+│ Steps              5.4K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         1s 890ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.000   score                         0.053    │
+│ episode_return             2664.539   episode_length             1476.333    │
+│ hold_seconds                  0.053   rail_exits                    0.333    │
+│ physics_warnings              0.000                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0           🐡     GPU:  93%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate        0ms   0%    Losses                │
+│ Params            25.7K      Model         0ms   0%    policy                │
+│ Steps              7.4K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         2s 509ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.000   score                         0.032    │
+│ episode_return             2571.865   episode_length             1438.200    │
+│ hold_seconds                  0.032   rail_exits                    0.400    │
+│ physics_warnings              0.000                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0          🐡      GPU:  93%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate        0ms   0%    Losses                │
+│ Params            25.7K      Model         0ms   0%    policy                │
+│ Steps              9.2K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         3s 112ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.000   score                         0.027    │
+│ episode_return             2497.199   episode_length             1405.333    │
+│ hold_seconds                  0.027   rail_exits                    0.500    │
+│ physics_warnings              0.000                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0         🐡       GPU:  93%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate        0ms   0%    Losses                │
+│ Params            25.7K      Model         0ms   0%    policy                │
+│ Steps             11.1K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         3s 714ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.000   score                         0.037    │
+│ episode_return             2516.974   episode_length             1418.857    │
+│ hold_seconds                  0.037   rail_exits                    0.429    │
+│ physics_warnings              0.000                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0        🐡        GPU:  92%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate        0ms   0%    Losses                │
+│ Params            25.7K      Model         0ms   0%    policy                │
+│ Steps             12.9K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         4s 324ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.000   score                         0.033    │
+│ episode_return             2516.019   episode_length             1435.556    │
+│ hold_seconds                  0.033   rail_exits                    0.444    │
+│ physics_warnings              0.000                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0       🐡         GPU:  92%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate        0ms   0%    Losses                │
+│ Params            25.7K      Model         0ms   0%    policy                │
+│ Steps             14.8K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         4s 927ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.000   score                         0.034    │
+│ episode_return             2505.916   episode_length             1442.000    │
+│ hold_seconds                  0.034   rail_exits                    0.400    │
+│ physics_warnings              0.000                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0      🐡          GPU:  93%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate        0ms   0%    Losses                │
+│ Params            25.7K      Model         0ms   0%    policy                │
+│ Steps             16.6K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         5s 534ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.000   score                         0.036    │
+│ episode_return             2529.509   episode_length             1447.273    │
+│ hold_seconds                  0.036   rail_exits                    0.364    │
+│ physics_warnings              0.000                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0     🐡           GPU:  91%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate        0ms   0%    Losses                │
+│ Params            25.7K      Model         0ms   0%    policy                │
+│ Steps             18.5K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         6s 136ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.000   score                         0.033    │
+│ episode_return             2522.712   episode_length             1442.917    │
+│ hold_seconds                  0.033   rail_exits                    0.417    │
+│ physics_warnings              0.000                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭──────────────────────────────────────────────────────────────────────────────╮
+│ PufferLib 5.0    🐡            GPU:  91%   VRAM:    1.1/8G    RAM:  0.3G     │
+│                                                                              │
+│ Env       spatial_cartp    Evaluate        0ms   0%    Losses                │
+│ Params            25.7K      Model         0ms   0%    policy                │
+│ Steps             18.8K      Env           0ms   0%    value                 │
+│ SPS                 0.0      Copy          0ms   0%    entropy               │
+│ Epoch                 0    Train           0ms   0%    old_kl                │
+│ Uptime         6s 223ms      Model         0ms   0%    kl                    │
+│ To go               0ms      Misc          0ms   0%    clipfrac              │
+│                                                                              │
+│ perf                          0.000   score                         0.031    │
+│ episode_return             2511.565   episode_length             1437.692    │
+│ hold_seconds                  0.031   rail_exits                    0.462    │
+│ physics_warnings              0.000                                          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+CUDA_EVAL env=spatial_cartpole score=0.030769 perf=0.000000 games=13 params=25668

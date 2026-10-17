@@ -1,0 +1,20 @@
+{
+  "puffer_ref": "ea7f989371270d2948f96728bda8aec5e7634a4c",
+  "links": 1,
+  "training_started": false,
+  "evaluation_io": true,
+  "deterministic_evaluation": true,
+  "reward_offset": 2.0,
+  "learning_rate": 0.001,
+  "trainer_patch": "spatial-flat-layout-v1",
+  "files": {
+    "ocean/spatial_cartpole/evaluation_io.h": "a0a8fd3cc028e9d623a5f6565f8ea38d029438797bde4a44794c16fefa810b5b",
+    "ocean/spatial_cartpole/spatial_core.h": "2ee52bed399350d913d69e851a93bf3debc2ae572a640822d3e8f5683120adbc",
+    "ocean/spatial_cartpole/spatial_cartpole.h": "7ed64e48c7aaa5c20a2f7cf8f258a953b12868d3a20375275a23fca0208d689a",
+    "spatial_patches/algo.cu": "9566889afd9fb87768898a69429b8be23ce554bf70c9e48eb7f4de2fc3371e60",
+    "spatial_patches/pufferl.cu": "4a27159db29ff62d99fccc2be0e10a1d667127852752baf1028de83c0fd52e1b",
+    "config/spatial_cartpole.ini": "a3366f827e4c63a741175cb94bf08162f7ccdc609d08ab3249b9a11954a481ab",
+    "resources/spatial_cartpole/model.xml": "a133cd7adf74f55fe77264f182cdbc3ee0314cf4c713a566ebbc6902f4070d33",
+    "build_spatial.sh": "69ebeec01aa7831086e76a5a8cb8f0c9fa492761d0bbc35ae534425d30a0707a"
+  }
+}

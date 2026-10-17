@@ -1,0 +1,109 @@
+{
+  "training": [
+    {
+      "name": "pufferlib5_gpu_learning_n1_001",
+      "controls": 999424,
+      "offset": 0.0,
+      "native": 3997696,
+      "seconds": 15.332363330999954,
+      "checkpoint": "1e342aa05611dd3c8ec4df0c44f57b8ea75407b8feed7d3a9bffe5a63d83c563"
+    },
+    {
+      "name": "pufferlib5_gpu_learning_n1_extended_001",
+      "controls": 9998336,
+      "offset": 2.0,
+      "native": 39993344,
+      "seconds": 147.42578243900002,
+      "checkpoint": "1c134a836945742beb889bf96023d467b324145487ea638ec835935bf25c1726"
+    },
+    {
+      "name": "pufferlib5_gpu_learning_n1_lr015_001",
+      "controls": 999424,
+      "offset": 2.0,
+      "native": 3997696,
+      "seconds": 13.981140367999984,
+      "checkpoint": "8c8dbdfc45cd5015e6e082bfb215c38a3e96ce909ba6471217e996dc671da1c0"
+    },
+    {
+      "name": "pufferlib5_gpu_learning_n1_offset2_001",
+      "controls": 999424,
+      "offset": 2.0,
+      "native": 3997696,
+      "seconds": 14.152010763999996,
+      "checkpoint": "44a005a0cea207a97679ed1dfde691440d31f7e984629b8478cbebc4dd8b2a4c"
+    }
+  ],
+  "evaluations": [
+    {
+      "name": "pufferlib5_gpu_evaluation_n1_001",
+      "mode": "gpu_sampled",
+      "passes": 0,
+      "cases": 13,
+      "full_horizon": 0,
+      "mean_steps": 37.84615384615385,
+      "maximum_hold": 0.0,
+      "native": 4304,
+      "exact_gpu_repeat": true
+    },
+    {
+      "name": "pufferlib5_gpu_evaluation_n1_extended_mean_001",
+      "mode": "gpu_mean",
+      "passes": 0,
+      "cases": 13,
+      "full_horizon": 10,
+      "mean_steps": 1483.7692307692307,
+      "maximum_hold": 0.12,
+      "native": 166312,
+      "exact_gpu_repeat": true
+    },
+    {
+      "name": "pufferlib5_gpu_evaluation_n1_extended_sampled_001",
+      "mode": "gpu_sampled",
+      "passes": 0,
+      "cases": 13,
+      "full_horizon": 7,
+      "mean_steps": 1437.6923076923076,
+      "maximum_hold": 0.1,
+      "native": 161520,
+      "exact_gpu_repeat": true
+    },
+    {
+      "name": "pufferlib5_gpu_evaluation_n1_lr015_001",
+      "mode": "gpu_sampled",
+      "passes": 0,
+      "cases": 13,
+      "full_horizon": 0,
+      "mean_steps": 1065.2307692307693,
+      "maximum_hold": 0.08,
+      "native": 116016,
+      "exact_gpu_repeat": true
+    },
+    {
+      "name": "pufferlib5_gpu_evaluation_n1_lr015_mean_001",
+      "mode": "gpu_mean",
+      "passes": 0,
+      "cases": 13,
+      "full_horizon": 4,
+      "mean_steps": 1368.923076923077,
+      "maximum_hold": 0.0,
+      "native": 154368,
+      "exact_gpu_repeat": true
+    },
+    {
+      "name": "pufferlib5_gpu_evaluation_n1_offset2_001",
+      "mode": "gpu_sampled",
+      "passes": 0,
+      "cases": 13,
+      "full_horizon": 0,
+      "mean_steps": 44.84615384615385,
+      "maximum_hold": 0.0,
+      "native": 5104,
+      "exact_gpu_repeat": true
+    }
+  ],
+  "smoke_native": 16384,
+  "reward_test_native": 768,
+  "inclusive_native_steps": 52611208,
+  "reserved_cases_consumed": 0,
+  "new_link_qualification": false
+}

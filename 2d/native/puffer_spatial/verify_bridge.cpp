@@ -78,13 +78,14 @@ struct PufferSmoke {
     Env env;
     float obs[SP_OBS], action[2], reward[1], terminal[1];
 };
-SP_EXPORT void* np_create(const char* xml, unsigned int seed, double noise) {
+static void* np_create_impl(const char* xml, unsigned int seed, double noise, double offset) {
     PufferSmoke* b = new PufferSmoke();
     b->env.rng = seed;
     Dict config = {0};
     dict_set_str(&config, "model_path", xml);
     dict_set(&config, "angle_noise", noise);
     dict_set(&config, "normalized_effort", 1);
+    dict_set(&config, "reward_offset", offset);
     puf_init(&b->env, &config);
     dict_clear(&config);
     b->env.agents[0].observations = b->obs;
@@ -93,6 +94,12 @@ SP_EXPORT void* np_create(const char* xml, unsigned int seed, double noise) {
     b->env.agents[0].terminals = b->terminal;
     puf_reset(&b->env);
     return b;
+}
+SP_EXPORT void* np_create(const char* xml, unsigned int seed, double noise) {
+    return np_create_impl(xml, seed, noise, 0.);
+}
+SP_EXPORT void* np_create_reward(const char* xml, unsigned int seed, double noise, double offset) {
+    return np_create_impl(xml, seed, noise, offset);
 }
 SP_EXPORT void np_set(void* ptr, const double* state) {
     PufferSmoke* b = (PufferSmoke*)ptr;

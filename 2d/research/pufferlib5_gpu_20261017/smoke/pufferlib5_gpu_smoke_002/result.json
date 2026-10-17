@@ -1,0 +1,23 @@
+{
+  "training_started": false,
+  "training_completed": false,
+  "qualified": false,
+  "native_steps": null,
+  "mujoco_library": "/home/cartpole/cartpole-lab/.venv/lib/python3.12/site-packages/mujoco/libmujoco.so.3.3.5",
+  "mujoco_library_sha256": "4d9f4d74b9a4dc78d0b0aa4da1c69df905941f23f39dd127ad39a16c085e6ac1",
+  "build": {
+    "command": [
+      "bash",
+      "build_spatial.sh",
+      "spatial_cartpole",
+      "/home/cartpole/cartpole-lab/output/pufferlib5_gpu_smoke_002/spatial_trainer",
+      "--float"
+    ],
+    "exit_code": 255,
+    "timed_out": false,
+    "elapsed_seconds": 0.6654105209999841
+  },
+  "error": "RuntimeError: CUDA build failed or timed out",
+  "traceback": "Traceback (most recent call last):\n  File \"/home/cartpole/cartpole-lab/scripts/run_puffer_training.py\", line 121, in main\n    if report['build']['exit_code'] or report['build']['timed_out']:raise RuntimeError('CUDA build failed or timed out')\n                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: CUDA build failed or timed out\n",
+  "native_cost_unknown": false
+}

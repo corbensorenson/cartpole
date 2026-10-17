@@ -1,0 +1,316 @@
+{
+  "passed": true,
+  "scope": "host allocation/registration, flat checkpoint/actor copy and optimizer offsets; no CUDA execution",
+  "upstream": {
+    "pufferl.cu": "8feb0cc5334468e60e2db6527121dee8e7028694beed1e431f96e8e2e7843d4a",
+    "algo.cu": "4f9a8c6189ebd3c2f058c78aa78f4bfec26ceee0df6995f65e3c306fd2ae9a65"
+  },
+  "cases": [
+    {
+      "patched": false,
+      "element_bytes": 4,
+      "cases": [
+        {
+          "links": 1,
+          "continuous": false,
+          "element_bytes": 4,
+          "logical_elements": 25728,
+          "physical_bytes": 102912,
+          "flat_bytes": 102912,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 1,
+          "continuous": true,
+          "element_bytes": 4,
+          "logical_elements": 25666,
+          "physical_bytes": 102672,
+          "flat_bytes": 102664,
+          "roundtrip_bad_tensors": 1,
+          "optimizer_bad_slices": 2
+        },
+        {
+          "links": 2,
+          "continuous": false,
+          "element_bytes": 4,
+          "logical_elements": 26176,
+          "physical_bytes": 104704,
+          "flat_bytes": 104704,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 2,
+          "continuous": true,
+          "element_bytes": 4,
+          "logical_elements": 26114,
+          "physical_bytes": 104464,
+          "flat_bytes": 104456,
+          "roundtrip_bad_tensors": 1,
+          "optimizer_bad_slices": 2
+        },
+        {
+          "links": 8,
+          "continuous": false,
+          "element_bytes": 4,
+          "logical_elements": 28864,
+          "physical_bytes": 115456,
+          "flat_bytes": 115456,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 8,
+          "continuous": true,
+          "element_bytes": 4,
+          "logical_elements": 28802,
+          "physical_bytes": 115216,
+          "flat_bytes": 115208,
+          "roundtrip_bad_tensors": 1,
+          "optimizer_bad_slices": 2
+        }
+      ],
+      "command": [
+        "/usr/bin/clang++",
+        "-std=c++20",
+        "-O2",
+        "-DPRECISION_BYTES=4",
+        "/home/cartpole/cartpole-lab/output/pufferlib5_linux_weight_layout_001/upstream_4.cpp",
+        "-o",
+        "/home/cartpole/cartpole-lab/output/pufferlib5_linux_weight_layout_001/upstream_4"
+      ],
+      "source_sha256": "33e88d4017c7656c3d0e3d806ca1575e7a56577088e28bc87c40dfb1827f4cee"
+    },
+    {
+      "patched": false,
+      "element_bytes": 2,
+      "cases": [
+        {
+          "links": 1,
+          "continuous": false,
+          "element_bytes": 2,
+          "logical_elements": 25728,
+          "physical_bytes": 51456,
+          "flat_bytes": 51456,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 1,
+          "continuous": true,
+          "element_bytes": 2,
+          "logical_elements": 25666,
+          "physical_bytes": 51344,
+          "flat_bytes": 51332,
+          "roundtrip_bad_tensors": 1,
+          "optimizer_bad_slices": 2
+        },
+        {
+          "links": 2,
+          "continuous": false,
+          "element_bytes": 2,
+          "logical_elements": 26176,
+          "physical_bytes": 52352,
+          "flat_bytes": 52352,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 2,
+          "continuous": true,
+          "element_bytes": 2,
+          "logical_elements": 26114,
+          "physical_bytes": 52240,
+          "flat_bytes": 52228,
+          "roundtrip_bad_tensors": 1,
+          "optimizer_bad_slices": 2
+        },
+        {
+          "links": 8,
+          "continuous": false,
+          "element_bytes": 2,
+          "logical_elements": 28864,
+          "physical_bytes": 57728,
+          "flat_bytes": 57728,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 8,
+          "continuous": true,
+          "element_bytes": 2,
+          "logical_elements": 28802,
+          "physical_bytes": 57616,
+          "flat_bytes": 57604,
+          "roundtrip_bad_tensors": 1,
+          "optimizer_bad_slices": 2
+        }
+      ],
+      "command": [
+        "/usr/bin/clang++",
+        "-std=c++20",
+        "-O2",
+        "-DPRECISION_BYTES=2",
+        "/home/cartpole/cartpole-lab/output/pufferlib5_linux_weight_layout_001/upstream_2.cpp",
+        "-o",
+        "/home/cartpole/cartpole-lab/output/pufferlib5_linux_weight_layout_001/upstream_2"
+      ],
+      "source_sha256": "33e88d4017c7656c3d0e3d806ca1575e7a56577088e28bc87c40dfb1827f4cee"
+    },
+    {
+      "patched": true,
+      "element_bytes": 4,
+      "cases": [
+        {
+          "links": 1,
+          "continuous": false,
+          "element_bytes": 4,
+          "logical_elements": 25728,
+          "physical_bytes": 102912,
+          "flat_bytes": 102912,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 1,
+          "continuous": true,
+          "element_bytes": 4,
+          "logical_elements": 25666,
+          "physical_bytes": 102672,
+          "flat_bytes": 102672,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 2,
+          "continuous": false,
+          "element_bytes": 4,
+          "logical_elements": 26176,
+          "physical_bytes": 104704,
+          "flat_bytes": 104704,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 2,
+          "continuous": true,
+          "element_bytes": 4,
+          "logical_elements": 26114,
+          "physical_bytes": 104464,
+          "flat_bytes": 104464,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 8,
+          "continuous": false,
+          "element_bytes": 4,
+          "logical_elements": 28864,
+          "physical_bytes": 115456,
+          "flat_bytes": 115456,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 8,
+          "continuous": true,
+          "element_bytes": 4,
+          "logical_elements": 28802,
+          "physical_bytes": 115216,
+          "flat_bytes": 115216,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        }
+      ],
+      "command": [
+        "/usr/bin/clang++",
+        "-std=c++20",
+        "-O2",
+        "-DPRECISION_BYTES=4",
+        "/home/cartpole/cartpole-lab/output/pufferlib5_linux_weight_layout_001/patched_4.cpp",
+        "-o",
+        "/home/cartpole/cartpole-lab/output/pufferlib5_linux_weight_layout_001/patched_4"
+      ],
+      "source_sha256": "9ae68408c6496ea50db1654460de2070384862bea4ea12a18ba0061945659ba5"
+    },
+    {
+      "patched": true,
+      "element_bytes": 2,
+      "cases": [
+        {
+          "links": 1,
+          "continuous": false,
+          "element_bytes": 2,
+          "logical_elements": 25728,
+          "physical_bytes": 51456,
+          "flat_bytes": 51456,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 1,
+          "continuous": true,
+          "element_bytes": 2,
+          "logical_elements": 25666,
+          "physical_bytes": 51344,
+          "flat_bytes": 51344,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 2,
+          "continuous": false,
+          "element_bytes": 2,
+          "logical_elements": 26176,
+          "physical_bytes": 52352,
+          "flat_bytes": 52352,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 2,
+          "continuous": true,
+          "element_bytes": 2,
+          "logical_elements": 26114,
+          "physical_bytes": 52240,
+          "flat_bytes": 52240,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 8,
+          "continuous": false,
+          "element_bytes": 2,
+          "logical_elements": 28864,
+          "physical_bytes": 57728,
+          "flat_bytes": 57728,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        },
+        {
+          "links": 8,
+          "continuous": true,
+          "element_bytes": 2,
+          "logical_elements": 28802,
+          "physical_bytes": 57616,
+          "flat_bytes": 57616,
+          "roundtrip_bad_tensors": 0,
+          "optimizer_bad_slices": 0
+        }
+      ],
+      "command": [
+        "/usr/bin/clang++",
+        "-std=c++20",
+        "-O2",
+        "-DPRECISION_BYTES=2",
+        "/home/cartpole/cartpole-lab/output/pufferlib5_linux_weight_layout_001/patched_2.cpp",
+        "-o",
+        "/home/cartpole/cartpole-lab/output/pufferlib5_linux_weight_layout_001/patched_2"
+      ],
+      "source_sha256": "9ae68408c6496ea50db1654460de2070384862bea4ea12a18ba0061945659ba5"
+    }
+  ],
+  "native_steps": 0,
+  "gpu_training": false
+}

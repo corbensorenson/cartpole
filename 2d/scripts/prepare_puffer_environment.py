@@ -17,7 +17,12 @@ p = argparse.ArgumentParser()
 p.add_argument('--checkout', required=True)
 p.add_argument('--links', type=int, default=1)
 p.add_argument('--evaluation-io', action='store_true')
+p.add_argument('--deterministic-evaluation', action='store_true')
+p.add_argument('--reward-offset', type=float, choices=[0.,2.], default=0.)
+p.add_argument('--learning-rate', type=float, choices=[0.001,0.015], default=0.001)
 a = p.parse_args()
+if a.deterministic_evaluation and not a.evaluation_io:
+    p.error('deterministic evaluation requires --evaluation-io; never use it to train')
 checkout = checked_checkout(a.checkout)
 assert a.links > 0
 env_dir = checkout / 'ocean/spatial_cartpole'
@@ -26,7 +31,7 @@ resource = checkout / 'resources/spatial_cartpole'
 driver = checkout / 'build_spatial.sh'
 patch_dir = checkout / 'spatial_patches'
 assert not any(x.exists() for x in (env_dir, config, resource, driver, patch_dir))
-trainer_sources = patched_sources(checkout)
+trainer_sources = patched_sources(checkout,a.deterministic_evaluation)
 source_build = (checkout / 'build.sh').read_text(encoding='utf-8')
 anchor = 'EXTRA_LDFLAGS=()\n'
 assert source_build.count(anchor) == 1
@@ -34,7 +39,7 @@ hook = '''
 if [ "$ENV" = "spatial_cartpole" ]; then
     : "${MUJOCO_DIR:?Set MUJOCO_DIR to the MuJoCo 3.3.5 Linux SDK directory}"
     : "${MUJOCO_LIBRARY:?Set MUJOCO_LIBRARY to the absolute libmujoco.so.3.3.5 path}"
-    EXTRA_LDFLAGS+=("$MUJOCO_LIBRARY" "-Xlinker=-rpath" "-Xlinker=$(dirname "$MUJOCO_LIBRARY")")
+    EXTRA_LDFLAGS+=("-Xlinker=$MUJOCO_LIBRARY" "-Xlinker=-rpath" "-Xlinker=$(dirname "$MUJOCO_LIBRARY")")
 fi
 '''
 # Include hook follows the stock EXTRA_CFLAGS initialization, not before it.
@@ -75,6 +80,10 @@ num_threads = 4
 model_path = resources/spatial_cartpole/model.xml
 angle_noise = 0.02
 normalized_effort = 1
+accounting_file = None
+evaluation_plan = None
+trace_directory = None
+reward_offset = REWARD_OFFSET
 
 [policy]
 hidden_size = 64
@@ -82,17 +91,20 @@ num_layers = 2
 
 [train]
 total_timesteps = 999424
-learning_rate = 0.001
+learning_rate = LEARNING_RATE
 minibatch_size = 2048
 horizon = 64
 gamma = 0.995
 gae_lambda = 0.95
 ent_coef = 0.005
-''', encoding='utf-8', newline='\n')
+'''.replace('REWARD_OFFSET', str(a.reward_offset)).replace('LEARNING_RATE', str(a.learning_rate)), encoding='utf-8', newline='\n')
 driver.write_text(patched, encoding='utf-8', newline='\n')
 driver.chmod(driver.stat().st_mode | 0o111)
 files = [*env_dir.iterdir(), *patch_dir.iterdir(), config, resource/'model.xml', driver]
 manifest = dict(puffer_ref=REF, links=a.links, training_started=False, evaluation_io=a.evaluation_io,
+                deterministic_evaluation=a.deterministic_evaluation,
+                reward_offset=a.reward_offset,
+                learning_rate=a.learning_rate,
                 trainer_patch=PATCH_VERSION,
                 files={x.relative_to(checkout).as_posix():hashlib.sha256(x.read_bytes()).hexdigest() for x in files})
 (resource / 'integration.json').write_text(json.dumps(manifest, indent=2))

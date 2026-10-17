@@ -31,13 +31,14 @@ def observation(env, previous):
                  previous/np.float32(80), env.steps/1500.].astype(np.float32)
 
 
-def create_plan(out, n, cases, scope, checkpoint=None):
+def create_plan(out, n, cases, scope, checkpoint=None, action_selection='unspecified'):
     """cases: seed, noise, mode (0 hanging / 1 upright / 2 diagnostic), state."""
     out = Path(out)
     assert 1 <= len(cases) <= 45 and len({x[0] for x in cases}) == len(cases)
     out.mkdir(parents=True, exist_ok=False)
     config = Config(n_links=n); env = SpatialCartpole(config)
     manifest = dict(schema=1, puffer_ref=REF, config=asdict(config), scope=scope,
+                    action_selection=action_selection,
                     qualification=False, cases=[], checkpoint_sha256=None)
     try:
         with (out/'plan.bin').open('xb') as f:
@@ -153,6 +154,7 @@ def import_traces(plan, traces, out):
             meta = dict(policy='recorded PufferLib 5 native evaluation', puffer_ref=REF,
                         park_steps=0, park_seconds=0., predictor_native_steps=0,
                         diagnostic=manifest['scope']=='diagnostic',
+                        action_selection=manifest.get('action_selection','unspecified'),
                         checkpoint_sha256=manifest['checkpoint_sha256'], hardware_realtime_claim=False)
             if manifest['scope']=='diagnostic':meta['demonstration']='evaluation IO diagnostic'
             row = dict(seed=seed, initialization='hanging' if mode==0 else 'diagnostic', angle_noise=noise,

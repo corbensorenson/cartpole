@@ -1,0 +1,8 @@
+Hit:1 http://archive.ubuntu.com/ubuntu noble InRelease
+Hit:2 http://archive.ubuntu.com/ubuntu noble-updates InRelease
+Get:3 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64  InRelease [1578 B]
+Hit:4 http://archive.ubuntu.com/ubuntu noble-backports InRelease
+Get:5 https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64  Packages [1919 kB]
+Hit:6 http://security.ubuntu.com/ubuntu noble-security InRelease
+Fetched 1921 kB in 1s (2602 kB/s)
+Reading package lists...

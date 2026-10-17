@@ -23,7 +23,7 @@ struct Env {
     unsigned int rng;
     uint64_t reset_rng;
     SpatialCore core;
-    double angle_noise, episode_return;
+    double angle_noise, episode_return, reward_offset;
     int normalized_effort;
 #ifdef SP_EVALUATION_IO
     SpatialEval evaluation;
@@ -61,6 +61,9 @@ void puf_init(Env* env, Dict* kwargs) {
     env->reset_rng = (uint64_t)env->rng + 1;
     env->angle_noise = dict_get(kwargs, "angle_noise");
     env->normalized_effort = (int)dict_get(kwargs, "normalized_effort");
+    DictItem* reward_offset = dict_find(kwargs, "reward_offset");
+    env->reward_offset = reward_offset ? reward_offset->value : 0.;
+    if (!isfinite(env->reward_offset)) { fprintf(stderr, "invalid reward offset\n"); exit(1); }
     if (env->angle_noise < 0 || !isfinite(env->angle_noise)) { fprintf(stderr, "invalid reset noise\n"); exit(1); }
 #ifdef SP_EVALUATION_IO
     DictItem* plan = dict_find(kwargs, "evaluation_plan");
@@ -95,7 +98,7 @@ void puf_step(Env* env) {
 #endif
     double force[2] = {(double)a->actions[0] * 80., (double)a->actions[1] * 80.};
     int advanced = sp_step(&env->core, force);
-    double reward = advanced ? sp_reward(&env->core, env->normalized_effort) : -1.;
+    double reward = advanced ? sp_reward(&env->core, env->normalized_effort) + env->reward_offset : -1.;
     a->rewards[0] = (float)reward;
 #ifdef SP_EVALUATION_IO
     if (env->evaluation.plan)
