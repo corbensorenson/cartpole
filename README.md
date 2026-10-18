@@ -286,3 +286,13 @@ The controller selects between two fixed feedback laws using owned forecasts.
 [Full first-reserved video and evidence](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-10-link-immediate-v1) ·
 [Method, negative results and reproduction](2d/research/immediate_10_link_20261017/README.md).
 The separate prepared 2D record remains fourteen links.
+
+## Eleven-link immediate noisy swing-up
+
+The 2D immediate variant now passes **32/32 fresh noisy starts**, after 45/45
+development cases, with zero hanging preparation and at least
+23.50 seconds upright in every full 30-second episode.
+The full-state controller plans offline before applying feedback during motion.
+The fourteen-link conditioned comparison and ten-link immediate result remain preserved.
+
+[Full video and release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-11-link-immediate-v1) · [Method, source and reproduction](2d/research/immediate_11_link_20261018/README.md).
