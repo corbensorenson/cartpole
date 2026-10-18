@@ -440,3 +440,21 @@ tests cover native spatial freedoms, independent affine/quotient optima,
 reflection, owned forecasts/final transitions and multipart/LFS evidence hashes.
 This is empirical reset-noise performance; no arbitrary-disturbance, indefinite
 balance or hardware20ms-deadline claim is made. The next count to solve is15.
+
+## Ten-link immediate swing-up
+
+The immediate variant passes46/46 development starts, then32/32 new reserved
+starts20263416..47. All30-second episodes hold upright for22.12 seconds with
+zero hanging preparation. A fixed affine-first/native-corrected-second feedback
+bank chooses by complete owned forecasts from the observed state and verifies
+actual execution through the final transition. All32 physical velocity
+coordinates remain. The physical plant and task limits are unchanged.
+
+The prior affine family failed31/32 on20263216..47; that failed cohort stays
+consumed development data. The new range is separate. All forecasts cold-replay
+exactly; full frozen execution and candidate audits pass, with294 regression
+tests. The first new qualification episode is the full50fps video.
+
+[Release, video and complete source/evidence](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-10-link-immediate-v1) ·
+[Study and reproduction](research/immediate_10_link_20261017/README.md).
+Fourteen remains the separate prepared record.

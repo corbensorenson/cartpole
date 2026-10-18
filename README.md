@@ -274,3 +274,15 @@ require separate experiments.
 
 Use [CITATION.cff](CITATION.cff) to cite the project, and include the relevant
 release tag or source commit when reporting a numerical result.
+
+## Immediate 2D swing-up: ten links
+
+Ten passive spatial links now qualify with **zero hanging preparation**:
+46/46 development starts followed by32/32 new reserved starts. Every episode
+completes30 seconds and holds all links upright for22.12 seconds. The original
+XY cart, unrestricted ball joints,80N force disk and3m boundary are preserved.
+The controller selects between two fixed feedback laws using owned forecasts.
+
+[Full first-reserved video and evidence](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-10-link-immediate-v1) ·
+[Method, negative results and reproduction](2d/research/immediate_10_link_20261017/README.md).
+The separate prepared 2D record remains fourteen links.
