@@ -922,3 +922,16 @@ The video is prepared for the count-specific2D fourteen-link release. Source/
 archive/GitHub checks are being completed; no public tag is claimed here.
 RootREADME1D section verified BYTE-unchanged. Publication QA is retained in
 n14_publication_qa_001. The next count to solve is15.
+
+
+## Qualified learned-capture method: one link
+
+A fixed hybrid executes the original8-second classical swing and then uses a
+PufferLib5-trained CPU float32 MinGRU for capture/balance. Sign-invariant
+quaternion observations preserve the actual plant and every velocity. It passes
+45/45 original hanging development and32/32 fresh starts20330116..20330147,
+complete30 seconds with minimum21.58 seconds upright, zero hanging wait and
+exact native replay. Independent inference/clock/handoff audits and isolated
+publication-source reproduction pass. This is a hybrid, not pure RL swing-up.
+See research/puffer_hybrid_1_link_20261017 for source, evidence and full video.
+The14-link prepared/10-link immediate overall records remain unchanged.

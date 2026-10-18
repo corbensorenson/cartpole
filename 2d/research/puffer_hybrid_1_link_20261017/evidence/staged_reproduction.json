@@ -1,0 +1,73 @@
+{
+  "passed": true,
+  "native_steps": 12000,
+  "command": [
+    "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\.venv\\Scripts\\python.exe",
+    "C:\\Users\\corbe\\Documents\\ChatGPT\\cartpole\\publication\\2d\\research\\puffer_hybrid_1_link_20261017\\reproduce.py",
+    "--seed",
+    "20330116",
+    "--noise",
+    ".02",
+    "--out",
+    "D:\\ChatGPT\\cartpole-2d-experiments\\puffer-balance\\hybrid_source_qa_n1_001\\reproduction.npz"
+  ],
+  "source_staging_sha256": "4a5c73710ffe12e9b580c76d485becaeecaeb3a01e04157f303fe79525d066d3",
+  "first_fresh_seed": 20330116,
+  "whole_closed_loop_byte_exact": true,
+  "package_source_unchanged": true,
+  "result": {
+    "seed": 20330116,
+    "initialization": "hanging",
+    "angle_noise": 0.02,
+    "max_tilt": 0.002594848077899558,
+    "best_hold_seconds": 21.580000000000002,
+    "plane_margin": 1.1428227871268402,
+    "physics_warning": false,
+    "success": true,
+    "steps": 1500,
+    "native_steps": 6000,
+    "wall_seconds": 0.8121544999994512,
+    "max_xy": [
+      1.5578447367688493,
+      1.8571772128731598
+    ],
+    "max_force_norm": 80.0,
+    "final_tilt": 0.002594848077899558,
+    "replay_exact": true,
+    "replay_max_error": 0.0,
+    "proof_native_steps": 6000,
+    "policy_metadata": {
+      "policy": "classical swing / learned CPU Puffer capture",
+      "park_steps": 0,
+      "park_seconds": 0.0,
+      "route_seconds": 8.0,
+      "hybrid_handoff_step": 400,
+      "canonical_quaternion_sign": true,
+      "physical_state_reset_at_handoff": false,
+      "learned_clock": "commands since activation; actual episode clock unchanged",
+      "predictor_native_steps": 0,
+      "hardware_realtime_claim": false,
+      "checkpoint_sha256": "b8134743906935239d5ae8366951a1f9ab411f3fc33a09a724413aefad06632a",
+      "handoff_state": [
+        0.1524451549932211,
+        -0.013542496594895835,
+        -0.9737951163116814,
+        0.04111000067861573,
+        0.2057035517751794,
+        -0.08785834097453356,
+        -1.7823407650897187,
+        0.3925212214656618,
+        0.32469094733211107,
+        1.5872159640335832,
+        -1.6859113993825116e-13
+      ],
+      "handoff_previous_force": [
+        77.43153381347656,
+        5.822760581970215
+      ],
+      "handoff_actual_native_steps": 1600,
+      "handoff_actual_seconds": 8.0,
+      "handoff_world_tilt": 0.42268202644198083
+    }
+  }
+}

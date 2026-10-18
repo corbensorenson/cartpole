@@ -458,3 +458,17 @@ tests. The first new qualification episode is the full50fps video.
 [Release, video and complete source/evidence](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-10-link-immediate-v1) ·
 [Study and reproduction](research/immediate_10_link_20261017/README.md).
 Fourteen remains the separate prepared record.
+
+
+## Learned-capture hybrid method track
+
+The new [one-link Puffer hybrid](research/puffer_hybrid_1_link_20261017/README.md)
+passes45/45 original hanging development starts and32/32 fresh noisy starts,
+with at least21.58 seconds upright in every30-second episode. The first8 seconds
+use the original classical swing; the learned controller captures and balances
+for the remaining22 seconds. There is no hanging wait or physical reset.
+This is a separate learned-capture method track; the fourteen-link prepared and
+ten-link immediate records above remain the overall frontiers.
+
+[Full held-out video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-1-link-puffer-hybrid-v1/2d-cartpole-1-link-puffer-hybrid.mp4)
+· [Release, source and complete evidence](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-1-link-puffer-hybrid-v1)
