@@ -296,3 +296,11 @@ The full-state controller plans offline before applying feedback during motion.
 The fourteen-link conditioned comparison and ten-link immediate result remain preserved.
 
 [Full video and release](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-11-link-immediate-v1) · [Method, source and reproduction](2d/research/immediate_11_link_20261018/README.md).
+
+## 12-link immediate noisy swing-up
+
+[12-link 2D immediate noisy swing-up](2d/research/immediate_12_link_20261018/README.md): 32/32 fresh
+starts pass, with zero hanging preparation and at least
+23.50 seconds upright in full 30-second episodes.
+[Video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-12-link-immediate-v1/2d-cartpole-12-link-immediate.mp4) · [Release and reproducible evidence](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-12-link-immediate-v1). Planning is
+offline from the observed initial state; the physical motion begins immediately.
