@@ -304,3 +304,11 @@ starts pass, with zero hanging preparation and at least
 23.50 seconds upright in full 30-second episodes.
 [Video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-12-link-immediate-v1/2d-cartpole-12-link-immediate.mp4) · [Release and reproducible evidence](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-12-link-immediate-v1). Planning is
 offline from the observed initial state; the physical motion begins immediately.
+
+## 13-link immediate noisy swing-up
+
+[13-link 2D immediate noisy swing-up](2d/research/immediate_13_link_20261019/README.md): 32/32 fresh
+starts pass, with zero hanging preparation and at least
+24.16 seconds upright in full 30-second episodes.
+[Video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-13-link-immediate-v1/2d-cartpole-13-link-immediate.mp4) · [Release and reproducible evidence](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-13-link-immediate-v1). Planning is
+offline from the observed initial state; the physical motion begins immediately.
