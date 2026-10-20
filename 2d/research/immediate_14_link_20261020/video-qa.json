@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "recorded_at": "2026-10-20T21:59:29.823779+00:00",
+  "video_sha256": "6ae3b9c5b84d7ad5c2a28194174766a5e80963fbde3e13293662bfd617552dcc",
+  "manual_visual_qa_complete": true,
+  "all1501_encoded_frames_decoded": true,
+  "visual_checks": {
+    "complete_chain_visible": true,
+    "legible_labels": true,
+    "explicit_qualification_status": true,
+    "xy_inset_visible": true
+  },
+  "inspected_encoded_frames": {
+    "0": {
+      "path": "D:\\ChatGPT\\cartpole\\experiments\\2d\\fourteen-link-immediate\\delivered14_qualified_video_001\\2d-cartpole-14-link-immediate-frame0000.png",
+      "sha256": "7c899f025011fd547000897dd9a79683ced439e102c611ffdefb8df1f8849090"
+    },
+    "83": {
+      "path": "D:\\ChatGPT\\cartpole\\experiments\\2d\\fourteen-link-immediate\\delivered14_qualified_video_001\\2d-cartpole-14-link-immediate-frame0083.png",
+      "sha256": "399e4385cfd1f02f1b15ac4ae30a8be1ea29d1ce097abaabe3d21d2103261186"
+    },
+    "150": {
+      "path": "D:\\ChatGPT\\cartpole\\experiments\\2d\\fourteen-link-immediate\\delivered14_qualified_video_001\\2d-cartpole-14-link-immediate-frame0150.png",
+      "sha256": "7f22a5c84d1e83d5c318f83b0764a8aa604a62fb2b505383ca5f9be2b99919c1"
+    },
+    "257": {
+      "path": "D:\\ChatGPT\\cartpole\\experiments\\2d\\fourteen-link-immediate\\delivered14_qualified_video_001\\2d-cartpole-14-link-immediate-frame0257.png",
+      "sha256": "72210d28adf4ecc6b7132fee5f2ad0f839b1559ff868cb0117ac710f396eea3a"
+    },
+    "262": {
+      "path": "D:\\ChatGPT\\cartpole\\experiments\\2d\\fourteen-link-immediate\\delivered14_qualified_video_001\\2d-cartpole-14-link-immediate-frame0262.png",
+      "sha256": "90e6e293e8d74e52067b4f4ddb44e5153f6f29c7fdfea5d08560d0d0d632208d"
+    },
+    "350": {
+      "path": "D:\\ChatGPT\\cartpole\\experiments\\2d\\fourteen-link-immediate\\delivered14_qualified_video_001\\2d-cartpole-14-link-immediate-frame0350.png",
+      "sha256": "9ef09c80363ae2a36b8321559f364fe120340c03893358f4d67cec8bbf889247"
+    },
+    "750": {
+      "path": "D:\\ChatGPT\\cartpole\\experiments\\2d\\fourteen-link-immediate\\delivered14_qualified_video_001\\2d-cartpole-14-link-immediate-frame0750.png",
+      "sha256": "1196bbf2081bd5f00077ab18b5317b7e922369ea0b3d37f33a5b778a2cfbdd35"
+    },
+    "1500": {
+      "path": "D:\\ChatGPT\\cartpole\\experiments\\2d\\fourteen-link-immediate\\delivered14_qualified_video_001\\2d-cartpole-14-link-immediate-frame1500.png",
+      "sha256": "01e87f307e0e24571170a2a45b9f806af948d9f47094c454aeac43ac8d13f033"
+    }
+  },
+  "contact_sheet_inspected": true,
+  "contact_sheet_sha256": "975a6e929a4fda6ec57f342c30151ed28cabdc6c8e8021890bdc8a032d55b2d8",
+  "projected_body_bounds_sha256": "2a975bf4a196224a2ae90869d55b69c37107c0d84bb48eca25db36dfdb48e8c3",
+  "source_render_metadata_sha256": "dea1358afe931a20dd1ff39cb7f528d9be79b09759b4ca14b823658c929db02b",
+  "notes": "Visually inspected the contact sheet and all eight required full-resolution encoded-frame PNGs using view_image. Entire chain/cart clear of overlays at swing, catch, hold and both vertical extrema; title, qualification, paused-planning disclosure and XY inset legible. Full1501-frame decode verified by completed renderer. No edit to original render receipt.",
+  "native_steps": 0,
+  "new_labels": 0
+}

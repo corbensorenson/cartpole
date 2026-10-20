@@ -312,3 +312,16 @@ starts pass, with zero hanging preparation and at least
 24.16 seconds upright in full 30-second episodes.
 [Video](https://github.com/corbensorenson/cartpole/releases/download/2d-cartpole-13-link-immediate-v1/2d-cartpole-13-link-immediate.mp4) · [Release and reproducible evidence](https://github.com/corbensorenson/cartpole/releases/tag/2d-cartpole-13-link-immediate-v1). Planning is
 offline from the observed initial state; the physical motion begins immediately.
+
+
+## 14-link immediate noisy swing-up
+
+**32/32 fresh starts pass**, with zero hanging conditioning and a minimum
+24.16-second upright hold in the original 30-second task. Qualified tier: **E**.
+Runtime: **offline per-episode planning with simulation paused**. The separately
+timed first-fresh plan used 6,554,044 native steps and 841.359 seconds.
+
+Measured development margins: sigma50 **1.05664e-6 N per axis** and both-sign
+relative mass tolerance **1e-11**; these are below M1. Force noise is added on
+every command in the declared parity-guard-bypass diagnostic.
+[Result, all 32 per-episode costs and full video](https://github.com/corbensorenson/cartpole/tree/2d-cartpole-14-link-immediate-v1/2d/research/immediate_14_link_20261020).

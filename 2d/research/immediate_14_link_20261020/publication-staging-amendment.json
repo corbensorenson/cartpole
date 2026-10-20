@@ -1,0 +1,9 @@
+{
+  "reason": "Normalize resolved filesystem paths instead of comparing Git forward slashes to Windows backslashes",
+  "original_driver_sha256": "5e231101a37e57dbf2cccbe817f847e9a2ffb8bccbe337765d36fef402d6fa01",
+  "amended_driver_sha256": "4028ff9d371cff2b44446d1adac5fbaf4092d0eca67b909509d17e47323f4905",
+  "scientific_inputs_or_results_changed": false,
+  "packaged_assets_changed": false,
+  "native_steps": 0,
+  "new_labels": 0
+}

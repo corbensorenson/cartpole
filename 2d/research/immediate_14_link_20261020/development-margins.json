@@ -1,0 +1,310 @@
+{
+  "completed": true,
+  "qualified": false,
+  "controller_identity": "59a380398942e2f61da99c922ca327d9bc3581e098cb51ddca6b1daf10706040",
+  "sigma50_N": 1.05663693242691e-06,
+  "sigma50_bracketed": true,
+  "mass_tolerance": 1e-11,
+  "force": {
+    "label": "2D14 frozen common immediate / guard bypass",
+    "seeds": [
+      20261416,
+      20261417,
+      20261418,
+      20261419,
+      20261420,
+      20261421,
+      20261422,
+      20261423,
+      20261424,
+      20261425,
+      20261426,
+      20261427,
+      20261428,
+      20261429,
+      20261430,
+      20261431,
+      20261432,
+      20261433,
+      20261434,
+      20261435
+    ],
+    "sigma0": {
+      "successes": 0,
+      "trials": 0
+    },
+    "cells": [
+      {
+        "sigma_N": 1e-08,
+        "successes": 18,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 2
+        }
+      },
+      {
+        "sigma_N": 1e-07,
+        "successes": 19,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 1
+        }
+      },
+      {
+        "sigma_N": 1e-06,
+        "successes": 16,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 4
+        }
+      },
+      {
+        "sigma_N": 3e-06,
+        "successes": 3,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 17
+        }
+      },
+      {
+        "sigma_N": 1e-05,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        }
+      },
+      {
+        "sigma_N": 3e-05,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        }
+      },
+      {
+        "sigma_N": 0.0001,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        }
+      },
+      {
+        "sigma_N": 0.0003,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        }
+      },
+      {
+        "sigma_N": 0.001,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        }
+      },
+      {
+        "sigma_N": 0.01,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        }
+      }
+    ],
+    "firth": {
+      "intercept": 0.05822933702972912,
+      "slope_per_decade": -2.4337480904221156,
+      "sigma50_N": 1.05663693242691e-06,
+      "converged": true,
+      "gradient_norm": 3.94473259813512e-11,
+      "usable": true
+    },
+    "mle": {
+      "intercept": 0.08288321608802948,
+      "slope_per_decade": -2.573877162739442,
+      "sigma50_N": 1.076965270011286e-06,
+      "converged": true,
+      "gradient_norm": 7.247580731674021e-14,
+      "usable": true
+    },
+    "interpolated": {
+      "sigma50_N": 1.660388856001088e-06,
+      "bracket": [
+        1e-06,
+        3e-06
+      ]
+    },
+    "sigma_ok_ge_19_of_20": null,
+    "bootstrap": {
+      "replicates": 2000,
+      "usable": 2000,
+      "interval95_N": [
+        4.2151141088952986e-07,
+        2.0742037118430286e-06
+      ]
+    }
+  },
+  "mass": {
+    "label": "2D14 frozen common immediate / both signs",
+    "cells": [
+      {
+        "mass_delta": -0.001,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        },
+        "median_fail_step": 201.0
+      },
+      {
+        "mass_delta": -0.0001,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        },
+        "median_fail_step": 215.0
+      },
+      {
+        "mass_delta": -1e-06,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        },
+        "median_fail_step": 230.5
+      },
+      {
+        "mass_delta": -1e-07,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        },
+        "median_fail_step": 257.0
+      },
+      {
+        "mass_delta": -1e-09,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        },
+        "median_fail_step": 360.5
+      },
+      {
+        "mass_delta": -1e-11,
+        "successes": 17,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 3
+        },
+        "median_fail_step": 534.0
+      },
+      {
+        "mass_delta": -1e-13,
+        "successes": 19,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 1
+        },
+        "median_fail_step": 547.0
+      },
+      {
+        "mass_delta": 1e-13,
+        "successes": 18,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 2
+        },
+        "median_fail_step": 491.0
+      },
+      {
+        "mass_delta": 1e-11,
+        "successes": 18,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 2
+        },
+        "median_fail_step": 474.5
+      },
+      {
+        "mass_delta": 1e-09,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        },
+        "median_fail_step": 361.0
+      },
+      {
+        "mass_delta": 1e-07,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        },
+        "median_fail_step": 248.5
+      },
+      {
+        "mass_delta": 1e-06,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        },
+        "median_fail_step": 232.0
+      },
+      {
+        "mass_delta": 0.0001,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        },
+        "median_fail_step": 214.0
+      },
+      {
+        "mass_delta": 0.001,
+        "successes": 0,
+        "trials": 20,
+        "causes": {
+          "plane_exit": 20
+        },
+        "median_fail_step": 198.0
+      }
+    ],
+    "largest_both_signs_ge_10_of_20": 1e-11,
+    "passing_magnitudes": [
+      1e-13,
+      1e-11
+    ]
+  },
+  "development_margin_tiers_met": {
+    "M1": false,
+    "M2": false,
+    "M3": false
+  },
+  "force_failure_timing": {
+    "count": 144,
+    "median_fail_step": 250.0,
+    "min_fail_step": 182,
+    "max_fail_step": 605
+  },
+  "mass_failure_timing": {
+    "count": 208,
+    "median_fail_step": 233.5,
+    "min_fail_step": 183,
+    "max_fail_step": 547
+  },
+  "referenced_episodes": 480,
+  "referenced_native_steps": 7426668,
+  "native_steps": 0,
+  "new_labels": 0,
+  "source_summary_sha256": "b35be88fbaa05715bccebc7881e96faa547525e76f2a3622f9fe0050e93ae4a3",
+  "scope": "complete dev20 diagnostic margin of frozen candidate; fresh32 E and publication gates separate"
+}
